@@ -8,6 +8,7 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Button Content="Open password database" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click" />
+        <TextBlock Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Margin="0,100,0,0" />
     </Grid>
 </Page>

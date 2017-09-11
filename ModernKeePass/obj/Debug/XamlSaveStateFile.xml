@@ -1,4 +1,7 @@
 <XamlCompilerSaveState>
   <ReferenceAssemblyList>
+    <LocalAssembly PathName="c:\users\gbe\source\repos\modernkeepass\modernkeepass\obj\debug\intermediatexaml\modernkeepass.exe" HashGuid="ba913411-8172-a080-2ef8-daa6762bdbba" />
+    <ReferenceAssembly PathName="c:\users\gbe\source\repos\modernkeepass\packages\modernkeepasslib.2.19.0.27133\lib\netstandard1.2\modernkeepasslib.dll" HashGuid="d08e360b-ca16-7b19-6f2a-08b4fd9e8331" />
+    <ReferenceAssembly PathName="c:\users\gbe\source\repos\modernkeepass\packages\system.runtime.interopservices.runtimeinformation.4.3.0\lib\win8\system.runtime.interopservices.runtimeinformation.dll" HashGuid="6560d00f-0bb0-0755-5423-c4e1bf779127" />
   </ReferenceAssemblyList>
 </XamlCompilerSaveState>

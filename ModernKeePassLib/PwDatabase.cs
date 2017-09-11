@@ -20,6 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
+using Windows.UI.Xaml.Media.Imaging;
 //using System.Drawing;
 
 using ModernKeePassLib.WinRTAdaptors;
@@ -30,8 +32,6 @@ using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Utility;
-using Windows.UI.Xaml.Media.Imaging;
-using System.Threading.Tasks;
 
 namespace ModernKeePassLib
 {
