@@ -252,15 +252,12 @@ namespace ModernKeePassLib.Serialization
 		{
             try
             {
-                var sampleFile = await StorageFile.GetFileFromPathAsync(ioc.Path);
-                using (IRandomAccessStream stream = await sampleFile.OpenAsync(FileAccessMode.Read))
-                {
-                    return stream.AsStream();
-                }
+                IRandomAccessStream stream = await ioc.StorageFile.OpenAsync(FileAccessMode.Read);
+                return stream.AsStream();
             }
-            catch
+            catch (Exception ex)
             {
-                Debug.Assert(false, "Not implemented yet");
+                Debug.Assert(false, ex.Message);
                 return null;
             }
 		}

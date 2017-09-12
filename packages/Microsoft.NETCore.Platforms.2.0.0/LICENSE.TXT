@@ -1,16 +1,8 @@
-This Microsoft .NET Library may incorporate components from the projects listed
-below. Microsoft licenses these components under the Microsoft .NET Library
-software license terms. The original copyright notices and the licenses under
-which Microsoft received such components are set forth below for informational
-purposes only. Microsoft reserves all rights not expressly granted herein,
-whether by implication, estoppel or otherwise.
+The MIT License (MIT)
 
-1.	.NET Core (https://github.com/dotnet/core/)
-
-.NET Core
 Copyright (c) .NET Foundation and Contributors
 
-The MIT License (MIT)
+All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

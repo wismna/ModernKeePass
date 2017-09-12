@@ -27,6 +27,7 @@ using System.Diagnostics;
 
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Utility;
+using Windows.Storage;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -62,9 +63,11 @@ namespace ModernKeePassLib.Serialization
 
 	public sealed class IOConnectionInfo : IDeepCloneable<IOConnectionInfo>
 	{
-		// private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
+        // private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
 
-		private string m_strUrl = string.Empty;
+        public StorageFile StorageFile { get; set; }
+
+        private string m_strUrl = string.Empty;
 		public string Path
 		{
 			get { return m_strUrl; }
@@ -296,7 +299,18 @@ namespace ModernKeePassLib.Serialization
 			return ioc;
 		}
 
-		public bool CanProbablyAccess()
+        public static IOConnectionInfo FromFile(StorageFile file)
+        {
+            IOConnectionInfo ioc = new IOConnectionInfo();
+
+            ioc.Path = file.Path;
+            ioc.CredSaveMode = IOCredSaveMode.NoSave;
+            ioc.StorageFile = file;
+
+            return ioc;
+        }
+
+        public bool CanProbablyAccess()
 		{
             Debug.Assert(false, "not yet implemented");
             return false;

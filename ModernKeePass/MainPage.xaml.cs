@@ -1,7 +1,8 @@
-﻿using ModernKeePass.Pages;
-using System;
+﻿using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+
+using ModernKeePass.Pages;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,7 +31,7 @@ namespace ModernKeePass
             {
                 // Application now has read/write access to the picked file
                 textBlock.Text = "Opened database: " + file.Name;
-                Frame.Navigate(typeof(DatabaseViewPage), file);
+                Frame.Navigate(typeof(DatabaseDetailPage), file);
             }
             else
             {

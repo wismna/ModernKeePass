@@ -1,33 +1,25 @@
 ﻿using ModernKeePass.Common;
-using ModernKeePassLib;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Serialization;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using System.Linq;
-using System;
+using ModernKeePass.ViewModels;
+using Windows.Storage;
 
-// The Hub Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=321224
+// The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
 namespace ModernKeePass.Pages
 {
     /// <summary>
-    /// A page that displays a grouped collection of items.
+    /// A page that displays an overview of a single group, including a preview of the items
+    /// within the group.
     /// </summary>
-    public sealed partial class DatabaseViewPage : Page
+    public sealed partial class DatabaseDetailPage : Page
     {
         private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private PwDatabase _database = new PwDatabase();
+        private DatabaseVm viewModel = new DatabaseVm();
 
-        /// <summary>
-        /// This can be changed to a strongly typed view model.
-        /// </summary>
-        public ObservableDictionary DefaultViewModel
+        public DatabaseVm ViewModel
         {
-            get { return this.defaultViewModel; }
+            get { return this.viewModel; }
         }
 
         /// <summary>
@@ -39,14 +31,14 @@ namespace ModernKeePass.Pages
             get { return this.navigationHelper; }
         }
 
-        public DatabaseViewPage()
+
+        public DatabaseDetailPage()
         {
             this.InitializeComponent();
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += navigationHelper_LoadState;
-
         }
-        
+
         /// <summary>
         /// Populates the page with content passed during navigation.  Any saved state is also
         /// provided when recreating a page from a prior session.
@@ -60,7 +52,8 @@ namespace ModernKeePass.Pages
         /// session.  The state will be null the first time a page is visited.</param>
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            // TODO: Assign a collection of bindable groups to this.DefaultViewModel["Groups"]
+            // TODO: Assign a bindable group to this.DefaultViewModel["Group"]
+            // TODO: Assign a collection of bindable items to this.DefaultViewModel["Items"]
         }
 
         #region NavigationHelper registration
@@ -77,21 +70,11 @@ namespace ModernKeePass.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
+            
             if (e.Parameter is StorageFile)
             {
                 var file = e.Parameter as StorageFile;
-                var key = new CompositeKey();
-                key.AddUserKey(new KcpPassword("test"));
-                try
-                {
-                    _database.Open(IOConnectionInfo.FromPath(file.Path), key, new NullStatusLogger());
-
-                    DefaultViewModel["Groups"] = _database.RootGroup.GetGroups(false).Select(g => g.Name);
-                }
-                finally
-                {
-                    _database.Close();
-                }
+                viewModel.Open(file, "test");
             }
         }
 

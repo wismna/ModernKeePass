@@ -42,8 +42,8 @@ namespace ModernKeePassLib.Serialization
 
 		public override byte[] ReadBytes(int count)
 		{
-			try
-			{
+			/*try
+			{*/
 				byte[] pb = base.ReadBytes(count);
 				if((pb == null) || (pb.Length != count))
 				{
@@ -52,12 +52,12 @@ namespace ModernKeePassLib.Serialization
 				}
 
 				return pb;
-			}
-			catch(Exception)
+			/*}
+			catch(Exception ex)
 			{
 				if(m_strReadExcp != null) throw new IOException(m_strReadExcp);
 				else throw;
-			}
+			}*/
 		}
 	}
 }
