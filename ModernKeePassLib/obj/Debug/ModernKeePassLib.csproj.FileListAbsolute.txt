@@ -1,10 +1,6 @@
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\ModernKeePassLib.dll
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\ModernKeePassLib.pdb
-C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\System.Net.Requests.dll
-C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\System.Xml.XmlSerializer.dll
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\Windows.winmd
-C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\System.Net.Requests.xml
-C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\System.Xml.XmlSerializer.xml
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\bin\Debug\Windows.xml
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\obj\Debug\ModernKeePassLib.csprojResolveAssemblyReference.cache
 C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePassLib\obj\Debug\ModernKeePassLib.dll

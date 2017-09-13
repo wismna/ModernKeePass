@@ -15,7 +15,7 @@ namespace ModernKeePass.ViewModels
         private PwDatabase _database = new PwDatabase();
 
         public string Name { get; set; }
-        public ObservableCollection<GroupVm> Groups { get; set; }
+        public GroupVm RootGroup { get; set; }
 
         public async void Open(StorageFile databaseFile, string password)
         {
@@ -26,7 +26,7 @@ namespace ModernKeePass.ViewModels
                 await _database.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
                 if (!_database.IsOpen) return;
                 Name = databaseFile.DisplayName;
-                Groups = new ObservableCollection<GroupVm>(_database.RootGroup.Groups.Select(g => new GroupVm { Name = g.Name }));
+                RootGroup = new GroupVm (_database.RootGroup);
             }
             finally
             {
