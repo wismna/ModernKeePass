@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Windows.Storage;
+﻿using Windows.Storage;
 
 using ModernKeePassLib;
 using ModernKeePassLib.Keys;

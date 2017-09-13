@@ -8,7 +8,6 @@
     xmlns:ViewModels="using:ModernKeePass.ViewModels"
     x:Name="pageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
-    DataContext="{Binding ViewModel, Mode=OneWay, RelativeSource={RelativeSource Mode=Self}}"
     mc:Ignorable="d">
 
     <Grid>
