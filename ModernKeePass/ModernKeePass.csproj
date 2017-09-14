@@ -150,8 +150,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ModernKeePassLib, Version=2.19.0.27564, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.19.0.27564\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+    <Reference Include="ModernKeePassLib, Version=2.19.0.25827, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\ModernKeePassLib.2.19.2900\lib\x86\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
