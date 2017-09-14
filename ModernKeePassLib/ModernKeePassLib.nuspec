@@ -1,17 +1,32 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <id>ModernKeePassLib</id>
+    <version>2.19.2900</version>
+    <title>ModernKeePassLib</title>
+    <authors>Geoffroy Bonneville</authors>
+    <owners>Geoffroy Bonneville</owners>
     <licenseUrl>https://www.gnu.org/licenses/gpl-3.0.en.html</licenseUrl>
     <projectUrl>https://github.com/wismna/ModernKeePass</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Portable KeePass Password Management Library</description>
     <releaseNotes>Initial release.</releaseNotes>
-    <copyright>$copyright$</copyright>
+    <copyright>Copyright © 2017 Geoffroy Bonneville</copyright>
     <tags>KeePass KeePassLib NetStandard</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard1.2">
+        <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.2" exclude="Build,Analyzers" />
+        <dependency id="NETStandard.Library" version="2.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Net.Requests" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.Runtime.WindowsRuntime" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.Xml.XmlSerializer" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
   </metadata>
+  <files>
+    <!-- DLLs and resources -->
+    <file src="bin\ARM\Release\ModernKeePassLib.dll" target="lib\ARM\netstandard1.2"/>
+    <file src="bin\x64\Release\ModernKeePassLib.dll" target="lib\x64\netstandard1.2"/>
+    <file src="bin\x86\Release\ModernKeePassLib.dll" target="lib\x86\netstandard1.2"/>
+  </files>
 </package>
