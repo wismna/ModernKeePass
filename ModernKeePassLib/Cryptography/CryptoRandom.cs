@@ -17,6 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+using System;
 using Windows.Security.Cryptography;
 //using System.Windows.Forms;
 //using System.Drawing;
@@ -77,7 +78,7 @@ namespace ModernKeePassLib.Cryptography
         public byte[] GetRandomBytes(uint uRequestedBytes)
         {
             if (uRequestedBytes == 0) return new byte[0]; // Allow zero-length array
-
+            
             byte[] pbRes;
 
             Windows.Storage.Streams.IBuffer buffer = CryptographicBuffer.GenerateRandom(uRequestedBytes);
