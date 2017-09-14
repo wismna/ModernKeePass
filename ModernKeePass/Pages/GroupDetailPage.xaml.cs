@@ -14,12 +14,8 @@ namespace ModernKeePass.Pages
     public sealed partial class GroupDetailPage : Page
     {
         private NavigationHelper navigationHelper;
-        private GroupVm viewModel;
 
-        public GroupVm ViewModel
-        {
-            get { return viewModel; }
-        }
+        public GroupVm ViewModel { get; set; }
 
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
@@ -72,7 +68,7 @@ namespace ModernKeePass.Pages
             
             if (e.Parameter is GroupVm)
             {
-                viewModel = e.Parameter as GroupVm;
+                ViewModel = e.Parameter as GroupVm;
             }
         }
 
