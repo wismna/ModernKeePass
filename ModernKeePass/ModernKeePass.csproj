@@ -121,6 +121,7 @@
     <Compile Include="ViewModels\DatabaseVm.cs" />
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
+    <Compile Include="ViewModels\Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

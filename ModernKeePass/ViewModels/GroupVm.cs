@@ -17,6 +17,8 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public GroupVm() { }
+
         public GroupVm(PwGroup group)
         {
             Name = group.Name;
