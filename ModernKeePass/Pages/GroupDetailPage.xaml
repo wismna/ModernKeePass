@@ -26,20 +26,21 @@
 
         <Grid.Resources>
             <CollectionViewSource
-                x:Name="itemsViewSource"
+                x:Name="groupsViewSource"
                 Source="{Binding Groups}"/>
         </Grid.Resources>
         <!-- Horizontal scrolling grid -->
         <GridView
-            x:Name="itemGridView"
+            x:Name="groupGridView"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Groups"
             TabIndex="1"
             Grid.RowSpan="2"
             Padding="120,126,120,50"
-            ItemsSource="{Binding Source={StaticResource itemsViewSource}}"
-            SelectionMode="None"
-            IsSwipeEnabled="false">
+            ItemsSource="{Binding Source={StaticResource groupsViewSource}}"
+            IsSwipeEnabled="false" 
+            SelectionChanged="itemGridView_SelectionChanged"
+            SelectedIndex="-1" >
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid Height="110" Width="480" Margin="10">
@@ -54,15 +55,14 @@
                             <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                             <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
                             <TextBlock Text="{Binding EntryCount}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60"/>
+                            <TextBlock Text="{Binding GroupCount}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
             <GridView.Header>
                 <StackPanel Width="480" Margin="0,4,14,0">
-                    <TextBlock Margin="0,0,0,20" Style="{StaticResource SubheaderTextBlockStyle}" MaxHeight="60" Text="{Binding Entries.Count}"/>
-                    <Image Height="400" Margin="0,0,0,20" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
-                    <TextBlock Margin="0,0,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
+                    <ListView x:Name="listView" Height="100"/>
                 </StackPanel>
             </GridView.Header>
             <GridView.ItemContainerStyle>

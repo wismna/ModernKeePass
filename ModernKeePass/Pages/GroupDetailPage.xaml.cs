@@ -47,8 +47,6 @@ namespace ModernKeePass.Pages
         /// session.  The state will be null the first time a page is visited.</param>
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            // TODO: Assign a bindable group to this.DefaultViewModel["Group"]
-            // TODO: Assign a collection of bindable items to this.DefaultViewModel["Items"]
         }
 
         #region NavigationHelper registration
@@ -69,6 +67,7 @@ namespace ModernKeePass.Pages
             if (e.Parameter is GroupVm)
             {
                 DataContext = e.Parameter as GroupVm;
+                groupGridView.SelectedIndex = -1;
             }
         }
 
@@ -78,5 +77,11 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
+
+        private void itemGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var gridView = sender as GridView;
+            Frame.Navigate(typeof(GroupDetailPage), gridView.SelectedItem as GroupVm);
+        }
     }
 }

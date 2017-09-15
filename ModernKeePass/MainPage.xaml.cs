@@ -31,15 +31,19 @@ namespace ModernKeePass
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                textBlock.Text = "Opened database: " + file.Name;
-                var database = new DatabaseVm();
-                database.Open(file, "test");
-                Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);
+                DataContext = new DatabaseVm(file);
             }
             else
             {
-                textBlock.Text = "Operation cancelled.";
             }
+        }
+        
+        private void openBbutton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var database = DataContext as DatabaseVm;
+            database.Open();
+            if (database.IsOpen)
+                Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);
         }
     }
 }

@@ -1,14 +1,41 @@
 ﻿<Page
-    x:Class="ModernKeePass.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ModernKeePass"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:ViewModels="using:ModernKeePass.ViewModels"
+    x:Class="ModernKeePass.MainPage"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+    <Page.DataContext>
+        <ViewModels:DatabaseVm/>
+    </Page.DataContext>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Content="Open password database" HorizontalAlignment="Center" VerticalAlignment="Center" Click="Button_Click" />
-        <TextBlock Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="TextBlock" VerticalAlignment="Center" Margin="0,100,0,0" />
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Button Grid.Column="0" Grid.Row="0" x:Name="selectButton" Content="Select password database" Click="Button_Click" HorizontalAlignment="Center" />
+        <Grid Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" Height="auto" VerticalAlignment="Top" Width="auto" Visibility="{Binding Visibility}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" x:Name="passwordTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
+            <PasswordBox Grid.Column="1" Grid.Row="0" x:Name="passwordBox" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130" Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" Margin="0,0,10,0"/>
+            <Button Grid.Column="1" Grid.Row="1" x:Name="openBbutton" Content="Open" HorizontalAlignment="Right" VerticalAlignment="Top" Click="openBbutton_Click" Margin="0,0,7,0" Width="auto"/>
+            <TextBlock Grid.Column="1" Grid.Row="2" x:Name="errorTextBlock" TextWrapping="Wrap" Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Height="auto" Width="auto" Foreground="#FF9E0909" Margin="0,0,10,0"/>
+        </Grid>
     </Grid>
 </Page>

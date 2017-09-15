@@ -17,6 +17,13 @@ namespace ModernKeePass.ViewModels
                 return $"{Entries?.Count} entries.";
             }
         }
+        public string GroupCount
+        {
+            get
+            {
+                return $"{Groups?.Count} groups.";
+            }
+        }
 
         public GroupVm()
         {
@@ -39,6 +46,5 @@ namespace ModernKeePass.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
     }
 }
