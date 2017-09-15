@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm
+    public class EntryVm : INotifyPropertyChanged
     {
         public string Title { get; private set; }
         public string UserName { get; private set; }
@@ -22,5 +18,7 @@ namespace ModernKeePass.ViewModels
             URL = entry.Strings.GetSafe(PwDefs.UrlField).ReadString();
             Notes = entry.Strings.GetSafe(PwDefs.NotesField).ReadString();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

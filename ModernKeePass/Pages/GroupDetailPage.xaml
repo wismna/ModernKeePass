@@ -8,9 +8,11 @@
     xmlns:ViewModels="using:ModernKeePass.ViewModels"
     x:Name="pageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
-    mc:Ignorable="d" 
-    DataContext="{Binding ViewModel, RelativeSource={RelativeSource Mode=Self}}">
-
+    mc:Ignorable="d" >
+    <Page.DataContext>
+        <ViewModels:GroupVm />
+    </Page.DataContext>
+    
     <Grid>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -25,7 +27,7 @@
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="itemsViewSource"
-                Source="{Binding Groups}"/>
+                Source="{Binding Path=Groups}"/>
         </Grid.Resources>
         <!-- Horizontal scrolling grid -->
         <GridView
@@ -82,7 +84,7 @@
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="{Binding Name}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+            <TextBlock x:Name="pageTitle" Text="{Binding Path=Name}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
         </Grid>
     </Grid>

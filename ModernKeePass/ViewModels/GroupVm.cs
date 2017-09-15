@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupVm
+    public class GroupVm : INotifyPropertyChanged
     {
         public ObservableCollection<EntryVm> Entries { get; set; }
         public ObservableCollection<GroupVm> Groups { get; set; }
@@ -17,7 +18,13 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public GroupVm() { }
+        public GroupVm()
+        {
+            Name = "GroupName";
+            Entries = new ObservableCollection<EntryVm>();
+            Groups = new ObservableCollection<GroupVm>();
+
+        }
 
         public GroupVm(PwGroup group)
         {
@@ -25,5 +32,13 @@ namespace ModernKeePass.ViewModels
             Entries = new ObservableCollection<EntryVm>(group.Entries.Select(e => new EntryVm(e)));
             Groups = new ObservableCollection<GroupVm>(group.Groups.Select(g => new GroupVm(g)));
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
     }
 }

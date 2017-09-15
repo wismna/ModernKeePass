@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.ComponentModel;
+using Windows.Storage;
 
 using ModernKeePassLib;
 using ModernKeePassLib.Keys;
@@ -7,12 +8,14 @@ using ModernKeePassLib.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class DatabaseVm
+    public class DatabaseVm : INotifyPropertyChanged
     {
         private PwDatabase _database = new PwDatabase();
 
         public string Name { get; set; }
         public GroupVm RootGroup { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public async void Open(StorageFile databaseFile, string password)
         {

@@ -34,7 +34,8 @@ namespace ModernKeePass
                 textBlock.Text = "Opened database: " + file.Name;
                 var database = new DatabaseVm();
                 database.Open(file, "test");
-                Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);
+                Frame.Navigate(typeof(GroupDetailPage), database);
+                //Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);
             }
             else
             {
