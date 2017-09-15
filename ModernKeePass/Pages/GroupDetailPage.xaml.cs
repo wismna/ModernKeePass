@@ -67,7 +67,7 @@ namespace ModernKeePass.Pages
             if (e.Parameter is GroupVm)
             {
                 DataContext = e.Parameter as GroupVm;
-                groupGridView.SelectedIndex = -1;
+                groupsGridView.SelectedIndex = -1;
             }
         }
 
@@ -78,10 +78,15 @@ namespace ModernKeePass.Pages
 
         #endregion
 
-        private void itemGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void groupsGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var gridView = sender as GridView;
             Frame.Navigate(typeof(GroupDetailPage), gridView.SelectedItem as GroupVm);
+        }
+
+        private void entriesListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+
         }
     }
 }

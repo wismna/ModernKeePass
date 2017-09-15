@@ -28,10 +28,13 @@
             <CollectionViewSource
                 x:Name="groupsViewSource"
                 Source="{Binding Groups}"/>
+            <CollectionViewSource
+                x:Name="entriesViewSource"
+                Source="{Binding Entries}"/>
         </Grid.Resources>
         <!-- Horizontal scrolling grid -->
         <GridView
-            x:Name="groupGridView"
+            x:Name="groupsGridView"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Groups"
             TabIndex="1"
@@ -39,7 +42,7 @@
             Padding="120,126,120,50"
             ItemsSource="{Binding Source={StaticResource groupsViewSource}}"
             IsSwipeEnabled="false" 
-            SelectionChanged="itemGridView_SelectionChanged"
+            SelectionChanged="groupsGridView_SelectionChanged"
             SelectedIndex="-1" >
             <GridView.ItemTemplate>
                 <DataTemplate>
@@ -62,7 +65,18 @@
             </GridView.ItemTemplate>
             <GridView.Header>
                 <StackPanel Width="480" Margin="0,4,14,0">
-                    <ListView x:Name="listView" Height="100"/>
+                    <ListView x:Name="entriesListView" Height="100" ItemsSource="{Binding Source={StaticResource entriesViewSource}}" Margin="10,0,0,0" ItemClick="entriesListView_ItemClick">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
                 </StackPanel>
             </GridView.Header>
             <GridView.ItemContainerStyle>
