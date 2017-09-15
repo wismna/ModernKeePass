@@ -27,7 +27,7 @@
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="itemsViewSource"
-                Source="{Binding Path=Groups}"/>
+                Source="{Binding Groups}"/>
         </Grid.Resources>
         <!-- Horizontal scrolling grid -->
         <GridView
@@ -60,7 +60,7 @@
             </GridView.ItemTemplate>
             <GridView.Header>
                 <StackPanel Width="480" Margin="0,4,14,0">
-                    <TextBlock Margin="0,0,0,20" Style="{StaticResource SubheaderTextBlockStyle}" MaxHeight="60"/>
+                    <TextBlock Margin="0,0,0,20" Style="{StaticResource SubheaderTextBlockStyle}" MaxHeight="60" Text="{Binding Entries.Count}"/>
                     <Image Height="400" Margin="0,0,0,20" Stretch="UniformToFill" AutomationProperties.Name="{Binding Title}"/>
                     <TextBlock Margin="0,0,0,0" Style="{StaticResource BodyTextBlockStyle}"/>
                 </StackPanel>

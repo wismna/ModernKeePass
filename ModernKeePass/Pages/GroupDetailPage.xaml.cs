@@ -23,15 +23,15 @@ namespace ModernKeePass.Pages
         /// </summary>
         public NavigationHelper NavigationHelper
         {
-            get { return this.navigationHelper; }
+            get { return navigationHelper; }
         }
 
 
         public GroupDetailPage()
         {
-            this.InitializeComponent();
-            this.navigationHelper = new NavigationHelper(this);
-            this.navigationHelper.LoadState += navigationHelper_LoadState;
+            InitializeComponent();
+            navigationHelper = new NavigationHelper(this);
+            navigationHelper.LoadState += navigationHelper_LoadState;
         }
 
         /// <summary>
@@ -61,15 +61,14 @@ namespace ModernKeePass.Pages
         /// and <see cref="Common.NavigationHelper.SaveState"/>.
         /// The navigation parameter is available in the LoadState method 
         /// in addition to page state preserved during an earlier session.
-
+        /// 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
             
             if (e.Parameter is GroupVm)
             {
-                ViewModel = e.Parameter as GroupVm;
-                ViewModel?.NotifyPropertyChanged("Name");
+                DataContext = e.Parameter as GroupVm;
             }
         }
 

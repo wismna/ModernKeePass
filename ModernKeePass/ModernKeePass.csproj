@@ -114,9 +114,6 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\BasicPage1.xaml.cs">
-      <DependentUpon>BasicPage1.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\GroupDetailPage.xaml.cs">
       <DependentUpon>GroupDetailPage.xaml</DependentUpon>
     </Compile>
@@ -124,7 +121,6 @@
     <Compile Include="ViewModels\DatabaseVm.cs" />
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
-    <Compile Include="ViewModels\Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -148,18 +144,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\BasicPage1.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\GroupDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ModernKeePassLib, Version=2.19.0.20446, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.19.2930\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+    <Reference Include="ModernKeePassLib, Version=2.19.0.17089, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernKeePassLib.2.19.2940\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
