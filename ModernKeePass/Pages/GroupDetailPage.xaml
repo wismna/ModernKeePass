@@ -65,7 +65,7 @@
             </GridView.ItemTemplate>
             <GridView.Header>
                 <StackPanel Width="480" Margin="0,4,14,0">
-                    <ListView x:Name="entriesListView" Height="100" ItemsSource="{Binding Source={StaticResource entriesViewSource}}" Margin="10,0,0,0" ItemClick="entriesListView_ItemClick">
+                    <ListView x:Name="entriesListView" Height="100" ItemsSource="{Binding Source={StaticResource entriesViewSource}}" Margin="10,0,0,0" SelectionChanged="entriesListView_SelectionChanged">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <Grid>

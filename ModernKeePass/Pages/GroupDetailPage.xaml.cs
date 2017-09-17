@@ -14,9 +14,7 @@ namespace ModernKeePass.Pages
     public sealed partial class GroupDetailPage : Page
     {
         private NavigationHelper navigationHelper;
-
-        public GroupVm ViewModel { get; set; }
-
+        
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
         /// process lifetime management
@@ -68,6 +66,7 @@ namespace ModernKeePass.Pages
             {
                 DataContext = e.Parameter as GroupVm;
                 groupsGridView.SelectedIndex = -1;
+                entriesListView.SelectedIndex = -1;
             }
         }
 
@@ -83,10 +82,12 @@ namespace ModernKeePass.Pages
             var gridView = sender as GridView;
             Frame.Navigate(typeof(GroupDetailPage), gridView.SelectedItem as GroupVm);
         }
+        
 
-        private void entriesListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void entriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            var listView = sender as ListView;
+            Frame.Navigate(typeof(EntryDetailPage), listView.SelectedItem as EntryVm);
         }
     }
 }

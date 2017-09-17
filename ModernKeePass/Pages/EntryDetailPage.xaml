@@ -1,0 +1,68 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ModernKeePass.Pages"
+    xmlns:common="using:ModernKeePass.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ViewModels="using:ModernKeePass.ViewModels"
+    x:Name="pageRoot"
+    x:Class="ModernKeePass.Pages.EntryDetailPage"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <ViewModels:EntryVm/>
+    </Page.DataContext>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="1" x:Name="contentRegion">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="userTextBlock" Grid.Row="0" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="User name or login" VerticalAlignment="Top" FontSize="18"/>
+            <TextBox x:Name="userTextBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding UserName, Mode=TwoWay}" VerticalAlignment="Top" Width="250" AllowDrop="True"/>
+            <TextBlock x:Name="passwordTextBlock" Grid.Row="2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" FontSize="18"/>
+            <PasswordBox x:Name="passwordBox" Grid.Row="3" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" Width="250" AllowDrop="True"/>
+            <TextBox x:Name="passwordTextBox" Grid.Row="3" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Password, Mode=TwoWay}" VerticalAlignment="Top" Width="250" FontSize="14,667" MaxLength="256" AllowDrop="True" Visibility="Collapsed"/>
+            <CheckBox x:Name="checkBox" Grid.Row="4" Content="Show password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="checkBox_Checked" Unchecked="checkBox_Unchecked"/>
+            <TextBlock x:Name="urlTextBlock" Grid.Row="5" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="URL" VerticalAlignment="Top" FontSize="18"/>
+            <TextBox x:Name="urlTextBox" Grid.Row="6" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding URL, Mode=TwoWay}" VerticalAlignment="Top" Width="250" FontSize="14,667" MaxLength="256" AllowDrop="True"/>
+            <TextBlock x:Name="notesTextBlock" Grid.Row="7" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Notes" VerticalAlignment="Top" FontSize="18"/>
+            <TextBox x:Name="notesTextBox" Grid.Row="8" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" VerticalAlignment="Top" Width="250" Height="32" IsSpellCheckEnabled="True" AllowDrop="True"/>
+            </Grid>
+
+        <!-- Bouton Précédent et titre de la page -->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="backButton" Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+                        Style="{StaticResource NavigationBackButtonNormalStyle}"
+                        VerticalAlignment="Top"
+                        AutomationProperties.Name="Back"
+                        AutomationProperties.AutomationId="BackButton"
+                        AutomationProperties.ItemType="Navigation Button"/>
+            <TextBlock x:Name="pageTitle" Text="{Binding Title}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+                        IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+        </Grid>
+    </Grid>
+</Page>
