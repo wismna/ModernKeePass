@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 // Bert TODO: For now, remove the accesscontrol from this class. 
 // In WinRT, the security of file has changed, and something could potentially be done
@@ -70,7 +71,7 @@ namespace ModernKeePassLib.Serialization
 			else m_iocTemp = m_iocBase;
 		}
 
-		public Stream OpenWrite()
+		public async Task<Stream> OpenWrite()
 		{
 			if(!m_bTransacted) m_bMadeUnhidden = UrlUtil.UnhideFile(m_iocTemp.Path);
 			else // m_bTransacted
@@ -79,7 +80,7 @@ namespace ModernKeePassLib.Serialization
 				catch(Exception) { }
 			}
 
-			return IOConnection.OpenWrite(m_iocTemp);
+			return await IOConnection.OpenWrite(m_iocTemp);
 		}
 
 		public void CommitWrite()

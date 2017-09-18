@@ -610,7 +610,7 @@ namespace ModernKeePassLib
 		/// it has been opened from.
 		/// </summary>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(IStatusLogger slLogger)
+		public async void Save(IStatusLogger slLogger)
 		{
 			Debug.Assert(ValidateUuidUniqueness());
 
@@ -620,7 +620,7 @@ namespace ModernKeePassLib
 			{
 				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
 					m_bUseFileTransactions);
-				Stream s = ft.OpenWrite();
+				Stream s = await ft.OpenWrite();
 
 				Kdb4File kdb = new Kdb4File(this);
 				kdb.Save(s, null, Kdb4Format.Default, slLogger);
@@ -631,6 +631,8 @@ namespace ModernKeePassLib
 				m_pbHashOfFileOnDisk = kdb.HashOfFileOnDisk;
 				Debug.Assert(m_pbHashOfFileOnDisk != null);
 			}
+            catch (Exception ex)
+            { }
 			finally { if(fl != null) fl.Dispose(); }
 
 			m_bModified = false;

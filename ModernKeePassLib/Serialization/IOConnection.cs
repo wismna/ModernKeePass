@@ -281,18 +281,24 @@ namespace ModernKeePassLib.Serialization
 			return CreateWebClient(ioc).OpenWrite(uri);
 		}
 #else
-		public static Stream OpenWrite(IOConnectionInfo ioc)
+		public async static Task<Stream> OpenWrite(IOConnectionInfo ioc)
 		{
-			return OpenWriteLocal(ioc);
+			return await OpenWriteLocal(ioc);
 		}
 #endif
 
-		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
+		private async static Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
 		{
-            Debug.Assert(false, "Not implemented yet");
-            return null;
-		//	return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
-		//		FileShare.None);
+            try
+            {
+                IRandomAccessStream stream = await ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite);
+                return stream.AsStream();
+            }
+            catch (Exception ex)
+            {
+                Debug.Assert(false, ex.Message);
+                return null;
+            }
 		}
 
 		public static bool FileExists(IOConnectionInfo ioc)
