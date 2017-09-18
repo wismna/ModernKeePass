@@ -65,7 +65,7 @@ namespace ModernKeePassLib.Native
 			else
 				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
 		} */
-
+        /*
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey32(IntPtr pBuf256,
@@ -75,7 +75,7 @@ namespace ModernKeePassLib.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey64(IntPtr pBuf256,
 			IntPtr pKey256, UInt64 uRounds);
-
+      
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
@@ -98,7 +98,7 @@ namespace ModernKeePassLib.Native
 			else
 				return TransformKeyBenchmark32(uTimeMs);
 		}
-
+        */
 #if !KeePassLibSD && TODO
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
 		internal static extern int StrCmpLogicalW(string x, string y);

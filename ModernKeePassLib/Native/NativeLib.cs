@@ -172,12 +172,12 @@ namespace ModernKeePassLib.Native
 			KeyValuePair<IntPtr, IntPtr> kvp = PrepareArrays256(pBuf256, pKey256);
 			bool bResult = false;
 
-			try
+			/*try
 			{
 				bResult = NativeMethods.TransformKey(kvp.Key, kvp.Value, uRounds);
 			}
 			catch(Exception) { bResult = false; }
-
+            */
 			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
 			NativeLib.FreeArrays(kvp);
@@ -196,8 +196,8 @@ namespace ModernKeePassLib.Native
 
 			if(m_bAllowNative == false) return false;
 
-			try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
-			catch(Exception) { return false; }
+			/*try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
+			catch(Exception) { return false; }*/
 
 			return true;
 		}
