@@ -19,7 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.IO.Compression;
+using System.Security;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
 //using System.Drawing;
 //using System.Drawing.Imaging;
 
@@ -30,10 +36,13 @@ using ModernKeePassLibSD;
 
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
+using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
+using ModernKeePassLib.Delegates;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -62,13 +71,9 @@ namespace ModernKeePassLib.Serialization
 		/// be written.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(Stream sSaveTo, PwGroup pgDataSource, Kdb4Format format,
+		public async void Save(Stream sSaveTo, PwGroup pgDataSource, Kdb4Format format,
 			IStatusLogger slLogger)
 		{
-                       Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
-
 			Debug.Assert(sSaveTo != null);
 			if(sSaveTo == null) throw new ArgumentNullException("sSaveTo");
 
@@ -100,7 +105,7 @@ namespace ModernKeePassLib.Serialization
 					bw = new BinaryWriter(hashedStream, encNoBom);
 					WriteHeader(bw); // Also flushes bw
 
-					Stream sEncrypted = AttachStreamEncryptor(hashedStream);
+					Stream sEncrypted = await AttachStreamEncryptor(hashedStream);
 					if((sEncrypted == null) || (sEncrypted == hashedStream))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
@@ -117,31 +122,26 @@ namespace ModernKeePassLib.Serialization
 					writerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
-				m_xmlWriter = new XmlTextWriter(writerStream, encNoBom);
-				WriteDocument(pgDataSource);
+                using (m_xmlWriter = XmlWriter.Create(writerStream, new XmlWriterSettings { Encoding = encNoBom }))
+                {
+                    WriteDocument(pgDataSource);
 
-				m_xmlWriter.Flush();
-				m_xmlWriter.Close();
-				writerStream.Close();
-
+                    m_xmlWriter.Flush();
+                    writerStream.Dispose();
+                }
 				GC.KeepAlive(bw);
 			}
 			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
-#endif
 		}
 
 		private void CommonCleanUpWrite(Stream sSaveTo, HashingStreamEx hashedStream)
 		{
-             Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
-			hashedStream.Close();
+			//hashedStream.Close();
 			m_pbHashOfFileOnDisk = hashedStream.Hash;
 
-			sSaveTo.Close();
+			sSaveTo.Dispose();
 
 			m_xmlWriter = null;
-#endif
 		}
 
 		private void WriteHeader(BinaryWriter bw)
@@ -193,47 +193,41 @@ namespace ModernKeePassLib.Serialization
 			else bwOut.Write((ushort)0);
 		}
 
-		private Stream AttachStreamEncryptor(Stream s)
+		private async Task<Stream> AttachStreamEncryptor(Stream s)
 		{
-                       Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
-			MemoryStream ms = new MemoryStream();
+            using (MemoryStream ms = new MemoryStream())
+            {
 
-			Debug.Assert(m_pbMasterSeed != null);
-			Debug.Assert(m_pbMasterSeed.Length == 32);
-			ms.Write(m_pbMasterSeed, 0, 32);
+                Debug.Assert(m_pbMasterSeed != null);
+                Debug.Assert(m_pbMasterSeed.Length == 32);
+                ms.Write(m_pbMasterSeed, 0, 32);
 
-			Debug.Assert(m_pwDatabase != null);
-			Debug.Assert(m_pwDatabase.MasterKey != null);
-			ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
-				m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
-			Debug.Assert(pbinKey != null);
-			if(pbinKey == null)
-				throw new SecurityException(KLRes.InvalidCompositeKey);
-			byte[] pKey32 = pbinKey.ReadData();
-			if((pKey32 == null) || (pKey32.Length != 32))
-				throw new SecurityException(KLRes.InvalidCompositeKey);
-			ms.Write(pKey32, 0, 32);
+                Debug.Assert(m_pwDatabase != null);
+                Debug.Assert(m_pwDatabase.MasterKey != null);
+                ProtectedBinary pbinKey = await m_pwDatabase.MasterKey.GenerateKey32(
+                    m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
+                Debug.Assert(pbinKey != null);
+                if (pbinKey == null)
+                    throw new SecurityException(KLRes.InvalidCompositeKey);
+                byte[] pKey32 = pbinKey.ReadData();
+                if ((pKey32 == null) || (pKey32.Length != 32))
+                    throw new SecurityException(KLRes.InvalidCompositeKey);
+                ms.Write(pKey32, 0, 32);
 
-			SHA256Managed sha256 = new SHA256Managed();
-			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
-			
-			ms.Close();
-			Array.Clear(pKey32, 0, 32);
+                SHA256Managed sha256 = SHA256Managed.Instance;
+                byte[] aesKey = sha256.ComputeHash(ms.ToArray());
+                
+			    Array.Clear(pKey32, 0, 32);
 
-			Debug.Assert(CipherPool.GlobalPool != null);
-			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
-			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
-			return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
-#endif
+			    Debug.Assert(CipherPool.GlobalPool != null);
+			    ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
+			    if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
+			    return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
+            }
 		}
 
 		private void WriteDocument(PwGroup pgDataSource)
 		{
-                       Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
 			Debug.Assert(m_xmlWriter != null);
 			if(m_xmlWriter == null) throw new InvalidOperationException();
 
@@ -244,9 +238,8 @@ namespace ModernKeePassLib.Serialization
 
 			BinPoolBuild(pgRoot);
 
-			m_xmlWriter.Formatting = Formatting.Indented;
-			m_xmlWriter.IndentChar = '\t';
-			m_xmlWriter.Indentation = 1;
+			m_xmlWriter.Settings.Indent = true;
+			m_xmlWriter.Settings.IndentChars = "\t";
 
 			m_xmlWriter.WriteStartDocument(true);
 			m_xmlWriter.WriteStartElement(ElemDocNode);
@@ -313,7 +306,6 @@ namespace ModernKeePassLib.Serialization
 
 			m_xmlWriter.WriteEndElement(); // ElemDocNode
 			m_xmlWriter.WriteEndDocument();
-#endif
 		}
 
 		private void WriteMeta()
@@ -380,9 +372,6 @@ namespace ModernKeePassLib.Serialization
 
 		private void WriteEntry(PwEntry pe, bool bIsHistory)
 		{
-                       Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
 			Debug.Assert(pe != null); if(pe == null) throw new ArgumentNullException("pe");
 
 			m_xmlWriter.WriteStartElement(ElemEntry);
@@ -408,7 +397,6 @@ namespace ModernKeePassLib.Serialization
 			else { Debug.Assert(pe.History.UCount == 0); }
 
 			m_xmlWriter.WriteEndElement();
-#endif
 		}
 
 		private void WriteList(ProtectedStringDictionary dictStrings, bool bEntryStrings)
@@ -635,10 +623,6 @@ namespace ModernKeePassLib.Serialization
 
 		private void WriteObject(string name, ProtectedString value, bool bIsEntryString)
 		{
-                Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
-
 			Debug.Assert(name != null);
 			Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
 
@@ -694,7 +678,7 @@ namespace ModernKeePassLib.Serialization
 						// page area
 						if(char.IsSymbol(ch) || char.IsSurrogate(ch))
 						{
-							System.Globalization.UnicodeCategory cat = char.GetUnicodeCategory(ch);
+							UnicodeCategory cat = CharUnicodeInfo.GetUnicodeCategory(ch);
 							// Map character to correct position in code page
 							chMapped = (char)((int)cat * 32 + ch);
 						}
@@ -706,7 +690,7 @@ namespace ModernKeePassLib.Serialization
 								// in the low ANSI range (up to 255) when calling
 								// ToLower on them with invariant culture (see
 								// http://lists.ximian.com/pipermail/mono-patches/2002-February/086106.html )
-								chMapped = char.ToLower(ch, CultureInfo.InvariantCulture);
+								chMapped = char.ToLowerInvariant(ch);
 							}
 						}
 
@@ -725,7 +709,6 @@ namespace ModernKeePassLib.Serialization
 
 			m_xmlWriter.WriteEndElement(); // ElemValue
 			m_xmlWriter.WriteEndElement(); // ElemString
-#endif
         }
 
 		private void WriteObject(string name, ProtectedBinary value, bool bAllowRef)
@@ -752,10 +735,6 @@ namespace ModernKeePassLib.Serialization
 
 		private void SubWriteValue(ProtectedBinary value)
 		{
-
-            Debug.Assert(false, "not yet implemented");
-            return ;
-#if TODO
 			if(value.IsProtected && (m_format != Kdb4Format.PlainXml))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
@@ -780,7 +759,6 @@ namespace ModernKeePassLib.Serialization
 					m_xmlWriter.WriteBase64(pbRaw, 0, pbRaw.Length);
 				}
 			}
-#endif
 		}
 
 		private void WriteObject(string name, PwDeletedObject value)

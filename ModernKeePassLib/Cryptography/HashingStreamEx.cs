@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLib.Cryptography
@@ -29,6 +30,7 @@ namespace ModernKeePassLib.Cryptography
         private Stream m_sBaseStream;
         private bool m_bWriting;
         private Queue<byte[]> m_DataToHash;
+        //private HashAlgorithm m_hash;
 
         public byte[] Hash
         {
@@ -124,9 +126,8 @@ namespace ModernKeePassLib.Cryptography
         {
             m_sBaseStream.Flush();
         }
-
-#if TODO
-		public override void Close()
+        
+		/*public override void Close()
 		{
 
 			if(m_hash != null)
@@ -144,8 +145,7 @@ namespace ModernKeePassLib.Cryptography
 
 			m_sBaseStream.Close();
 
-		}
-#endif
+		}*/
 
         public override long Seek(long lOffset, SeekOrigin soOrigin)
         {
@@ -182,26 +182,22 @@ namespace ModernKeePassLib.Cryptography
 
         public override void Write(byte[] pbBuffer, int nOffset, int nCount)
         {
-            // BERT TODO: Not implemented.
-            Debug.Assert(false);
-#if TODO
 			if(!m_bWriting) throw new InvalidOperationException();
 
 #if DEBUG
 			byte[] pbOrg = new byte[pbBuffer.Length];
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
-
-			if((m_hash != null) && (nCount > 0))
-				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
+            // TODO: implement this
+			/*if((m_hash != null) && (nCount > 0))
+				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);*/
 
 #if DEBUG
 			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
 #endif
 
 			m_sBaseStream.Write(pbBuffer, nOffset, nCount);
-
-#endif // TODO
+            
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 
 using ModernKeePass.Pages;
 using ModernKeePass.ViewModels;
@@ -19,7 +19,7 @@ namespace ModernKeePass
             this.InitializeComponent();
         }
         
-        private async void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.List;
@@ -31,19 +31,31 @@ namespace ModernKeePass
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                DataContext = new DatabaseVm(file);
-            }
-            else
-            {
+                //DataContext = new DatabaseVm(file);
+                ((App)Application.Current).Database = new Common.DatabaseHelper(file);
+                var homeVm = DataContext as HomeVm;
+                homeVm.Visibility = Visibility.Visible;
+                homeVm.NotifyPropertyChanged("Visibility");
             }
         }
         
-        private void openBbutton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void openBbutton_Click(object sender, RoutedEventArgs e)
         {
-            var database = DataContext as DatabaseVm;
+            /*var database = DataContext as DatabaseVm;
             database.Open();
             if (database.IsOpen)
-                Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);
+                Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);*/
+            var homeVm = DataContext as HomeVm;
+            var app = ((App)Application.Current);
+            homeVm.ErrorMessage = await app.Database.Open(homeVm.Password);
+            if (!app.Database.IsOpen) homeVm.NotifyPropertyChanged("ErrorMessage");
+            else Frame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
+        }
+
+        private void saveBbutton_Click(object sender, RoutedEventArgs e)
+        {
+            var database = DataContext as HomeVm;
+            ((App)Application.Current).Database.Save();
         }
     }
 }
