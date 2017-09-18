@@ -61,10 +61,6 @@ namespace ModernKeePass.Pages
             {
                 navigationParameter = e.PageState["SelectedItem"];
             }
-
-            // TODO: affectez un groupe pouvant être lié à this.DefaultViewModel["Group"]
-            // TODO: affectez une collection d'éléments pouvant être liés à this.DefaultViewModel["Items"]
-            // TODO: assignez l'élément sélectionné à .flipView.SelectedItem
         }
 
         #region Inscription de NavigationHelper

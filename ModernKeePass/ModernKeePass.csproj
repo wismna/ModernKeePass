@@ -137,10 +137,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Logo.scale-100.png" />
-    <Content Include="Assets\SmallLogo.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -162,8 +158,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ModernKeePassLib, Version=2.19.0.17089, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.19.2940\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+    <Reference Include="ModernKeePassLib, Version=2.19.0.15913, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernKeePassLib.2.19.2950\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -172,6 +168,48 @@
     </Reference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Assets\Logo.scale-100.png" />
+    <Content Include="Assets\Logo.scale-140.png" />
+    <Content Include="Assets\Logo.scale-180.png" />
+    <Content Include="Assets\Logo.scale-80.png" />
+    <Content Include="Assets\ModernKeePass-Logo.scale-100.png" />
+    <Content Include="Assets\ModernKeePass-Logo.scale-140.png" />
+    <Content Include="Assets\ModernKeePass-Logo.scale-180.png" />
+    <Content Include="Assets\ModernKeePass-Logo.scale-80.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.scale-100.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.scale-140.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.scale-180.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.scale-80.png" />
+    <Content Include="Assets\ModernKeePass-SplashScreen.scale-100.png" />
+    <Content Include="Assets\ModernKeePass-SplashScreen.scale-140.png" />
+    <Content Include="Assets\ModernKeePass-SplashScreen.scale-180.png" />
+    <Content Include="Assets\ModernKeePass-StoreLogo.scale-100.png" />
+    <Content Include="Assets\ModernKeePass-StoreLogo.scale-140.png" />
+    <Content Include="Assets\ModernKeePass-StoreLogo.scale-180.png" />
+    <Content Include="Assets\SmallLogo.scale-100.png" />
+    <Content Include="Assets\SmallLogo.scale-140.png" />
+    <Content Include="Assets\SmallLogo.scale-180.png" />
+    <Content Include="Assets\SmallLogo.scale-80.png" />
+    <Content Include="Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\SplashScreen.scale-140.png" />
+    <Content Include="Assets\SplashScreen.scale-180.png" />
+    <Content Include="Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Square310x310Logo.scale-140.png" />
+    <Content Include="Assets\Square310x310Logo.scale-180.png" />
+    <Content Include="Assets\Square310x310Logo.scale-80.png" />
+    <Content Include="Assets\Square70x70Logo.scale-100.png" />
+    <Content Include="Assets\Square70x70Logo.scale-140.png" />
+    <Content Include="Assets\Square70x70Logo.scale-180.png" />
+    <Content Include="Assets\Square70x70Logo.scale-80.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-140.png" />
+    <Content Include="Assets\StoreLogo.scale-180.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-140.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-180.png" />
+    <Content Include="Assets\Wide310x150Logo.scale-80.png" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
