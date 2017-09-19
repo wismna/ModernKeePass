@@ -34,3 +34,4 @@ Translation/TrlUtil.vshost.exe.manifest
 *.nupkg
 .vs/
 /UpgradeLog.htm
+packages/
