@@ -71,7 +71,7 @@ namespace ModernKeePassLib.Serialization
 		/// be written.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public async void Save(Stream sSaveTo, PwGroup pgDataSource, Kdb4Format format,
+		public void Save(Stream sSaveTo, PwGroup pgDataSource, Kdb4Format format,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
@@ -105,7 +105,7 @@ namespace ModernKeePassLib.Serialization
 					bw = new BinaryWriter(hashedStream, encNoBom);
 					WriteHeader(bw); // Also flushes bw
 
-					Stream sEncrypted = await AttachStreamEncryptor(hashedStream);
+					Stream sEncrypted = AttachStreamEncryptor(hashedStream);
 					if((sEncrypted == null) || (sEncrypted == hashedStream))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
@@ -193,18 +193,17 @@ namespace ModernKeePassLib.Serialization
 			else bwOut.Write((ushort)0);
 		}
 
-		private async Task<Stream> AttachStreamEncryptor(Stream s)
+		private Stream AttachStreamEncryptor(Stream s)
 		{
             using (MemoryStream ms = new MemoryStream())
             {
-
                 Debug.Assert(m_pbMasterSeed != null);
                 Debug.Assert(m_pbMasterSeed.Length == 32);
                 ms.Write(m_pbMasterSeed, 0, 32);
 
                 Debug.Assert(m_pwDatabase != null);
                 Debug.Assert(m_pwDatabase.MasterKey != null);
-                ProtectedBinary pbinKey = await m_pwDatabase.MasterKey.GenerateKey32(
+                ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
                     m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
                 Debug.Assert(pbinKey != null);
                 if (pbinKey == null)

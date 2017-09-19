@@ -57,7 +57,7 @@ namespace ModernKeePassLib.Serialization
             IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
             IOConnection ioConnection = new IOConnection();
             Stream abc = await ioConnection.OpenRead(ioc);
-            await Load(abc, kdbFormat, slLogger);
+            Load(abc, kdbFormat, slLogger);
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace ModernKeePassLib.Serialization
 		/// a KDB4 stream.</param>
 		/// <param name="kdbFormat">Format specifier.</param>
 		/// <param name="slLogger">Status logger (optional).</param>
-        public async Task Load(Stream sSource, Kdb4Format kdbFormat, IStatusLogger slLogger)
+        public void Load(Stream sSource, Kdb4Format kdbFormat, IStatusLogger slLogger)
 		{
             
 			Debug.Assert(sSource != null);
@@ -90,7 +90,7 @@ namespace ModernKeePassLib.Serialization
 					br = new BinaryReaderEx(hashedStream, encNoBom, KLRes.FileCorrupted);
 					ReadHeader(br);
 
-					Stream sDecrypted = await AttachStreamDecryptor(hashedStream);
+					Stream sDecrypted = AttachStreamDecryptor(hashedStream);
 					if((sDecrypted == null) || (sDecrypted == hashedStream))
 						throw new SecurityException(KLRes.CryptoStreamFailed);
 
@@ -312,7 +312,7 @@ namespace ModernKeePassLib.Serialization
 			m_craInnerRandomStream = (CrsAlgorithm)uID;
 		}
 
-		private async Task<Stream> AttachStreamDecryptor(Stream s)
+		private Stream AttachStreamDecryptor(Stream s)
 		{      
 			MemoryStream ms = new MemoryStream();
 
@@ -321,7 +321,7 @@ namespace ModernKeePassLib.Serialization
 				throw new FormatException(KLRes.MasterSeedLengthInvalid);
 			ms.Write(m_pbMasterSeed, 0, 32);
 
-            Security.ProtectedBinary pb = await m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
+            Security.ProtectedBinary pb = m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
 				m_pwDatabase.KeyEncryptionRounds);
 
 			byte[] pKey32 = pb.ReadData();

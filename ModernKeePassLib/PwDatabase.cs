@@ -587,7 +587,7 @@ namespace ModernKeePassLib
 
                 IOConnection ioc = new IOConnection();
 				Stream s = await ioc.OpenRead(ioSource);
-				await kdb4.Load(s, Kdb4Format.Default, slLogger);
+				kdb4.Load(s, Kdb4Format.Default, slLogger);
 
                 s.Dispose();
 

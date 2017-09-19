@@ -162,7 +162,7 @@ namespace ModernKeePassLib.Keys
 		/// Creates the composite key from the supplied user key sources (password,
 		/// key file, user account, computer ID, etc.).
 		/// </summary>
-		private async Task<byte[]> CreateRawCompositeKey32()
+		private byte[] CreateRawCompositeKey32()
 		{
 			ValidateUserKeys();
 
@@ -185,12 +185,12 @@ namespace ModernKeePassLib.Keys
 
 		}
 
-		public async Task<bool> EqualsValue(CompositeKey ckOther)
+		public bool EqualsValue(CompositeKey ckOther)
 		{
 			if(ckOther == null) throw new ArgumentNullException("ckOther");
 
-			byte[] pbThis = await CreateRawCompositeKey32();
-			byte[] pbOther = await ckOther.CreateRawCompositeKey32();
+			byte[] pbThis = CreateRawCompositeKey32();
+			byte[] pbOther = ckOther.CreateRawCompositeKey32();
 			bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
 			Array.Clear(pbOther, 0, pbOther.Length);
 			Array.Clear(pbThis, 0, pbThis.Length);
@@ -207,14 +207,14 @@ namespace ModernKeePassLib.Keys
 		/// <param name="uNumRounds">Number of key transformation rounds.</param>
 		/// <returns>Returns a protected binary object that contains the
 		/// resulting 32-bit wide key.</returns>
-		public async Task<ProtectedBinary> GenerateKey32(byte[] pbKeySeed32, ulong uNumRounds)
+		public ProtectedBinary GenerateKey32(byte[] pbKeySeed32, ulong uNumRounds)
 		{
 			Debug.Assert(pbKeySeed32 != null);
 			if(pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
 			Debug.Assert(pbKeySeed32.Length == 32);
 			if(pbKeySeed32.Length != 32) throw new ArgumentException("pbKeySeed32");
 
-			byte[] pbRaw32 = await CreateRawCompositeKey32();
+			byte[] pbRaw32 = CreateRawCompositeKey32();
 			if((pbRaw32 == null) || (pbRaw32.Length != 32))
 				{ Debug.Assert(false); return null; }
 
