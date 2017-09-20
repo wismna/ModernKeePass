@@ -4,25 +4,43 @@
     xmlns:local="using:ModernKeePass"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ViewModels="using:ModernKeePass.ViewModels"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
     x:Class="ModernKeePass.MainPage"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
     <Page.DataContext>
-        <ViewModels:HomeVm/>
+        <viewModels:HomeVm/>
     </Page.DataContext>
 
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+    <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Margin="25,25,0,0" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="50" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Button Grid.Column="0" Grid.Row="0" x:Name="selectButton" Content="Select password database" Click="Button_Click" HorizontalAlignment="Center" />
-        <Grid Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" Height="auto" VerticalAlignment="Top" Width="auto" Visibility="{Binding Visibility}" >
+        <ListView Grid.Column="0" SelectionChanged="ListView_SelectionChanged">
+            <ListView.Header>
+                <TextBlock Text="Open database from..." FontWeight="Bold" FontSize="36" />
+            </ListView.Header>
+            <ListView.ItemTemplate >
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Padding" Value="10,5,0,0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.Items>
+                <ListViewItem Name="SelectItem">File</ListViewItem>
+                <ListViewItem Name="NewItem">New</ListViewItem>
+                <ListViewItem Name="SaveItem">Save</ListViewItem>
+                <ListViewItem Name="RecentItem">Recent files - Coming soon</ListViewItem>
+                <ListViewItem Name="UrlItem">URL - Coming soon</ListViewItem>
+            </ListView.Items>
+        </ListView>
+        <Grid Name="SelectGrid" Grid.Column="2" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Width="auto" Margin="0,30,0,0" Visibility="Collapsed" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="150" />
@@ -33,11 +51,12 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock Grid.Column="0" Grid.Row="0" x:Name="passwordTextBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-            <PasswordBox Grid.Column="1" Grid.Row="0" x:Name="passwordBox" VerticalAlignment="Top" HorizontalAlignment="Right" Width="130" Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" Margin="0,0,10,0"/>
-            <Button Grid.Column="1" Grid.Row="1" x:Name="openBbutton" Content="Open" HorizontalAlignment="Right" VerticalAlignment="Top" Click="openBbutton_Click" Margin="0,0,7,0" Width="auto"/>
-            <TextBlock Grid.Column="1" Grid.Row="2" x:Name="errorTextBlock" TextWrapping="Wrap" Text="{Binding ErrorMessage}" HorizontalAlignment="Right" Height="auto" Width="auto" Foreground="#FF9E0909" Margin="0,0,10,0"/>
-        </Grid>
-        <Button Grid.Column="1" Grid.Row="3" x:Name="saveBbutton" Content="Save" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,7,0" Width="auto" Click="saveBbutton_Click"/>
+            <HyperlinkButton Grid.Row="0" Grid.ColumnSpan="2" Content="Select password database" Click="Button_Click" />
+            <TextBlock Grid.Column="0" Grid.Row="1" x:Name="PasswordTextBlock" HorizontalAlignment="Left" Visibility="{Binding Visibility}" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
+            <PasswordBox Grid.Column="1" Grid.Row="1" x:Name="PasswordBox" VerticalAlignment="Top" HorizontalAlignment=" Right" Visibility="{Binding Visibility}"  Width="130" Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" Margin="0,0,10,0"/>
+            <TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ErrorMessage}" Foreground="#FF9E1B1B" />
+            <Button Grid.Column="1" Grid.Row="3" x:Name="OpenButton" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding Visibility}" Click="openBbutton_Click" Margin="0,0,7,0" Width="auto"/>
+            </Grid>
+        <HyperlinkButton Grid.Column="2" Name="SaveButton" Content="Save file" Click="saveBbutton_Click" VerticalAlignment="Top" Margin="0,30,0,0" Visibility="Collapsed" />
     </Grid>
 </Page>

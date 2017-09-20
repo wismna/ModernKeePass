@@ -57,5 +57,19 @@ namespace ModernKeePass
             var database = DataContext as HomeVm;
             ((App)Application.Current).Database.Save();
         }
+
+        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Contains(SelectItem) || e.AddedItems.Contains(NewItem))
+            {
+                SelectGrid.Visibility = Visibility.Visible;
+                SaveButton.Visibility = Visibility.Collapsed;
+            }
+            else if (e.AddedItems.Contains(SaveItem))
+            {
+                SaveButton.Visibility = Visibility.Visible;
+                SelectGrid.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }
