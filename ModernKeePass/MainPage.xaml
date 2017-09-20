@@ -54,7 +54,7 @@
             <HyperlinkButton Grid.Row="0" Grid.ColumnSpan="2" Content="Select password database" Click="Button_Click" />
             <TextBlock Grid.Column="0" Grid.Row="1" x:Name="PasswordTextBlock" HorizontalAlignment="Left" Visibility="{Binding Visibility}" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
             <PasswordBox Grid.Column="1" Grid.Row="1" x:Name="PasswordBox" VerticalAlignment="Top" HorizontalAlignment=" Right" Visibility="{Binding Visibility}"  Width="130" Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" Margin="0,0,10,0"/>
-            <TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ErrorMessage}" Foreground="#FF9E1B1B" />
+            <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="#FF9E1B1B" />
             <Button Grid.Column="1" Grid.Row="3" x:Name="OpenButton" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding Visibility}" Click="openBbutton_Click" Margin="0,0,7,0" Width="auto"/>
             </Grid>
         <HyperlinkButton Grid.Column="2" Name="SaveButton" Content="Save file" Click="saveBbutton_Click" VerticalAlignment="Top" Margin="0,30,0,0" Visibility="Collapsed" />

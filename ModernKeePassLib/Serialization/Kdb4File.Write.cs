@@ -85,52 +85,60 @@ namespace ModernKeePassLib.Serialization
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			CryptoRandom cr = CryptoRandom.Instance;
 
-			try
-			{
-				m_pbMasterSeed = cr.GetRandomBytes(32);
-				m_pbTransformSeed = cr.GetRandomBytes(32);
-				m_pbEncryptionIV = cr.GetRandomBytes(16);
+		    try
+		    {
+		        m_pbMasterSeed = cr.GetRandomBytes(32);
+		        m_pbTransformSeed = cr.GetRandomBytes(32);
+		        m_pbEncryptionIV = cr.GetRandomBytes(16);
 
-				m_pbProtectedStreamKey = cr.GetRandomBytes(32);
-				m_craInnerRandomStream = CrsAlgorithm.Salsa20;
-				m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
-					m_pbProtectedStreamKey);
+		        m_pbProtectedStreamKey = cr.GetRandomBytes(32);
+		        m_craInnerRandomStream = CrsAlgorithm.Salsa20;
+		        m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
+		            m_pbProtectedStreamKey);
 
-				m_pbStreamStartBytes = cr.GetRandomBytes(32);
+		        m_pbStreamStartBytes = cr.GetRandomBytes(32);
 
-				Stream writerStream;
-				BinaryWriter bw = null;
-				if(m_format == Kdb4Format.Default)
-				{
-					bw = new BinaryWriter(hashedStream, encNoBom);
-					WriteHeader(bw); // Also flushes bw
+		        Stream writerStream;
+		        BinaryWriter bw = null;
+		        if (m_format == Kdb4Format.Default)
+		        {
+		            bw = new BinaryWriter(hashedStream, encNoBom);
+		            WriteHeader(bw); // Also flushes bw
 
-					Stream sEncrypted = AttachStreamEncryptor(hashedStream);
-					if((sEncrypted == null) || (sEncrypted == hashedStream))
-						throw new SecurityException(KLRes.CryptoStreamFailed);
+		            Stream sEncrypted = AttachStreamEncryptor(hashedStream);
+		            if ((sEncrypted == null) || (sEncrypted == hashedStream))
+		                throw new SecurityException(KLRes.CryptoStreamFailed);
 
-					sEncrypted.Write(m_pbStreamStartBytes, 0, m_pbStreamStartBytes.Length);
+		            sEncrypted.Write(m_pbStreamStartBytes, 0, m_pbStreamStartBytes.Length);
 
-					Stream sHashed = new HashedBlockStream(sEncrypted, true);
+		            Stream sHashed = new HashedBlockStream(sEncrypted, true);
 
-					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-						writerStream = new GZipStream(sHashed, CompressionMode.Compress);
-					else
-						writerStream = sHashed;
-				}
-				else if(m_format == Kdb4Format.PlainXml)
-					writerStream = hashedStream;
-				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
+		            if (m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
+		                writerStream = new GZipStream(sHashed, CompressionMode.Compress);
+		            else
+		                writerStream = sHashed;
+		        }
+		        else if (m_format == Kdb4Format.PlainXml)
+		            writerStream = hashedStream;
+		        else
+		        {
+		            Debug.Assert(false);
+		            throw new FormatException("KdbFormat");
+		        }
 
-                using (m_xmlWriter = XmlWriter.Create(writerStream, new XmlWriterSettings { Encoding = encNoBom }))
-                {
-                    WriteDocument(pgDataSource);
+		        using (m_xmlWriter = XmlWriter.Create(writerStream, new XmlWriterSettings {Encoding = encNoBom}))
+		        {
+		            WriteDocument(pgDataSource);
 
-                    m_xmlWriter.Flush();
-                    writerStream.Dispose();
-                }
-				GC.KeepAlive(bw);
-			}
+		            m_xmlWriter.Flush();
+		            writerStream.Dispose();
+		        }
+		        GC.KeepAlive(bw);
+		    }
+		    catch (Exception ex)
+		    {
+		        
+		    }
 			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
 		}
 

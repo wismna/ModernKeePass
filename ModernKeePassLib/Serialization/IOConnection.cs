@@ -281,13 +281,13 @@ namespace ModernKeePassLib.Serialization
 			return CreateWebClient(ioc).OpenWrite(uri);
 		}
 #else
-		public async static Task<Stream> OpenWrite(IOConnectionInfo ioc)
+		public static async Task<Stream> OpenWrite(IOConnectionInfo ioc)
 		{
 			return await OpenWriteLocal(ioc);
 		}
 #endif
 
-		private async static Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
+		private static async Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
 		{
             try
             {
@@ -303,18 +303,15 @@ namespace ModernKeePassLib.Serialization
 
 		public static bool FileExists(IOConnectionInfo ioc)
 		{
-			return FileExists(ioc, false);
+			//return FileExists(ioc, false);
+		    return true;
 		}
 
-		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
+		/*public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
         {
-            Debug.Assert(false, "Not implemented yet");
-            return false;
-#if TODO
-
 			if(ioc == null) { Debug.Assert(false); return false; }
 
-			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
+			if(ioc.IsLocalFile()) return ioc.StorageFile.IsAvailable;
 
 			try
 			{
@@ -334,15 +331,12 @@ namespace ModernKeePassLib.Serialization
 			}
 
 			return true;
-#endif
-		}
+		}*/
 
-		public static void DeleteFile(IOConnectionInfo ioc)
+		public static async void DeleteFile(IOConnectionInfo ioc)
 		{
-            Debug.Assert(false, "Not implemented yet");
-            return ;
-#if TODO
-			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
+			if(ioc.IsLocalFile()) { await ioc.StorageFile.DeleteAsync(StorageDeleteOption.Default);
+			}
 
 #if !KeePassLibSD && TODO
 			WebRequest req = CreateWebRequest(ioc);
@@ -360,7 +354,6 @@ namespace ModernKeePassLib.Serialization
 				DisposeResponse(req.GetResponse(), true);
 			}
 #endif
-#endif
 		}
 
 		/// <summary>
@@ -372,11 +365,9 @@ namespace ModernKeePassLib.Serialization
 		/// </summary>
 		/// <param name="iocFrom">Source file path.</param>
 		/// <param name="iocTo">Target file path.</param>
-		public static void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
+		public static async void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
-            return;
-#if TODO
-			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
+			if(iocFrom.IsLocalFile()) { await iocTo.StorageFile.RenameAsync(iocTo.Path, NameCollisionOption.GenerateUniqueName); }
 
 #if !KeePassLibSD && TODO
 			WebRequest req = CreateWebRequest(iocFrom);
@@ -419,7 +410,6 @@ namespace ModernKeePassLib.Serialization
 			//	sIn.Close();
 			// }
 			// DeleteFile(iocFrom);
-#endif
 		}
 
 		private static void DisposeResponse(WebResponse wr, bool bGetStream)
