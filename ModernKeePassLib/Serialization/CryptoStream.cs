@@ -22,12 +22,12 @@ namespace ModernKeePassLib.Serialization
             IBuffer iv = CryptographicBuffer.CreateFromByteArray(pbIV);
             SymmetricKeyAlgorithmProvider objAlg = SymmetricKeyAlgorithmProvider.OpenAlgorithm(strAlgName);
             CryptographicKey key = objAlg.CreateSymmetricKey( CryptographicBuffer.CreateFromByteArray(pbKey) );
-            /*if (bEncrypt)
+            if (bEncrypt)
             {
                 Debug.Assert(false, "Not implemented yet");
             } 
             else
-            {*/
+            {
                // For the time being, WinRT CryptographicEngine doesn't support stream decoding. Bummer.
                // Copy the file to a memory buffer, then decode all at once.
 
@@ -49,7 +49,7 @@ namespace ModernKeePassLib.Serialization
                 }
                 CryptographicBuffer.CopyToByteArray(decoded, out m_decoded);
                 m_enumerator = m_decoded.AsEnumerable().GetEnumerator();
-            //}
+            }
         }
 
 

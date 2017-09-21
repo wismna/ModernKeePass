@@ -95,7 +95,6 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
 			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
-            
             return new CryptoStream( s, "AES_CBC_PKCS7", bEncrypt, pbKey, pbIV);
 
         }

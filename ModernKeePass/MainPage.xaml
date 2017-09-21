@@ -33,11 +33,10 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Items>
-                <ListViewItem Name="SelectItem">File</ListViewItem>
-                <ListViewItem Name="NewItem">New</ListViewItem>
                 <ListViewItem Name="SaveItem">Save</ListViewItem>
+                <ListViewItem Name="NewItem">New</ListViewItem>
+                <ListViewItem Name="SelectItem">File</ListViewItem>
                 <ListViewItem Name="RecentItem">Recent files - Coming soon</ListViewItem>
-                <ListViewItem Name="UrlItem">URL - Coming soon</ListViewItem>
             </ListView.Items>
         </ListView>
         <Grid Name="SelectGrid" Grid.Column="2" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Width="auto" Margin="0,30,0,0" Visibility="Collapsed" >
