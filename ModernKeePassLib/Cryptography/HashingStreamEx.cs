@@ -21,25 +21,23 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
-using ModernKeePassLib.Utility;
-using CryptographicHash = Windows.Security.Cryptography.Core.CryptographicHash;
 
-namespace ModernKeePassLib.Cryptography
+using ModernKeePassLibPCL.Utility;
+
+namespace ModernKeePassLibPCL.Cryptography
 {
 	public sealed class HashingStreamEx : Stream
 	{
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
-#if PCL
-		private CryptographicHash m_hash;
+#if ModernKeePassLibPCL
+		private ICryptoTransform m_hash;
 #else
 		private HashAlgorithm m_hash;
 #endif
@@ -77,8 +75,8 @@ namespace ModernKeePassLib.Cryptography
 			set { throw new NotSupportedException(); }
 		}
 
-#if PCL
-		public HashingStreamEx(Stream sBaseStream, bool bWriting, string hashAlgorithm)
+#if ModernKeePassLibPCL
+		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm? hashAlgorithm)
 #else
 		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm hashAlgorithm)
 #endif
@@ -88,8 +86,8 @@ namespace ModernKeePassLib.Cryptography
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
-#if PCL
-			m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
+#if ModernKeePassLibPCL
+			m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
 #elif !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
 #else // KeePassLibSD
@@ -103,14 +101,14 @@ namespace ModernKeePassLib.Cryptography
 			if(m_hash == null) { Debug.Assert(false); return; }
 
 			// Validate hash algorithm
-			/*if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
+			if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
 				(m_hash.InputBlockSize != 1) || (m_hash.OutputBlockSize != 1))
 			{
 #if false && DEBUG
 				MessageService.ShowWarning("Broken HashAlgorithm object in HashingStreamEx.");
 #endif
 				m_hash = null;
-			}*/
+			}
 		}
 
 		public override void Flush()
@@ -118,7 +116,7 @@ namespace ModernKeePassLib.Cryptography
 			m_sBaseStream.Flush();
 		}
 
-#if PCL || KeePassRT
+#if ModernKeePassLibPCL || KeePassRT
 		protected override void Dispose(bool disposing)
 		{
 			if(!disposing) return;
@@ -130,9 +128,9 @@ namespace ModernKeePassLib.Cryptography
 			{
 				try
 				{
-					//m_hash.TransformFinalBlock(new byte[0], 0, 0);
-#if PCL
-					m_pbFinalHash = m_hash.GetValueAndReset().ToArray();
+					m_hash.TransformFinalBlock(new byte[0], 0, 0);
+#if ModernKeePassLibPCL
+					m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
 #else
 					m_pbFinalHash = m_hash.Hash;
 #endif
@@ -173,8 +171,8 @@ namespace ModernKeePassLib.Cryptography
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
 
-			/*if((m_hash != null) && (nRead > 0))
-				m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);*/
+			if((m_hash != null) && (nRead > 0))
+				m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
 
 #if DEBUG
 			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
@@ -192,8 +190,8 @@ namespace ModernKeePassLib.Cryptography
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
 
-			/*if((m_hash != null) && (nCount > 0))
-				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);*/
+			if((m_hash != null) && (nCount > 0))
+				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
 
 #if DEBUG
 			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));

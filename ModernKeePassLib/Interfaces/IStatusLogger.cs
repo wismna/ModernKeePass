@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ModernKeePassLib.Interfaces
+namespace ModernKeePassLibPCL.Interfaces
 {
 	/// <summary>
 	/// Status message types.

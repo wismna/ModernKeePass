@@ -23,9 +23,9 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 
-using ModernKeePassLib.Interfaces;
+using ModernKeePassLibPCL.Interfaces;
 
-namespace ModernKeePassLib.Utility
+namespace ModernKeePassLibPCL.Utility
 {
 	/// <summary>
 	/// Contains various static time structure manipulation and conversion

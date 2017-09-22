@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Diagnostics;
 
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib
+namespace ModernKeePassLibPCL
 {
 	// [ImmutableObject(true)]
 	/// <summary>

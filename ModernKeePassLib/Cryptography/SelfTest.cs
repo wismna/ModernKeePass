@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Security;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
@@ -29,13 +29,14 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Utility;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Security;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Keys;
+using ModernKeePassLibPCL.Native;
+using ModernKeePassLibPCL.Utility;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Security;
 
-namespace ModernKeePassLib.Cryptography
+namespace ModernKeePassLibPCL.Cryptography
 {
 	/* /// <summary>
 	/// Return values of the <c>SelfTest.Perform</c> method.
@@ -63,7 +64,7 @@ namespace ModernKeePassLib.Cryptography
 			TestRijndael();
 			TestSalsa20();
 
-#if !PCL
+#if !ModernKeePassLibPCL
 			TestNativeKeyTransform();
 #endif
 			
@@ -81,7 +82,7 @@ namespace ModernKeePassLib.Cryptography
 
 		internal static void TestFipsComplianceProblems()
 		{
-#if !PCL && !KeePassRT
+#if !ModernKeePassLibPCL && !KeePassRT
 			try { new RijndaelManaged(); }
 			catch(Exception exAes)
 			{
@@ -98,7 +99,7 @@ namespace ModernKeePassLib.Cryptography
 
 		private static void TestRijndael()
 		{
-#if !PCL && !KeePassRT
+#if !ModernKeePassLibPCL && !KeePassRT
 			// Test vector (official ECB test vector #356)
 			byte[] pbIV = new byte[16];
 			byte[] pbTestKey = new byte[32];
@@ -210,7 +211,7 @@ namespace ModernKeePassLib.Cryptography
 		}
 #endif
 
-#if !PCL
+#if !ModernKeePassLibPCL
 		private static void TestNativeKeyTransform()
 		{
 #if DEBUG
@@ -519,7 +520,7 @@ namespace ModernKeePassLib.Cryptography
 			if(UrlUtil.GetHost(@"s://u:p@d.tld:p/p?q#f") != "d.tld")
 				throw new InvalidOperationException("UrlUtil-H7");
 
-			//if(NativeLib.IsUnix()) return;
+			if(NativeLib.IsUnix()) return;
 
 			string strBase = "\\\\HOMESERVER\\Apps\\KeePass\\KeePass.exe";
 			string strDoc = "\\\\HOMESERVER\\Documents\\KeePass\\NewDatabase.kdbx";

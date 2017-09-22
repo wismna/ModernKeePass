@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ModernKeePassLib.Delegates
+namespace ModernKeePassLibPCL.Delegates
 {
 	/// <summary>
 	/// Function definition of a method that performs an action on a group.

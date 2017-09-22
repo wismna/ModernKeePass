@@ -20,7 +20,7 @@
 using System;
 using System.Diagnostics;
 
-namespace ModernKeePassLib.Security
+namespace ModernKeePassLibPCL.Security
 {
 	/// <summary>
 	/// Represents an object that is encrypted using a XOR pad until

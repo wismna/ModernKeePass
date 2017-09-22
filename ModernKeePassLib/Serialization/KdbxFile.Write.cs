@@ -23,32 +23,32 @@ using System.Text;
 using System.IO;
 using System.Xml;
 using System.Security;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
+using System.Drawing;
 using System.Globalization;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
+
 #if !KeePassLibSD
 using System.IO.Compression;
 #else
 using KeePassLibSD;
 #endif
 
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Delegates;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Collections;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Delegates;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Keys;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
@@ -124,7 +124,7 @@ namespace ModernKeePassLib.Serialization
 					writerStream = hashedStream;
 				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
 
-#if PCL
+#if ModernKeePassLibPCL
 				var settings = new XmlWriterSettings() {
 					Encoding = encNoBom,
 					Indent = true,
@@ -188,9 +188,9 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbHeader = ms.ToArray();
 			ms.Dispose();
 
-#if PCL
-			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			m_pbHashOfHeader = sha256.HashData(pbHeader.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			m_pbHashOfHeader = sha256.HashData(pbHeader);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
@@ -235,9 +235,9 @@ namespace ModernKeePassLib.Serialization
 				throw new SecurityException(KLRes.InvalidCompositeKey);
 			ms.Write(pKey32, 0, 32);
 
-#if PCL
-			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			var aesKey = sha256.HashData(ms.GetWindowsRuntimeBuffer()).ToArray();
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			var aesKey = sha256.HashData(ms.ToArray());
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
@@ -264,7 +264,7 @@ namespace ModernKeePassLib.Serialization
 
 			BinPoolBuild(pgRoot);
 
-#if !PCL
+#if !ModernKeePassLibPCL
 			m_xmlWriter.Formatting = Formatting.Indented;
 			m_xmlWriter.IndentChar = '\t';
 			m_xmlWriter.Indentation = 1;

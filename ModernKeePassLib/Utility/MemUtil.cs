@@ -29,7 +29,7 @@ using System.IO.Compression;
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLib.Utility
+namespace ModernKeePassLibPCL.Utility
 {
 	/// <summary>
 	/// Contains static buffer manipulation and string conversion routines.

@@ -25,15 +25,15 @@ using System.Net;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Diagnostics;
-
-#if PCL
 using Windows.Storage;
+#if ModernKeePassLibPCL
+using PCLStorage;
 #endif
 
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	public enum IOCredSaveMode
 	{
@@ -67,11 +67,9 @@ namespace ModernKeePassLib.Serialization
 
 	public sealed class IOConnectionInfo : IDeepCloneable<IOConnectionInfo>
 	{
-        // private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
+		// private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
 
-	    public StorageFile StorageFile { get; set; }
-
-        private string m_strUrl = string.Empty;
+		private string m_strUrl = string.Empty;
 		public string Path
 		{
 			get { return m_strUrl; }
@@ -295,23 +293,24 @@ namespace ModernKeePassLib.Serialization
 			return ioc;
 		}
 
-	    public static IOConnectionInfo FromFile(StorageFile file)
-	    {
-	        IOConnectionInfo ioc = new IOConnectionInfo();
+		public static IOConnectionInfo FromFile(StorageFile file)
+		{
+			IOConnectionInfo ioc = new IOConnectionInfo();
 
-	        ioc.Path = file.Path;
-	        ioc.CredSaveMode = IOCredSaveMode.NoSave;
-	        ioc.StorageFile = file;
+		    ioc.StorageFile = file;
+			ioc.Path = file.Path;
+			ioc.CredSaveMode = IOCredSaveMode.NoSave;
 
-	        return ioc;
-	    }
+			return ioc;
+		}
 
+	    public StorageFile StorageFile { get; set; }
 
 	    public bool CanProbablyAccess()
 		{
-#if PCL
+#if ModernKeePassLibPCL
 			if(IsLocalFile())
-				return (StorageFile.IsAvailable);
+				return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
 #else
 			if(IsLocalFile()) return File.Exists(m_strUrl);
 #endif

@@ -2,10 +2,10 @@
 using Windows.Storage;
 using System.Threading.Tasks;
 using ModernKeePass.ViewModels;
-using ModernKeePassLib;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Serialization;
+using ModernKeePassLibPCL;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Keys;
+using ModernKeePassLibPCL.Serialization;
 
 namespace ModernKeePass.Common
 {

@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using ModernKeePassLib.Interfaces;
+using ModernKeePassLibPCL.Interfaces;
 
-namespace ModernKeePassLib
+namespace ModernKeePassLibPCL
 {
 	/// <summary>
 	/// Represents an object that has been deleted.

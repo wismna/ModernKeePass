@@ -21,15 +21,16 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Native;
+using ModernKeePassLibPCL.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLib.Security
+namespace ModernKeePassLibPCL.Security
 {
 	[Flags]
 	public enum PbCryptFlags
@@ -85,19 +86,17 @@ namespace ModernKeePassLib.Security
 			{
 #if KeePassLibSD
 				return false;
-#elif PCL
-                return false;
 #else
 				bool? ob = g_bProtectedMemorySupported;
 				if(ob.HasValue) return ob.Value;
 
 				// Mono does not implement any encryption for ProtectedMemory;
 				// https://sourceforge.net/p/keepass/feature-requests/1907/
-				/*if(NativeLib.IsUnix())
+				if(NativeLib.IsUnix())
 				{
 					g_bProtectedMemorySupported = false;
 					return false;
-				}*/
+				}
 
 				ob = false;
 				try // Test whether ProtectedMemory is supported
@@ -242,15 +241,14 @@ namespace ModernKeePassLib.Security
 				return;
 			}
 
-#if !PCL
-            if(ProtectedBinary.ProtectedMemorySupported)
+			if(ProtectedBinary.ProtectedMemorySupported)
 			{
 				ProtectedMemory.Protect(m_pbData, MemoryProtectionScope.SameProcess);
 
 				m_mp = PbMemProt.ProtectedMemory;
 				return;
 			}
-#endif
+
 			byte[] pbKey32 = g_pbKey32;
 			if(pbKey32 == null)
 			{
@@ -270,10 +268,9 @@ namespace ModernKeePassLib.Security
 		private void Decrypt()
 		{
 			if(m_pbData.Length == 0) return;
-#if !PCL
+
 			if(m_mp == PbMemProt.ProtectedMemory)
 				ProtectedMemory.Unprotect(m_pbData, MemoryProtectionScope.SameProcess);
-#endif
 			else if(m_mp == PbMemProt.Salsa20)
 			{
 				Salsa20Cipher s = new Salsa20Cipher(g_pbKey32,

@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ModernKeePassLib.Interfaces
+namespace ModernKeePassLibPCL.Interfaces
 {
 	/// <summary>
 	/// Interface for objects that support various times (creation time, last

@@ -29,18 +29,18 @@ using System.Diagnostics;
 using System.IO.Compression;
 #endif
 
-#if PCL
-using Windows.Storage;
+#if ModernKeePassLibPCL
+using PCLStorage;
 #endif
 
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Delegates;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Collections;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Delegates;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	/// <summary>
 	/// The <c>KdbxFile</c> class supports saving the data to various
@@ -195,7 +195,7 @@ namespace ModernKeePassLib.Serialization
 
 		private PwDatabase m_pwDatabase; // Not null, see constructor
 
-#if PCL
+#if ModernKeePassLibPCL
 		private XmlWriter m_xmlWriter = null;
 #else
 		private XmlTextWriter m_xmlWriter = null;
@@ -383,16 +383,16 @@ namespace ModernKeePassLib.Serialization
 
 				++iTry;
 			}
-#if PCL
-			while(ApplicationData.Current.RoamingFolder.GetFileAsync(strPath).GetResults() != null);
+#if ModernKeePassLibPCL
+			while(FileSystem.Current.GetFileFromPathAsync(strPath).Result != null);
 #else
 			while(File.Exists(strPath));
 #endif
 
-#if PCL
+#if ModernKeePassLibPCL
 			byte[] pbData = pb.ReadData();
-			var file = ApplicationData.Current.RoamingFolder.GetFileAsync(strPath).GetResults();
-			using (var stream = file.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream()) {
+			var file = FileSystem.Current.GetFileFromPathAsync(strPath).Result;
+			using (var stream = file.OpenAsync(FileAccess.ReadAndWrite).Result) {
 				stream.Write (pbData, 0, pbData.Length);
 			}
 			MemUtil.ZeroByteArray(pbData);

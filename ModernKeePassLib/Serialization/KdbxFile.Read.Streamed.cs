@@ -21,20 +21,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security;
+using System.Drawing;
 using System.Xml;
 using System.IO;
 using System.Diagnostics;
 
-using ModernKeePassLib;
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL;
+using ModernKeePassLibPCL.Collections;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
@@ -98,7 +99,7 @@ namespace ModernKeePassLib.Serialization
 			xrs.IgnoreProcessingInstructions = true;
 			xrs.IgnoreWhitespace = true;
 
-#if !PCL
+#if !ModernKeePassLibPCL
 			// these are default values, so no need to set them
 #if !KeePassRT
 #if !KeePassLibSD
@@ -241,8 +242,8 @@ namespace ModernKeePassLib.Serialization
 					else if(xr.Name == ElemDbColor)
 					{
 						string strColor = ReadString(xr);
-						/*if(!string.IsNullOrEmpty(strColor))
-							m_pwDatabase.Color = ColorTranslator.FromHtml(strColor);*/
+						if(!string.IsNullOrEmpty(strColor))
+							m_pwDatabase.Color = ColorTranslator.FromHtml(strColor);
 					}
 					else if(xr.Name == ElemDbKeyChanged)
 						m_pwDatabase.MasterKeyChanged = ReadTime(xr);
@@ -413,14 +414,14 @@ namespace ModernKeePassLib.Serialization
 					else if(xr.Name == ElemFgColor)
 					{
 						string strColor = ReadString(xr);
-						/*if(!string.IsNullOrEmpty(strColor))
-							m_ctxEntry.ForegroundColor = ColorTranslator.FromHtml(strColor);*/
+						if(!string.IsNullOrEmpty(strColor))
+							m_ctxEntry.ForegroundColor = ColorTranslator.FromHtml(strColor);
 					}
 					else if(xr.Name == ElemBgColor)
 					{
 						string strColor = ReadString(xr);
-						/*if(!string.IsNullOrEmpty(strColor))
-							m_ctxEntry.BackgroundColor = ColorTranslator.FromHtml(strColor);*/
+						if(!string.IsNullOrEmpty(strColor))
+							m_ctxEntry.BackgroundColor = ColorTranslator.FromHtml(strColor);
 					}
 					else if(xr.Name == ElemOverrideUrl)
 						m_ctxEntry.OverrideUrl = ReadString(xr);
@@ -689,7 +690,7 @@ namespace ModernKeePassLib.Serialization
 			}
 
 			m_bReadNextNode = false; // ReadElementString skips end tag
-#if PCL
+#if ModernKeePassLibPCL
 			return xr.ReadElementContentAsString();
 #else
 			return xr.ReadElementString();
@@ -699,7 +700,7 @@ namespace ModernKeePassLib.Serialization
 		private string ReadStringRaw(XmlReader xr)
 		{
 			m_bReadNextNode = false; // ReadElementString skips end tag
-#if PCL
+#if ModernKeePassLibPCL
 			return xr.ReadElementContentAsString();
 #else
 			return xr.ReadElementString();

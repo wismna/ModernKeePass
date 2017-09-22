@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-using ModernKeePassLib.Security;
+using ModernKeePassLibPCL.Security;
 
-namespace ModernKeePassLib.Cryptography.PasswordGenerator
+namespace ModernKeePassLibPCL.Cryptography.PasswordGenerator
 {
 	public enum PwgError
 	{

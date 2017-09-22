@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	public sealed class OldFormatException : Exception
 	{

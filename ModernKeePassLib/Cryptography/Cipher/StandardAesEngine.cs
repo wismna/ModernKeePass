@@ -23,10 +23,9 @@ using System.Text;
 using System.IO;
 using System.Security;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
-#if PCL
-using Windows.Security.Cryptography;
+
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 
 #if !KeePassRT
@@ -42,16 +41,16 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 #endif
 
-using ModernKeePassLib.Resources;
+using ModernKeePassLibPCL.Resources;
 
-namespace ModernKeePassLib.Cryptography.Cipher
+namespace ModernKeePassLibPCL.Cryptography.Cipher
 {
 	/// <summary>
 	/// Standard AES cipher implementation.
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !PCL && !KeePassRT
+#if !ModernKeePassLibPCL && !KeePassRT
 		private const CipherMode m_rCipherMode = CipherMode.CBC;
 		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
 #endif
@@ -114,28 +113,31 @@ namespace ModernKeePassLib.Cryptography.Cipher
 			}
 		}
 
-	    private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
-	    {
-	        ValidateArguments(s, bEncrypt, pbKey, pbIV);
-#if PCL
-	        var provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
-	        var key = provider.CreateSymmetricKey(CryptographicBuffer.GenerateRandom(32));
-	        using (var ms = new MemoryStream())
-	        {
-	            s.CopyTo(ms);
-	            if (bEncrypt)
-	            {
-	                return CryptographicEngine.Encrypt(key, ms.GetWindowsRuntimeBuffer(), CryptographicBuffer.GenerateRandom(16)).AsStream();
-	            }
-	            /*var encryptor = CryptographicEngine.CreateEncryptor(
+		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
+		{
+			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
+
+			byte[] pbLocalIV = new byte[16];
+			Array.Copy(pbIV, pbLocalIV, 16);
+
+			byte[] pbLocalKey = new byte[32];
+			Array.Copy(pbKey, pbLocalKey, 32);
+
+#if ModernKeePassLibPCL
+			var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
+                OpenAlgorithm(SymmetricAlgorithm.AesCbcPkcs7);
+			var key = provider.CreateSymmetricKey(pbLocalKey);
+			if (bEncrypt)
+            {
+				var encryptor = WinRTCrypto.CryptographicEngine.CreateEncryptor(
                     key, pbLocalIV);
-                return new CryptoStream(s, encryptor, CryptoStreamMode.Write);*/
-	        
-	            return CryptographicEngine.Decrypt(key, ms.GetWindowsRuntimeBuffer(), CryptographicBuffer.GenerateRandom(16)).AsStream();
-                /*var decryptor = CryptographicEngine.CreateDecryptor(
-	                key, pbLocalIV);
-	            return new CryptoStream(s, decryptor, CryptoStreamMode.Read);*/
-            }
+				return new CryptoStream(s, encryptor, CryptoStreamMode.Write);
+			} else
+            {
+				var decryptor = WinRTCrypto.CryptographicEngine.CreateDecryptor(
+                    key, pbLocalIV);
+				return new CryptoStream(s, decryptor, CryptoStreamMode.Read);
+			}
 #else
 
 #if !KeePassRT

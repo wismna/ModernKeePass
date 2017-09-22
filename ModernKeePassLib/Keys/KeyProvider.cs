@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ModernKeePassLib.Serialization;
+using ModernKeePassLibPCL.Serialization;
 
-namespace ModernKeePassLib.Keys
+namespace ModernKeePassLibPCL.Keys
 {
 	public sealed class KeyProviderQueryContext
 	{

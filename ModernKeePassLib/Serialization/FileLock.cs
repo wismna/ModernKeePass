@@ -21,18 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if PCL
+#if ModernKeePassLibPCL
 using System.Threading.Tasks;
 #else
 using System.Threading;
 #endif
 using System.Diagnostics;
 
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	public sealed class FileLockException : Exception
 	{
@@ -158,7 +158,7 @@ namespace ModernKeePassLib.Serialization
 					byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
 					string strTime = TimeUtil.SerializeUtc(DateTime.Now);
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
 						Environment.UserName, Environment.MachineName,
 						Environment.UserDomainName);
@@ -243,7 +243,7 @@ namespace ModernKeePassLib.Serialization
 
 				if(bFileDeleted) break;
 
-#if PCL
+#if ModernKeePassLibPCL
 				if(bDisposing)
 					Task.Delay(50).Wait();
 #else

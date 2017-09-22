@@ -21,14 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.Windows.Forms;
 using System.Diagnostics;
 using System.Xml.Serialization;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
+using System.Drawing;
 
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Translation
+namespace ModernKeePassLibPCL.Translation
 {
 	public sealed class KpccLayout
 	{

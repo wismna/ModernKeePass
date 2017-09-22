@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ModernKeePassLib.Keys
+namespace ModernKeePassLibPCL.Keys
 {
 	[Flags]
 	public enum UserKeyType

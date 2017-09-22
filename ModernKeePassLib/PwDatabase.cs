@@ -21,20 +21,24 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Windows.UI;
-using Windows.UI.Xaml.Controls;
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Delegates;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Serialization;
-using ModernKeePassLib.Utility;
+using System.Drawing;
 
-namespace ModernKeePassLib
+#if ModernKeePassLibPCL
+using Image = Splat.IBitmap;
+#endif
+
+using ModernKeePassLibPCL.Collections;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Delegates;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Keys;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Serialization;
+using ModernKeePassLibPCL.Utility;
+
+namespace ModernKeePassLibPCL
 {
 	/// <summary>
 	/// The core password manager class. It contains a number of groups, which
@@ -68,7 +72,7 @@ namespace ModernKeePassLib
 		private string m_strDefaultUserName = string.Empty;
 		private DateTime m_dtDefaultUserChanged = PwDefs.DtDefaultNow;
 		private uint m_uMntncHistoryDays = 365;
-		private Color m_clr;
+		private Color m_clr = Color.Empty;
 
 		private DateTime m_dtKeyLastChanged = PwDefs.DtDefaultNow;
 		private long m_lKeyChangeRecDays = -1;
@@ -498,7 +502,7 @@ namespace ModernKeePassLib
 			m_strDefaultUserName = string.Empty;
 			m_dtDefaultUserChanged = dtNow;
 			m_uMntncHistoryDays = 365;
-			m_clr = new Color();
+			m_clr = Color.Empty;
 
 			m_dtKeyLastChanged = dtNow;
 			m_lKeyChangeRecDays = -1;
@@ -1465,14 +1469,10 @@ namespace ModernKeePassLib
 		/// <returns>Image data.</returns>
 		public Image GetCustomIcon(PwUuid pwIconId)
 		{
-#if PCL
-		    return null;
-#else
-            int nIndex = GetCustomIconIndex(pwIconId);
+			int nIndex = GetCustomIconIndex(pwIconId);
 
 			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
 			else { Debug.Assert(false); return null; }
-#endif
 		}
 
 		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)

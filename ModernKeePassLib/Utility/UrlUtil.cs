@@ -24,11 +24,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
 
-#if PCL
-using Windows.Storage;
+#if ModernKeePassLibPCL
+using PCLStorage;
 #endif
 
-namespace ModernKeePassLib.Utility
+using ModernKeePassLibPCL.Native;
+
+namespace ModernKeePassLibPCL.Utility
 {
 	/// <summary>
 	/// A class containing various static path utility helper methods (like
@@ -38,7 +40,7 @@ namespace ModernKeePassLib.Utility
 	{
 		private static readonly char[] m_vDirSeps = new char[] {
 			'\\', '/', UrlUtil.LocalDirSepChar };
-#if !PCL
+#if !ModernKeePassLibPCL
 		private static readonly char[] m_vPathTrimCharsWs = new char[] {
 			'\"', ' ', '\t', '\r', '\n' };
 #endif
@@ -47,9 +49,8 @@ namespace ModernKeePassLib.Utility
 		{
 #if KeePassRT
 			get { return '\\'; }
-#elif PCL
-			//get { return PortablePath.DirectorySeparatorChar; }
-            get { return '\\';  }
+#elif ModernKeePassLibPCL
+			get { return PortablePath.DirectorySeparatorChar; }
 #else
 			get { return Path.DirectorySeparatorChar; }
 #endif
@@ -264,7 +265,7 @@ namespace ModernKeePassLib.Utility
 
 		public static bool UnhideFile(string strFile)
 		{
-#if (PCL || KeePassLibSD || KeePassRT)
+#if (ModernKeePassLibPCL || KeePassLibSD || KeePassRT)
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -284,7 +285,7 @@ namespace ModernKeePassLib.Utility
 
 		public static bool HideFile(string strFile, bool bHide)
 		{
-#if (PCL || KeePassLibSD || KeePassRT)
+#if (ModernKeePassLibPCL || KeePassLibSD || KeePassRT)
 			return false;
 #else
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -325,7 +326,7 @@ namespace ModernKeePassLib.Utility
 					return strTargetFile;
 			}
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			if(NativeLib.IsUnix())
 #endif
 			{
@@ -358,7 +359,7 @@ namespace ModernKeePassLib.Utility
 				return sbRel.ToString();
 			}
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
@@ -452,13 +453,12 @@ namespace ModernKeePassLib.Utility
 			try
 			{
 #if KeePassRT
-				var dirT = StorageFolder.GetFolderFromPathAsync(
-					strPath).GetResults();
+				var dirT = Windows.Storage.StorageFolder.GetFolderFromPathAsync(
+					strPath).AwaitEx();
 				str = dirT.Path;
-#elif PCL
-				//var dirT = FileSystem.Current.GetFolderFromPathAsync(strPath).Result;
-			    str = ApplicationData.Current.RoamingFolder.Path;
-                //str = dirT.Path;
+#elif ModernKeePassLibPCL
+				var dirT = FileSystem.Current.GetFolderFromPathAsync(strPath).Result;
+				str = dirT.Path;
 #else
 				str = Path.GetFullPath(strPath);
 #endif
@@ -631,7 +631,7 @@ namespace ModernKeePassLib.Utility
 			return false;
 		}
 
-#if !PCL
+#if !ModernKeePassLibPCL
 		public static string GetTempPath()
 		{
 			string strDir;
@@ -654,7 +654,7 @@ namespace ModernKeePassLib.Utility
 		}
 #endif
 
-#if !PCL && !KeePassLibSD
+#if !ModernKeePassLibPCL && !KeePassLibSD
 		// Structurally mostly equivalent to UrlUtil.GetFileInfos
 		public static List<string> GetFilePaths(string strDir, string strPattern,
 			SearchOption opt)

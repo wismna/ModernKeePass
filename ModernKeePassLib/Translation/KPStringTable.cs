@@ -24,7 +24,7 @@ using System.Xml.Serialization;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace ModernKeePassLib.Translation
+namespace ModernKeePassLibPCL.Translation
 {
 	public sealed class KPStringTable
 	{

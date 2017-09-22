@@ -19,22 +19,23 @@
 
 using System;
 using System.IO;
-#if PCL
+#if ModernKeePassLibPCL
 using System.Linq;
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Windows.Security.Cryptography.Core;
-using ModernKeePassLib.Utility;
+
+using ModernKeePassLibPCL.Native;
+using ModernKeePassLibPCL.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	public sealed class HashedBlockStream : Stream
 	{
@@ -98,8 +99,8 @@ namespace ModernKeePassLib.Serialization
 		private void Initialize(Stream sBaseStream, bool bWriting, int nBufferSize,
 			bool bVerify)
 		{
-            if (sBaseStream == null) throw new ArgumentNullException(nameof(sBaseStream));
-		    m_sBaseStream = sBaseStream;
+		    if (sBaseStream != null) m_sBaseStream = sBaseStream;
+            else throw new ArgumentNullException(nameof(sBaseStream));
             if (nBufferSize < 0)
                 throw new ArgumentOutOfRangeException(nameof(nBufferSize));
 
@@ -134,7 +135,7 @@ namespace ModernKeePassLib.Serialization
 			if(m_bWriting) m_bwOutput.Flush();
 		}
 
-#if PCL || KeePassRT
+#if ModernKeePassLibPCL || KeePassRT
 		protected override void Dispose(bool disposing)
 		{
 			if(!disposing) return;
@@ -221,11 +222,11 @@ namespace ModernKeePassLib.Serialization
 				throw new InvalidDataException();
 
 			int nBufferSize = 0;
-			/*try {*/ nBufferSize = m_brInput.ReadInt32(); /*}
+			try { nBufferSize = m_brInput.ReadInt32(); }
 			catch(NullReferenceException) // Mono bug workaround (LaunchPad 783268)
 			{
 				if(!NativeLib.IsUnix()) throw;
-			}*/
+			}
 
 			if(nBufferSize < 0)
 				throw new InvalidDataException();
@@ -249,16 +250,16 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_bVerify)
 			{
-#if PCL
-				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-				var pbComputedHash = sha256.HashData(m_pbBuffer.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbComputedHash = sha256.HashData(m_pbBuffer);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
 #endif
 				if((pbComputedHash == null) || (pbComputedHash.Length != 32))
 					throw new InvalidOperationException();
-                
+
 				for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
 				{
 					if(pbStoredHash[iHashPos] != pbComputedHash[iHashPos])
@@ -296,9 +297,9 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_nBufferPos > 0)
 			{
-#if PCL
-				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray().AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray());
 #else
 
 				SHA256Managed sha256 = new SHA256Managed();

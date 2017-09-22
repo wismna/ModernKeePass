@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ModernKeePassLib.Interfaces
+namespace ModernKeePassLibPCL.Interfaces
 {
 	public interface IStructureItem : ITimeLogger // Provides LocationChanged
 	{

@@ -19,9 +19,9 @@
 
 using System;
 
-using ModernKeePassLib.Security;
+using ModernKeePassLibPCL.Security;
 
-namespace ModernKeePassLib.Keys
+namespace ModernKeePassLibPCL.Keys
 {
 	/// <summary>
 	/// Interface to a user key, like a password, key file data, etc.

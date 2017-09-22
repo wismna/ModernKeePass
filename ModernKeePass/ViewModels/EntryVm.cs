@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using ModernKeePassLib;
+using ModernKeePassLibPCL;
 
 namespace ModernKeePass.ViewModels
 {

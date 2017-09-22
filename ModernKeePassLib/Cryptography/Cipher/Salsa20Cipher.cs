@@ -22,9 +22,9 @@
 using System;
 using System.Diagnostics;
 
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Cryptography.Cipher
+namespace ModernKeePassLibPCL.Cryptography.Cipher
 {
 	public sealed class Salsa20Cipher : IDisposable
 	{

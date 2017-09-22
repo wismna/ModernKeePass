@@ -27,7 +27,7 @@ using System.Diagnostics;
 using System.IO.Compression;
 #endif
 
-namespace ModernKeePassLib.Utility
+namespace ModernKeePassLibPCL.Utility
 {
 	/// <summary>
 	/// Application-wide logging services.

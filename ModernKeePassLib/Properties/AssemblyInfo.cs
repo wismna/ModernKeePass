@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,22 +22,23 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General assembly properties
-[assembly: AssemblyTitle("ModernKeePassLib")]
-[assembly: AssemblyDescription("Portable KeePass Password Management Library")]
+[assembly: AssemblyTitle("KeePassLib")]
+[assembly: AssemblyDescription("KeePass Password Management Library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Geoffroy Bonneville")]
-[assembly: AssemblyProduct("ModernKeePassLib")]
-[assembly: AssemblyCopyright("Copyright © 2017 Geoffroy Bonneville")]
+[assembly: AssemblyCompany("Panteam")]
+[assembly: AssemblyProduct("KeePassLib")]
+[assembly: AssemblyCopyright("Copyright © 2003-2017 Dominik Reichl")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // COM settings
 [assembly: ComVisible(false)]
 
+#if !ModernKeePassLibPCL
 // Assembly GUID
-//Bert TODO: Disabled Guid
-//[assembly: Guid("395f6eec-a1e0-4438-aa82-b75099348134")]
+[assembly: Guid("395f6eec-a1e0-4438-aa82-b75099348134")]
+#endif
 
 // Assembly version information
-[assembly: AssemblyVersion("2.36.0.*")]
-[assembly: AssemblyFileVersion("2.36.0.0")]
+[assembly: AssemblyVersion("2.28.1.*")]
+[assembly: AssemblyFileVersion("2.28.1.0")]

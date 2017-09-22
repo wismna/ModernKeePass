@@ -21,13 +21,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
-using Windows.UI;
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
+using System.Drawing;
 
-namespace ModernKeePassLib
+using ModernKeePassLibPCL.Collections;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Utility;
+
+namespace ModernKeePassLibPCL
 {
 	/// <summary>
 	/// A class representing a password entry. A password entry consists of several
@@ -48,8 +49,8 @@ namespace ModernKeePassLib
 		private PwIcon m_pwIcon = PwIcon.Key;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 
-		private Color m_clrForeground;
-		private Color m_clrBackground;
+		private Color m_clrForeground = Color.Empty;
+		private Color m_clrBackground = Color.Empty;
 
 		private DateTime m_tCreation = PwDefs.DtDefaultNow;
 		private DateTime m_tLastMod = PwDefs.DtDefaultNow;
@@ -888,7 +889,7 @@ namespace ModernKeePassLib
 
 			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strA, strB);
 
-#if PCL || KeePassRT
+#if ModernKeePassLibPCL || KeePassRT
 			return string.Compare(strA, strB, m_bCaseInsensitive ?
 				StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
 #else

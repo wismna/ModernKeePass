@@ -19,18 +19,18 @@
 
 using System;
 using System.Security;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
-using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLib.Cryptography
+using ModernKeePassLibPCL.Native;
+using ModernKeePassLibPCL.Utility;
+
+namespace ModernKeePassLibPCL.Cryptography
 {
 	/// <summary>
 	/// Cryptographically strong random number generator. The returned values
@@ -41,8 +41,8 @@ namespace ModernKeePassLib.Cryptography
 	{
 		private byte[] m_pbEntropyPool = new byte[64];
 		private uint m_uCounter;
-#if PCL
-		//private IRandomNumberGenerator m_rng = NetFxCrypto.RandomNumberGenerator;
+#if ModernKeePassLibPCL
+		private IRandomNumberGenerator m_rng = NetFxCrypto.RandomNumberGenerator;
 #else
 		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
 #endif
@@ -106,9 +106,9 @@ namespace ModernKeePassLib.Cryptography
 			byte[] pbNewData = pbEntropy;
 			if(pbEntropy.Length >= 64)
 			{
-#if PCL
-				var shaNew = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512);
-				pbNewData = shaNew.HashData(pbEntropy.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+				var shaNew = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
+				pbNewData = shaNew.HashData(pbEntropy);
 #else
 
 #if !KeePassLibSD
@@ -128,9 +128,9 @@ namespace ModernKeePassLib.Cryptography
 				ms.Write(pbNewData, 0, pbNewData.Length);
 
 				byte[] pbFinal = ms.ToArray();
-#if PCL
-				var shaPool = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512);
-				m_pbEntropyPool = shaPool.HashData(pbFinal.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+				var shaPool = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
+				m_pbEntropyPool = shaPool.HashData(pbFinal);
 #else
 
 #if !KeePassLibSD
@@ -157,7 +157,7 @@ namespace ModernKeePassLib.Cryptography
 			pb = TimeUtil.PackTime(DateTime.Now);
 			ms.Write(pb, 0, pb.Length);
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			// In try-catch for systems without GUI;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/20335b73/
 			try
@@ -174,7 +174,7 @@ namespace ModernKeePassLib.Cryptography
 			pb = MemUtil.UInt32ToBytes((uint)rWeak.Next());
 			ms.Write(pb, 0, pb.Length);
 
-#if PCL
+#if ModernKeePassLibPCL
 			pb = MemUtil.UInt32ToBytes((uint)Environment.ProcessorCount);
 			ms.Write(pb, 0, pb.Length);
 
@@ -185,7 +185,7 @@ namespace ModernKeePassLib.Cryptography
 			ms.Write(pb, 0, pb.Length);
 #endif
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			Process p = null;
 			try
 			{
@@ -249,10 +249,9 @@ namespace ModernKeePassLib.Cryptography
 
 		private byte[] GetCspData()
 		{
-			//byte[] pbCspRandom = new byte[32];
-		    var pbCspRandom = CryptographicBuffer.GenerateRandom(32);
-            //m_rng.GetBytes(pbCspRandom);
-			return pbCspRandom.ToArray();
+			byte[] pbCspRandom = new byte[32];
+			m_rng.GetBytes(pbCspRandom);
+			return pbCspRandom;
 		}
 
 		private byte[] GenerateRandom256()
@@ -280,9 +279,9 @@ namespace ModernKeePassLib.Cryptography
 				m_uGeneratedBytesCount += 32;
 			}
 
-#if PCL
-			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			return sha256.HashData(pbFinal.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			return sha256.HashData(pbFinal);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			return sha256.ComputeHash(pbFinal);
@@ -310,7 +309,7 @@ namespace ModernKeePassLib.Cryptography
 
 				long lCopy = (long)((uRequestedBytes < 32) ? uRequestedBytes : 32);
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 				Array.Copy(pbRandom256, 0, pbRes, lPos, lCopy);
 #else
 				Array.Copy(pbRandom256, 0, pbRes, (int)lPos, (int)lCopy);

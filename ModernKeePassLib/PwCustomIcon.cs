@@ -18,9 +18,17 @@
 */
 
 using System;
-using Windows.UI.Xaml.Controls;
+using System.Diagnostics;
+#if ModernKeePassLibPCL
+using Image = Splat.IBitmap;
+#else
+using System.Drawing;
+#endif
+using System.IO;
 
-namespace ModernKeePassLib
+using ModernKeePassLibPCL.Utility;
+
+namespace ModernKeePassLibPCL
 {
 	/// <summary>
 	/// Custom icon. <c>PwCustomIcon</c> objects are immutable.
@@ -63,7 +71,7 @@ namespace ModernKeePassLib
 			// MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
 			// m_pCachedImage = Image.FromStream(ms);
 			// ms.Close();
-			//m_pCachedImage = GfxUtil.LoadImage(m_pbImageDataPng);
+			m_pCachedImage = GfxUtil.LoadImage(m_pbImageDataPng);
 #else
 			m_pCachedImage = null;
 #endif

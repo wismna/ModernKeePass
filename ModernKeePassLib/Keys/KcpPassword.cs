@@ -20,18 +20,16 @@
 using System;
 using System.Text;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
 
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Security;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Keys
+namespace ModernKeePassLibPCL.Keys
 {
 	/// <summary>
 	/// Master password / passphrase as provided by the user.
@@ -74,16 +72,16 @@ namespace ModernKeePassLib.Keys
 			Debug.Assert(pbPasswordUtf8 != null);
 			if(pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
 
-#if PCL
-			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			var pbRaw = sha256.HashData(pbPasswordUtf8.AsBuffer());
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			var pbRaw = sha256.HashData(pbPasswordUtf8);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] pbRaw = sha256.ComputeHash(pbPasswordUtf8);
 #endif
 
 			m_psPassword = new ProtectedString(true, pbPasswordUtf8);
-			m_pbKeyData = new ProtectedBinary(true, pbRaw.ToArray());
+			m_pbKeyData = new ProtectedBinary(true, pbRaw);
 		}
 
 		// public void Clear()

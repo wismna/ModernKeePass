@@ -22,29 +22,28 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security;
-#if PCL
-using Windows.Security.Cryptography;
+#if ModernKeePassLibPCL
+using PCLCrypto;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Xml;
-using Windows.Security.Cryptography.Core;
+
 #if !KeePassLibSD
 using System.IO.Compression;
 #else
 using KeePassLibSD;
 #endif
 
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Interfaces;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Resources;
-using ModernKeePassLib.Utility;
+using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLibPCL.Keys;
+using ModernKeePassLibPCL.Resources;
+using ModernKeePassLibPCL.Utility;
 
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
@@ -155,7 +154,7 @@ namespace ModernKeePassLib.Serialization
 				// GC.KeepAlive(br);
 				// GC.KeepAlive(brDecrypted);
 			}
-#if !PCL
+#if !ModernKeePassLibPCL
 			catch(CryptographicException) // Thrown on invalid padding
 			{
 				throw new CryptographicException(KLRes.FileCorrupted);
@@ -221,9 +220,9 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbHeader = msHeader.ToArray();
 			msHeader.Dispose();
 
-#if PCL
-			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			m_pbHashOfHeader = sha256.HashData(pbHeader.AsBuffer()).ToArray();
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			m_pbHashOfHeader = sha256.HashData(pbHeader);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
@@ -333,39 +332,46 @@ namespace ModernKeePassLib.Serialization
 			m_craInnerRandomStream = (CrsAlgorithm)uID;
 		}
 
-	    private Stream AttachStreamDecryptor(Stream s)
-	    {
-	        using (var ms = new MemoryStream())
-	        {
-	            Debug.Assert(m_pbMasterSeed.Length == 32);
-	            if (m_pbMasterSeed.Length != 32)
-	                throw new FormatException(KLRes.MasterSeedLengthInvalid);
-	            ms.Write(m_pbMasterSeed, 0, 32);
+		private Stream AttachStreamDecryptor(Stream s)
+		{
+			MemoryStream ms = new MemoryStream();
 
-	            byte[] pKey32 = m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
-	                m_pwDatabase.KeyEncryptionRounds).ReadData();
-	            if (pKey32 == null || pKey32.Length != 32)
-	                throw new SecurityException(KLRes.InvalidCompositeKey);
-	            ms.Write(pKey32, 0, 32);
+			Debug.Assert(m_pbMasterSeed.Length == 32);
+			if(m_pbMasterSeed.Length != 32)
+				throw new FormatException(KLRes.MasterSeedLengthInvalid);
+			ms.Write(m_pbMasterSeed, 0, 32);
 
-#if PCL
-	            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-	            var aesKey = sha256.HashData(ms.GetWindowsRuntimeBuffer()).ToArray();
+			byte[] pKey32 = m_pwDatabase.MasterKey.GenerateKey32(m_pbTransformSeed,
+				m_pwDatabase.KeyEncryptionRounds).ReadData();
+			if((pKey32 == null) || (pKey32.Length != 32))
+				throw new SecurityException(KLRes.InvalidCompositeKey);
+			ms.Write(pKey32, 0, 32);
+
+#if ModernKeePassLibPCL
+			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			var aesKey = sha256.HashData(ms.ToArray());
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
 #endif
-	            Array.Clear(pKey32, 0, 32);
 
-	            if (aesKey == null || aesKey.Length != 32)
-	                throw new SecurityException(KLRes.FinalKeyCreationFailed);
+			ms.Dispose();
+			Array.Clear(pKey32, 0, 32);
 
-	            ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
-	            if (iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
-	            return iEngine.DecryptStream(s, aesKey, m_pbEncryptionIV);
-	        }
-	    }
-        
+			if((aesKey == null) || (aesKey.Length != 32))
+				throw new SecurityException(KLRes.FinalKeyCreationFailed);
+
+			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
+			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
+			return iEngine.DecryptStream(s, aesKey, m_pbEncryptionIV);
+		}
+
+		[Obsolete]
+		public static List<PwEntry> ReadEntries(PwDatabase pwDatabase, Stream msData)
+		{
+			return ReadEntries(msData);
+		}
+
 		/// <summary>
 		/// Read entries from a stream.
 		/// </summary>

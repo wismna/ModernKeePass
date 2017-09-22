@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Diagnostics;
 
-namespace KeePass2PCL.Native
+namespace ModernKeePassLibPCL.Native
 {
 	internal static partial class NativeMethods
 	{

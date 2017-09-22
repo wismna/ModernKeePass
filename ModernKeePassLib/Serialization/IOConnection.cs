@@ -19,31 +19,28 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Diagnostics;
-
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+using Windows.Storage.Streams;
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 using System.Net.Cache;
 using System.Net.Security;
 #endif
 
-#if !PCL && !KeePassRT
+#if !ModernKeePassLibPCL && !KeePassRT
 using System.Security.Cryptography.X509Certificates;
 #endif
 
-#if PCL
+#if ModernKeePassLibPCL
 using Windows.Storage;
+using PCLStorage;
 #endif
+using ModernKeePassLibPCL.Utility;
 
-using ModernKeePassLib.Utility;
-
-namespace ModernKeePassLib.Serialization
+namespace ModernKeePassLibPCL.Serialization
 {
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 	internal sealed class IOWebClient : WebClient
 	{
 		protected override WebRequest GetWebRequest(Uri address)
@@ -55,7 +52,7 @@ namespace ModernKeePassLib.Serialization
 	}
 #endif
 
-#if !PCL
+#if !ModernKeePassLibPCL
 	internal abstract class WrapperStream : Stream
 	{
 		private readonly Stream m_s;
@@ -228,7 +225,7 @@ namespace ModernKeePassLib.Serialization
 
 	public static class IOConnection
 	{
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 		private static ProxyServerType m_pstProxyType = ProxyServerType.System;
 		private static string m_strProxyAddr = string.Empty;
 		private static string m_strProxyPort = string.Empty;
@@ -252,7 +249,7 @@ namespace ModernKeePassLib.Serialization
 
 		public static event EventHandler<IOAccessEventArgs> IOAccessPre;
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 		// Allow self-signed certificates, expired certificates, etc.
 		private static bool AcceptCertificate(object sender,
 			X509Certificate certificate, X509Chain chain,
@@ -434,17 +431,20 @@ namespace ModernKeePassLib.Serialization
 
 		private static Stream OpenReadLocal(IOConnectionInfo ioc)
 		{
-#if PCL
-            /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;*/
-		    return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetResults().AsStream();
+#if ModernKeePassLibPCL
+		    if (ioc.StorageFile != null)
+		    {
+		        return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetResults().AsStream();
+		    }
+		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;
 #else
 			return new FileStream(ioc.Path, FileMode.Open, FileAccess.Read,
 				FileShare.Read);
 #endif
 		}
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
 			if(ioc == null) { Debug.Assert(false); return null; }
@@ -477,15 +477,18 @@ namespace ModernKeePassLib.Serialization
 
 		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
-#if PCL
-		    return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream();
-            /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(FileAccess.ReadAndWrite).Result;*/
+#if ModernKeePassLibPCL
+		    if (ioc.StorageFile != null)
+		    {
+		        return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream();
+		    }
+            var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+			return file.OpenAsync(FileAccess.ReadAndWrite).Result;
 #else
 			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
 				FileShare.None);
 #endif
-        }
+		}
 
 		public static bool FileExists(IOConnectionInfo ioc)
 		{
@@ -498,14 +501,14 @@ namespace ModernKeePassLib.Serialization
 
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
 
-#if PCL
+#if ModernKeePassLibPCL
 			if(ioc.IsLocalFile())
-				return ioc.StorageFile.IsAvailable;
+				return (FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result != null);
 #else
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 #endif
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
 			{
 				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
@@ -540,17 +543,16 @@ namespace ModernKeePassLib.Serialization
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
 
-#if PCL
-			if(ioc.IsLocalFile()) {
-				/*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-				file.DeleteAsync().RunSynchronously();*/
-                ioc.StorageFile.DeleteAsync(StorageDeleteOption.Default).GetResults();
-			}
+#if ModernKeePassLibPCL
+		    if (!ioc.IsLocalFile()) return;
+		    ioc.StorageFile?.DeleteAsync().GetResults();
+		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+		    file.DeleteAsync().RunSynchronously();
 #else
 			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
 #endif
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(ioc);
 			if(req != null)
 			{
@@ -582,18 +584,16 @@ namespace ModernKeePassLib.Serialization
 		{
 			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
 
-#if PCL
-			if(iocFrom.IsLocalFile()) {
-				/*var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
-				file.MoveAsync(iocTo.Path).RunSynchronously();*/
-                iocFrom.StorageFile.RenameAsync(iocTo.Path).GetResults();
-				return;
-			}
+#if ModernKeePassLibPCL
+		    if (!iocFrom.IsLocalFile()) return;
+		    iocFrom.StorageFile?.RenameAsync(iocTo.Path).GetResults();
+		    var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
+		    file.MoveAsync(iocTo.Path).RunSynchronously();
 #else
 			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
 #endif
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(iocFrom);
 			if(req != null)
 			{
@@ -642,7 +642,7 @@ namespace ModernKeePassLib.Serialization
 			// DeleteFile(iocFrom);
 		}
 
-#if (!PCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
 		{
 			try

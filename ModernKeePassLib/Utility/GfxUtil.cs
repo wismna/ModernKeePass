@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if KeePass2PCL
+#if ModernKeePassLibPCL
 using Splat;
 #else
 using System.Drawing;
@@ -29,7 +29,7 @@ using System.Drawing.Imaging;
 #endif
 using System.Diagnostics;
 
-namespace KeePass2PCL.Utility
+namespace ModernKeePassLibPCL.Utility
 {
 	public static class GfxUtil
 	{
@@ -40,7 +40,7 @@ namespace KeePass2PCL.Utility
 			try { return Image.FromStream(ms); }
 			finally { ms.Close(); }
 		}
-#elif KeePass2PCL
+#elif ModernKeePassLibPCL
 		public static IBitmap LoadImage(byte[] pb)
 		{
 			using (var ms = new MemoryStream(pb, false)) {
