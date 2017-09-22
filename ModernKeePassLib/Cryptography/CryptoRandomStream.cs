@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,15 +18,23 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
+#if PCL
+using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
 
 using ModernKeePassLib.Cryptography.Cipher;
 
 namespace ModernKeePassLib.Cryptography
 {
-    /// <summary>
-    /// Algorithms supported by <c>CryptoRandomStream</c>.
-    /// </summary>
-    public enum CrsAlgorithm
+	/// <summary>
+	/// Algorithms supported by <c>CryptoRandomStream</c>.
+	/// </summary>
+	public enum CrsAlgorithm
 	{
 		/// <summary>
 		/// Not supported.
@@ -109,13 +117,17 @@ namespace ModernKeePassLib.Cryptography
 			}
 			else if(genAlgorithm == CrsAlgorithm.Salsa20)
 			{
-                byte[] pbKey32 = SHA256Managed.Instance.ComputeHash(pbKey);
-               
-				byte[] pbIV = new byte[]{ 0xE8, 0x30, 0x09, 0x4B,
+#if PCL
+				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+				var pbKey32 = sha256.HashData(pbKey.AsBuffer()).ToArray();
+#else
+				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbKey32 = sha256.ComputeHash(pbKey);
+#endif
+				byte[] pbIV = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
 					0x97, 0x20, 0x5D, 0x2A }; // Unique constant
 
 				m_salsa20 = new Salsa20Cipher(pbKey32, pbIV);
-
 			}
 			else // Unknown algorithm
 			{

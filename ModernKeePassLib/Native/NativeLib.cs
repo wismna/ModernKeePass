@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using System.Threading;
+using System.IO;
+using System.Reflection;
 using System.Diagnostics;
 
 using ModernKeePassLib.Utility;
@@ -42,6 +48,43 @@ namespace ModernKeePassLib.Native
 		{
 			get { return m_bAllowNative; }
 			set { m_bAllowNative = value; }
+		}
+
+		private static ulong? m_ouMonoVersion = null;
+		public static ulong MonoVersion
+		{
+			get
+			{
+				if(m_ouMonoVersion.HasValue) return m_ouMonoVersion.Value;
+
+				ulong uVersion = 0;
+				try
+				{
+					Type t = Type.GetType("Mono.Runtime");
+					if(t != null)
+					{
+						MethodInfo mi = t.GetMethod("GetDisplayName",
+							BindingFlags.NonPublic | BindingFlags.Static);
+						if(mi != null)
+						{
+							string strName = (mi.Invoke(null, null) as string);
+							if(!string.IsNullOrEmpty(strName))
+							{
+								Match m = Regex.Match(strName, "\\d+(\\.\\d+)+");
+								if(m.Success)
+									uVersion = StrUtil.ParseVersion(m.Value);
+								else { Debug.Assert(false); }
+							}
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				m_ouMonoVersion = uVersion;
+				return uVersion;
+			}
 		}
 
 		/// <summary>
@@ -70,10 +113,6 @@ namespace ModernKeePassLib.Native
 		{
 			if(m_bIsUnix.HasValue) return m_bIsUnix.Value;
 
-#if KeePassWinRT
-            return false;
-#else
-
 			PlatformID p = GetPlatformID();
 
 			// Mono defines Unix as 128 in early .NET versions
@@ -84,19 +123,20 @@ namespace ModernKeePassLib.Native
 			m_bIsUnix = (((int)p == 4) || ((int)p == 6) || ((int)p == 128));
 #endif
 			return m_bIsUnix.Value;
-#endif //KeePassWinRT
-        }
+		}
 
-        // TODO Bert : Not supported for the time being.
-#if !KeePassWinRT
 		private static PlatformID? m_platID = null;
 		public static PlatformID GetPlatformID()
 		{
 			if(m_platID.HasValue) return m_platID.Value;
 
+#if KeePassRT
+			m_platID = PlatformID.Win32NT;
+#else
 			m_platID = Environment.OSVersion.Platform;
+#endif
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 			// Mono returns PlatformID.Unix on Mac OS X, workaround this
 			if(m_platID.Value == PlatformID.Unix)
 			{
@@ -108,11 +148,8 @@ namespace ModernKeePassLib.Native
 
 			return m_platID.Value;
 		}
-#endif
 
-
-        // BERT Todo: Not supported for the moment.
-#if !KeePassLibSD && TODO
+#if (!KeePassLibSD && !KeePassRT)
 		public static string RunConsoleApp(string strAppPath, string strParams)
 		{
 			return RunConsoleApp(strAppPath, strParams, null);
@@ -121,39 +158,120 @@ namespace ModernKeePassLib.Native
 		public static string RunConsoleApp(string strAppPath, string strParams,
 			string strStdInput)
 		{
+			return RunConsoleApp(strAppPath, strParams, strStdInput,
+				(AppRunFlags.GetStdOutput | AppRunFlags.WaitForExit));
+		}
+
+		private delegate string RunProcessDelegate();
+
+		public static string RunConsoleApp(string strAppPath, string strParams,
+			string strStdInput, AppRunFlags f)
+		{
 			if(strAppPath == null) throw new ArgumentNullException("strAppPath");
 			if(strAppPath.Length == 0) throw new ArgumentException("strAppPath");
 
-			try
+			bool bStdOut = ((f & AppRunFlags.GetStdOutput) != AppRunFlags.None);
+
+			RunProcessDelegate fnRun = delegate()
 			{
-				ProcessStartInfo psi = new ProcessStartInfo();
-
-				psi.CreateNoWindow = true;
-				psi.FileName = strAppPath;
-				psi.WindowStyle = ProcessWindowStyle.Hidden;
-				psi.UseShellExecute = false;
-				psi.RedirectStandardOutput = true;
-
-				if(strStdInput != null) psi.RedirectStandardInput = true;
-
-				if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
-
-				Process p = Process.Start(psi);
-
-				if(strStdInput != null)
+				try
 				{
-					p.StandardInput.Write(strStdInput);
-					p.StandardInput.Close();
+					ProcessStartInfo psi = new ProcessStartInfo();
+
+					psi.CreateNoWindow = true;
+					psi.FileName = strAppPath;
+					psi.WindowStyle = ProcessWindowStyle.Hidden;
+					psi.UseShellExecute = false;
+					psi.RedirectStandardOutput = bStdOut;
+
+					if(strStdInput != null) psi.RedirectStandardInput = true;
+
+					if(!string.IsNullOrEmpty(strParams)) psi.Arguments = strParams;
+
+					Process p = Process.Start(psi);
+
+					if(strStdInput != null)
+					{
+						// Workaround for Mono Process StdIn BOM bug;
+						// https://sourceforge.net/p/keepass/bugs/1219/
+						EnsureNoBom(p.StandardInput);
+
+						p.StandardInput.Write(strStdInput);
+						p.StandardInput.Close();
+					}
+
+					string strOutput = string.Empty;
+					if(bStdOut) strOutput = p.StandardOutput.ReadToEnd();
+
+					if((f & AppRunFlags.WaitForExit) != AppRunFlags.None)
+						p.WaitForExit();
+					else if((f & AppRunFlags.GCKeepAlive) != AppRunFlags.None)
+					{
+						Thread th = new Thread(delegate()
+						{
+							try { p.WaitForExit(); }
+							catch(Exception) { Debug.Assert(false); }
+						});
+						th.Start();
+					}
+
+					return strOutput;
+				}
+				catch(Exception) { Debug.Assert(false); }
+
+				return null;
+			};
+
+			if((f & AppRunFlags.DoEvents) != AppRunFlags.None)
+			{
+				List<Form> lDisabledForms = new List<Form>();
+				if((f & AppRunFlags.DisableForms) != AppRunFlags.None)
+				{
+					foreach(Form form in Application.OpenForms)
+					{
+						if(!form.Enabled) continue;
+
+						lDisabledForms.Add(form);
+						form.Enabled = false;
+					}
 				}
 
-				string strOutput = p.StandardOutput.ReadToEnd();
-				p.WaitForExit();
+				IAsyncResult ar = fnRun.BeginInvoke(null, null);
 
-				return strOutput;
+				while(!ar.AsyncWaitHandle.WaitOne(0))
+				{
+					Application.DoEvents();
+					Thread.Sleep(2);
+				}
+
+				string strRet = fnRun.EndInvoke(ar);
+
+				for(int i = lDisabledForms.Count - 1; i >= 0; --i)
+					lDisabledForms[i].Enabled = true;
+
+				return strRet;
+			}
+
+			return fnRun();
+		}
+
+		private static void EnsureNoBom(StreamWriter sw)
+		{
+			if(sw == null) { Debug.Assert(false); return; }
+			if(!NativeLib.IsUnix()) return;
+
+			try
+			{
+				Encoding enc = sw.Encoding;
+				if(enc == null) { Debug.Assert(false); return; }
+				byte[] pbBom = enc.GetPreamble();
+				if((pbBom == null) || (pbBom.Length == 0)) return;
+
+				FieldInfo fi = typeof(StreamWriter).GetField("preamble_done",
+					BindingFlags.Instance | BindingFlags.NonPublic);
+				if(fi != null) fi.SetValue(sw, true);
 			}
 			catch(Exception) { Debug.Assert(false); }
-
-			return null;
 		}
 #endif
 
@@ -172,12 +290,12 @@ namespace ModernKeePassLib.Native
 			KeyValuePair<IntPtr, IntPtr> kvp = PrepareArrays256(pBuf256, pKey256);
 			bool bResult = false;
 
-			/*try
+			try
 			{
 				bResult = NativeMethods.TransformKey(kvp.Key, kvp.Value, uRounds);
 			}
 			catch(Exception) { bResult = false; }
-            */
+
 			if(bResult) GetBuffers256(kvp, pBuf256, pKey256);
 
 			NativeLib.FreeArrays(kvp);
@@ -196,8 +314,8 @@ namespace ModernKeePassLib.Native
 
 			if(m_bAllowNative == false) return false;
 
-			/*try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
-			catch(Exception) { return false; }*/
+			try { puRounds = NativeMethods.TransformKeyBenchmark(uTimeMs); }
+			catch(Exception) { return false; }
 
 			return true;
 		}

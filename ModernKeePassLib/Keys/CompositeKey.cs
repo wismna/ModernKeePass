@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,104 +22,105 @@ using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Security.Cryptography.Core;
+using Windows.Security.ExchangeActiveSyncProvisioning;
+#if PCL
+using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
 
-using ModernKeePassLib.Native;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
-using System.Threading.Tasks;
-using Windows.Security.Cryptography;
-using Windows.Storage.Streams;
-using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePassLib.Keys
 {
-	/// <summary>
-	/// Represents a key. A key can be build up using several user key data sources
-	/// like a password, a key file, the currently logged on user credentials,
-	/// the current computer ID, etc.
-	/// </summary>
-	public sealed class CompositeKey
-	{
-		private List<IUserKey> m_vUserKeys = new List<IUserKey>();
+    /// <summary>
+    /// Represents a key. A key can be build up using several user key data sources
+    /// like a password, a key file, the currently logged on user credentials,
+    /// the current computer ID, etc.
+    /// </summary>
+    public sealed class CompositeKey
+    {
+        private List<IUserKey> m_vUserKeys = new List<IUserKey>();
 
-		/// <summary>
-		/// List of all user keys contained in the current composite key.
-		/// </summary>
-		public IEnumerable<IUserKey> UserKeys
-		{
-			get { return m_vUserKeys; }
-		}
+        /// <summary>
+        /// List of all user keys contained in the current composite key.
+        /// </summary>
+        public IEnumerable<IUserKey> UserKeys
+        {
+            get { return m_vUserKeys; }
+        }
 
-		public uint UserKeyCount
-		{
-			get { return (uint)m_vUserKeys.Count; }
-		}
+        public uint UserKeyCount
+        {
+            get { return (uint) m_vUserKeys.Count; }
+        }
 
-		/// <summary>
-		/// Construct a new, empty key object.
-		/// </summary>
-		public CompositeKey()
-		{
-		}
+        /// <summary>
+        /// Construct a new, empty key object.
+        /// </summary>
+        public CompositeKey()
+        {
+        }
 
-		// /// <summary>
-		// /// Deconstructor, clears up the key.
-		// /// </summary>
-		// ~CompositeKey()
-		// {
-		//	Clear();
-		// }
+        // /// <summary>
+        // /// Deconstructor, clears up the key.
+        // /// </summary>
+        // ~CompositeKey()
+        // {
+        //	Clear();
+        // }
 
-		// /// <summary>
-		// /// Clears the key. This function also erases all previously stored
-		// /// user key data objects.
-		// /// </summary>
-		// public void Clear()
-		// {
-		//	foreach(IUserKey pKey in m_vUserKeys)
-		//		pKey.Clear();
-		//	m_vUserKeys.Clear();
-		// }
+        // /// <summary>
+        // /// Clears the key. This function also erases all previously stored
+        // /// user key data objects.
+        // /// </summary>
+        // public void Clear()
+        // {
+        //	foreach(IUserKey pKey in m_vUserKeys)
+        //		pKey.Clear();
+        //	m_vUserKeys.Clear();
+        // }
 
-		/// <summary>
-		/// Add a user key.
-		/// </summary>
-		/// <param name="pKey">User key to add.</param>
-		public void AddUserKey(IUserKey pKey)
-		{
-			Debug.Assert(pKey != null); if(pKey == null) throw new ArgumentNullException("pKey");
+        /// <summary>
+        /// Add a user key.
+        /// </summary>
+        /// <param name="pKey">User key to add.</param>
+        public void AddUserKey(IUserKey pKey)
+        {
+            Debug.Assert(pKey != null);
+            if (pKey == null) throw new ArgumentNullException("pKey");
 
-			m_vUserKeys.Add(pKey);
-		}
+            m_vUserKeys.Add(pKey);
+        }
 
-		/// <summary>
-		/// Remove a user key.
-		/// </summary>
-		/// <param name="pKey">User key to remove.</param>
-		/// <returns>Returns <c>true</c> if the key was removed successfully.</returns>
-		public bool RemoveUserKey(IUserKey pKey)
-		{
-			Debug.Assert(pKey != null); if(pKey == null) throw new ArgumentNullException("pKey");
+        /// <summary>
+        /// Remove a user key.
+        /// </summary>
+        /// <param name="pKey">User key to remove.</param>
+        /// <returns>Returns <c>true</c> if the key was removed successfully.</returns>
+        public bool RemoveUserKey(IUserKey pKey)
+        {
+            Debug.Assert(pKey != null);
+            if (pKey == null) throw new ArgumentNullException("pKey");
 
-			Debug.Assert(m_vUserKeys.IndexOf(pKey) >= 0);
-			return m_vUserKeys.Remove(pKey);
-		}
+            Debug.Assert(m_vUserKeys.IndexOf(pKey) >= 0);
+            return m_vUserKeys.Remove(pKey);
+        }
 
-		/// <summary>
-		/// Test whether the composite key contains a specific type of
-		/// user keys (password, key file, ...). If at least one user
-		/// key of that type is present, the function returns <c>true</c>.
-		/// </summary>
-		/// <param name="tUserKeyType">User key type.</param>
-		/// <returns>Returns <c>true</c>, if the composite key contains
-		/// a user key of the specified type.</returns>
+#if !PCL && !KeePassRT /// <summary>
+/// Test whether the composite key contains a specific type of
+/// user keys (password, key file, ...). If at least one user
+/// key of that type is present, the function returns <c>true</c>.
+/// </summary>
+/// <param name="tUserKeyType">User key type.</param>
+/// <returns>Returns <c>true</c>, if the composite key contains
+/// a user key of the specified type.</returns>
 		public bool ContainsType(Type tUserKeyType)
 		{
-               Debug.Assert(false, "not yet implemented");
-            return false;
-#if TODO
 			Debug.Assert(tUserKeyType != null);
 			if(tUserKeyType == null) throw new ArgumentNullException("tUserKeyType");
 
@@ -130,7 +131,6 @@ namespace ModernKeePassLib.Keys
 			}
 
 			return false;
-#endif
 		}
 
 		/// <summary>
@@ -141,10 +141,6 @@ namespace ModernKeePassLib.Keys
 		/// or <c>null</c> if no key of that type is found.</returns>
 		public IUserKey GetUserKey(Type tUserKeyType)
 		{
-               Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
-
 			Debug.Assert(tUserKeyType != null);
 			if(tUserKeyType == null) throw new ArgumentNullException("tUserKeyType");
 
@@ -155,82 +151,94 @@ namespace ModernKeePassLib.Keys
 			}
 
 			return null;
+		}
 #endif
-		}
 
-		/// <summary>
-		/// Creates the composite key from the supplied user key sources (password,
-		/// key file, user account, computer ID, etc.).
-		/// </summary>
-		private byte[] CreateRawCompositeKey32()
-		{
-			ValidateUserKeys();
+        /// <summary>
+        /// Creates the composite key from the supplied user key sources (password,
+        /// key file, user account, computer ID, etc.).
+        /// </summary>
+        private byte[] CreateRawCompositeKey32()
+        {
+            ValidateUserKeys();
 
-			// Concatenate user key data
-			MemoryStream ms = new MemoryStream();
-			foreach(IUserKey pKey in m_vUserKeys)
-			{
-				ProtectedBinary b = pKey.KeyData;
-				if(b != null)
-				{
-					byte[] pbKeyData = b.ReadData();
-					ms.Write(pbKeyData, 0, pbKeyData.Length);
-					MemUtil.ZeroByteArray(pbKeyData);
-				}
-			}
+            // Concatenate user key data
+            MemoryStream ms = new MemoryStream();
+            foreach (IUserKey pKey in m_vUserKeys)
+            {
+                ProtectedBinary b = pKey.KeyData;
+                if (b != null)
+                {
+                    byte[] pbKeyData = b.ReadData();
+                    ms.Write(pbKeyData, 0, pbKeyData.Length);
+                    MemUtil.ZeroByteArray(pbKeyData);
+                }
+            }
 
-            byte[] pbHash = SHA256Managed.Instance.ComputeHash(ms.ToArray());
-           
-			return pbHash;
+#if PCL
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var pbHash = sha256.HashData(ms.ToArray().AsBuffer()).ToArray();
+#else
+			SHA256Managed sha256 = new SHA256Managed();
+			byte[] pbHash = sha256.ComputeHash(ms.ToArray());
+#endif
+            ms.Dispose();
+            return pbHash;
+        }
 
-		}
+        public bool EqualsValue(CompositeKey ckOther)
+        {
+            if (ckOther == null) throw new ArgumentNullException("ckOther");
 
-		public bool EqualsValue(CompositeKey ckOther)
-		{
-			if(ckOther == null) throw new ArgumentNullException("ckOther");
+            byte[] pbThis = CreateRawCompositeKey32();
+            byte[] pbOther = ckOther.CreateRawCompositeKey32();
+            bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
+            Array.Clear(pbOther, 0, pbOther.Length);
+            Array.Clear(pbThis, 0, pbThis.Length);
 
-			byte[] pbThis = CreateRawCompositeKey32();
-			byte[] pbOther = ckOther.CreateRawCompositeKey32();
-			bool bResult = MemUtil.ArraysEqual(pbThis, pbOther);
-			Array.Clear(pbOther, 0, pbOther.Length);
-			Array.Clear(pbThis, 0, pbThis.Length);
+            return bResult;
+        }
 
-			return bResult;
-		}
+        /// <summary>
+        /// Generate a 32-bit wide key out of the composite key.
+        /// </summary>
+        /// <param name="pbKeySeed32">Seed used in the key transformation
+        /// rounds. Must be a byte array containing exactly 32 bytes; must
+        /// not be null.</param>
+        /// <param name="uNumRounds">Number of key transformation rounds.</param>
+        /// <returns>Returns a protected binary object that contains the
+        /// resulting 32-bit wide key.</returns>
+        public ProtectedBinary GenerateKey32(byte[] pbKeySeed32, ulong uNumRounds)
+        {
+            Debug.Assert(pbKeySeed32 != null);
+            if (pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
+            Debug.Assert(pbKeySeed32.Length == 32);
+            if (pbKeySeed32.Length != 32) throw new ArgumentException("pbKeySeed32");
 
-		/// <summary>
-		/// Generate a 32-bit wide key out of the composite key.
-		/// </summary>
-		/// <param name="pbKeySeed32">Seed used in the key transformation
-		/// rounds. Must be a byte array containing exactly 32 bytes; must
-		/// not be null.</param>
-		/// <param name="uNumRounds">Number of key transformation rounds.</param>
-		/// <returns>Returns a protected binary object that contains the
-		/// resulting 32-bit wide key.</returns>
-		public ProtectedBinary GenerateKey32(byte[] pbKeySeed32, ulong uNumRounds)
-		{
-			Debug.Assert(pbKeySeed32 != null);
-			if(pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
-			Debug.Assert(pbKeySeed32.Length == 32);
-			if(pbKeySeed32.Length != 32) throw new ArgumentException("pbKeySeed32");
+            byte[] pbRaw32 = CreateRawCompositeKey32();
+            if ((pbRaw32 == null) || (pbRaw32.Length != 32))
+            {
+                Debug.Assert(false);
+                return null;
+            }
 
-			byte[] pbRaw32 = CreateRawCompositeKey32();
-			if((pbRaw32 == null) || (pbRaw32.Length != 32))
-				{ Debug.Assert(false); return null; }
+            byte[] pbTrf32 = TransformKey(pbRaw32, pbKeySeed32, uNumRounds);
+            if ((pbTrf32 == null) || (pbTrf32.Length != 32))
+            {
+                Debug.Assert(false);
+                return null;
+            }
 
-			byte[] pbTrf32 = TransformKey(pbRaw32, pbKeySeed32, uNumRounds);
-			if((pbTrf32 == null) || (pbTrf32.Length != 32))
-				{ Debug.Assert(false); return null; }
+            ProtectedBinary pbRet = new ProtectedBinary(true, pbTrf32);
+            MemUtil.ZeroByteArray(pbTrf32);
+            MemUtil.ZeroByteArray(pbRaw32);
 
-			ProtectedBinary pbRet = new ProtectedBinary(true, pbTrf32);
-			MemUtil.ZeroByteArray(pbTrf32);
-			MemUtil.ZeroByteArray(pbRaw32);
+            return pbRet;
+        }
 
-			return pbRet;
-		}
-
-		private void ValidateUserKeys()
-		{
+        private void ValidateUserKeys()
+        {
+#if !PCL
 			int nAccounts = 0;
 
 			foreach(IUserKey uKey in m_vUserKeys)
@@ -244,98 +252,69 @@ namespace ModernKeePassLib.Keys
 				Debug.Assert(false);
 				throw new InvalidOperationException();
 			}
-		}
+#endif
+        }
 
-		/// <summary>
-		/// Transform the current key <c>uNumRounds</c> times.
-		/// </summary>
-		/// <param name="pbOriginalKey32">The original key which will be transformed.
-		/// This parameter won't be modified.</param>
-		/// <param name="pbKeySeed32">Seed used for key transformations. Must not
-		/// be <c>null</c>. This parameter won't be modified.</param>
-		/// <param name="uNumRounds">Transformation count.</param>
-		/// <returns>256-bit transformed key.</returns>
-		private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbKeySeed32,
-			ulong uNumRounds)
-		{
-             
-			Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
-			if(pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
-			if(pbOriginalKey32.Length != 32) throw new ArgumentException();
+        /// <summary>
+        /// Transform the current key <c>uNumRounds</c> times.
+        /// </summary>
+        /// <param name="pbOriginalKey32">The original key which will be transformed.
+        /// This parameter won't be modified.</param>
+        /// <param name="pbKeySeed32">Seed used for key transformations. Must not
+        /// be <c>null</c>. This parameter won't be modified.</param>
+        /// <param name="uNumRounds">Transformation count.</param>
+        /// <returns>256-bit transformed key.</returns>
+        private static byte[] TransformKey(byte[] pbOriginalKey32, byte[] pbKeySeed32,
+            ulong uNumRounds)
+        {
+            Debug.Assert((pbOriginalKey32 != null) && (pbOriginalKey32.Length == 32));
+            if (pbOriginalKey32 == null) throw new ArgumentNullException("pbOriginalKey32");
+            if (pbOriginalKey32.Length != 32) throw new ArgumentException();
 
-			Debug.Assert((pbKeySeed32 != null) && (pbKeySeed32.Length == 32));
-			if(pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
-			if(pbKeySeed32.Length != 32) throw new ArgumentException();
+            Debug.Assert((pbKeySeed32 != null) && (pbKeySeed32.Length == 32));
+            if (pbKeySeed32 == null) throw new ArgumentNullException("pbKeySeed32");
+            if (pbKeySeed32.Length != 32) throw new ArgumentException();
 
-			byte[] pbNewKey = new byte[32];
-			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
+            byte[] pbNewKey = new byte[32];
+            Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
 
-			if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds) == false)
-				return null;
+#if !PCL // Try to use the native library first
+			if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+				return (new SHA256Managed()).ComputeHash(pbNewKey);
+#endif
 
-            byte[] transformedKey = SHA256Managed.Instance.ComputeHash(pbNewKey);
-            return (transformedKey);
-		}
+            if (TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds) == false)
+                return null;
 
-		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
-			ulong uNumRounds)
-		{
-            
-			byte[] pbIV = new byte[16];
-			Array.Clear(pbIV, 0, pbIV.Length);
+#if PCL
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            return sha256.HashData(pbNewKey.AsBuffer()).ToArray();
+#else
+			SHA256Managed sha256 = new SHA256Managed();
+			return sha256.ComputeHash(pbNewKey);
+#endif
+        }
 
-            String strAlgName = "AES_ECB";          // Algorithm name    
+        public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+            ulong uNumRounds)
+        {
+#if KeePassRT
+			KeyParameter kp = new KeyParameter(pbKeySeed32);
+			AesEngine aes = new AesEngine();
+			aes.Init(true, kp);
 
-            IBuffer iv = null; // no IV used in ECB.
-            IBuffer buffMsg = CryptographicBuffer.CreateFromByteArray(pbNewKey32);
-            IBuffer keyMaterial = CryptographicBuffer.CreateFromByteArray(pbKeySeed32);
-            SymmetricKeyAlgorithmProvider objAlg = SymmetricKeyAlgorithmProvider.OpenAlgorithm(strAlgName);
-            CryptographicKey key = objAlg.CreateSymmetricKey(keyMaterial);
-
-            for (ulong i = 0; i < uNumRounds; ++i)
-            {
-                buffMsg = CryptographicEngine.Encrypt(key, buffMsg, iv);
-            }
-            byte[] newKey32;
-            CryptographicBuffer.CopyToByteArray(buffMsg, out newKey32);
-            newKey32.CopyTo(pbNewKey32,0);
-
-			return true;
-		}
-
-		/// <summary>
-		/// Benchmark the <c>TransformKey</c> method. Within
-		/// <paramref name="uMilliseconds"/> ms, random keys will be transformed
-		/// and the number of performed transformations are returned.
-		/// </summary>
-		/// <param name="uMilliseconds">Test duration in ms.</param>
-		/// <param name="uStep">Stepping.
-		/// <paramref name="uStep" /> should be a prime number. For fast processors
-		/// (PCs) a value of <c>3001</c> is recommended, for slower processors (PocketPC)
-		/// a value of <c>401</c> is recommended.</param>
-		/// <returns>Number of transformations performed in the specified
-		/// amount of time. Maximum value is <c>uint.MaxValue</c>.</returns>
-		public static ulong TransformKeyBenchmark(uint uMilliseconds, ulong uStep)
-		{
-   Debug.Assert(false, "not yet implemented");
-            return 0;
-#if TODO
-			ulong uRounds;
-
-			// Try native method
-			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
-				return uRounds;
-
-			byte[] pbIV = new byte[16];
-			Array.Clear(pbIV, 0, pbIV.Length);
-
-			byte[] pbKey = new byte[32];
-			byte[] pbNewKey = new byte[32];
-			for(int i = 0; i < pbKey.Length; ++i)
+			for(ulong i = 0; i < uNumRounds; ++i)
 			{
-				pbKey[i] = (byte)i;
-				pbNewKey[i] = (byte)i;
+				aes.ProcessBlock(pbNewKey32, 0, pbNewKey32, 0);
+				aes.ProcessBlock(pbNewKey32, 16, pbNewKey32, 16);
 			}
+#elif PCL
+            var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+            var key = aes.CreateSymmetricKey(pbKeySeed32.AsBuffer());
+            //var iCrypt = CryptographicEngine.CreateEncryptor(key);
+#else
+			byte[] pbIV = new byte[16];
+			Array.Clear(pbIV, 0, pbIV.Length);
 
 			RijndaelManaged r = new RijndaelManaged();
 			if(r.BlockSize != 128) // AES block size
@@ -347,56 +326,40 @@ namespace ModernKeePassLib.Keys
 			r.IV = pbIV;
 			r.Mode = CipherMode.ECB;
 			r.KeySize = 256;
-			r.Key = pbKey;
+			r.Key = pbKeySeed32;
 			ICryptoTransform iCrypt = r.CreateEncryptor();
-
-			// !iCrypt.CanReuseTransform -- doesn't work with Mono
-			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
-				(iCrypt.OutputBlockSize != 16))
-			{
-				Debug.Assert(false, "Invalid ICryptoTransform.");
-				Debug.Assert(iCrypt.InputBlockSize == 16, "Invalid input block size!");
-				Debug.Assert(iCrypt.OutputBlockSize == 16, "Invalid output block size!");
-				return PwDefs.DefaultKeyEncryptionRounds;
-			}
-
-			DateTime dtStart = DateTime.Now;
-			TimeSpan ts;
-			double dblReqMillis = uMilliseconds;
-
-			uRounds = 0;
-			while(true)
-			{
-				for(ulong j = 0; j < uStep; ++j)
-				{
-					iCrypt.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
-					iCrypt.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);
-				}
-
-				uRounds += uStep;
-				if(uRounds < uStep) // Overflow check
-				{
-					uRounds = ulong.MaxValue;
-					break;
-				}
-
-				ts = DateTime.Now - dtStart;
-				if(ts.TotalMilliseconds > dblReqMillis) break;
-			}
-
-			return uRounds;
 #endif
+
+            // !iCrypt.CanReuseTransform -- doesn't work with Mono
+            /*if ((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+                (iCrypt.OutputBlockSize != 16))*/
+            if (aes.BlockLength != 16)
+            {
+                Debug.Assert(false, "Invalid ICryptoTransform.");
+                /*Debug.Assert((iCrypt.InputBlockSize == 16), "Invalid input block size!");
+                Debug.Assert((iCrypt.OutputBlockSize == 16), "Invalid output block size!");*/
+                Debug.Assert(aes.BlockLength == 16, "Invalid input block size!");
+                return false;
+            }
+
+            for (ulong i = 0; i < uNumRounds; ++i)
+            {
+                /*iCrypt.TransformBlock(pbNewKey32, 0, 16, pbNewKey32, 0);
+                iCrypt.TransformBlock(pbNewKey32, 16, 16, pbNewKey32, 16);*/
+            }
+
+            return true;
         }
-	}
+    }
 
-	public sealed class InvalidCompositeKeyException : Exception
+    public sealed class InvalidCompositeKeyException : Exception
 	{
-
 		public override string Message
 		{
 			get
 			{
-                return "The composite key is invalid!" + Environment.NewLine + "Make sure the composite key is correct and try again."; // No translation needed here, the message will not be shown in the UI.
+				return KLRes.InvalidCompositeKey + Environment.NewLine
+					+ Environment.NewLine + KLRes.InvalidCompositeKeyHint;
 			}
 		}
 

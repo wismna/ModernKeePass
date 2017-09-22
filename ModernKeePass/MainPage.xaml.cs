@@ -39,7 +39,7 @@ namespace ModernKeePass
             }
         }
         
-        private async void openBbutton_Click(object sender, RoutedEventArgs e)
+        private void openBbutton_Click(object sender, RoutedEventArgs e)
         {
             /*var database = DataContext as DatabaseVm;
             database.Open();
@@ -47,7 +47,7 @@ namespace ModernKeePass
                 Frame.Navigate(typeof(GroupDetailPage), database.RootGroup);*/
             var homeVm = DataContext as HomeVm;
             var app = ((App)Application.Current);
-            homeVm.ErrorMessage = await app.Database.Open(homeVm.Password);
+            homeVm.ErrorMessage = app.Database.Open(homeVm.Password);
             if (!app.Database.IsOpen) homeVm.NotifyPropertyChanged("ErrorMessage");
             else Frame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
         }

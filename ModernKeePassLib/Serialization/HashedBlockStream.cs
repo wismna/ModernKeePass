@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,19 +19,24 @@
 
 using System;
 using System.IO;
+#if PCL
+using System.Linq;
+#else
+using System.Security.Cryptography;
+#endif
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-
-using ModernKeePassLib.Native;
+using Windows.Security.Cryptography.Core;
 using ModernKeePassLib.Utility;
-using ModernKeePassLib.Cryptography;
 
 #if KeePassLibSD
-using ModernKeePassLibSD;
+using KeePassLibSD;
 #endif
 
 namespace ModernKeePassLib.Serialization
 {
-    public sealed class HashedBlockStream : Stream
+	public sealed class HashedBlockStream : Stream
 	{
 		private const int m_nDefaultBufferSize = 1024 * 1024; // 1 MB
 
@@ -93,12 +98,13 @@ namespace ModernKeePassLib.Serialization
 		private void Initialize(Stream sBaseStream, bool bWriting, int nBufferSize,
 			bool bVerify)
 		{
-			if(sBaseStream == null) throw new ArgumentNullException("sBaseStream");
-			if(nBufferSize < 0) throw new ArgumentOutOfRangeException("nBufferSize");
+            if (sBaseStream == null) throw new ArgumentNullException(nameof(sBaseStream));
+		    m_sBaseStream = sBaseStream;
+            if (nBufferSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(nBufferSize));
 
-			if(nBufferSize == 0) nBufferSize = m_nDefaultBufferSize;
-
-			m_sBaseStream = sBaseStream;
+			if(nBufferSize == 0)
+                nBufferSize = m_nDefaultBufferSize;
 			m_bWriting = bWriting;
 			m_bVerify = bVerify;
 
@@ -128,14 +134,20 @@ namespace ModernKeePassLib.Serialization
 			if(m_bWriting) m_bwOutput.Flush();
 		}
 
-#if TODO
+#if PCL || KeePassRT
+		protected override void Dispose(bool disposing)
+		{
+			if(!disposing) return;
+#else
 		public override void Close()
 		{
+#endif
 			if(m_sBaseStream != null)
 			{
 				if(m_bWriting == false) // Reading mode
 				{
-					m_brInput.Close();
+                    try { m_brInput.Dispose(); } catch { }
+
 					m_brInput = null;
 				}
 				else // Writing mode
@@ -149,15 +161,14 @@ namespace ModernKeePassLib.Serialization
 					}
 
 					Flush();
-					m_bwOutput.Close();
+					m_bwOutput.Dispose();
 					m_bwOutput = null;
 				}
 
-				m_sBaseStream.Close();
+                try { m_sBaseStream.Dispose(); } catch { }
 				m_sBaseStream = null;
 			}
 		}
-#endif
 
 		public override long Seek(long lOffset, SeekOrigin soOrigin)
 		{
@@ -210,11 +221,11 @@ namespace ModernKeePassLib.Serialization
 				throw new InvalidDataException();
 
 			int nBufferSize = 0;
-			try { nBufferSize = m_brInput.ReadInt32(); }
+			/*try {*/ nBufferSize = m_brInput.ReadInt32(); /*}
 			catch(NullReferenceException) // Mono bug workaround (LaunchPad 783268)
 			{
 				if(!NativeLib.IsUnix()) throw;
-			}
+			}*/
 
 			if(nBufferSize < 0)
 				throw new InvalidDataException();
@@ -238,17 +249,22 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_bVerify)
 			{
-				byte[] pbComputedHash = SHA256Managed.Instance.ComputeHash(m_pbBuffer);
+#if PCL
+				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+				var pbComputedHash = sha256.HashData(m_pbBuffer.AsBuffer()).ToArray();
+#else
+				SHA256Managed sha256 = new SHA256Managed();
+				byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
+#endif
 				if((pbComputedHash == null) || (pbComputedHash.Length != 32))
 					throw new InvalidOperationException();
-
+                
 				for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
 				{
 					if(pbStoredHash[iHashPos] != pbComputedHash[iHashPos])
 						throw new InvalidDataException();
 				}
-            }
-
+			}
 
 			return true;
 		}
@@ -275,14 +291,16 @@ namespace ModernKeePassLib.Serialization
 
 		private void WriteHashedBlock()
 		{
-            Debug.Assert(false, "not yet implemented");
-            return ;
-#if TODO
 			m_bwOutput.Write(m_uBufferIndex);
 			++m_uBufferIndex;
 
 			if(m_nBufferPos > 0)
 			{
+#if PCL
+				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray().AsBuffer()).ToArray();
+#else
+
 				SHA256Managed sha256 = new SHA256Managed();
 
 #if !KeePassLibSD
@@ -297,6 +315,8 @@ namespace ModernKeePassLib.Serialization
 					Array.Copy(m_pbBuffer, 0, pbData, 0, m_nBufferPos);
 					pbHash = sha256.ComputeHash(pbData);
 				}
+#endif
+
 #endif
 
 				m_bwOutput.Write(pbHash);
@@ -315,7 +335,6 @@ namespace ModernKeePassLib.Serialization
 				m_bwOutput.Write(m_pbBuffer, 0, m_nBufferPos);
 
 			m_nBufferPos = 0;
-#endif
 		}
 	}
 }

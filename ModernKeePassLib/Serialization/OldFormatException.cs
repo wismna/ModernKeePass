@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
+
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Utility;
 
@@ -41,17 +41,13 @@ namespace ModernKeePassLib.Serialization
 		{
 			get
 			{
-                Debug.Assert(false, "not yet implemented");
-                return null;
-#if TODO
 				string str = KLRes.OldFormat + ((m_strFormat.Length > 0) ?
 					(@" (" + m_strFormat + @")") : string.Empty) + ".";
 
 				if(m_type == OldFormatType.KeePass1x)
-					str += MessageService.NewParagraph + KLRes.KeePass1xHint;
+					str += Environment.NewLine + Environment.NewLine + KLRes.KeePass1xHint;
 
 				return str;
-#endif
 			}
 		}
 

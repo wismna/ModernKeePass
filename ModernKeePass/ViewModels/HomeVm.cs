@@ -1,12 +1,5 @@
 ﻿using System.ComponentModel;
-using Windows.Storage;
-
-using ModernKeePassLib;
-using ModernKeePassLib.Keys;
-using ModernKeePassLib.Serialization;
-using ModernKeePassLib.Interfaces;
 using Windows.UI.Xaml;
-using System;
 
 namespace ModernKeePass.ViewModels
 {

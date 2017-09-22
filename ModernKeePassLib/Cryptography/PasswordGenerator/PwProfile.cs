@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,11 @@
 */
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
+using System.Diagnostics;
 
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Security;
@@ -27,12 +30,12 @@ using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
-    /// <summary>
-    /// Type of the password generator. Different types like generators
-    /// based on given patterns, based on character sets, etc. are
-    /// available.
-    /// </summary>
-    public enum PasswordGeneratorType
+	/// <summary>
+	/// Type of the password generator. Different types like generators
+	/// based on given patterns, based on character sets, etc. are
+	/// available.
+	/// </summary>
+	public enum PasswordGeneratorType
 	{
 		/// <summary>
 		/// Generator based on character spaces/sets, i.e. groups
@@ -250,14 +253,15 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 				if((ch >= 'A') && (ch <= 'Z')) pcs.Add(PwCharSet.UpperCase);
 				else if((ch >= 'a') && (ch <= 'z')) pcs.Add(PwCharSet.LowerCase);
 				else if((ch >= '0') && (ch <= '9')) pcs.Add(PwCharSet.Digits);
-				else if((@"!#$%&'*+,./:;=?@^").IndexOf(ch) >= 0) pcs.Add(pcs.SpecialChars);
+				else if(PwCharSet.SpecialChars.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.SpecialChars);
 				else if(ch == ' ') pcs.Add(' ');
 				else if(ch == '-') pcs.Add('-');
 				else if(ch == '_') pcs.Add('_');
-				else if(ch == '\"') pcs.Add(pcs.SpecialChars);
-				else if(ch == '\\') pcs.Add(pcs.SpecialChars);
-				else if((@"()[]{}<>").IndexOf(ch) >= 0) pcs.Add(PwCharSet.Brackets);
-				else if((ch >= '~') && (ch <= 255)) pcs.Add(pcs.HighAnsiChars);
+				else if(PwCharSet.Brackets.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.Brackets);
+				else if(PwCharSet.HighAnsiChars.IndexOf(ch) >= 0)
+					pcs.Add(PwCharSet.HighAnsiChars);
 				else pcs.Add(ch);
 			}
 

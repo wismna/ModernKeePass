@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,16 +17,34 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
+using System;
+using System.Text;
+using System.IO;
+using System.Xml;
+using System.Security;
+#if PCL
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.Linq;
+using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Keys
 {
-    /// <summary>
-    /// Key files as provided by the user.
-    /// </summary>
-    public sealed class KcpKeyFile : IUserKey
+	/// <summary>
+	/// Key files as provided by the user.
+	/// </summary>
+	public sealed class KcpKeyFile : IUserKey
 	{
 		private string m_strPath;
 		private ProtectedBinary m_pbKeyData;
@@ -51,21 +69,46 @@ namespace ModernKeePassLib.Keys
 
 		public KcpKeyFile(string strKeyFile)
 		{
-			Construct(IOConnectionInfo.FromPath(strKeyFile));
+			Construct(IOConnectionInfo.FromPath(strKeyFile), false);
+		}
+
+		public KcpKeyFile(string strKeyFile, bool bThrowIfDbFile)
+		{
+			Construct(IOConnectionInfo.FromPath(strKeyFile), bThrowIfDbFile);
 		}
 
 		public KcpKeyFile(IOConnectionInfo iocKeyFile)
 		{
-			Construct(iocKeyFile);
+			Construct(iocKeyFile, false);
 		}
 
-		private void Construct(IOConnectionInfo iocFile)
+		public KcpKeyFile(IOConnectionInfo iocKeyFile, bool bThrowIfDbFile)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
+			Construct(iocKeyFile, bThrowIfDbFile);
+		}
+
+		private void Construct(IOConnectionInfo iocFile, bool bThrowIfDbFile)
+		{
 			byte[] pbFileData = IOConnection.ReadFile(iocFile);
 			if(pbFileData == null) throw new FileNotFoundException();
+
+			if(bThrowIfDbFile && (pbFileData.Length >= 8))
+			{
+				uint uSig1 = MemUtil.BytesToUInt32(MemUtil.Mid(pbFileData, 0, 4));
+				uint uSig2 = MemUtil.BytesToUInt32(MemUtil.Mid(pbFileData, 4, 4));
+
+				if(((uSig1 == KdbxFile.FileSignature1) &&
+					(uSig2 == KdbxFile.FileSignature2)) ||
+					((uSig1 == KdbxFile.FileSignaturePreRelease1) &&
+					(uSig2 == KdbxFile.FileSignaturePreRelease2)) ||
+					((uSig1 == KdbxFile.FileSignatureOld1) &&
+					(uSig2 == KdbxFile.FileSignatureOld2)))
+#if KeePassLibSD
+					throw new Exception(KLRes.KeyFileDbSel);
+#else
+					throw new InvalidDataException(KLRes.KeyFileDbSel);
+#endif
+			}
 
 			byte[] pbKey = LoadXmlKeyFile(pbFileData);
 			if(pbKey == null) pbKey = LoadKeyFile(pbFileData);
@@ -76,7 +119,6 @@ namespace ModernKeePassLib.Keys
 			m_pbKeyData = new ProtectedBinary(true, pbKey);
 
 			MemUtil.ZeroByteArray(pbKey);
-#endif
 		}
 
 		// public void Clear()
@@ -87,9 +129,6 @@ namespace ModernKeePassLib.Keys
 
 		private static byte[] LoadKeyFile(byte[] pbFileData)
 		{
-            Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
 			if(pbFileData == null) { Debug.Assert(false); return null; }
 
 			int iLength = pbFileData.Length;
@@ -100,12 +139,16 @@ namespace ModernKeePassLib.Keys
 
 			if(pbKey == null)
 			{
+#if PCL
+				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+				pbKey = sha256.HashData(pbFileData.AsBuffer()).ToArray();
+#else
 				SHA256Managed sha256 = new SHA256Managed();
 				pbKey = sha256.ComputeHash(pbFileData);
+#endif
 			}
 
 			return pbKey;
-#endif
 		}
 
 		private static byte[] LoadBinaryKey32(byte[] pbFileData)
@@ -118,15 +161,12 @@ namespace ModernKeePassLib.Keys
 
 		private static byte[] LoadHexKey32(byte[] pbFileData)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
 			if(pbFileData == null) { Debug.Assert(false); return null; }
 			if(pbFileData.Length != 64) { Debug.Assert(false); return null; }
 
 			try
 			{
-				string strHex = Encoding.ASCII.GetString(pbFileData, 0, 64);
+				string strHex = StrUtil.Utf8.GetString(pbFileData, 0, 64);
 				if(!StrUtil.IsHexString(strHex, true)) return null;
 
 				byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
@@ -138,7 +178,6 @@ namespace ModernKeePassLib.Keys
 			catch(Exception) { Debug.Assert(false); }
 
 			return null;
-#endif
 		}
 
 		/// <summary>
@@ -152,9 +191,6 @@ namespace ModernKeePassLib.Keys
 		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
 		public static void Create(string strFilePath, byte[] pbAdditionalEntropy)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
 			byte[] pbKey32 = CryptoRandom.Instance.GetRandomBytes(32);
 			if(pbKey32 == null) throw new SecurityException();
 
@@ -163,17 +199,22 @@ namespace ModernKeePassLib.Keys
 				pbFinalKey32 = pbKey32;
 			else
 			{
-				MemoryStream ms = new MemoryStream();
-				ms.Write(pbAdditionalEntropy, 0, pbAdditionalEntropy.Length);
-				ms.Write(pbKey32, 0, 32);
+			    using (MemoryStream ms = new MemoryStream())
+			    {
+			        ms.Write(pbAdditionalEntropy, 0, pbAdditionalEntropy.Length);
+			        ms.Write(pbKey32, 0, 32);
 
-				SHA256Managed sha256 = new SHA256Managed();
-				pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
-				ms.Close();
+#if PCL
+			        var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+			        pbFinalKey32 = sha256.HashData(ms.GetWindowsRuntimeBuffer()).ToArray();
+#else
+				    SHA256Managed sha256 = new SHA256Managed();
+				    pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
+#endif
+			    }
 			}
 
 			CreateXmlKeyFile(strFilePath, pbFinalKey32);
-#endif
 		}
 
 		// ================================================================
@@ -199,9 +240,6 @@ namespace ModernKeePassLib.Keys
 
 		private static byte[] LoadXmlKeyFile(byte[] pbFileData)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
 			if(pbFileData == null) { Debug.Assert(false); return null; }
 
 			MemoryStream ms = new MemoryStream(pbFileData, false);
@@ -209,10 +247,38 @@ namespace ModernKeePassLib.Keys
 
 			try
 			{
+#if PCL
+
+				var doc = XDocument.Load(ms);
+
+				var el = doc.Root;
+
+				if((el == null) || !el.Name.LocalName.Equals(RootElementName))
+					return null;
+				if(el.DescendantNodes().Count() < 2)
+					return null;
+
+				foreach(var xmlChild in el.Descendants())
+				{
+					if(xmlChild.Name == MetaElementName) { } // Ignore Meta
+					else if(xmlChild.Name == KeyElementName)
+					{
+						foreach(var xmlKeyChild in xmlChild.Descendants())
+						{
+							if(xmlKeyChild.Name == KeyDataElementName)
+							{
+								if(pbKeyData == null)
+									pbKeyData = Convert.FromBase64String(xmlKeyChild.Value);
+							}
+						}
+					}
+				}
+#else
 				XmlDocument doc = new XmlDocument();
 				doc.Load(ms);
 
 				XmlElement el = doc.DocumentElement;
+
 				if((el == null) || !el.Name.Equals(RootElementName)) return null;
 				if(el.ChildNodes.Count < 2) return null;
 
@@ -231,26 +297,30 @@ namespace ModernKeePassLib.Keys
 						}
 					}
 				}
+#endif
 			}
 			catch(Exception) { pbKeyData = null; }
-			finally { ms.Close(); }
+			finally { ms.Dispose(); }
 
 			return pbKeyData;
-#endif
 		}
 
 		private static void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
-
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 			Debug.Assert(pbKeyData != null);
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
-			XmlTextWriter xtw = new XmlTextWriter(strFile, StrUtil.Utf8);
+			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+			Stream sOut = IOConnection.OpenWrite(ioc);
+
+#if PCL
+			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };
+			var xtw = XmlWriter.Create(sOut, settings);
+#else
+			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
+#endif
 
 			xtw.WriteStartDocument();
 			xtw.WriteWhitespace("\r\n");
@@ -280,8 +350,9 @@ namespace ModernKeePassLib.Keys
 			xtw.WriteEndElement(); // RootElementName
 			xtw.WriteWhitespace("\r\n");
 			xtw.WriteEndDocument(); // End KeyFile
-			xtw.Close();
-#endif
-        }
+			xtw.Dispose();
+
+			sOut.Dispose();
+		}
 	}
 }

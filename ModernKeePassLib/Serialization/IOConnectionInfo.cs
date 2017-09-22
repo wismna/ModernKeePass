@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,11 +23,15 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.ComponentModel;
+using System.Xml.Serialization;
 using System.Diagnostics;
+
+#if PCL
+using Windows.Storage;
+#endif
 
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Utility;
-using Windows.Storage;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -65,7 +69,7 @@ namespace ModernKeePassLib.Serialization
 	{
         // private IOFileFormatHint m_ioHint = IOFileFormatHint.None;
 
-        public StorageFile StorageFile { get; set; }
+	    public StorageFile StorageFile { get; set; }
 
         private string m_strUrl = string.Empty;
 		public string Path
@@ -122,6 +126,14 @@ namespace ModernKeePassLib.Serialization
 			set { m_ioCredSaveMode = value; }
 		}
 
+		private bool m_bComplete = false;
+		[XmlIgnore]
+		public bool IsComplete // Credentials etc. fully specified
+		{
+			get { return m_bComplete; }
+			set { m_bComplete = value; }
+		}
+
 		/* public IOFileFormatHint FileFormatHint
 		{
 			get { return m_ioHint; }
@@ -133,11 +145,17 @@ namespace ModernKeePassLib.Serialization
 			return (IOConnectionInfo)this.MemberwiseClone();
 		}
 
+#if DEBUG // For debugger display only
+		public override string ToString()
+		{
+			return GetDisplayName();
+		}
+#endif
+
 		/*
 		/// <summary>
 		/// Serialize the current connection info to a string. Credentials
-		/// are only serialized if the <c>SaveCredentials</c> property
-		/// is <c>true</c>.
+		/// are serialized based on the <c>CredSaveMode</c> property.
 		/// </summary>
 		/// <param name="iocToCompile">Input object to be serialized.</param>
 		/// <returns>Serialized object as string.</returns>
@@ -149,31 +167,9 @@ namespace ModernKeePassLib.Serialization
 			string strUrl = iocToCompile.Path;
 			string strUser = TransformUnreadable(iocToCompile.UserName, true);
 			string strPassword = TransformUnreadable(iocToCompile.Password, true);
-			string strAll = strUrl + strUser + strPassword;
-			char chSep = char.MinValue;
 
-			char[] vPrefSeps = new char[]{ '@', '#', '!', '$', '*' };
-			foreach(char ch in vPrefSeps)
-			{
-				if(strAll.IndexOf(ch) < 0)
-				{
-					chSep = ch;
-					break;
-				}
-			}
-
-			if(chSep == char.MinValue)
-			{
-				for(char chEnum = '!'; chEnum < char.MaxValue; ++chEnum)
-				{
-					if(strAll.IndexOf(chEnum) < 0)
-					{
-						chSep = chEnum;
-						break;
-					}
-				}
-			}
-
+			string strAll = strUrl + strUser + strPassword + "CUN";
+			char chSep = StrUtil.GetUnusedChar(strAll);
 			if(chSep == char.MinValue) throw new FormatException();
 
 			StringBuilder sb = new StringBuilder();
@@ -279,7 +275,7 @@ namespace ModernKeePassLib.Serialization
 			string str = m_strUrl;
 
 			if(m_strUser.Length > 0)
-				str += @": " + m_strUser;
+				str += " (" + m_strUser + ")";
 
 			return str;
 		}
@@ -299,30 +295,33 @@ namespace ModernKeePassLib.Serialization
 			return ioc;
 		}
 
-        public static IOConnectionInfo FromFile(StorageFile file)
-        {
-            IOConnectionInfo ioc = new IOConnectionInfo();
+	    public static IOConnectionInfo FromFile(StorageFile file)
+	    {
+	        IOConnectionInfo ioc = new IOConnectionInfo();
 
-            ioc.Path = file.Path;
-            ioc.CredSaveMode = IOCredSaveMode.NoSave;
-            ioc.StorageFile = file;
+	        ioc.Path = file.Path;
+	        ioc.CredSaveMode = IOCredSaveMode.NoSave;
+	        ioc.StorageFile = file;
 
-            return ioc;
-        }
+	        return ioc;
+	    }
 
-        public bool CanProbablyAccess()
+
+	    public bool CanProbablyAccess()
 		{
-            Debug.Assert(false, "not yet implemented");
-            return false;
-#if TODO
+#if PCL
+			if(IsLocalFile())
+				return (StorageFile.IsAvailable);
+#else
 			if(IsLocalFile()) return File.Exists(m_strUrl);
+#endif
 
 			return true;
-#endif
 		}
 
 		public bool IsLocalFile()
 		{
+			// Not just ":/", see e.g. AppConfigEx.ChangePathRelAbs
 			return (m_strUrl.IndexOf(@"://") < 0);
 		}
 
@@ -355,15 +354,5 @@ namespace ModernKeePassLib.Serialization
 				m_ioCredProtMode = IOCredProtMode.None;
 			}
 		}
-
-        public override bool Equals(object obj)
-        {
-            if (!(obj is IOConnectionInfo)) return false;
-            IOConnectionInfo ioc = obj as IOConnectionInfo;
-            if (ioc.Path != this.Path) return false;
-            if (ioc.UserName != this.UserName) return false;
-            if (ioc.Password != this.Password) return false;
-            return true;
-        }
 	}
 }

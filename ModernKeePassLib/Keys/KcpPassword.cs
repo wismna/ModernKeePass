@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,17 +18,25 @@
 */
 
 using System;
+using System.Text;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
+#if PCL
+using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
 
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
-using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePassLib.Keys
 {
-    /// <summary>
-    /// Master password / passphrase as provided by the user.
-    /// </summary>
-    public sealed class KcpPassword : IUserKey
+	/// <summary>
+	/// Master password / passphrase as provided by the user.
+	/// </summary>
+	public sealed class KcpPassword : IUserKey
 	{
 		private ProtectedString m_psPassword;
 		private ProtectedBinary m_pbKeyData;
@@ -66,11 +74,16 @@ namespace ModernKeePassLib.Keys
 			Debug.Assert(pbPasswordUtf8 != null);
 			if(pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
 
-            byte[] pbRaw = SHA256Managed.Instance.ComputeHash(pbPasswordUtf8);
-          
+#if PCL
+			var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+			var pbRaw = sha256.HashData(pbPasswordUtf8.AsBuffer());
+#else
+			SHA256Managed sha256 = new SHA256Managed();
+			byte[] pbRaw = sha256.ComputeHash(pbPasswordUtf8);
+#endif
+
 			m_psPassword = new ProtectedString(true, pbPasswordUtf8);
-			m_pbKeyData = new ProtectedBinary(true, pbRaw);
-        
+			m_pbKeyData = new ProtectedBinary(true, pbRaw.ToArray());
 		}
 
 		// public void Clear()

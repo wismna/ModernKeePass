@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+using System;
+#if PCL
+using Windows.Security.Cryptography.Core;
+#else
+using System.Security.Cryptography;
+#endif
+using System.Globalization;
+using System.Runtime.InteropServices.WindowsRuntime;
+using ModernKeePassLib.Utility;
 
-
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 namespace ModernKeePassLib.Cryptography
 {
-    /// <summary>
-    /// Generate HMAC-based one-time passwords as specified in RFC 4226.
-    /// </summary>
-    public static class HmacOtp
+	/// <summary>
+	/// Generate HMAC-based one-time passwords as specified in RFC 4226.
+	/// </summary>
+	public static class HmacOtp
 	{
 		private static readonly uint[] vDigitsPower = new uint[]{ 1, 10, 100,
 			1000, 10000, 100000, 1000000, 10000000, 100000000 };
@@ -33,14 +41,17 @@ namespace ModernKeePassLib.Cryptography
 		public static string Generate(byte[] pbSecret, ulong uFactor,
 			uint uCodeDigits, bool bAddChecksum, int iTruncationOffset)
 		{
-            Debug.Assert(false, "Not yet implemented");
-            return null;
-#if TODO
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
 			Array.Reverse(pbText); // Big-Endian
 
+#if PCL
+			var hsha1 = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1).CreateHash(pbSecret.AsBuffer());
+			hsha1.Append(pbText.AsBuffer());
+			var pbHash = hsha1.GetValueAndReset().ToArray();
+#else
 			HMACSHA1 hsha1 = new HMACSHA1(pbSecret);
 			byte[] pbHash = hsha1.ComputeHash(pbText);
+#endif
 
 			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
 			if((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
@@ -56,8 +67,8 @@ namespace ModernKeePassLib.Cryptography
 				uOtp = ((uOtp * 10) + CalculateChecksum(uOtp, uCodeDigits));
 
 			uint uDigits = (bAddChecksum ? (uCodeDigits + 1) : uCodeDigits);
-			return uOtp.ToString().PadLeft((int)uDigits, '0');
-#endif
+			return uOtp.ToString(NumberFormatInfo.InvariantInfo).PadLeft(
+				(int)uDigits, '0');
 		}
 
 		private static readonly uint[] vDoubleDigits = new uint[]{ 0, 2, 4, 6, 8,

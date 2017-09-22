@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,6 +29,10 @@ using System.Diagnostics;
 using System.IO.Compression;
 #endif
 
+#if PCL
+using Windows.Storage;
+#endif
+
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Delegates;
@@ -39,10 +43,10 @@ using ModernKeePassLib.Utility;
 namespace ModernKeePassLib.Serialization
 {
 	/// <summary>
-	/// The <c>Kdb4File</c> class supports saving the data to various
+	/// The <c>KdbxFile</c> class supports saving the data to various
 	/// formats.
 	/// </summary>
-	public enum Kdb4Format
+	public enum KdbxFormat
 	{
 		/// <summary>
 		/// The default, encrypted file format.
@@ -56,37 +60,37 @@ namespace ModernKeePassLib.Serialization
 	}
 
 	/// <summary>
-	/// Serialization to KeePass KDB files.
+	/// Serialization to KeePass KDBX files.
 	/// </summary>
-	public sealed partial class Kdb4File
+	public sealed partial class KdbxFile
 	{
 		/// <summary>
 		/// File identifier, first 32-bit value.
 		/// </summary>
-		private const uint FileSignature1 = 0x9AA2D903;
+		internal const uint FileSignature1 = 0x9AA2D903;
 
 		/// <summary>
 		/// File identifier, second 32-bit value.
 		/// </summary>
-		private const uint FileSignature2 = 0xB54BFB67;
+		internal const uint FileSignature2 = 0xB54BFB67;
 
 		/// <summary>
-		/// File version of files saved by the current <c>Kdb4File</c> class.
+		/// File version of files saved by the current <c>KdbxFile</c> class.
 		/// KeePass 2.07 has version 1.01, 2.08 has 1.02, 2.09 has 2.00,
-		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00.
+		/// 2.10 has 2.02, 2.11 has 2.04, 2.15 has 3.00, 2.20 has 3.01.
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00030000;
+		private const uint FileVersion32 = 0x00030001;
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
 		// KeePass 1.x signature
-		private const uint FileSignatureOld1 = 0x9AA2D903;
-		private const uint FileSignatureOld2 = 0xB54BFB65;
+		internal const uint FileSignatureOld1 = 0x9AA2D903;
+		internal const uint FileSignatureOld2 = 0xB54BFB65;
 		// KeePass 2.x pre-release (alpha and beta) signature
-		private const uint FileSignaturePreRelease1 = 0x9AA2D903;
-		private const uint FileSignaturePreRelease2 = 0xB54BFB66;
+		internal const uint FileSignaturePreRelease1 = 0x9AA2D903;
+		internal const uint FileSignaturePreRelease2 = 0xB54BFB66;
 
 		private const string ElemDocNode = "KeePassFile";
 		private const string ElemMeta = "Meta";
@@ -95,6 +99,7 @@ namespace ModernKeePassLib.Serialization
 		private const string ElemEntry = "Entry";
 
 		private const string ElemGenerator = "Generator";
+		private const string ElemHeaderHash = "HeaderHash";
 		private const string ElemDbName = "DatabaseName";
 		private const string ElemDbNameChanged = "DatabaseNameChanged";
 		private const string ElemDbDesc = "DatabaseDescription";
@@ -190,9 +195,13 @@ namespace ModernKeePassLib.Serialization
 
 		private PwDatabase m_pwDatabase; // Not null, see constructor
 
+#if PCL
 		private XmlWriter m_xmlWriter = null;
+#else
+		private XmlTextWriter m_xmlWriter = null;
+#endif
 		private CryptoRandomStream m_randomStream = null;
-		private Kdb4Format m_format = Kdb4Format.Default;
+		private KdbxFormat m_format = KdbxFormat.Default;
 		private IStatusLogger m_slLogger = null;
 
 		private byte[] m_pbMasterSeed = null;
@@ -208,6 +217,7 @@ namespace ModernKeePassLib.Serialization
 		private Dictionary<string, ProtectedBinary> m_dictBinPool =
 			new Dictionary<string, ProtectedBinary>();
 
+		private byte[] m_pbHashOfHeader = null;
 		private byte[] m_pbHashOfFileOnDisk = null;
 
 		private readonly DateTime m_dtNow = DateTime.Now; // Cache current time
@@ -217,7 +227,7 @@ namespace ModernKeePassLib.Serialization
 		private const uint NeutralLanguageID = NeutralLanguageOffset + NeutralLanguageIDSec;
 		private static bool m_bLocalizedNames = false;
 
-		private enum Kdb4HeaderFieldID : byte
+		private enum KdbxHeaderFieldID : byte
 		{
 			EndOfHeader = 0,
 			Comment = 1,
@@ -261,7 +271,7 @@ namespace ModernKeePassLib.Serialization
 		/// </summary>
 		/// <param name="pwDataStore">The <c>PwDatabase</c> instance that the
 		/// class will load file data into or use to create a KDBX file.</param>
-		public Kdb4File(PwDatabase pwDataStore)
+		public KdbxFile(PwDatabase pwDataStore)
 		{
 			Debug.Assert(pwDataStore != null);
 			if(pwDataStore == null) throw new ArgumentNullException("pwDataStore");
@@ -322,7 +332,8 @@ namespace ModernKeePassLib.Serialization
 
 			if(BinPoolFind(pb) != null) return; // Exists already
 
-			m_dictBinPool.Add(m_dictBinPool.Count.ToString(), pb);
+			m_dictBinPool.Add(m_dictBinPool.Count.ToString(
+				NumberFormatInfo.InvariantInfo), pb);
 		}
 
 		private string BinPoolFind(ProtectedBinary pb)
@@ -350,12 +361,6 @@ namespace ModernKeePassLib.Serialization
 		private static void SaveBinary(string strName, ProtectedBinary pb,
 			string strSaveDir)
 		{
-            // TODO Bert: Needs to be implemented.
-#if !TODO
-            Debug.Assert(false,"not implemented");
-#else
-
-
 			if(pb == null) { Debug.Assert(false); return; }
 
 			if(string.IsNullOrEmpty(strName)) strName = "File.bin";
@@ -370,15 +375,28 @@ namespace ModernKeePassLib.Serialization
 				string strDesc = UrlUtil.StripExtension(strName);
 
 				strPath += strDesc;
-				if(iTry > 1) strPath += " (" + iTry.ToString() + ")";
+				if(iTry > 1)
+					strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
+						")";
 
 				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 
 				++iTry;
 			}
+#if PCL
+			while(ApplicationData.Current.RoamingFolder.GetFileAsync(strPath).GetResults() != null);
+#else
 			while(File.Exists(strPath));
+#endif
 
-#if !KeePassLibSD
+#if PCL
+			byte[] pbData = pb.ReadData();
+			var file = ApplicationData.Current.RoamingFolder.GetFileAsync(strPath).GetResults();
+			using (var stream = file.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream()) {
+				stream.Write (pbData, 0, pbData.Length);
+			}
+			MemUtil.ZeroByteArray(pbData);
+#elif !KeePassLibSD
 			byte[] pbData = pb.ReadData();
 			File.WriteAllBytes(strPath, pbData);
 			MemUtil.ZeroByteArray(pbData);
@@ -389,9 +407,6 @@ namespace ModernKeePassLib.Serialization
 			fs.Write(pbData, 0, pbData.Length);
 			fs.Close();
 #endif
-
-#endif // TODO
-        }
-
+		}
 	}
 }

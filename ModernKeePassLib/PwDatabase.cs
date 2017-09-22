@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,27 +19,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Imaging;
-//using System.Drawing;
-
-using ModernKeePassLib.WinRTAdaptors;
+using Windows.UI;
+using Windows.UI.Xaml.Controls;
 using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib
 {
-    /// <summary>
-    /// The core password manager class. It contains a number of groups, which
-    /// contain the actual entries.
-    /// </summary>
-    public sealed class PwDatabase
+	/// <summary>
+	/// The core password manager class. It contains a number of groups, which
+	/// contain the actual entries.
+	/// </summary>
+	public sealed class PwDatabase
 	{
 		internal const int DefaultHistoryMaxItems = 10; // -1 = unlimited
 		internal const long DefaultHistoryMaxSize = 6 * 1024 * 1024; // -1 = unlimited
@@ -67,7 +68,7 @@ namespace ModernKeePassLib
 		private string m_strDefaultUserName = string.Empty;
 		private DateTime m_dtDefaultUserChanged = PwDefs.DtDefaultNow;
 		private uint m_uMntncHistoryDays = 365;
-		private Color m_clr = Color.Empty;
+		private Color m_clr;
 
 		private DateTime m_dtKeyLastChanged = PwDefs.DtDefaultNow;
 		private long m_lKeyChangeRecDays = -1;
@@ -497,7 +498,7 @@ namespace ModernKeePassLib
 			m_strDefaultUserName = string.Empty;
 			m_dtDefaultUserChanged = dtNow;
 			m_uMntncHistoryDays = 365;
-			m_clr = Color.Empty;
+			m_clr = new Color();
 
 			m_dtKeyLastChanged = dtNow;
 			m_lKeyChangeRecDays = -1;
@@ -561,10 +562,9 @@ namespace ModernKeePassLib
 		/// <param name="ioSource">IO connection to load the database from.</param>
 		/// <param name="pwKey">Key used to open the specified database.</param>
 		/// <param name="slLogger">Logger, which gets all status messages.</param>
-		public async Task Open(IOConnectionInfo ioSource, CompositeKey pwKey,
+		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
 			IStatusLogger slLogger)
 		{
-              
 			Debug.Assert(ioSource != null);
 			if(ioSource == null) throw new ArgumentNullException("ioSource");
 			Debug.Assert(pwKey != null);
@@ -582,17 +582,15 @@ namespace ModernKeePassLib
 
 				m_bModified = false;
 
-				Kdb4File kdb4 = new Kdb4File(this);
-				kdb4.DetachBinaries = m_strDetachBins;
+				KdbxFile kdbx = new KdbxFile(this);
+				kdbx.DetachBinaries = m_strDetachBins;
 
-                IOConnection ioc = new IOConnection();
-				Stream s = await ioc.OpenRead(ioSource);
-				kdb4.Load(s, Kdb4Format.Default, slLogger);
+				Stream s = IOConnection.OpenRead(ioSource);
+				kdbx.Load(s, KdbxFormat.Default, slLogger);
+				s.Dispose();
 
-                s.Dispose();
-
-				m_pbHashOfLastIO = kdb4.HashOfFileOnDisk;
-				m_pbHashOfFileOnDisk = kdb4.HashOfFileOnDisk;
+				m_pbHashOfLastIO = kdbx.HashOfFileOnDisk;
+				m_pbHashOfFileOnDisk = kdbx.HashOfFileOnDisk;
 				Debug.Assert(m_pbHashOfFileOnDisk != null);
 
 				m_bDatabaseOpened = true;
@@ -610,7 +608,7 @@ namespace ModernKeePassLib
 		/// it has been opened from.
 		/// </summary>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public async void Save(IStatusLogger slLogger)
+		public void Save(IStatusLogger slLogger)
 		{
 			Debug.Assert(ValidateUuidUniqueness());
 
@@ -620,10 +618,10 @@ namespace ModernKeePassLib
 			{
 				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
 					m_bUseFileTransactions);
-				Stream s = await ft.OpenWrite();
+				Stream s = ft.OpenWrite();
 
-				Kdb4File kdb = new Kdb4File(this);
-				kdb.Save(s, null, Kdb4Format.Default, slLogger);
+				KdbxFile kdb = new KdbxFile(this);
+				kdb.Save(s, null, KdbxFormat.Default, slLogger);
 
 				ft.CommitWrite();
 
@@ -631,8 +629,6 @@ namespace ModernKeePassLib
 				m_pbHashOfFileOnDisk = kdb.HashOfFileOnDisk;
 				Debug.Assert(m_pbHashOfFileOnDisk != null);
 			}
-            catch (Exception ex)
-            { }
 			finally { if(fl != null) fl.Dispose(); }
 
 			m_bModified = false;
@@ -688,15 +684,15 @@ namespace ModernKeePassLib
 			Clear();
 		}
 
-		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm)
+		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm)
 		{
-			MergeIn(pwSource, mm, null);
+			MergeIn(pdSource, mm, null);
 		}
 
 		/// <summary>
 		/// Synchronize the current database with another one.
 		/// </summary>
-		/// <param name="pwSource">Input database to synchronize with. This input
+		/// <param name="pdSource">Input database to synchronize with. This input
 		/// database is used to update the current one, but is not modified! You
 		/// must copy the current object if you want a second instance of the
 		/// synchronized database. The input database must not be seen as valid
@@ -704,27 +700,38 @@ namespace ModernKeePassLib
 		/// <param name="mm">Merge method.</param>
 		/// <param name="slStatus">Logger to report status messages to.
 		/// May be <c>null</c>.</param>
-		public void MergeIn(PwDatabase pwSource, PwMergeMethod mm,
+		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm,
 			IStatusLogger slStatus)
 		{
-			if(pwSource == null) throw new ArgumentNullException("pwSource");
+			if(pdSource == null) throw new ArgumentNullException("pdSource");
 
 			PwGroup pgOrgStructure = m_pgRootGroup.CloneStructure();
-			PwGroup pgSrcStructure = pwSource.m_pgRootGroup.CloneStructure();
+			PwGroup pgSrcStructure = pdSource.m_pgRootGroup.CloneStructure();
 
 			if(mm == PwMergeMethod.CreateNewUuids)
-				pwSource.RootGroup.CreateNewItemUuids(true, true, true);
+			{
+				pdSource.RootGroup.CreateNewItemUuids(true, true, true);
+				pdSource.RootGroup.Uuid = new PwUuid(true);
+			}
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				if(pg == pwSource.m_pgRootGroup) return true;
+				// if(pg == pdSource.m_pgRootGroup) return true;
 
 				PwGroup pgLocal = m_pgRootGroup.FindGroup(pg.Uuid, true);
 				if(pgLocal == null)
 				{
 					PwGroup pgSourceParent = pg.ParentGroup;
 					PwGroup pgLocalContainer;
-					if(pgSourceParent == pwSource.m_pgRootGroup)
+					if(pgSourceParent == null)
+					{
+						// pg is the root group of pdSource, and no corresponding
+						// local group was found; create the group within the
+						// local root group
+						Debug.Assert(pg == pdSource.m_pgRootGroup);
+						pgLocalContainer = m_pgRootGroup;
+					}
+					else if(pgSourceParent == pdSource.m_pgRootGroup)
 						pgLocalContainer = m_pgRootGroup;
 					else
 						pgLocalContainer = m_pgRootGroup.FindGroup(pgSourceParent.Uuid, true);
@@ -760,7 +767,7 @@ namespace ModernKeePassLib
 				{
 					PwGroup pgSourceParent = pe.ParentGroup;
 					PwGroup pgLocalContainer;
-					if(pgSourceParent == pwSource.m_pgRootGroup)
+					if(pgSourceParent == pdSource.m_pgRootGroup)
 						pgLocalContainer = m_pgRootGroup;
 					else
 						pgLocalContainer = m_pgRootGroup.FindGroup(pgSourceParent.Uuid, true);
@@ -783,12 +790,12 @@ namespace ModernKeePassLib
 
 					bool bOrgBackup = !bEquals;
 					if(mm != PwMergeMethod.OverwriteExisting)
-						bOrgBackup &= (pe.LastModificationTime > peLocal.LastModificationTime);
+						bOrgBackup &= (TimeUtil.CompareLastMod(pe, peLocal, true) > 0);
 					bOrgBackup &= !pe.HasBackupOfData(peLocal, false, true);
 					if(bOrgBackup) peLocal.CreateBackup(null); // Maintain at end
 
 					bool bSrcBackup = !bEquals && (mm != PwMergeMethod.OverwriteExisting);
-					bSrcBackup &= (peLocal.LastModificationTime > pe.LastModificationTime);
+					bSrcBackup &= (TimeUtil.CompareLastMod(peLocal, pe, true) > 0);
 					bSrcBackup &= !peLocal.HasBackupOfData(pe, false, true);
 					if(bSrcBackup) pe.CreateBackup(null); // Maintain at end
 
@@ -807,7 +814,8 @@ namespace ModernKeePassLib
 				return ((slStatus != null) ? slStatus.ContinueWork() : true);
 			};
 
-			if(!pwSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
+			gh(pdSource.RootGroup);
+			if(!pdSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
 				throw new InvalidOperationException();
 
 			IStatusLogger slPrevStatus = m_slStatus;
@@ -815,7 +823,7 @@ namespace ModernKeePassLib
 
 			if(mm == PwMergeMethod.Synchronize)
 			{
-				ApplyDeletions(pwSource.m_vDeletedObjects, true);
+				ApplyDeletions(pdSource.m_vDeletedObjects, true);
 				ApplyDeletions(m_vDeletedObjects, false);
 
 				PwObjectPool ppOrgGroups = PwObjectPool.FromGroupRecursive(
@@ -836,18 +844,18 @@ namespace ModernKeePassLib
 
 			// Must be called *after* merging groups, because group UUIDs
 			// are required for recycle bin and entry template UUIDs
-			MergeInDbProperties(pwSource, mm);
+			MergeInDbProperties(pdSource, mm);
 
-			MergeInCustomIcons(pwSource);
+			MergeInCustomIcons(pdSource);
 
 			MaintainBackups();
 
 			m_slStatus = slPrevStatus;
 		}
 
-		private void MergeInCustomIcons(PwDatabase pwSource)
+		private void MergeInCustomIcons(PwDatabase pdSource)
 		{
-			foreach(PwCustomIcon pwci in pwSource.CustomIcons)
+			foreach(PwCustomIcon pwci in pdSource.CustomIcons)
 			{
 				if(GetCustomIconIndex(pwci.Uuid) >= 0) continue;
 
@@ -856,10 +864,6 @@ namespace ModernKeePassLib
 			}
 		}
 
-		/// <summary>
-		/// Apply a list of deleted objects.
-		/// </summary>
-		/// <param name="listDelObjects">List of deleted objects.</param>
 		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects,
 			bool bCopyDeletionInfoToLocal)
 		{
@@ -874,9 +878,12 @@ namespace ModernKeePassLib
 
 				foreach(PwDeletedObject pdo in listDelObjects)
 				{
-					if(pg.Uuid.EqualsValue(pdo.Uuid))
-						if(pg.LastModificationTime < pdo.DeletionTime)
+					if(pg.Uuid.Equals(pdo.Uuid))
+					{
+						if(TimeUtil.Compare(pg.LastModificationTime,
+							pdo.DeletionTime, true) < 0)
 							listGroupsToDelete.AddLast(pg);
+					}
 				}
 
 				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
@@ -886,9 +893,12 @@ namespace ModernKeePassLib
 			{
 				foreach(PwDeletedObject pdo in listDelObjects)
 				{
-					if(pe.Uuid.EqualsValue(pdo.Uuid))
-						if(pe.LastModificationTime < pdo.DeletionTime)
+					if(pe.Uuid.Equals(pdo.Uuid))
+					{
+						if(TimeUtil.Compare(pe.LastModificationTime,
+							pdo.DeletionTime, true) < 0)
 							listEntriesToDelete.AddLast(pe);
+					}
 				}
 
 				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
@@ -909,7 +919,7 @@ namespace ModernKeePassLib
 
 					foreach(PwDeletedObject pdoLocal in m_vDeletedObjects)
 					{
-						if(pdoNew.Uuid.EqualsValue(pdoLocal.Uuid))
+						if(pdoNew.Uuid.Equals(pdoLocal.Uuid))
 						{
 							bCopy = false;
 
@@ -942,8 +952,15 @@ namespace ModernKeePassLib
 				if(ptSrc == null) continue;
 
 				PwGroup pgOrgParent = ptOrg.ParentGroup;
+				// vGroups does not contain the root group, thus pgOrgParent
+				// should not be null
+				if(pgOrgParent == null) { Debug.Assert(false); continue; }
+
 				PwGroup pgSrcParent = ptSrc.ParentGroup;
-				if(pgOrgParent.Uuid.EqualsValue(pgSrcParent.Uuid))
+				// pgSrcParent may be null (for the source root group)
+				if(pgSrcParent == null) continue;
+
+				if(pgOrgParent.Uuid.Equals(pgSrcParent.Uuid))
 				{
 					pg.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
 						ptSrc.LocationChanged : ptOrg.LocationChanged);
@@ -963,7 +980,7 @@ namespace ModernKeePassLib
 				}
 				else
 				{
-					Debug.Assert(pg.ParentGroup.Uuid.EqualsValue(pgOrgParent.Uuid));
+					Debug.Assert(pg.ParentGroup.Uuid.Equals(pgOrgParent.Uuid));
 					Debug.Assert(pg.LocationChanged == ptOrg.LocationChanged);
 				}
 			}
@@ -989,7 +1006,7 @@ namespace ModernKeePassLib
 
 				PwGroup pgOrg = ptOrg.ParentGroup;
 				PwGroup pgSrc = ptSrc.ParentGroup;
-				if(pgOrg.Uuid.EqualsValue(pgSrc.Uuid))
+				if(pgOrg.Uuid.Equals(pgSrc.Uuid))
 				{
 					pe.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
 						ptSrc.LocationChanged : ptOrg.LocationChanged);
@@ -1007,7 +1024,7 @@ namespace ModernKeePassLib
 				}
 				else
 				{
-					Debug.Assert(pe.ParentGroup.Uuid.EqualsValue(pgOrg.Uuid));
+					Debug.Assert(pe.ParentGroup.Uuid.Equals(pgOrg.Uuid));
 					Debug.Assert(pe.LocationChanged == ptOrg.LocationChanged);
 				}
 			}
@@ -1084,7 +1101,7 @@ namespace ModernKeePassLib
 					bool bAdded = false;
 					foreach(PwUuid puBefore in qRelBefore)
 					{
-						if(puBefore.EqualsValue(pt.Uuid))
+						if(puBefore.Equals(pt.Uuid))
 						{
 							qBefore.Enqueue(pt);
 							bAdded = true;
@@ -1095,7 +1112,7 @@ namespace ModernKeePassLib
 
 					foreach(PwUuid puAfter in qRelAfter)
 					{
-						if(puAfter.EqualsValue(pt.Uuid))
+						if(puAfter.Equals(pt.Uuid))
 						{
 							qAfter.Enqueue(pt);
 							bAdded = true;
@@ -1159,7 +1176,16 @@ namespace ModernKeePassLib
 				{
 					uPosMax = u;
 					dtMax = ptOrg.LocationChanged; // No 'continue'
-					vNeighborSrc = ptOrg.ParentGroup.GetObjects(false, bEntries);
+
+					PwGroup pgParent = ptOrg.ParentGroup;
+					if(pgParent != null)
+						vNeighborSrc = pgParent.GetObjects(false, bEntries);
+					else
+					{
+						Debug.Assert(false); // Org root should be excluded
+						vNeighborSrc = new List<IStructureItem>();
+						vNeighborSrc.Add(ptOrg);
+					}
 				}
 
 				// IStructureItem ptSrc = pgSrcStructure.FindObject(pt.Uuid, true, bEntries);
@@ -1168,7 +1194,16 @@ namespace ModernKeePassLib
 				{
 					uPosMax = u;
 					dtMax = ptSrc.LocationChanged; // No 'continue'
-					vNeighborSrc = ptSrc.ParentGroup.GetObjects(false, bEntries);
+
+					PwGroup pgParent = ptSrc.ParentGroup;
+					if(pgParent != null)
+						vNeighborSrc = pgParent.GetObjects(false, bEntries);
+					else
+					{
+						// pgParent may be null (for the source root group)
+						vNeighborSrc = new List<IStructureItem>();
+						vNeighborSrc.Add(ptSrc);
+					}
 				}
 			}
 
@@ -1190,7 +1225,7 @@ namespace ModernKeePassLib
 			{
 				PwUuid pw = vItems[i].Uuid;
 
-				if(pw.EqualsValue(pwPivot)) bBefore = false;
+				if(pw.Equals(pwPivot)) bBefore = false;
 				else if(bBefore) qBefore.Enqueue(pw);
 				else qAfter.Enqueue(pw);
 			}
@@ -1226,8 +1261,8 @@ namespace ModernKeePassLib
 			PwGroup pgSrcParent = ptSrc.ParentGroup;
 			if(pgSrcParent == null) return true; // Root might be in tree
 
-			if(!ptFirst.ParentGroup.Uuid.EqualsValue(pgOrgParent.Uuid)) return true;
-			if(!pgOrgParent.Uuid.EqualsValue(pgSrcParent.Uuid)) return true;
+			if(!ptFirst.ParentGroup.Uuid.Equals(pgOrgParent.Uuid)) return true;
+			if(!pgOrgParent.Uuid.Equals(pgSrcParent.Uuid)) return true;
 
 			List<IStructureItem> lOrg = pgOrgParent.GetObjects(false, bEntries);
 			List<IStructureItem> lSrc = pgSrcParent.GetObjects(false, bEntries);
@@ -1239,8 +1274,8 @@ namespace ModernKeePassLib
 				IStructureItem pt = vItems.GetAt(u);
 				Debug.Assert(pt.ParentGroup == ptFirst.ParentGroup);
 
-				if(!pt.Uuid.EqualsValue(lOrg[(int)u].Uuid)) return true;
-				if(!pt.Uuid.EqualsValue(lSrc[(int)u].Uuid)) return true;
+				if(!pt.Uuid.Equals(lOrg[(int)u].Uuid)) return true;
+				if(!pt.Uuid.Equals(lSrc[(int)u].Uuid)) return true;
 				if(pt.LocationChanged != lOrg[(int)u].LocationChanged) return true;
 				if(pt.LocationChanged != lSrc[(int)u].LocationChanged) return true;
 			}
@@ -1248,41 +1283,41 @@ namespace ModernKeePassLib
 			return false;
 		}
 
-		private void MergeInDbProperties(PwDatabase pwSource, PwMergeMethod mm)
+		private void MergeInDbProperties(PwDatabase pdSource, PwMergeMethod mm)
 		{
-			if(pwSource == null) { Debug.Assert(false); return; }
+			if(pdSource == null) { Debug.Assert(false); return; }
 			if((mm == PwMergeMethod.KeepExisting) || (mm == PwMergeMethod.None))
 				return;
 
 			bool bForce = (mm == PwMergeMethod.OverwriteExisting);
 
-			if(bForce || (pwSource.m_dtNameChanged > m_dtNameChanged))
+			if(bForce || (pdSource.m_dtNameChanged > m_dtNameChanged))
 			{
-				m_strName = pwSource.m_strName;
-				m_dtNameChanged = pwSource.m_dtNameChanged;
+				m_strName = pdSource.m_strName;
+				m_dtNameChanged = pdSource.m_dtNameChanged;
 			}
 
-			if(bForce || (pwSource.m_dtDescChanged > m_dtDescChanged))
+			if(bForce || (pdSource.m_dtDescChanged > m_dtDescChanged))
 			{
-				m_strDesc = pwSource.m_strDesc;
-				m_dtDescChanged = pwSource.m_dtDescChanged;
+				m_strDesc = pdSource.m_strDesc;
+				m_dtDescChanged = pdSource.m_dtDescChanged;
 			}
 
-			if(bForce || (pwSource.m_dtDefaultUserChanged > m_dtDefaultUserChanged))
+			if(bForce || (pdSource.m_dtDefaultUserChanged > m_dtDefaultUserChanged))
 			{
-				m_strDefaultUserName = pwSource.m_strDefaultUserName;
-				m_dtDefaultUserChanged = pwSource.m_dtDefaultUserChanged;
+				m_strDefaultUserName = pdSource.m_strDefaultUserName;
+				m_dtDefaultUserChanged = pdSource.m_dtDefaultUserChanged;
 			}
 
-			if(bForce) m_clr = pwSource.m_clr;
+			if(bForce) m_clr = pdSource.m_clr;
 
-			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pwSource.m_pwRecycleBin;
-			if(bForce || (pwSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
+			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pdSource.m_pwRecycleBin;
+			if(bForce || (pdSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
 			{
-				pwPrefBin = pwSource.m_pwRecycleBin;
+				pwPrefBin = pdSource.m_pwRecycleBin;
 				pwAltBin = m_pwRecycleBin;
-				m_bUseRecycleBin = pwSource.m_bUseRecycleBin;
-				m_dtRecycleBinChanged = pwSource.m_dtRecycleBinChanged;
+				m_bUseRecycleBin = pdSource.m_bUseRecycleBin;
+				m_dtRecycleBinChanged = pdSource.m_dtRecycleBinChanged;
 			}
 			if(m_pgRootGroup.FindGroup(pwPrefBin, true) != null)
 				m_pwRecycleBin = pwPrefBin;
@@ -1290,12 +1325,12 @@ namespace ModernKeePassLib
 				m_pwRecycleBin = pwAltBin;
 			else m_pwRecycleBin = PwUuid.Zero; // Debug.Assert(false);
 
-			PwUuid pwPrefTmp = m_pwEntryTemplatesGroup, pwAltTmp = pwSource.m_pwEntryTemplatesGroup;
-			if(bForce || (pwSource.m_dtEntryTemplatesChanged > m_dtEntryTemplatesChanged))
+			PwUuid pwPrefTmp = m_pwEntryTemplatesGroup, pwAltTmp = pdSource.m_pwEntryTemplatesGroup;
+			if(bForce || (pdSource.m_dtEntryTemplatesChanged > m_dtEntryTemplatesChanged))
 			{
-				pwPrefTmp = pwSource.m_pwEntryTemplatesGroup;
+				pwPrefTmp = pdSource.m_pwEntryTemplatesGroup;
 				pwAltTmp = m_pwEntryTemplatesGroup;
-				m_dtEntryTemplatesChanged = pwSource.m_dtEntryTemplatesChanged;
+				m_dtEntryTemplatesChanged = pdSource.m_dtEntryTemplatesChanged;
 			}
 			if(m_pgRootGroup.FindGroup(pwPrefTmp, true) != null)
 				m_pwEntryTemplatesGroup = pwPrefTmp;
@@ -1307,10 +1342,7 @@ namespace ModernKeePassLib
 		private void MergeEntryHistory(PwEntry pe, PwEntry peSource,
 			PwMergeMethod mm)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return ;
-#if TODO
-			if(!pe.Uuid.EqualsValue(peSource.Uuid)) { Debug.Assert(false); return; }
+			if(!pe.Uuid.Equals(peSource.Uuid)) { Debug.Assert(false); return; }
 
 			if(pe.History.UCount == peSource.History.UCount)
 			{
@@ -1330,31 +1362,35 @@ namespace ModernKeePassLib
 
 			if((m_slStatus != null) && !m_slStatus.ContinueWork()) return;
 
-			SortedList<DateTime, PwEntry> list = new SortedList<DateTime, PwEntry>();
+			IDictionary<DateTime, PwEntry> dict =
+#if KeePassLibSD
+				new SortedList<DateTime, PwEntry>();
+#else
+				new SortedDictionary<DateTime, PwEntry>();
+#endif
 			foreach(PwEntry peOrg in pe.History)
 			{
-				list[peOrg.LastModificationTime] = peOrg;
+				dict[peOrg.LastModificationTime] = peOrg;
 			}
 
 			foreach(PwEntry peSrc in peSource.History)
 			{
 				DateTime dt = peSrc.LastModificationTime;
-				if(list.ContainsKey(dt))
+				if(dict.ContainsKey(dt))
 				{
 					if(mm == PwMergeMethod.OverwriteExisting)
-						list[dt] = peSrc.CloneDeep();
+						dict[dt] = peSrc.CloneDeep();
 				}
-				else list[dt] = peSrc.CloneDeep();
+				else dict[dt] = peSrc.CloneDeep();
 			}
 
 			pe.History.Clear();
-			foreach(KeyValuePair<DateTime, PwEntry> kvpCur in list)
+			foreach(KeyValuePair<DateTime, PwEntry> kvpCur in dict)
 			{
-				Debug.Assert(kvpCur.Value.Uuid.EqualsValue(pe.Uuid));
+				Debug.Assert(kvpCur.Value.Uuid.Equals(pe.Uuid));
 				Debug.Assert(kvpCur.Value.History.UCount == 0);
 				pe.History.Add(kvpCur.Value);
 			}
-#endif
 		}
 
 		public bool MaintainBackups()
@@ -1378,12 +1414,12 @@ namespace ModernKeePassLib
 		/// <param name="strFile">Source file.</param>
 		public void Synchronize(string strFile)
 		{
-			PwDatabase pwSource = new PwDatabase();
+			PwDatabase pdSource = new PwDatabase();
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			pwSource.Open(ioc, m_pwUserKey, null);
+			pdSource.Open(ioc, m_pwUserKey, null);
 
-			MergeIn(pwSource, PwMergeMethod.Synchronize);
+			MergeIn(pdSource, PwMergeMethod.Synchronize);
 		} */
 
 		/// <summary>
@@ -1393,17 +1429,31 @@ namespace ModernKeePassLib
 		/// <returns>Index of the icon.</returns>
 		public int GetCustomIconIndex(PwUuid pwIconId)
 		{
-			int nIndex = 0;
-
-			foreach(PwCustomIcon pwci in m_vCustomIcons)
+			for(int i = 0; i < m_vCustomIcons.Count; ++i)
 			{
-				if(pwci.Uuid.EqualsValue(pwIconId))
-					return nIndex;
-
-				++nIndex;
+				PwCustomIcon pwci = m_vCustomIcons[i];
+				if(pwci.Uuid.Equals(pwIconId))
+					return i;
 			}
 
 			// Debug.Assert(false); // Do not assert
+			return -1;
+		}
+
+		public int GetCustomIconIndex(byte[] pbPngData)
+		{
+			if(pbPngData == null) { Debug.Assert(false); return -1; }
+
+			for(int i = 0; i < m_vCustomIcons.Count; ++i)
+			{
+				PwCustomIcon pwci = m_vCustomIcons[i];
+				byte[] pbEx = pwci.ImageDataPng;
+				if(pbEx == null) { Debug.Assert(false); continue; }
+
+				if(MemUtil.ArraysEqual(pbEx, pbPngData))
+					return i;
+			}
+
 			return -1;
 		}
 
@@ -1413,12 +1463,16 @@ namespace ModernKeePassLib
 		/// </summary>
 		/// <param name="pwIconId">ID of the icon.</param>
 		/// <returns>Image data.</returns>
-        public BitmapImage GetCustomIcon(PwUuid pwIconId)
+		public Image GetCustomIcon(PwUuid pwIconId)
 		{
-			int nIndex = GetCustomIconIndex(pwIconId);
+#if PCL
+		    return null;
+#else
+            int nIndex = GetCustomIconIndex(pwIconId);
 
 			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
 			else { Debug.Assert(false); return null; }
+#endif
 		}
 
 		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
@@ -1430,11 +1484,11 @@ namespace ModernKeePassLib
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid uuidThis = pg.CustomIconUuid;
-				if(uuidThis.EqualsValue(PwUuid.Zero)) return true;
+				if(uuidThis.Equals(PwUuid.Zero)) return true;
 
 				foreach(PwUuid uuidDelete in vUuidsToDelete)
 				{
-					if(uuidThis.EqualsValue(uuidDelete))
+					if(uuidThis.Equals(uuidDelete))
 					{
 						pg.CustomIconUuid = PwUuid.Zero;
 						break;
@@ -1469,11 +1523,11 @@ namespace ModernKeePassLib
 		private static void RemoveCustomIconUuid(PwEntry pe, List<PwUuid> vToDelete)
 		{
 			PwUuid uuidThis = pe.CustomIconUuid;
-			if(uuidThis.EqualsValue(PwUuid.Zero)) return;
+			if(uuidThis.Equals(PwUuid.Zero)) return;
 
 			foreach(PwUuid uuidDelete in vToDelete)
 			{
-				if(uuidThis.EqualsValue(uuidDelete))
+				if(uuidThis.Equals(uuidDelete))
 				{
 					pe.CustomIconUuid = PwUuid.Zero;
 					break;
@@ -1493,7 +1547,7 @@ namespace ModernKeePassLib
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				foreach(PwUuid u in l)
-					bAllUnique &= !pg.Uuid.EqualsValue(u);
+					bAllUnique &= !pg.Uuid.Equals(u);
 				l.Add(pg.Uuid);
 				return bAllUnique;
 			};
@@ -1501,7 +1555,7 @@ namespace ModernKeePassLib
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				foreach(PwUuid u in l)
-					bAllUnique &= !pe.Uuid.EqualsValue(u);
+					bAllUnique &= !pe.Uuid.Equals(u);
 				l.Add(pe.Uuid);
 				return bAllUnique;
 			};
@@ -1599,7 +1653,7 @@ namespace ModernKeePassLib
 					PwEntry peB = l.GetAt(j);
 					if(!DupEntriesEqual(peA, peB)) continue;
 
-					bool bDeleteA = (peA.LastModificationTime <= peB.LastModificationTime);
+					bool bDeleteA = (TimeUtil.CompareLastMod(peA, peB, true) <= 0);
 					if(pgRecycleBin != null)
 					{
 						bool bAInBin = peA.IsContainedIn(pgRecycleBin);
@@ -1638,10 +1692,6 @@ namespace ModernKeePassLib
 		private static List<string> m_lStdFields = null;
 		private static bool DupEntriesEqual(PwEntry a, PwEntry b)
 		{
-            
-            Debug.Assert(false, "not yet implemented");
-            return true;
-#if TODO
 			if(m_lStdFields == null) m_lStdFields = PwDefs.GetStandardFields();
 
 			foreach(string strStdKey in m_lStdFields)
@@ -1689,7 +1739,6 @@ namespace ModernKeePassLib
 			}
 
 			return true;
-#endif
 		}
 
 		public uint DeleteEmptyGroups()
@@ -1721,11 +1770,11 @@ namespace ModernKeePassLib
 			GroupHandler gh = delegate(PwGroup pg)
 			{
 				PwUuid pwUuid = pg.CustomIconUuid;
-				if((pwUuid == null) || pwUuid.EqualsValue(PwUuid.Zero)) return true;
+				if((pwUuid == null) || pwUuid.Equals(PwUuid.Zero)) return true;
 
 				for(int i = 0; i < lToDelete.Count; ++i)
 				{
-					if(lToDelete[i].EqualsValue(pwUuid))
+					if(lToDelete[i].Equals(pwUuid))
 					{
 						lToDelete.RemoveAt(i);
 						break;
@@ -1738,11 +1787,11 @@ namespace ModernKeePassLib
 			EntryHandler eh = delegate(PwEntry pe)
 			{
 				PwUuid pwUuid = pe.CustomIconUuid;
-				if((pwUuid == null) || pwUuid.EqualsValue(PwUuid.Zero)) return true;
+				if((pwUuid == null) || pwUuid.Equals(PwUuid.Zero)) return true;
 
 				for(int i = 0; i < lToDelete.Count; ++i)
 				{
-					if(lToDelete[i].EqualsValue(pwUuid))
+					if(lToDelete[i].Equals(pwUuid))
 					{
 						lToDelete.RemoveAt(i);
 						break;

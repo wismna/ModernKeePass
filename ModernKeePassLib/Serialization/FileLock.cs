@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+#if PCL
+using System.Threading.Tasks;
+#else
 using System.Threading;
+#endif
 using System.Diagnostics;
 
 using ModernKeePassLib.Cryptography;
@@ -41,28 +45,24 @@ namespace ModernKeePassLib.Serialization
 
 		public FileLockException(string strBaseFile, string strUser)
 		{
-            Debug.Assert(false, "Not yet implemented");
-            return;
-#if TODO
 			StringBuilder sb = new StringBuilder();
 
 			if(!string.IsNullOrEmpty(strBaseFile))
 			{
 				sb.Append(strBaseFile);
-				sb.Append(MessageService.NewParagraph);
+				sb.Append(Environment.NewLine + Environment.NewLine);
 			}
 
 			sb.Append(KLRes.FileLockedWrite);
-			sb.Append(MessageService.NewLine);
+			sb.Append(Environment.NewLine);
 
 			if(!string.IsNullOrEmpty(strUser)) sb.Append(strUser);
 			else sb.Append("?");
 
-			sb.Append(MessageService.NewParagraph);
+			sb.Append(Environment.NewLine + Environment.NewLine);
 			sb.Append(KLRes.TryAgainSecs);
 
 			m_strMsg = sb.ToString();
-#endif
 		}
 	}
 
@@ -124,9 +124,6 @@ namespace ModernKeePassLib.Serialization
 
 			public static LockFileInfo Load(IOConnectionInfo iocLockFile)
 			{
-                  Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
 				Stream s = null;
 				try
 				{
@@ -134,7 +131,7 @@ namespace ModernKeePassLib.Serialization
 					if(s == null) return null;
 					StreamReader sr = new StreamReader(s, StrUtil.Utf8);
 					string str = sr.ReadToEnd();
-					sr.Close();
+					sr.Dispose();
 					if(str == null) { Debug.Assert(false); return null; }
 
 					str = StrUtil.NormalizeNewLines(str, false);
@@ -146,18 +143,14 @@ namespace ModernKeePassLib.Serialization
 				}
 				catch(FileNotFoundException) { }
 				catch(Exception) { Debug.Assert(false); }
-				finally { if(s != null) s.Close(); }
+				finally { if(s != null) s.Dispose(); }
 
 				return null;
-#endif
 			}
 
 			// Throws on error
 			public static LockFileInfo Create(IOConnectionInfo iocLockFile)
 			{
-                Debug.Assert(false, "not yet implemented");
-            return null;
-#if TODO
 				LockFileInfo lfi;
 				Stream s = null;
 				try
@@ -165,7 +158,7 @@ namespace ModernKeePassLib.Serialization
 					byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
 					string strTime = TimeUtil.SerializeUtc(DateTime.Now);
 
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
 						Environment.UserName, Environment.MachineName,
 						Environment.UserDomainName);
@@ -175,7 +168,7 @@ namespace ModernKeePassLib.Serialization
 #endif
 
 					StringBuilder sb = new StringBuilder();
-#if !KeePassLibSD && TODO
+#if !KeePassLibSD
 					sb.AppendLine(LockFileHeader);
 					sb.AppendLine(lfi.ID);
 					sb.AppendLine(strTime);
@@ -197,18 +190,14 @@ namespace ModernKeePassLib.Serialization
 					if(s == null) throw new IOException(iocLockFile.GetDisplayName());
 					s.Write(pbFile, 0, pbFile.Length);
 				}
-				finally { if(s != null) s.Close(); }
+				finally { if(s != null) s.Dispose(); }
 
 				return lfi;
-#endif
-            }
+			}
 		}
 
 		public FileLock(IOConnectionInfo iocBaseFile)
 		{
-            Debug.Assert(false, "not yet implemented");
-            return ;
-#if TODO
 			if(iocBaseFile == null) throw new ArgumentNullException("strBaseFile");
 
 			m_iocLockFile = iocBaseFile.CloneDeep();
@@ -223,7 +212,6 @@ namespace ModernKeePassLib.Serialization
 			}
 
 			LockFileInfo.Create(m_iocLockFile);
-#endif
 		}
 
 		~FileLock()
@@ -239,9 +227,6 @@ namespace ModernKeePassLib.Serialization
 
 		private void Dispose(bool bDisposing)
 		{
-             Debug.Assert(false, "not yet implemented");
-            return ;
-#if TODO
 			if(m_iocLockFile == null) return;
 
 			bool bFileDeleted = false;
@@ -258,14 +243,18 @@ namespace ModernKeePassLib.Serialization
 
 				if(bFileDeleted) break;
 
+#if PCL
+				if(bDisposing)
+					Task.Delay(50).Wait();
+#else
 				if(bDisposing) Thread.Sleep(50);
+#endif
 			}
 
 			if(bDisposing && !bFileDeleted)
 				IOConnection.DeleteFile(m_iocLockFile); // Possibly with exception
 
 			m_iocLockFile = null;
-#endif
 		}
 
 		// private bool OwnLockFile()

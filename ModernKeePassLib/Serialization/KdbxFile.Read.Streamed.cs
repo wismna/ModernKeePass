@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,17 +19,27 @@
 
 using System;
 using System.Collections.Generic;
-//using System.Drawing;
+using System.Text;
+using System.Security;
 using System.Xml;
 using System.IO;
+using System.Diagnostics;
+
+using ModernKeePassLib;
 using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Serialization
 {
-    public sealed partial class Kdb4File
+	/// <summary>
+	/// Serialization to KeePass KDBX files.
+	/// </summary>
+	public sealed partial class KdbxFile
 	{
 		private enum KdbContext
 		{
@@ -88,13 +98,17 @@ namespace ModernKeePassLib.Serialization
 			xrs.IgnoreProcessingInstructions = true;
 			xrs.IgnoreWhitespace = true;
 
-#if !KeePassLibSD && TODO
+#if !PCL
+			// these are default values, so no need to set them
+#if !KeePassRT
+#if !KeePassLibSD
 			xrs.ProhibitDtd = true;
 #endif
-
-#if TODO
 			xrs.ValidationType = ValidationType.None;
 #endif
+
+#endif
+
 			return xrs;
 		}
 
@@ -199,6 +213,17 @@ namespace ModernKeePassLib.Serialization
 				case KdbContext.Meta:
 					if(xr.Name == ElemGenerator)
 						ReadString(xr); // Ignore
+					else if(xr.Name == ElemHeaderHash)
+					{
+						string strHash = ReadString(xr);
+						if(!string.IsNullOrEmpty(strHash) && (m_pbHashOfHeader != null) &&
+							!m_bRepairMode)
+						{
+							byte[] pbHash = Convert.FromBase64String(strHash);
+							if(!MemUtil.ArraysEqual(pbHash, m_pbHashOfHeader))
+								throw new IOException(KLRes.FileCorrupted);
+						}
+					}
 					else if(xr.Name == ElemDbName)
 						m_pwDatabase.Name = ReadString(xr);
 					else if(xr.Name == ElemDbNameChanged)
@@ -216,10 +241,8 @@ namespace ModernKeePassLib.Serialization
 					else if(xr.Name == ElemDbColor)
 					{
 						string strColor = ReadString(xr);
-#if TODO
-						if(!string.IsNullOrEmpty(strColor))
-							m_pwDatabase.Color = ColorTranslator.FromHtml(strColor);
-#endif
+						/*if(!string.IsNullOrEmpty(strColor))
+							m_pwDatabase.Color = ColorTranslator.FromHtml(strColor);*/
 					}
 					else if(xr.Name == ElemDbKeyChanged)
 						m_pwDatabase.MasterKeyChanged = ReadTime(xr);
@@ -390,19 +413,14 @@ namespace ModernKeePassLib.Serialization
 					else if(xr.Name == ElemFgColor)
 					{
 						string strColor = ReadString(xr);
-#if TODO
-						if(!string.IsNullOrEmpty(strColor))
-							m_ctxEntry.ForegroundColor = ColorTranslator.FromHtml(strColor);
-#endif
+						/*if(!string.IsNullOrEmpty(strColor))
+							m_ctxEntry.ForegroundColor = ColorTranslator.FromHtml(strColor);*/
 					}
 					else if(xr.Name == ElemBgColor)
 					{
-
 						string strColor = ReadString(xr);
-#if TODO
-						if(!string.IsNullOrEmpty(strColor))
-							m_ctxEntry.BackgroundColor = ColorTranslator.FromHtml(strColor);
-#endif
+						/*if(!string.IsNullOrEmpty(strColor))
+							m_ctxEntry.BackgroundColor = ColorTranslator.FromHtml(strColor);*/
 					}
 					else if(xr.Name == ElemOverrideUrl)
 						m_ctxEntry.OverrideUrl = ReadString(xr);
@@ -436,10 +454,10 @@ namespace ModernKeePassLib.Serialization
 						(ITimeLogger)m_ctxGroup : (ITimeLogger)m_ctxEntry);
 					Debug.Assert(tl != null);
 
-					if(xr.Name == ElemLastModTime)
-						tl.LastModificationTime = ReadTime(xr);
-					else if(xr.Name == ElemCreationTime)
+					if(xr.Name == ElemCreationTime)
 						tl.CreationTime = ReadTime(xr);
+					else if(xr.Name == ElemLastModTime)
+						tl.LastModificationTime = ReadTime(xr);
 					else if(xr.Name == ElemLastAccessTime)
 						tl.LastAccessTime = ReadTime(xr);
 					else if(xr.Name == ElemExpiryTime)
@@ -545,7 +563,8 @@ namespace ModernKeePassLib.Serialization
 				return KdbContext.Meta;
 			else if((ctx == KdbContext.CustomIcon) && (xr.Name == ElemCustomIconItem))
 			{
-				if((m_uuidCustomIconID != PwUuid.Zero) && (m_pbCustomIconData != null))
+				if(!m_uuidCustomIconID.Equals(PwUuid.Zero) &&
+					(m_pbCustomIconData != null))
 					m_pwDatabase.CustomIcons.Add(new PwCustomIcon(
 						m_uuidCustomIconID, m_pbCustomIconData));
 				else { Debug.Assert(false); }
@@ -572,7 +591,7 @@ namespace ModernKeePassLib.Serialization
 			}
 			else if((ctx == KdbContext.Group) && (xr.Name == ElemGroup))
 			{
-				if(PwUuid.Zero.EqualsValue(m_ctxGroup.Uuid))
+				if(PwUuid.Zero.Equals(m_ctxGroup.Uuid))
 					m_ctxGroup.Uuid = new PwUuid(true); // No assert (import)
 
 				m_ctxGroups.Pop();
@@ -593,7 +612,7 @@ namespace ModernKeePassLib.Serialization
 			else if((ctx == KdbContext.Entry) && (xr.Name == ElemEntry))
 			{
 				// Create new UUID if absent
-				if(PwUuid.Zero.EqualsValue(m_ctxEntry.Uuid))
+				if(PwUuid.Zero.Equals(m_ctxEntry.Uuid))
 					m_ctxEntry.Uuid = new PwUuid(true); // No assert (import)
 
 				if(m_bEntryInHistory)
@@ -670,13 +689,21 @@ namespace ModernKeePassLib.Serialization
 			}
 
 			m_bReadNextNode = false; // ReadElementString skips end tag
+#if PCL
 			return xr.ReadElementContentAsString();
+#else
+			return xr.ReadElementString();
+#endif
 		}
 
 		private string ReadStringRaw(XmlReader xr)
 		{
 			m_bReadNextNode = false; // ReadElementString skips end tag
-            return xr.ReadElementContentAsString();
+#if PCL
+			return xr.ReadElementContentAsString();
+#else
+			return xr.ReadElementString();
+#endif
 		}
 
 		private bool ReadBool(XmlReader xr, bool bDefault)
@@ -701,6 +728,9 @@ namespace ModernKeePassLib.Serialization
 			string str = ReadString(xr);
 
 			int n;
+			if(StrUtil.TryParseIntInvariant(str, out n)) return n;
+
+			// Backward compatibility
 			if(StrUtil.TryParseInt(str, out n)) return n;
 
 			Debug.Assert(false);
@@ -712,6 +742,9 @@ namespace ModernKeePassLib.Serialization
 			string str = ReadString(xr);
 
 			uint u;
+			if(StrUtil.TryParseUIntInvariant(str, out u)) return u;
+
+			// Backward compatibility
 			if(StrUtil.TryParseUInt(str, out u)) return u;
 
 			Debug.Assert(false);
@@ -723,6 +756,9 @@ namespace ModernKeePassLib.Serialization
 			string str = ReadString(xr);
 
 			long l;
+			if(StrUtil.TryParseLongInvariant(str, out l)) return l;
+
+			// Backward compatibility
 			if(StrUtil.TryParseLong(str, out l)) return l;
 
 			Debug.Assert(false);
@@ -734,6 +770,9 @@ namespace ModernKeePassLib.Serialization
 			string str = ReadString(xr);
 
 			ulong u;
+			if(StrUtil.TryParseULongInvariant(str, out u)) return u;
+
+			// Backward compatibility
 			if(StrUtil.TryParseULong(str, out u)) return u;
 
 			Debug.Assert(false);
@@ -757,7 +796,7 @@ namespace ModernKeePassLib.Serialization
 			if(xb != null) return new ProtectedString(true, xb);
 
 			bool bProtect = false;
-			if(m_format == Kdb4Format.PlainXml)
+			if(m_format == KdbxFormat.PlainXml)
 			{
 				if(xr.MoveToAttribute(AttrProtectedInMemPlainXml))
 				{

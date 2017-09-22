@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/* BERT TODO: All removed for the time being */
-
-#if false
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -121,7 +118,7 @@ namespace ModernKeePassLib.Utility
 
 				Exception exObj = (obj as Exception);
 				string strObj = (obj as string);
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				StringCollection scObj = (obj as StringCollection);
 #endif
 
@@ -132,7 +129,7 @@ namespace ModernKeePassLib.Utility
 					else if((exObj.Message != null) && (exObj.Message.Length > 0))
 						strAppend = exObj.Message;
 				}
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 				else if(scObj != null)
 				{
 					StringBuilder sb = new StringBuilder();
@@ -161,24 +158,30 @@ namespace ModernKeePassLib.Utility
 			return sbText.ToString();
 		}
 
-		private static DialogResult SafeShowMessageBox(string strText, string strTitle,
+#if (!KeePassLibSD && !KeePassRT)
+		internal static Form GetTopForm()
+		{
+			FormCollection fc = Application.OpenForms;
+			if((fc == null) || (fc.Count == 0)) return null;
+
+			return fc[fc.Count - 1];
+		}
+#endif
+
+		internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
-#if KeePassLibSD
+#if (KeePassLibSD || KeePassRT)
 			return MessageBox.Show(strText, strTitle, mb, mi, mdb);
 #else
 			IWin32Window wnd = null;
 			try
 			{
-				FormCollection fc = Application.OpenForms;
-				if((fc != null) && (fc.Count > 0))
-				{
-					Form f = fc[fc.Count - 1];
-					if((f != null) && f.InvokeRequired)
-						return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
-							SafeShowMessageBoxInternal), f, strText, strTitle, mb, mi, mdb);
-					else wnd = f;
-				}
+				Form f = GetTopForm();
+				if((f != null) && f.InvokeRequired)
+					return (DialogResult)f.Invoke(new SafeShowMessageBoxInternalDelegate(
+						SafeShowMessageBoxInternal), f, strText, strTitle, mb, mi, mdb);
+				else wnd = f;
 			}
 			catch(Exception) { Debug.Assert(false); }
 
@@ -203,7 +206,7 @@ namespace ModernKeePassLib.Utility
 #endif
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		internal delegate DialogResult SafeShowMessageBoxInternalDelegate(IWin32Window iParent,
 			string strText, string strTitle, MessageBoxButtons mb, MessageBoxIcon mi,
 			MessageBoxDefaultButton mdb);
@@ -318,7 +321,8 @@ namespace ModernKeePassLib.Utility
 			return dr;
 		}
 
-		public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes)
+		public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes,
+			MessageBoxIcon mbi)
 		{
 			++m_uCurrentMessageCount;
 
@@ -327,24 +331,29 @@ namespace ModernKeePassLib.Utility
 
 			if(MessageService.MessageShowing != null)
 				MessageService.MessageShowing(null, new MessageServiceEventArgs(
-					strTitleEx, strTextEx, MessageBoxButtons.YesNo, m_mbiQuestion));
+					strTitleEx, strTextEx, MessageBoxButtons.YesNo, mbi));
 
 			DialogResult dr = SafeShowMessageBox(strTextEx, strTitleEx,
-				MessageBoxButtons.YesNo, m_mbiQuestion, bDefaultToYes ?
+				MessageBoxButtons.YesNo, mbi, bDefaultToYes ?
 				MessageBoxDefaultButton.Button1 : MessageBoxDefaultButton.Button2);
 
 			--m_uCurrentMessageCount;
 			return (dr == DialogResult.Yes);
 		}
 
+		public static bool AskYesNo(string strText, string strTitle, bool bDefaultToYes)
+		{
+			return AskYesNo(strText, strTitle, bDefaultToYes, m_mbiQuestion);
+		}
+
 		public static bool AskYesNo(string strText, string strTitle)
 		{
-			return AskYesNo(strText, strTitle, true);
+			return AskYesNo(strText, strTitle, true, m_mbiQuestion);
 		}
 
 		public static bool AskYesNo(string strText)
 		{
-			return AskYesNo(strText, null, true);
+			return AskYesNo(strText, null, true, m_mbiQuestion);
 		}
 
 		public static void ShowLoadWarning(string strFilePath, Exception ex)
@@ -423,5 +432,3 @@ namespace ModernKeePassLib.Utility
 		}
 	}
 }
-
-#endif // false

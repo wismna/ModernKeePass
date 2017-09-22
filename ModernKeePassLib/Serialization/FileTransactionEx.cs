@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,13 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
-// Bert TODO: For now, remove the accesscontrol from this class. 
-// In WinRT, the security of file has changed, and something could potentially be done
-// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364399%28v=vs.85%29.aspx
-
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 using System.Security.AccessControl;
 #endif
 
@@ -63,6 +58,16 @@ namespace ModernKeePassLib.Serialization
 			m_bTransacted = bTransacted;
 			m_iocBase = iocBaseFile.CloneDeep();
 
+// ModernKeePassLib is currently targeting .NET 4.5
+#if !PCL
+			// Prevent transactions for FTP URLs under .NET 4.0 in order to
+			// avoid/workaround .NET bug 621450:
+			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+			if(m_iocBase.Path.StartsWith("ftp:", StrUtil.CaseIgnoreCmp) &&
+				(Environment.Version.Major >= 4) && !NativeLib.IsUnix())
+				m_bTransacted = false;
+#endif
+
 			if(m_bTransacted)
 			{
 				m_iocTemp = m_iocBase.CloneDeep();
@@ -71,7 +76,7 @@ namespace ModernKeePassLib.Serialization
 			else m_iocTemp = m_iocBase;
 		}
 
-		public async Task<Stream> OpenWrite()
+		public Stream OpenWrite()
 		{
 			if(!m_bTransacted) m_bMadeUnhidden = UrlUtil.UnhideFile(m_iocTemp.Path);
 			else // m_bTransacted
@@ -80,7 +85,7 @@ namespace ModernKeePassLib.Serialization
 				catch(Exception) { }
 			}
 
-			return await IOConnection.OpenWrite(m_iocTemp);
+			return IOConnection.OpenWrite(m_iocTemp);
 		}
 
 		public void CommitWrite()
@@ -96,14 +101,14 @@ namespace ModernKeePassLib.Serialization
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
 
 			if(IOConnection.FileExists(m_iocBase))
 			{
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 				if(m_iocBase.IsLocalFile())
 				{
 					try
@@ -125,7 +130,7 @@ namespace ModernKeePassLib.Serialization
 
 			IOConnection.RenameFile(m_iocTemp, m_iocBase);
 
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 			if(m_iocBase.IsLocalFile())
 			{
 				try

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,12 +21,19 @@ using System;
 using System.Text;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Diagnostics;
+
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Native
 {
-	internal static class NativeMethods
+	internal static partial class NativeMethods
 	{
 		internal const int MAX_PATH = 260;
+
+		// internal const uint TF_SFT_SHOWNORMAL = 0x00000001;
+		// internal const uint TF_SFT_HIDDEN = 0x00000008;
 
 		/* [DllImport("KeePassNtv32.dll", EntryPoint = "TransformKey")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -65,7 +72,7 @@ namespace ModernKeePassLib.Native
 			else
 				return TransformKeyTimed32(pBuf256, pKey256, ref puRounds, uSeconds);
 		} */
-        /*
+
 		[DllImport("KeePassLibC32.dll", EntryPoint = "TransformKey256")]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey32(IntPtr pBuf256,
@@ -75,7 +82,7 @@ namespace ModernKeePassLib.Native
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool TransformKey64(IntPtr pBuf256,
 			IntPtr pKey256, UInt64 uRounds);
-      
+
 		internal static bool TransformKey(IntPtr pBuf256, IntPtr pKey256,
 			UInt64 uRounds)
 		{
@@ -95,11 +102,25 @@ namespace ModernKeePassLib.Native
 		{
 			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
 				return TransformKeyBenchmark64(uTimeMs);
-			else
-				return TransformKeyBenchmark32(uTimeMs);
+			return TransformKeyBenchmark32(uTimeMs);
 		}
-        */
-#if !KeePassLibSD && TODO
+
+		/* [DllImport("KeePassLibC32.dll", EntryPoint = "TF_ShowLangBar")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TF_ShowLangBar32(UInt32 dwFlags);
+
+		[DllImport("KeePassLibC64.dll", EntryPoint = "TF_ShowLangBar")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool TF_ShowLangBar64(UInt32 dwFlags);
+
+		internal static bool TfShowLangBar(uint dwFlags)
+		{
+			if(Marshal.SizeOf(typeof(IntPtr)) == 8)
+				return TF_ShowLangBar64(dwFlags);
+			return TF_ShowLangBar32(dwFlags);
+		} */
+
+#if (!KeePassLibSD && !KeePassRT)
 		[DllImport("ShlWApi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
 		internal static extern int StrCmpLogicalW(string x, string y);
 
@@ -114,7 +135,7 @@ namespace ModernKeePassLib.Native
 
 		private static void TestNaturalComparisonsSupport()
 		{
-#if KeePassLibSD || !TODO
+#if (KeePassLibSD || KeePassRT)
 #warning No native natural comparisons supported.
 			m_bSupportsLogicalCmp = false;
 #else
@@ -143,11 +164,36 @@ namespace ModernKeePassLib.Native
 			if(m_bSupportsLogicalCmp.HasValue == false) TestNaturalComparisonsSupport();
 			if(m_bSupportsLogicalCmp.Value == false) return 0;
 
-#if KeePassLibSD || !TODO
+#if (KeePassLibSD || KeePassRT)
 #warning No native natural comparisons supported.
 			return x.CompareTo(y);
 #else
 			return StrCmpLogicalW(x, y);
+#endif
+		}
+
+		internal static string GetUserRuntimeDir()
+		{
+#if !KeePassLibSD
+#if KeePassRT
+			string strRtDir = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+#else
+			string strRtDir = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
+			if(string.IsNullOrEmpty(strRtDir))
+				strRtDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			if(string.IsNullOrEmpty(strRtDir))
+			{
+				Debug.Assert(false);
+				return Path.GetTempPath(); // Not UrlUtil (otherwise cyclic)
+			}
+#endif
+
+			strRtDir = UrlUtil.EnsureTerminatingSeparator(strRtDir, false);
+			strRtDir += PwDefs.ShortProductName;
+
+			return strRtDir;
+#else
+			return Path.GetTempPath();
 #endif
 		}
 	}

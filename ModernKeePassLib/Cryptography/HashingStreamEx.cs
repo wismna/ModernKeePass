@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,85 +17,80 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-using ModernKeePassLib.Utility;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.IO;
+#if PCL
 using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Utility;
+using CryptographicHash = Windows.Security.Cryptography.Core.CryptographicHash;
 
 namespace ModernKeePassLib.Cryptography
 {
-    public sealed class HashingStreamEx : Stream
-    {
-        private Stream m_sBaseStream;
-        private bool m_bWriting;
-        private Queue<byte[]> m_DataToHash;
-        //private HashAlgorithm m_hash;
-
-        public byte[] Hash
-        {
-            get
-            {
-                int len = 0;
-                foreach (byte[] block in m_DataToHash)
-                {
-                    len += block.Length;
-                }
-                byte[] dataToHash = new byte[len];
-                int pos = 0;
-                while(m_DataToHash.Count > 0)
-                {
-                    byte[] block = m_DataToHash.Dequeue();
-                    Array.Copy(block, 0, dataToHash, pos, block.Length);
-                    pos += block.Length;
-                }
-
-                byte[] hash = SHA256Managed.Instance.ComputeHash(dataToHash);
-                return hash;
-            }
-        }
-
-        public override bool CanRead
-        {
-            get { return !m_bWriting; }
-        }
-
-        public override bool CanSeek
-        {
-            get { return false; }
-        }
-
-        public override bool CanWrite
-        {
-            get { return m_bWriting; }
-        }
-
-        public override long Length
-        {
-            get { return m_sBaseStream.Length; }
-        }
-
-        public override long Position
-        {
-            get { return m_sBaseStream.Position; }
-            set { throw new NotSupportedException(); }
-        }
-
-        public HashingStreamEx(Stream sBaseStream, bool bWriting, CryptographicHash hashAlgorithm)
-        {
-            if (sBaseStream == null) throw new ArgumentNullException("sBaseStream");
-
-            m_sBaseStream = sBaseStream;
-            m_bWriting = bWriting;
-
-#if KeePassWinRT
-
-            m_DataToHash = new Queue<byte[]>();
-
-
+	public sealed class HashingStreamEx : Stream
+	{
+		private Stream m_sBaseStream;
+		private bool m_bWriting;
+#if PCL
+		private CryptographicHash m_hash;
 #else
-#if !KeePassLibSD
+		private HashAlgorithm m_hash;
+#endif
+
+		private byte[] m_pbFinalHash = null;
+
+		public byte[] Hash
+		{
+			get { return m_pbFinalHash; }
+		}
+
+		public override bool CanRead
+		{
+			get { return !m_bWriting; }
+		}
+
+		public override bool CanSeek
+		{
+			get { return false; }
+		}
+
+		public override bool CanWrite
+		{
+			get { return m_bWriting; }
+		}
+
+		public override long Length
+		{
+			get { return m_sBaseStream.Length; }
+		}
+
+		public override long Position
+		{
+			get { return m_sBaseStream.Position; }
+			set { throw new NotSupportedException(); }
+		}
+
+#if PCL
+		public HashingStreamEx(Stream sBaseStream, bool bWriting, string hashAlgorithm)
+#else
+		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm hashAlgorithm)
+#endif
+		{
+			if(sBaseStream == null)
+                throw new ArgumentNullException("sBaseStream");
+
+			m_sBaseStream = sBaseStream;
+			m_bWriting = bWriting;
+#if PCL
+			m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
+#elif !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
 #else // KeePassLibSD
 			m_hash = null;
@@ -105,91 +100,98 @@ namespace ModernKeePassLib.Cryptography
 			try { if(m_hash == null) m_hash = HashAlgorithm.Create(); }
 			catch(Exception) { }
 #endif
-#endif // KeePassWinRT
+			if(m_hash == null) { Debug.Assert(false); return; }
 
-
-#if TODO 
-            // Bert TODO: For the time being, only built-in Hash algorithm are supported.
-            if (m_hash == null) { Debug.Assert(false); return; }
 			// Validate hash algorithm
-			if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
+			/*if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
 				(m_hash.InputBlockSize != 1) || (m_hash.OutputBlockSize != 1))
 			{
-#if DEBUG
+#if false && DEBUG
 				MessageService.ShowWarning("Broken HashAlgorithm object in HashingStreamEx.");
 #endif
 				m_hash = null;
-			}
-#endif
-        }
+			}*/
+		}
 
-        public override void Flush()
-        {
-            m_sBaseStream.Flush();
-        }
-        
-		/*public override void Close()
+		public override void Flush()
 		{
+			m_sBaseStream.Flush();
+		}
 
+#if PCL || KeePassRT
+		protected override void Dispose(bool disposing)
+		{
+			if(!disposing) return;
+#else
+		public override void Close()
+		{
+#endif
 			if(m_hash != null)
 			{
 				try
 				{
-					m_hash.TransformFinalBlock(new byte[0], 0, 0);
-
+					//m_hash.TransformFinalBlock(new byte[0], 0, 0);
+#if PCL
+					m_pbFinalHash = m_hash.GetValueAndReset().ToArray();
+#else
 					m_pbFinalHash = m_hash.Hash;
+#endif
 				}
 				catch(Exception) { Debug.Assert(false); }
 
 				m_hash = null;
 			}
 
-			m_sBaseStream.Close();
+			m_sBaseStream.Dispose();
+		}
 
-		}*/
+		public override long Seek(long lOffset, SeekOrigin soOrigin)
+		{
+			throw new NotSupportedException();
+		}
 
-        public override long Seek(long lOffset, SeekOrigin soOrigin)
-        {
-            throw new NotSupportedException();
-        }
+		public override void SetLength(long lValue)
+		{
+			throw new NotSupportedException();
+		}
 
-        public override void SetLength(long lValue)
-        {
-            throw new NotSupportedException();
-        }
+		public override int Read(byte[] pbBuffer, int nOffset, int nCount)
+		{
+			if(m_bWriting) throw new InvalidOperationException();
 
-        public override int Read(byte[] pbBuffer, int nOffset, int nCount)
-        {
+			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
+			int nPartialRead = nRead;
+			while((nRead < nCount) && (nPartialRead != 0))
+			{
+				nPartialRead = m_sBaseStream.Read(pbBuffer, nOffset + nRead,
+					nCount - nRead);
+				nRead += nPartialRead;
+			}
 
-            if (m_bWriting) throw new InvalidOperationException();
+#if DEBUG
+			byte[] pbOrg = new byte[pbBuffer.Length];
+			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
+#endif
 
-            int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
+			/*if((m_hash != null) && (nRead > 0))
+				m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);*/
 
-            // Mono bug workaround (LaunchPad 798910)
-            int nPartialRead = nRead;
-            while ((nRead < nCount) && (nPartialRead != 0))
-            {
-                nPartialRead = m_sBaseStream.Read(pbBuffer, nOffset + nRead,
-                    nCount - nRead);
-                nRead += nPartialRead;
-            }
+#if DEBUG
+			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
+#endif
 
-            byte[] pbOrg = new byte[nRead];
-            Array.Copy(pbBuffer, pbOrg, nRead);
-            m_DataToHash.Enqueue(pbOrg);
-			
-            return nRead;
-        }
+			return nRead;
+		}
 
-        public override void Write(byte[] pbBuffer, int nOffset, int nCount)
-        {
+		public override void Write(byte[] pbBuffer, int nOffset, int nCount)
+		{
 			if(!m_bWriting) throw new InvalidOperationException();
 
 #if DEBUG
 			byte[] pbOrg = new byte[pbBuffer.Length];
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
-            // TODO: implement this
+
 			/*if((m_hash != null) && (nCount > 0))
 				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);*/
 
@@ -198,7 +200,6 @@ namespace ModernKeePassLib.Cryptography
 #endif
 
 			m_sBaseStream.Write(pbBuffer, nOffset, nCount);
-            
-        }
-    }
+		}
+	}
 }

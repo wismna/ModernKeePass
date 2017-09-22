@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,12 +17,24 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
+#if PCL
+using Windows.Security.Cryptography;
+#else
+using System.Security.Cryptography;
+#endif
 
 using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Keys
 {
-    public sealed class KcpCustomKey : IUserKey
+	public sealed class KcpCustomKey : IUserKey
 	{
 		private readonly string m_strName;
 		private ProtectedBinary m_pbKey;
@@ -42,10 +54,6 @@ namespace ModernKeePassLib.Keys
 
 		public KcpCustomKey(string strName, byte[] pbKeyData, bool bPerformHash)
 		{
-                        Debug.Assert(false, "not yet implemented");
-            return;
-#if TODO
-
 			Debug.Assert(strName != null); if(strName == null) throw new ArgumentNullException("strName");
 			Debug.Assert(pbKeyData != null); if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
@@ -53,12 +61,16 @@ namespace ModernKeePassLib.Keys
 
 			if(bPerformHash)
 			{
+#if PCL
+				var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+				var pbRaw = sha256.HashData(pbKeyData.AsBuffer());
+#else
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbRaw = sha256.ComputeHash(pbKeyData);
-				m_pbKey = new ProtectedBinary(true, pbRaw);
+#endif
+				m_pbKey = new ProtectedBinary(true, pbRaw.ToArray());
 			}
 			else m_pbKey = new ProtectedBinary(true, pbKeyData);
-#endif
 		}
 
 		// public void Clear()

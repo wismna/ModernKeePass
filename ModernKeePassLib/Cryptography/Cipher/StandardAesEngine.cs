@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,22 +17,44 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.IO;
+using System.Security;
+using System.Diagnostics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
+#if PCL
+using Windows.Security.Cryptography;
+#else
+
+#if !KeePassRT
+using System.Security.Cryptography;
+#else
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.IO;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
+using Org.BouncyCastle.Crypto.Parameters;
+#endif
+
+#endif
 
 using ModernKeePassLib.Resources;
-using ModernKeePassLib.Serialization;
 
 namespace ModernKeePassLib.Cryptography.Cipher
 {
-    /// <summary>
-    /// Standard AES cipher implementation.
-    /// </summary>
-    public sealed class StandardAesEngine : ICipherEngine
+	/// <summary>
+	/// Standard AES cipher implementation.
+	/// </summary>
+	public sealed class StandardAesEngine : ICipherEngine
 	{
-	//	private const CipherMode m_rCipherMode = CipherMode.CBC;
-	//	private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
+#if !PCL && !KeePassRT
+		private const CipherMode m_rCipherMode = CipherMode.CBC;
+		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
+#endif
 
 		private static PwUuid m_uuidAes = null;
 
@@ -54,7 +76,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 				return m_uuidAes;
 			}
 		}
- 
+
 		/// <summary>
 		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
 		/// </summary>
@@ -92,31 +114,41 @@ namespace ModernKeePassLib.Cryptography.Cipher
 			}
 		}
 
-		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
-		{
-			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
-            return new CryptoStream( s, "AES_CBC_PKCS7", bEncrypt, pbKey, pbIV);
+	    private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
+	    {
+	        ValidateArguments(s, bEncrypt, pbKey, pbIV);
+#if PCL
+	        var provider = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
+	        var key = provider.CreateSymmetricKey(CryptographicBuffer.GenerateRandom(32));
+	        using (var ms = new MemoryStream())
+	        {
+	            s.CopyTo(ms);
+	            if (bEncrypt)
+	            {
+	                return CryptographicEngine.Encrypt(key, ms.GetWindowsRuntimeBuffer(), CryptographicBuffer.GenerateRandom(16)).AsStream();
+	            }
+	            /*var encryptor = CryptographicEngine.CreateEncryptor(
+                    key, pbLocalIV);
+                return new CryptoStream(s, encryptor, CryptoStreamMode.Write);*/
+	        
+	            return CryptographicEngine.Decrypt(key, ms.GetWindowsRuntimeBuffer(), CryptographicBuffer.GenerateRandom(16)).AsStream();
+                /*var decryptor = CryptographicEngine.CreateDecryptor(
+	                key, pbLocalIV);
+	            return new CryptoStream(s, decryptor, CryptoStreamMode.Read);*/
+            }
+#else
 
-        }
-#if false
-            
+#if !KeePassRT
 			RijndaelManaged r = new RijndaelManaged();
-
 			if(r.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
 				r.BlockSize = 128;
 			}
 
-			byte[] pbLocalIV = new byte[16];
-			Array.Copy(pbIV, pbLocalIV, 16);
 			r.IV = pbLocalIV;
-
-			byte[] pbLocalKey = new byte[32];
-			Array.Copy(pbKey, pbLocalKey, 32);
 			r.KeySize = 256;
 			r.Key = pbLocalKey;
-
 			r.Mode = m_rCipherMode;
 			r.Padding = m_rCipherPadding;
 
@@ -126,11 +158,24 @@ namespace ModernKeePassLib.Cryptography.Cipher
 
 			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
 				CryptoStreamMode.Read);
-        		}
+#else
+			AesEngine aes = new AesEngine();
+			CbcBlockCipher cbc = new CbcBlockCipher(aes);
+			PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
+				new Pkcs7Padding());
+			KeyParameter kp = new KeyParameter(pbLocalKey);
+			ParametersWithIV prmIV = new ParametersWithIV(kp, pbLocalIV);
+			bc.Init(bEncrypt, prmIV);
+
+			IBufferedCipher cpRead = (bEncrypt ? null : bc);
+			IBufferedCipher cpWrite = (bEncrypt ? bc : null);
+			return new CipherStream(s, cpRead, cpWrite);
 #endif
 
+#endif
+		}
 
-        public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
+		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
 		{
 			return StandardAesEngine.CreateStream(sPlainText, true, pbKey, pbIV);
 		}
@@ -139,7 +184,5 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		{
 			return StandardAesEngine.CreateStream(sEncrypted, false, pbKey, pbIV);
 		}
-
-       
-    }
+	}
 }

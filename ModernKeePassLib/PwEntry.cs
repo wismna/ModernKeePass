@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Diagnostics;
+using System.Xml;
+using Windows.UI;
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Security;
@@ -27,12 +29,12 @@ using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib
 {
-    /// <summary>
-    /// A class representing a password entry. A password entry consists of several
-    /// fields like title, user name, password, etc. Each password entry has a
-    /// unique ID (UUID).
-    /// </summary>
-    public sealed class PwEntry : ITimeLogger, IStructureItem, IDeepCloneable<PwEntry>
+	/// <summary>
+	/// A class representing a password entry. A password entry consists of several
+	/// fields like title, user name, password, etc. Each password entry has a
+	/// unique ID (UUID).
+	/// </summary>
+	public sealed class PwEntry : ITimeLogger, IStructureItem, IDeepCloneable<PwEntry>
 	{
 		private PwUuid m_uuid = PwUuid.Zero;
 		private PwGroup m_pParentGroup = null;
@@ -46,9 +48,8 @@ namespace ModernKeePassLib
 		private PwIcon m_pwIcon = PwIcon.Key;
 		private PwUuid m_pwCustomIconID = PwUuid.Zero;
 
-        private WinRTAdaptors.Color m_clrForeground = WinRTAdaptors.Color.Empty;
-        private WinRTAdaptors.Color m_clrBackground = WinRTAdaptors.Color.Empty;
-
+		private Color m_clrForeground;
+		private Color m_clrBackground;
 
 		private DateTime m_tCreation = PwDefs.DtDefaultNow;
 		private DateTime m_tLastMod = PwDefs.DtDefaultNow;
@@ -81,7 +82,7 @@ namespace ModernKeePassLib
 		{
 			get { return m_pParentGroup; }
 
-			/// Plugins: use <c>PwGroup.AddEntry</c> instead.
+			// Plugins: use <c>PwGroup.AddEntry</c> instead.
 			internal set { m_pParentGroup = value; }
 		}
 
@@ -173,7 +174,7 @@ namespace ModernKeePassLib
 		/// <summary>
 		/// Get or set the foreground color of this entry.
 		/// </summary>
-        public WinRTAdaptors.Color ForegroundColor
+		public Color ForegroundColor
 		{
 			get { return m_clrForeground; }
 			set { m_clrForeground = value; }
@@ -182,7 +183,7 @@ namespace ModernKeePassLib
 		/// <summary>
 		/// Get or set the background color of this entry.
 		/// </summary>
-        public WinRTAdaptors.Color BackgroundColor
+		public Color BackgroundColor
 		{
 			get { return m_clrBackground; }
 			set { m_clrBackground = value; }
@@ -198,21 +199,21 @@ namespace ModernKeePassLib
 		}
 
 		/// <summary>
-		/// The date/time when this entry was last accessed (read).
-		/// </summary>
-		public DateTime LastAccessTime
-		{
-			get { return m_tLastAccess; }
-			set { m_tLastAccess = value; }
-		}
-
-		/// <summary>
 		/// The date/time when this entry was last modified.
 		/// </summary>
 		public DateTime LastModificationTime
 		{
 			get { return m_tLastMod; }
 			set { m_tLastMod = value; }
+		}
+
+		/// <summary>
+		/// The date/time when this entry was last accessed (read).
+		/// </summary>
+		public DateTime LastAccessTime
+		{
+			get { return m_tLastAccess; }
+			set { m_tLastAccess = value; }
 		}
 
 		/// <summary>
@@ -402,10 +403,6 @@ namespace ModernKeePassLib
 		public bool EqualsEntry(PwEntry pe, PwCompareOptions pwOpt,
 			MemProtCmpMode mpCmpStr)
 		{
-            Debug.Assert(false, "not yet implemented");
-            return false;
-#if TODO
-
 			if(pe == null) { Debug.Assert(false); return false; }
 
 			bool bNeEqStd = ((pwOpt & PwCompareOptions.NullEmptyEquivStd) !=
@@ -415,7 +412,7 @@ namespace ModernKeePassLib
 			bool bIgnoreLastMod = ((pwOpt & PwCompareOptions.IgnoreLastMod) !=
 				PwCompareOptions.None);
 
-			if(!m_uuid.EqualsValue(pe.m_uuid)) return false;
+			if(!m_uuid.Equals(pe.m_uuid)) return false;
 			if((pwOpt & PwCompareOptions.IgnoreParentGroup) == PwCompareOptions.None)
 			{
 				if(m_pParentGroup != pe.m_pParentGroup) return false;
@@ -458,7 +455,7 @@ namespace ModernKeePassLib
 			}
 
 			if(m_pwIcon != pe.m_pwIcon) return false;
-			if(!m_pwCustomIconID.EqualsValue(pe.m_pwCustomIconID)) return false;
+			if(!m_pwCustomIconID.Equals(pe.m_pwCustomIconID)) return false;
 
 			if(m_clrForeground != pe.m_clrForeground) return false;
 			if(m_clrBackground != pe.m_clrBackground) return false;
@@ -479,7 +476,6 @@ namespace ModernKeePassLib
 			}
 
 			return true;
-#endif
 		}
 
 		/// <summary>
@@ -497,10 +493,12 @@ namespace ModernKeePassLib
 		{
 			Debug.Assert(peTemplate != null); if(peTemplate == null) throw new ArgumentNullException("peTemplate");
 
-			if(bOnlyIfNewer && (peTemplate.m_tLastMod < m_tLastMod)) return;
+			if(bOnlyIfNewer && (TimeUtil.Compare(peTemplate.m_tLastMod, m_tLastMod,
+				true) < 0))
+				return;
 
 			// Template UUID should be the same as the current one
-			Debug.Assert(m_uuid.EqualsValue(peTemplate.m_uuid));
+			Debug.Assert(m_uuid.Equals(peTemplate.m_uuid));
 			m_uuid = peTemplate.m_uuid;
 
 			if(bAssignLocationChanged)
@@ -695,7 +693,7 @@ namespace ModernKeePassLib
 			for(uint u = 0; u < m_listHistory.UCount; ++u)
 			{
 				PwEntry pe = m_listHistory.GetAt(u);
-				if(pe.LastModificationTime < dtMin)
+				if(TimeUtil.Compare(pe.LastModificationTime, dtMin, true) < 0)
 				{
 					idxRemove = u;
 					dtMin = pe.LastModificationTime;
@@ -847,6 +845,24 @@ namespace ModernKeePassLib
 				}
 			}
 		}
+
+		public void SetCreatedNow()
+		{
+			DateTime dt = DateTime.Now;
+
+			m_tCreation = dt;
+			m_tLastAccess = dt;
+		}
+
+		public PwEntry Duplicate()
+		{
+			PwEntry pe = CloneDeep();
+
+			pe.SetUuid(new PwUuid(true), true);
+			pe.SetCreatedNow();
+
+			return pe;
+		}
 	}
 
 	public sealed class PwEntryComparer : IComparer<PwEntry>
@@ -867,13 +883,15 @@ namespace ModernKeePassLib
 
 		public int Compare(PwEntry a, PwEntry b)
 		{
-            Debug.Assert(false, "not yet implemented");
-            return 0;
-#if TODO
 			string strA = a.Strings.ReadSafe(m_strFieldName);
 			string strB = b.Strings.ReadSafe(m_strFieldName);
 
 			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strA, strB);
+
+#if PCL || KeePassRT
+			return string.Compare(strA, strB, m_bCaseInsensitive ?
+				StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
+#else
 			return string.Compare(strA, strB, m_bCaseInsensitive);
 #endif
 		}

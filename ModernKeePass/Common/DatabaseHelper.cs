@@ -1,7 +1,6 @@
 ﻿using System;
 using Windows.Storage;
 using System.Threading.Tasks;
-
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Interfaces;
@@ -23,13 +22,14 @@ namespace ModernKeePass.Common
         {
             this.databaseFile = databaseFile;
         }
-        public async Task<string> Open(string password)
+        public string Open(string password)
         {
             var key = new CompositeKey();
             try
             {
                 key.AddUserKey(new KcpPassword(password));
-                await _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
+                _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
+                //_pwDatabase.Open(IOConnectionInfo.FromPath(databaseFile.Path), key, new NullStatusLogger());
                 IsOpen = _pwDatabase.IsOpen;
                 Name = databaseFile.DisplayName;
                 RootGroup = new GroupVm(_pwDatabase.RootGroup);
@@ -41,6 +41,10 @@ namespace ModernKeePass.Common
             catch (InvalidCompositeKeyException)
             {
                 return "Wrong password";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
             /*finally
             {

@@ -1,11 +1,12 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
+
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,27 +19,32 @@
 */
 
 using System;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Text;
 using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Diagnostics;
 
-using Windows.Storage.Streams;
-using Windows.Storage;
-// BERT TODO: For the time being, the web functionality is not available for WinRT
-
-
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 using System.Net.Cache;
 using System.Net.Security;
+#endif
+
+#if !PCL && !KeePassRT
+using System.Security.Cryptography.X509Certificates;
+#endif
+
+#if PCL
+using Windows.Storage;
 #endif
 
 using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Serialization
 {
-#if !KeePassLibSD && false
-	public sealed class IOWebClient : HttpClient
+#if (!PCL && !KeePassLibSD && !KeePassRT)
+	internal sealed class IOWebClient : WebClient
 	{
 		protected override WebRequest GetWebRequest(Uri address)
 		{
@@ -49,14 +55,192 @@ namespace ModernKeePassLib.Serialization
 	}
 #endif
 
-    public class IOConnection
+#if !PCL
+	internal abstract class WrapperStream : Stream
 	{
-#if !KeePassLibSD && TODO
+		private readonly Stream m_s;
+		protected Stream BaseStream
+		{
+			get { return m_s; }
+		}
+
+		public override bool CanRead
+		{
+			get { return m_s.CanRead; }
+		}
+
+		public override bool CanSeek
+		{
+			get { return m_s.CanSeek; }
+		}
+
+		public override bool CanTimeout
+		{
+			get { return m_s.CanTimeout; }
+		}
+
+		public override bool CanWrite
+		{
+			get { return m_s.CanWrite; }
+		}
+
+		public override long Length
+		{
+			get { return m_s.Length; }
+		}
+
+		public override long Position
+		{
+			get { return m_s.Position; }
+			set { m_s.Position = value; }
+		}
+
+		public override int ReadTimeout
+		{
+			get { return m_s.ReadTimeout; }
+			set { m_s.ReadTimeout = value; }
+		}
+
+		public override int WriteTimeout
+		{
+			get { return m_s.WriteTimeout; }
+			set { m_s.WriteTimeout = value; }
+		}
+
+		public WrapperStream(Stream sBase) : base()
+		{
+			if(sBase == null) throw new ArgumentNullException("sBase");
+
+			m_s = sBase;
+		}
+
+		public override IAsyncResult BeginRead(byte[] buffer, int offset,
+			int count, AsyncCallback callback, object state)
+		{
+			return m_s.BeginRead(buffer, offset, count, callback, state);
+		}
+
+		public override IAsyncResult BeginWrite(byte[] buffer, int offset,
+			int count, AsyncCallback callback, object state)
+		{
+			return BeginWrite(buffer, offset, count, callback, state);
+		}
+
+		public override void Close()
+		{
+			m_s.Close();
+		}
+
+		public override int EndRead(IAsyncResult asyncResult)
+		{
+			return m_s.EndRead(asyncResult);
+		}
+
+		public override void EndWrite(IAsyncResult asyncResult)
+		{
+			m_s.EndWrite(asyncResult);
+		}
+
+		public override void Flush()
+		{
+			m_s.Flush();
+		}
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			return m_s.Read(buffer, offset, count);
+		}
+
+		public override int ReadByte()
+		{
+			return m_s.ReadByte();
+		}
+
+		public override long Seek(long offset, SeekOrigin origin)
+		{
+			return m_s.Seek(offset, origin);
+		}
+
+		public override void SetLength(long value)
+		{
+			m_s.SetLength(value);
+		}
+
+		public override void Write(byte[] buffer, int offset, int count)
+		{
+			m_s.Write(buffer, offset, count);
+		}
+
+		public override void WriteByte(byte value)
+		{
+			m_s.WriteByte(value);
+		}
+	}
+
+	internal sealed class IocStream : WrapperStream
+	{
+		private readonly bool m_bWrite; // Initially opened for writing
+
+		public IocStream(Stream sBase) : base(sBase)
+		{
+			m_bWrite = sBase.CanWrite;
+		}
+
+		public override void Close()
+		{
+			base.Close();
+
+			if(MonoWorkarounds.IsRequired(10163) && m_bWrite)
+			{
+				try
+				{
+					Stream s = this.BaseStream;
+					Type t = s.GetType();
+					if(t.Name == "WebConnectionStream")
+					{
+						PropertyInfo pi = t.GetProperty("Request",
+							BindingFlags.Instance | BindingFlags.NonPublic);
+						if(pi != null)
+						{
+							WebRequest wr = (pi.GetValue(s, null) as WebRequest);
+							if(wr != null)
+								IOConnection.DisposeResponse(wr.GetResponse(), false);
+							else { Debug.Assert(false); }
+						}
+						else { Debug.Assert(false); }
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+		}
+
+		public static Stream WrapIfRequired(Stream s)
+		{
+			if(s == null) { Debug.Assert(false); return null; }
+
+			if(MonoWorkarounds.IsRequired(10163) && s.CanWrite)
+				return new IocStream(s);
+
+			return s;
+		}
+	}
+#endif
+
+	public static class IOConnection
+	{
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 		private static ProxyServerType m_pstProxyType = ProxyServerType.System;
 		private static string m_strProxyAddr = string.Empty;
 		private static string m_strProxyPort = string.Empty;
 		private static string m_strProxyUserName = string.Empty;
 		private static string m_strProxyPassword = string.Empty;
+
+		private static bool m_bSslCertsAcceptInvalid = false;
+		internal static bool SslCertsAcceptInvalid
+		{
+			// get { return m_bSslCertsAcceptInvalid; }
+			set { m_bSslCertsAcceptInvalid = value; }
+		}
 #endif
 
 		// Web request methods
@@ -66,16 +250,18 @@ namespace ModernKeePassLib.Serialization
 		// Web request headers
 		public const string WrhMoveFileTo = "MoveFileTo";
 
-#if !KeePassLibSD && TODO
+		public static event EventHandler<IOAccessEventArgs> IOAccessPre;
+
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 		// Allow self-signed certificates, expired certificates, etc.
-		private static bool ValidateServerCertificate(object sender,
+		private static bool AcceptCertificate(object sender,
 			X509Certificate certificate, X509Chain chain,
 			SslPolicyErrors sslPolicyErrors)
 		{
 			return true;
 		}
 
-		public static void SetProxy(ProxyServerType pst, string strAddr,
+		internal static void SetProxy(ProxyServerType pst, string strAddr,
 			string strPort, string strUserName, string strPassword)
 		{
 			m_pstProxyType = pst;
@@ -185,12 +371,27 @@ namespace ModernKeePassLib.Serialization
 
 		private static void PrepareWebAccess()
 		{
-			ServicePointManager.ServerCertificateValidationCallback =
-				ValidateServerCertificate;
+			if(m_bSslCertsAcceptInvalid)
+				ServicePointManager.ServerCertificateValidationCallback =
+					IOConnection.AcceptCertificate;
+			else
+				ServicePointManager.ServerCertificateValidationCallback = null;
 		}
 
+		private static IOWebClient CreateWebClient(IOConnectionInfo ioc)
+		{
+			PrepareWebAccess();
 
+			IOWebClient wc = new IOWebClient();
+			ConfigureWebClient(wc);
 
+			if((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))
+				wc.Credentials = new NetworkCredential(ioc.UserName, ioc.Password);
+			else if(NativeLib.IsUnix()) // Mono requires credentials
+				wc.Credentials = new NetworkCredential("anonymous", string.Empty);
+
+			return wc;
+		}
 
 		private static WebRequest CreateWebRequest(IOConnectionInfo ioc)
 		{
@@ -206,122 +407,124 @@ namespace ModernKeePassLib.Serialization
 
 			return req;
 		}
-#endif
 
-        private async Task<Stream> OpenReadHttp(IOConnectionInfo ioc)
-        {
-
-            // TODO: Configure the httpClient
-            // PrepareWebAccess();         
-            // ConfigureWebClient(wc);
-
-            HttpClient hc = new HttpClient();
-            HttpResponseMessage response = await hc.GetAsync(ioc.Path);
-            response.EnsureSuccessStatusCode();
-
-            // Read content into buffer
-            // Not the most efficient thing to do,
-            // but simplifies our life by allowing to use stream.length later on.
-            await response.Content.LoadIntoBufferAsync();
-            return await response.Content.ReadAsStreamAsync();
-#if false
-			if((ioc.UserName.Length > 0) || (ioc.Password.Length > 0))
-				wc.Credentials = new NetworkCredential(ioc.UserName, ioc.Password);
-			else if(NativeLib.IsUnix()) // Mono requires credentials
-				wc.Credentials = new NetworkCredential("anonymous", string.Empty);
-#endif
-        }
-
-
-		public async Task<Stream> OpenRead(IOConnectionInfo ioc)
+		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
+
 			if(StrUtil.IsDataUri(ioc.Path))
 			{
 				byte[] pbData = StrUtil.DataUriToData(ioc.Path);
 				if(pbData != null) return new MemoryStream(pbData, false);
 			}
 
-			if(ioc.IsLocalFile()) return await OpenReadLocal(ioc);
+			if(ioc.IsLocalFile()) return OpenReadLocal(ioc);
 
-
-            return await OpenReadHttp(ioc);
-        }
-
-
-		private async Task<Stream> OpenReadLocal(IOConnectionInfo ioc)
+			return IocStream.WrapIfRequired(CreateWebClient(ioc).OpenRead(
+				new Uri(ioc.Path)));
+		}
+#else
+		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
-            try
-            {
-                IRandomAccessStream stream = await ioc.StorageFile.OpenAsync(FileAccessMode.Read);
-                return stream.AsStream();
-            }
-            catch (Exception ex)
-            {
-                Debug.Assert(false, ex.Message);
-                return null;
-            }
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
+
+			return OpenReadLocal(ioc);
+		}
+#endif
+
+		private static Stream OpenReadLocal(IOConnectionInfo ioc)
+		{
+#if PCL
+            /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;*/
+		    return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetResults().AsStream();
+#else
+			return new FileStream(ioc.Path, FileMode.Open, FileAccess.Read,
+				FileShare.Read);
+#endif
 		}
 
-#if !KeePassLibSD && TODO
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
 			if(ioc == null) { Debug.Assert(false); return null; }
 
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
+
 			if(ioc.IsLocalFile()) return OpenWriteLocal(ioc);
 
 			Uri uri = new Uri(ioc.Path);
+			Stream s;
 
 			// Mono does not set HttpWebRequest.Method to POST for writes,
 			// so one needs to set the method to PUT explicitly
 			if(NativeLib.IsUnix() && (uri.Scheme.Equals(Uri.UriSchemeHttp,
 				StrUtil.CaseIgnoreCmp) || uri.Scheme.Equals(Uri.UriSchemeHttps,
 				StrUtil.CaseIgnoreCmp)))
-				return CreateWebClient(ioc).OpenWrite(uri, WebRequestMethods.Http.Put);
+				s = CreateWebClient(ioc).OpenWrite(uri, WebRequestMethods.Http.Put);
+			else s = CreateWebClient(ioc).OpenWrite(uri);
 
-			return CreateWebClient(ioc).OpenWrite(uri);
+			return IocStream.WrapIfRequired(s);
 		}
 #else
-		public static async Task<Stream> OpenWrite(IOConnectionInfo ioc)
+		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
-			return await OpenWriteLocal(ioc);
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
+
+			return OpenWriteLocal(ioc);
 		}
 #endif
 
-		private static async Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
+		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
-            try
-            {
-                IRandomAccessStream stream = await ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite);
-                return stream.AsStream();
-            }
-            catch (Exception ex)
-            {
-                Debug.Assert(false, ex.Message);
-                return null;
-            }
-		}
+#if PCL
+		    return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream();
+            /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+			return file.OpenAsync(FileAccess.ReadAndWrite).Result;*/
+#else
+			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
+				FileShare.None);
+#endif
+        }
 
 		public static bool FileExists(IOConnectionInfo ioc)
 		{
-			//return FileExists(ioc, false);
-		    return true;
+			return FileExists(ioc, false);
 		}
 
-		/*public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
-        {
+		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
+		{
 			if(ioc == null) { Debug.Assert(false); return false; }
 
-			if(ioc.IsLocalFile()) return ioc.StorageFile.IsAvailable;
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
+
+#if PCL
+			if(ioc.IsLocalFile())
+				return ioc.StorageFile.IsAvailable;
+#else
+			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
+#endif
+
+#if (!PCL && !KeePassLibSD && !KeePassRT)
+			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
+			{
+				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
+				if(!b && bThrowErrors) throw new InvalidOperationException();
+				return b;
+			}
+#endif
 
 			try
 			{
 				Stream s = OpenRead(ioc);
 				if(s == null) throw new FileNotFoundException();
 
-				// For FTP clients we called RETR to get the file, but we never
-				// followed-up and downloaded the file; close may produce a
-				// 550 error -- that's okay
-				try { s.Close(); }
+				try { s.ReadByte(); }
+				catch(Exception) { }
+
+				// We didn't download the file completely; close may throw
+				// an exception -- that's okay
+				try { s.Dispose(); }
 				catch(Exception) { }
 			}
 			catch(Exception)
@@ -331,19 +534,29 @@ namespace ModernKeePassLib.Serialization
 			}
 
 			return true;
-		}*/
+		}
 
-		public static async void DeleteFile(IOConnectionInfo ioc)
+		public static void DeleteFile(IOConnectionInfo ioc)
 		{
-			if(ioc.IsLocalFile()) { await ioc.StorageFile.DeleteAsync(StorageDeleteOption.Default);
-			}
+			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
 
-#if !KeePassLibSD && TODO
+#if PCL
+			if(ioc.IsLocalFile()) {
+				/*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+				file.DeleteAsync().RunSynchronously();*/
+                ioc.StorageFile.DeleteAsync(StorageDeleteOption.Default).GetResults();
+			}
+#else
+			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
+#endif
+
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(ioc);
 			if(req != null)
 			{
 				if(req is HttpWebRequest) req.Method = "DELETE";
-				else if(req is FtpWebRequest) req.Method = WebRequestMethods.Ftp.DeleteFile;
+				else if(req is FtpWebRequest)
+					req.Method = WebRequestMethods.Ftp.DeleteFile;
 				else if(req is FileWebRequest)
 				{
 					File.Delete(UrlUtil.FileUrlToPath(ioc.Path));
@@ -365,11 +578,22 @@ namespace ModernKeePassLib.Serialization
 		/// </summary>
 		/// <param name="iocFrom">Source file path.</param>
 		/// <param name="iocTo">Target file path.</param>
-		public static async void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
+		public static void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
-			if(iocFrom.IsLocalFile()) { await iocTo.StorageFile.RenameAsync(iocTo.Path, NameCollisionOption.GenerateUniqueName); }
+			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
 
-#if !KeePassLibSD && TODO
+#if PCL
+			if(iocFrom.IsLocalFile()) {
+				/*var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
+				file.MoveAsync(iocTo.Path).RunSynchronously();*/
+                iocFrom.StorageFile.RenameAsync(iocTo.Path).GetResults();
+				return;
+			}
+#else
+			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
+#endif
+
+#if (!PCL && !KeePassLibSD && !KeePassRT)
 			WebRequest req = CreateWebRequest(iocFrom);
 			if(req != null)
 			{
@@ -381,7 +605,13 @@ namespace ModernKeePassLib.Serialization
 				else if(req is FtpWebRequest)
 				{
 					req.Method = WebRequestMethods.Ftp.Rename;
-					((FtpWebRequest)req).RenameTo = UrlUtil.GetFileName(iocTo.Path);
+					string strTo = UrlUtil.GetFileName(iocTo.Path);
+
+					// We're affected by .NET bug 621450:
+					// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+					// Prepending "./", "%2E/" or "Dummy/../" doesn't work.
+
+					((FtpWebRequest)req).RenameTo = strTo;
 				}
 				else if(req is FileWebRequest)
 				{
@@ -412,11 +642,23 @@ namespace ModernKeePassLib.Serialization
 			// DeleteFile(iocFrom);
 		}
 
-		private static void DisposeResponse(WebResponse wr, bool bGetStream)
+#if (!PCL && !KeePassLibSD && !KeePassRT)
+		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
 		{
-            Debug.Assert(false, "Not implemented yet");
-            return;
-#if TODO
+			try
+			{
+				WebRequest req = CreateWebRequest(ioc);
+				req.Method = strMethod;
+				DisposeResponse(req.GetResponse(), true);
+			}
+			catch(Exception) { return false; }
+
+			return true;
+		}
+#endif
+
+		internal static void DisposeResponse(WebResponse wr, bool bGetStream)
+		{
 			if(wr == null) return;
 
 			try
@@ -424,12 +666,12 @@ namespace ModernKeePassLib.Serialization
 				if(bGetStream)
 				{
 					Stream s = wr.GetResponseStream();
-					if(s != null) s.Close();
+					if(s != null) s.Dispose();
 				}
 			}
 			catch(Exception) { Debug.Assert(false); }
 
-			try { wr.Close(); }
+			try { wr.Dispose(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
 
@@ -450,12 +692,30 @@ namespace ModernKeePassLib.Serialization
 			catch(Exception) { }
 			finally
 			{
-				if(sIn != null) sIn.Close();
-				if(ms != null) ms.Close();
+				if(sIn != null) sIn.Dispose();
+				if(ms != null) ms.Dispose();
 			}
 
 			return null;
-#endif
-        }
+		}
+
+		private static void RaiseIOAccessPreEvent(IOConnectionInfo ioc, IOAccessType t)
+		{
+			RaiseIOAccessPreEvent(ioc, null, t);
+		}
+
+		private static void RaiseIOAccessPreEvent(IOConnectionInfo ioc,
+			IOConnectionInfo ioc2, IOAccessType t)
+		{
+			if(ioc == null) { Debug.Assert(false); return; }
+			// ioc2 may be null
+
+			if(IOConnection.IOAccessPre != null)
+			{
+				IOConnectionInfo ioc2Lcl = ((ioc2 != null) ? ioc2.CloneDeep() : null);
+				IOAccessEventArgs e = new IOAccessEventArgs(ioc.CloneDeep(), ioc2Lcl, t);
+				IOConnection.IOAccessPre(null, e);
+			}
+		}
 	}
 }

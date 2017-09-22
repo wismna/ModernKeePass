@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/* Bert TODO: completely removed for the time being */
-
-#if TODO
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -156,7 +153,7 @@ namespace ModernKeePassLib.Translation
 			return new Dictionary<string, string>();
 		}
 
-#if !KeePassLibSD
+#if (!KeePassLibSD && !KeePassRT)
 		public void ApplyTo(Form form)
 		{
 			if(form == null) throw new ArgumentNullException("form");
@@ -253,5 +250,3 @@ namespace ModernKeePassLib.Translation
 #endif
 	}
 }
-
-#endif

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.IO;
+using System.Diagnostics;
+using System.Security;
 
 namespace ModernKeePassLib.Cryptography.Cipher
 {
-    /// <summary>
-    /// Pool of encryption/decryption algorithms (ciphers).
-    /// </summary>
-    public sealed class CipherPool
+	/// <summary>
+	/// Pool of encryption/decryption algorithms (ciphers).
+	/// </summary>
+	public sealed class CipherPool
 	{
 		private List<ICipherEngine> m_vCiphers = new List<ICipherEngine>();
 		private static CipherPool m_poolGlobal = null;
@@ -65,7 +69,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 
 			// Return if a cipher with that ID is registered already.
 			for(int i = 0; i < m_vCiphers.Count; ++i)
-				if(m_vCiphers[i].CipherUuid.EqualsValue(csEngine.CipherUuid))
+				if(m_vCiphers[i].CipherUuid.Equals(csEngine.CipherUuid))
 					return;
 
 			m_vCiphers.Add(csEngine);
@@ -81,7 +85,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		{
 			foreach(ICipherEngine iEngine in m_vCiphers)
 			{
-				if(iEngine.CipherUuid.EqualsValue(uuidCipher))
+				if(iEngine.CipherUuid.Equals(uuidCipher))
 					return iEngine;
 			}
 
@@ -99,7 +103,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		{
 			for(int i = 0; i < m_vCiphers.Count; ++i)
 			{
-				if(m_vCiphers[i].CipherUuid.EqualsValue(uuidCipher))
+				if(m_vCiphers[i].CipherUuid.Equals(uuidCipher))
 					return i;
 			}
 

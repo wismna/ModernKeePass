@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2012 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,20 +18,18 @@
 */
 
 using System;
-//using System.Drawing;
-using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls;
 
-// Bert TODO: http://blog.tallcomponents.com/2012/06/windows-8-release-preview-back-to-earth.html
 namespace ModernKeePassLib
 {
-    /// <summary>
-    /// Custom icon. <c>PwCustomIcon</c> objects are immutable.
-    /// </summary>
-    public sealed class PwCustomIcon
+	/// <summary>
+	/// Custom icon. <c>PwCustomIcon</c> objects are immutable.
+	/// </summary>
+	public sealed class PwCustomIcon
 	{
 		private PwUuid m_pwUuid;
 		private byte[] m_pbImageDataPng;
-		private BitmapImage m_pCachedImage;
+		private Image m_pCachedImage;
 
 		public PwUuid Uuid
 		{
@@ -43,7 +41,7 @@ namespace ModernKeePassLib
 			get { return m_pbImageDataPng; }
 		}
 
-        public BitmapImage Image
+		public Image Image
 		{
 			get { return m_pCachedImage; }
 		}
@@ -52,8 +50,8 @@ namespace ModernKeePassLib
 		{
 			Debug.Assert(pwUuid != null);
 			if(pwUuid == null) throw new ArgumentNullException("pwUuid");
-			Debug.Assert(pwUuid != PwUuid.Zero);
-			if(pwUuid == PwUuid.Zero) throw new ArgumentException("pwUuid == 0");
+			Debug.Assert(!pwUuid.Equals(PwUuid.Zero));
+			if(pwUuid.Equals(PwUuid.Zero)) throw new ArgumentException("pwUuid == 0");
 
 			Debug.Assert(pbImageDataPng != null);
 			if(pbImageDataPng == null) throw new ArgumentNullException("pbImageDataPng");
@@ -61,10 +59,11 @@ namespace ModernKeePassLib
 			m_pwUuid = pwUuid;
 			m_pbImageDataPng = pbImageDataPng;
 
-#if !KeePassLibSD && false
-			MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
-			m_pCachedImage = Image.FromStream(ms);
-			ms.Close();
+#if !KeePassLibSD
+			// MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
+			// m_pCachedImage = Image.FromStream(ms);
+			// ms.Close();
+			//m_pCachedImage = GfxUtil.LoadImage(m_pbImageDataPng);
 #else
 			m_pCachedImage = null;
 #endif
