@@ -310,12 +310,13 @@ namespace ModernKeePassLibPCL.Serialization
 		{
 #if ModernKeePassLibPCL
 			if(IsLocalFile())
-				return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
+				//return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
+                return StorageFile.GetFileFromPathAsync(m_strUrl).GetResults() != null;
 #else
 			if(IsLocalFile()) return File.Exists(m_strUrl);
 #endif
 
-			return true;
+            return true;
 		}
 
 		public bool IsLocalFile()

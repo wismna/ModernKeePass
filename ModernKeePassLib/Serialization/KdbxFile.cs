@@ -368,33 +368,37 @@ namespace ModernKeePassLibPCL.Serialization
 
 			string strPath;
 			int iTry = 1;
-			do
-			{
-				strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
+            do
+            {
+                strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
 
-				string strExt = UrlUtil.GetExtension(strName);
-				string strDesc = UrlUtil.StripExtension(strName);
+                string strExt = UrlUtil.GetExtension(strName);
+                string strDesc = UrlUtil.StripExtension(strName);
 
-				strPath += strDesc;
-				if(iTry > 1)
-					strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
-						")";
+                strPath += strDesc;
+                if (iTry > 1)
+                    strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
+                        ")";
 
-				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
+                if (!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 
-				++iTry;
-			}
+                ++iTry;
+            }
 #if ModernKeePassLibPCL
-			while(FileSystem.Current.GetFileFromPathAsync(strPath).Result != null);
+            //while(FileSystem.Current.GetFileFromPathAsync(strPath).Result != null);
+            while (StorageFile.GetFileFromPathAsync(strPath).GetResults() != null);
 #else
 			while(File.Exists(strPath));
 #endif
 
 #if ModernKeePassLibPCL
 			byte[] pbData = pb.ReadData();
-			var file = FileSystem.Current.GetFileFromPathAsync(strPath).Result;
-			using (var stream = file.OpenAsync(FileAccess.ReadAndWrite).Result) {
-				stream.Write (pbData, 0, pbData.Length);
+            /*var file = FileSystem.Current.GetFileFromPathAsync(strPath).Result;
+			using (var stream = file.OpenAsync(FileAccess.ReadAndWrite).Result) {*/
+            var file = StorageFile.GetFileFromPathAsync(strPath).GetResults();
+            using (var stream = file.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream())
+            {
+                stream.Write (pbData, 0, pbData.Length);
 			}
 			MemUtil.ZeroByteArray(pbData);
 #elif !KeePassLibSD
