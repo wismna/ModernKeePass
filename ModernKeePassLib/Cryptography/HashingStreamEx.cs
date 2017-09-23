@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
 
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLibPCL.Cryptography
 {
@@ -37,7 +38,8 @@ namespace ModernKeePassLibPCL.Cryptography
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
 #if ModernKeePassLibPCL
-		private ICryptoTransform m_hash;
+        //private ICryptoTransform m_hash;
+        private CryptographicHash m_hash;
 #else
 		private HashAlgorithm m_hash;
 #endif
@@ -76,18 +78,20 @@ namespace ModernKeePassLibPCL.Cryptography
 		}
 
 #if ModernKeePassLibPCL
-		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm? hashAlgorithm)
+        //public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm? hashAlgorithm)
+        public HashingStreamEx(Stream sBaseStream, bool bWriting, string hashAlgorithm)
 #else
 		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm hashAlgorithm)
 #endif
-		{
+        {
 			if(sBaseStream == null)
                 throw new ArgumentNullException("sBaseStream");
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
 #if ModernKeePassLibPCL
-			m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
+            //m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
+            m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
 #elif !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
 #else // KeePassLibSD
@@ -98,17 +102,17 @@ namespace ModernKeePassLibPCL.Cryptography
 			try { if(m_hash == null) m_hash = HashAlgorithm.Create(); }
 			catch(Exception) { }
 #endif
-			if(m_hash == null) { Debug.Assert(false); return; }
+            if (m_hash == null) { Debug.Assert(false); return; }
 
 			// Validate hash algorithm
-			if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
+			/*if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
 				(m_hash.InputBlockSize != 1) || (m_hash.OutputBlockSize != 1))
 			{
 #if false && DEBUG
 				MessageService.ShowWarning("Broken HashAlgorithm object in HashingStreamEx.");
 #endif
 				m_hash = null;
-			}
+			}*/
 		}
 
 		public override void Flush()
@@ -128,13 +132,14 @@ namespace ModernKeePassLibPCL.Cryptography
 			{
 				try
 				{
-					m_hash.TransformFinalBlock(new byte[0], 0, 0);
+                    //m_hash.TransformFinalBlock(new byte[0], 0, 0);
 #if ModernKeePassLibPCL
-					m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
+                    //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
+                    CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
 #else
 					m_pbFinalHash = m_hash.Hash;
 #endif
-				}
+                }
 				catch(Exception) { Debug.Assert(false); }
 
 				m_hash = null;
@@ -172,10 +177,11 @@ namespace ModernKeePassLibPCL.Cryptography
 #endif
 
 			if((m_hash != null) && (nRead > 0))
-				m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
+                //m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
+                m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
 
 #if DEBUG
-			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
+            Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
 #endif
 
 			return nRead;
@@ -190,8 +196,9 @@ namespace ModernKeePassLibPCL.Cryptography
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
 
-			if((m_hash != null) && (nCount > 0))
-				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
+            if ((m_hash != null) && (nCount > 0))
+                //m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
+                m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
 
 #if DEBUG
 			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));

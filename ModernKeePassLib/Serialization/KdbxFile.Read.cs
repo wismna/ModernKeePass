@@ -24,7 +24,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Security;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -42,6 +42,7 @@ using ModernKeePassLibPCL.Interfaces;
 using ModernKeePassLibPCL.Keys;
 using ModernKeePassLibPCL.Resources;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLibPCL.Serialization
 {
@@ -221,13 +222,16 @@ namespace ModernKeePassLibPCL.Serialization
 			msHeader.Dispose();
 
 #if ModernKeePassLibPCL
-			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			m_pbHashOfHeader = sha256.HashData(pbHeader);
+            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			m_pbHashOfHeader = sha256.HashData(pbHeader);*/
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbHeader));
+            CryptographicBuffer.CopyToByteArray(buffer, out m_pbHashOfHeader);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
 #endif
-		}
+        }
 
 		private bool ReadHeaderField(BinaryReaderEx brSource)
 		{
@@ -348,14 +352,18 @@ namespace ModernKeePassLibPCL.Serialization
 			ms.Write(pKey32, 0, 32);
 
 #if ModernKeePassLibPCL
-			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			var aesKey = sha256.HashData(ms.ToArray());
+            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			var aesKey = sha256.HashData(ms.ToArray());*/
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
+            byte[] aesKey;
+            CryptographicBuffer.CopyToByteArray(buffer, out aesKey);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
 #endif
 
-			ms.Dispose();
+            ms.Dispose();
 			Array.Clear(pKey32, 0, 32);
 
 			if((aesKey == null) || (aesKey.Length != 32))

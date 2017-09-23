@@ -26,7 +26,7 @@ using System.Security;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -37,6 +37,7 @@ using ModernKeePassLibPCL.Resources;
 using ModernKeePassLibPCL.Security;
 using ModernKeePassLibPCL.Serialization;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLibPCL.Keys
 {
@@ -139,13 +140,16 @@ namespace ModernKeePassLibPCL.Keys
 			if(pbKey == null)
 			{
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				pbKey = sha256.HashData(pbFileData);
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				pbKey = sha256.HashData(pbFileData);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbFileData));
+                CryptographicBuffer.CopyToByteArray(buffer, out pbKey);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				pbKey = sha256.ComputeHash(pbFileData);
 #endif
-			}
+            }
 
 			return pbKey;
 		}
@@ -203,13 +207,16 @@ namespace ModernKeePassLibPCL.Keys
 				ms.Write(pbKey32, 0, 32);
 
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				pbFinalKey32 = sha256.HashData(ms.ToArray());
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				pbFinalKey32 = sha256.HashData(ms.ToArray());*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
+                CryptographicBuffer.CopyToByteArray(buffer, out pbFinalKey32);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
 #endif
-				ms.Dispose();
+                ms.Dispose();
 			}
 
 			CreateXmlKeyFile(strFilePath, pbFinalKey32);

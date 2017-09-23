@@ -20,7 +20,7 @@
 using System;
 using System.Security;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -29,6 +29,7 @@ using System.Diagnostics;
 
 using ModernKeePassLibPCL.Native;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLibPCL.Cryptography
 {
@@ -42,7 +43,7 @@ namespace ModernKeePassLibPCL.Cryptography
 		private byte[] m_pbEntropyPool = new byte[64];
 		private uint m_uCounter;
 #if ModernKeePassLibPCL
-		private IRandomNumberGenerator m_rng = NetFxCrypto.RandomNumberGenerator;
+		//private IRandomNumberGenerator m_rng = NetFxCrypto.RandomNumberGenerator;
 #else
 		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
 #endif
@@ -107,8 +108,11 @@ namespace ModernKeePassLibPCL.Cryptography
 			if(pbEntropy.Length >= 64)
 			{
 #if ModernKeePassLibPCL
-				var shaNew = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
-				pbNewData = shaNew.HashData(pbEntropy);
+                /*var shaNew = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
+				pbNewData = shaNew.HashData(pbEntropy);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbEntropy));
+                CryptographicBuffer.CopyToByteArray(buffer, out pbNewData);
 #else
 
 #if !KeePassLibSD
@@ -119,7 +123,7 @@ namespace ModernKeePassLibPCL.Cryptography
 				pbNewData = shaNew.ComputeHash(pbEntropy);
 
 #endif
-			}
+            }
 
 			MemoryStream ms = new MemoryStream();
 			lock(m_oSyncRoot)
@@ -129,8 +133,11 @@ namespace ModernKeePassLibPCL.Cryptography
 
 				byte[] pbFinal = ms.ToArray();
 #if ModernKeePassLibPCL
-				var shaPool = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
-				m_pbEntropyPool = shaPool.HashData(pbFinal);
+                /*var shaPool = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
+				m_pbEntropyPool = shaPool.HashData(pbFinal);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbFinal));
+                CryptographicBuffer.CopyToByteArray(buffer, out m_pbEntropyPool);
 #else
 
 #if !KeePassLibSD
@@ -142,7 +149,7 @@ namespace ModernKeePassLibPCL.Cryptography
 				m_pbEntropyPool = shaPool.ComputeHash(pbFinal);
 
 #endif
-			}
+            }
 			ms.Dispose();
 		}
 
@@ -250,7 +257,8 @@ namespace ModernKeePassLibPCL.Cryptography
 		private byte[] GetCspData()
 		{
 			byte[] pbCspRandom = new byte[32];
-			m_rng.GetBytes(pbCspRandom);
+			//m_rng.GetBytes(pbCspRandom);
+            CryptographicBuffer.CopyToByteArray(CryptographicBuffer.GenerateRandom(32), out pbCspRandom);
 			return pbCspRandom;
 		}
 
@@ -280,13 +288,18 @@ namespace ModernKeePassLibPCL.Cryptography
 			}
 
 #if ModernKeePassLibPCL
-			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			return sha256.HashData(pbFinal);
+            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			return sha256.HashData(pbFinal);*/
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbFinal));
+            byte[] result;
+            CryptographicBuffer.CopyToByteArray(buffer, out result);
+            return result;
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			return sha256.ComputeHash(pbFinal);
 #endif
-		}
+        }
 
 		/// <summary>
 		/// Get a number of cryptographically strong random bytes.

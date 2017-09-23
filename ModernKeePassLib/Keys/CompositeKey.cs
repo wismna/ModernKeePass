@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -37,6 +37,8 @@ using ModernKeePassLibPCL.Native;
 using ModernKeePassLibPCL.Resources;
 using ModernKeePassLibPCL.Security;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
+using Windows.Storage.Streams;
 
 namespace ModernKeePassLibPCL.Keys
 {
@@ -178,13 +180,17 @@ namespace ModernKeePassLibPCL.Keys
 			}
 
 #if ModernKeePassLibPCL
-			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			var pbHash = sha256.HashData(ms.ToArray());
+            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			var pbHash = sha256.HashData(ms.ToArray());*/
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
+            byte[] pbHash;
+            CryptographicBuffer.CopyToByteArray(buffer, out pbHash);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] pbHash = sha256.ComputeHash(ms.ToArray());
 #endif
-			ms.Dispose();
+            ms.Dispose();
 			return pbHash;
 		}
 
@@ -284,13 +290,18 @@ namespace ModernKeePassLibPCL.Keys
 				return null;
 
 #if ModernKeePassLibPCL
-			var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			return sha256.HashData(pbNewKey);
+            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+			return sha256.HashData(pbNewKey);*/
+            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+            byte[] result;
+            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbNewKey));
+            CryptographicBuffer.CopyToByteArray(buffer, out result);
+            return result;
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			return sha256.ComputeHash(pbNewKey);
 #endif
-		}
+        }
 
 		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
@@ -307,9 +318,12 @@ namespace ModernKeePassLibPCL.Keys
 			}
 #else
 #if ModernKeePassLibPCL
-			var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
+            /*var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKeySeed32);
-			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);
+			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
+            var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+            var key = aes.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbKeySeed32));
+            
 #else
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);
@@ -328,8 +342,8 @@ namespace ModernKeePassLibPCL.Keys
 			ICryptoTransform iCrypt = r.CreateEncryptor();
 #endif
 
-			// !iCrypt.CanReuseTransform -- doesn't work with Mono
-			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+            // !iCrypt.CanReuseTransform -- doesn't work with Mono
+            if ((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
 				(iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
@@ -384,9 +398,12 @@ namespace ModernKeePassLibPCL.Keys
 			aes.Init(true, kp);
 #else
 #if ModernKeePassLibPCL
-			var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
+            /*var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKey);
-			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);
+            var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
+            var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+            var key = aes.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbKey));
+            
 #else
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);

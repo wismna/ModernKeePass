@@ -25,7 +25,8 @@ using System.Text;
 using System.Diagnostics;
 
 #if ModernKeePassLibPCL
-using PCLStorage;
+//using PCLStorage;
+using Windows.Storage;
 #endif
 
 using ModernKeePassLibPCL.Native;
@@ -50,11 +51,12 @@ namespace ModernKeePassLibPCL.Utility
 #if KeePassRT
 			get { return '\\'; }
 #elif ModernKeePassLibPCL
-			get { return PortablePath.DirectorySeparatorChar; }
+            //get { return PortablePath.DirectorySeparatorChar; }
+            get { return '\\'; }
 #else
 			get { return Path.DirectorySeparatorChar; }
 #endif
-		}
+        }
 
 		/// <summary>
 		/// Get the directory (path) of a file name. The returned string may be
@@ -457,8 +459,11 @@ namespace ModernKeePassLibPCL.Utility
 					strPath).AwaitEx();
 				str = dirT.Path;
 #elif ModernKeePassLibPCL
-				var dirT = FileSystem.Current.GetFolderFromPathAsync(strPath).Result;
-				str = dirT.Path;
+                var dirT = StorageFolder.GetFolderFromPathAsync(
+                    strPath).GetResults();
+                str = dirT.Path;
+                /*var dirT = FileSystem.Current.GetFolderFromPathAsync(strPath).Result;
+				str = dirT.Path;*/
 #else
 				str = Path.GetFullPath(strPath);
 #endif

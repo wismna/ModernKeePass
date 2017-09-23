@@ -21,7 +21,7 @@ using System;
 using System.IO;
 #if ModernKeePassLibPCL
 using System.Linq;
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -30,6 +30,7 @@ using System.Text;
 
 using ModernKeePassLibPCL.Native;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 #if KeePassLibSD
 using KeePassLibSD;
@@ -251,13 +252,17 @@ namespace ModernKeePassLibPCL.Serialization
 			if(m_bVerify)
 			{
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				var pbComputedHash = sha256.HashData(m_pbBuffer);
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbComputedHash = sha256.HashData(m_pbBuffer);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(m_pbBuffer));
+                byte[] pbComputedHash;
+                CryptographicBuffer.CopyToByteArray(buffer, out pbComputedHash);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbComputedHash = sha256.ComputeHash(m_pbBuffer);
 #endif
-				if((pbComputedHash == null) || (pbComputedHash.Length != 32))
+                if ((pbComputedHash == null) || (pbComputedHash.Length != 32))
 					throw new InvalidOperationException();
 
 				for(int iHashPos = 0; iHashPos < 32; ++iHashPos)
@@ -298,8 +303,12 @@ namespace ModernKeePassLibPCL.Serialization
 			if(m_nBufferPos > 0)
 			{
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray());
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray());*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray()));
+                byte[] pbHash;
+                CryptographicBuffer.CopyToByteArray(buffer, out pbHash);
 #else
 
 				SHA256Managed sha256 = new SHA256Managed();
@@ -320,7 +329,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 #endif
 
-				m_bwOutput.Write(pbHash);
+                m_bwOutput.Write(pbHash);
 			}
 			else
 			{

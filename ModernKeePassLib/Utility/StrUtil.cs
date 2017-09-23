@@ -25,7 +25,7 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif

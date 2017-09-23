@@ -21,13 +21,14 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Globalization;
 
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 #if (!KeePassLibSD && !KeePassRT)
 namespace ModernKeePassLibPCL.Cryptography
@@ -47,15 +48,19 @@ namespace ModernKeePassLibPCL.Cryptography
 			Array.Reverse(pbText); // Big-Endian
 
 #if ModernKeePassLibPCL
-			var hsha1 = WinRTCrypto.MacAlgorithmProvider.OpenAlgorithm(MacAlgorithm.HmacSha1).CreateHash(pbSecret);
+            /*var hsha1 = WinRTCrypto.MacAlgorithmProvider.OpenAlgorithm(MacAlgorithm.HmacSha1).CreateHash(pbSecret);
 			hsha1.Append(pbText);
-			var pbHash = hsha1.GetValueAndReset();
+			var pbHash = hsha1.GetValueAndReset();*/
+            var hsha1 = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1).CreateHash(CryptographicBuffer.CreateFromByteArray(pbSecret));
+            hsha1.Append(CryptographicBuffer.CreateFromByteArray(pbText));
+            byte[] pbHash;
+            CryptographicBuffer.CopyToByteArray(hsha1.GetValueAndReset(), out pbHash);
 #else
 			HMACSHA1 hsha1 = new HMACSHA1(pbSecret);
 			byte[] pbHash = hsha1.ComputeHash(pbText);
 #endif
 
-			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
+            uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
 			if((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
 				uOffset = (uint)iTruncationOffset;
 

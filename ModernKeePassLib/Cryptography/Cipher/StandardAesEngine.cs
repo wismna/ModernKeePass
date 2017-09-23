@@ -25,7 +25,8 @@ using System.Security;
 using System.Diagnostics;
 
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 #else
 
 #if !KeePassRT
@@ -124,7 +125,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 			Array.Copy(pbKey, pbLocalKey, 32);
 
 #if ModernKeePassLibPCL
-			var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
+            /*var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
                 OpenAlgorithm(SymmetricAlgorithm.AesCbcPkcs7);
 			var key = provider.CreateSymmetricKey(pbLocalKey);
 			if (bEncrypt)
@@ -138,6 +139,27 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
                     key, pbLocalIV);
 				return new CryptoStream(s, decryptor, CryptoStreamMode.Read);
 			}
+            */
+            var provider = SymmetricKeyAlgorithmProvider.
+                OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
+            var key = provider.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbLocalKey));
+            using (var ms = new MemoryStream())
+            {
+                s.CopyTo(ms);
+                var data = CryptographicBuffer.CreateFromByteArray(ms.ToArray());
+                byte[] resultByteArray;
+                if (bEncrypt)
+                {
+                    var encrypted = CryptographicEngine.Encrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
+                    CryptographicBuffer.CopyToByteArray(encrypted, out resultByteArray);
+                }
+                else
+                {
+                    var decrypted = CryptographicEngine.Decrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
+                    CryptographicBuffer.CopyToByteArray(decrypted, out resultByteArray);
+                }
+                    return new MemoryStream(resultByteArray, true);
+            }
 #else
 
 #if !KeePassRT
@@ -175,7 +197,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 #endif
 
 #endif
-		}
+        }
 
 		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
 		{

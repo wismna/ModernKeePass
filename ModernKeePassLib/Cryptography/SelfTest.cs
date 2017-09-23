@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Security;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif

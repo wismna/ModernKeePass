@@ -22,13 +22,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 
 using ModernKeePassLibPCL.Security;
 using ModernKeePassLibPCL.Utility;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLibPCL.Keys
 {
@@ -60,13 +61,17 @@ namespace ModernKeePassLibPCL.Keys
 			if(bPerformHash)
 			{
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				var pbRaw = sha256.HashData(pbKeyData);
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbRaw = sha256.HashData(pbKeyData);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbKeyData));
+                byte[] pbRaw;
+                CryptographicBuffer.CopyToByteArray(buffer, out pbRaw);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbRaw = sha256.ComputeHash(pbKeyData);
 #endif
-				m_pbKey = new ProtectedBinary(true, pbRaw);
+                m_pbKey = new ProtectedBinary(true, pbRaw);
 			}
 			else m_pbKey = new ProtectedBinary(true, pbKeyData);
 		}

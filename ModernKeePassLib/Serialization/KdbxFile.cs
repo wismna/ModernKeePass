@@ -30,7 +30,8 @@ using System.IO.Compression;
 #endif
 
 #if ModernKeePassLibPCL
-using PCLStorage;
+//using PCLStorage;
+using Windows.Storage;
 #endif
 
 using ModernKeePassLibPCL.Collections;

@@ -19,8 +19,9 @@
 
 using System;
 using System.Diagnostics;
+using Windows.Security.Cryptography.Core;
 #if ModernKeePassLibPCL
-using PCLCrypto;
+using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
@@ -116,13 +117,17 @@ namespace ModernKeePassLibPCL.Cryptography
 			else if(genAlgorithm == CrsAlgorithm.Salsa20)
 			{
 #if ModernKeePassLibPCL
-				var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				var pbKey32 = sha256.HashData(pbKey);
+                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+				var pbKey32 = sha256.HashData(pbKey);*/
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbKey));
+                byte[] pbKey32;
+                CryptographicBuffer.CopyToByteArray(buffer, out pbKey32);
 #else
 				SHA256Managed sha256 = new SHA256Managed();
 				byte[] pbKey32 = sha256.ComputeHash(pbKey);
 #endif
-				byte[] pbIV = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
+                byte[] pbIV = new byte[8] { 0xE8, 0x30, 0x09, 0x4B,
 					0x97, 0x20, 0x5D, 0x2A }; // Unique constant
 
 				m_salsa20 = new Salsa20Cipher(pbKey32, pbIV);

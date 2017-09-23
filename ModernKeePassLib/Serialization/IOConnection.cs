@@ -34,7 +34,7 @@ using System.Security.Cryptography.X509Certificates;
 
 #if ModernKeePassLibPCL
 using Windows.Storage;
-using PCLStorage;
+//using PCLStorage;
 #endif
 using ModernKeePassLibPCL.Utility;
 
@@ -432,12 +432,12 @@ namespace ModernKeePassLibPCL.Serialization
 		private static Stream OpenReadLocal(IOConnectionInfo ioc)
 		{
 #if ModernKeePassLibPCL
-		    if (ioc.StorageFile != null)
-		    {
+		    /*if (ioc.StorageFile != null)
+		    {*/
 		        return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetResults().AsStream();
-		    }
+		    /*}
 		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;
+			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;*/
 #else
 			return new FileStream(ioc.Path, FileMode.Open, FileAccess.Read,
 				FileShare.Read);
@@ -478,12 +478,12 @@ namespace ModernKeePassLibPCL.Serialization
 		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
 #if ModernKeePassLibPCL
-		    if (ioc.StorageFile != null)
-		    {
+		    /*if (ioc.StorageFile != null)
+		    {*/
 		        return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream();
-		    }
+		    /*}
             var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(FileAccess.ReadAndWrite).Result;
+			return file.OpenAsync(FileAccess.ReadAndWrite).Result;*/
 #else
 			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
 				FileShare.None);
@@ -502,8 +502,9 @@ namespace ModernKeePassLibPCL.Serialization
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
 
 #if ModernKeePassLibPCL
-			if(ioc.IsLocalFile())
-				return (FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result != null);
+            /*if(ioc.IsLocalFile())
+				return (FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result != null);*/
+            return ioc.StorageFile.IsAvailable;
 #else
 			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
 #endif
@@ -546,8 +547,8 @@ namespace ModernKeePassLibPCL.Serialization
 #if ModernKeePassLibPCL
 		    if (!ioc.IsLocalFile()) return;
 		    ioc.StorageFile?.DeleteAsync().GetResults();
-		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-		    file.DeleteAsync().RunSynchronously();
+		    /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
+		    file.DeleteAsync().RunSynchronously();*/
 #else
 			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
 #endif
@@ -587,8 +588,8 @@ namespace ModernKeePassLibPCL.Serialization
 #if ModernKeePassLibPCL
 		    if (!iocFrom.IsLocalFile()) return;
 		    iocFrom.StorageFile?.RenameAsync(iocTo.Path).GetResults();
-		    var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
-		    file.MoveAsync(iocTo.Path).RunSynchronously();
+            /*var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
+		    file.MoveAsync(iocTo.Path).RunSynchronously();*/
 #else
 			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
 #endif
@@ -629,18 +630,18 @@ namespace ModernKeePassLibPCL.Serialization
 			}
 #endif
 
-			// using(Stream sIn = IOConnection.OpenRead(iocFrom))
-			// {
-			//	using(Stream sOut = IOConnection.OpenWrite(iocTo))
-			//	{
-			//		MemUtil.CopyStream(sIn, sOut);
-			//		sOut.Close();
-			//	}
-			//
-			//	sIn.Close();
-			// }
-			// DeleteFile(iocFrom);
-		}
+            // using(Stream sIn = IOConnection.OpenRead(iocFrom))
+            // {
+            //	using(Stream sOut = IOConnection.OpenWrite(iocTo))
+            //	{
+            //		MemUtil.CopyStream(sIn, sOut);
+            //		sOut.Close();
+            //	}
+            //
+            //	sIn.Close();
+            // }
+            // DeleteFile(iocFrom);
+        }
 
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
@@ -656,8 +657,8 @@ namespace ModernKeePassLibPCL.Serialization
 			return true;
 		}
 #endif
-
-		internal static void DisposeResponse(WebResponse wr, bool bGetStream)
+#if !ModernKeePassLibPCL
+        internal static void DisposeResponse(WebResponse wr, bool bGetStream)
 		{
 			if(wr == null) return;
 
@@ -674,8 +675,8 @@ namespace ModernKeePassLibPCL.Serialization
 			try { wr.Dispose(); }
 			catch(Exception) { Debug.Assert(false); }
 		}
-
-		public static byte[] ReadFile(IOConnectionInfo ioc)
+#endif
+        public static byte[] ReadFile(IOConnectionInfo ioc)
 		{
 			Stream sIn = null;
 			MemoryStream ms = null;
