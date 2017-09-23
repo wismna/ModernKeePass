@@ -23,6 +23,7 @@ using System.IO;
 using System.Net;
 using System.Diagnostics;
 using Windows.Storage.Streams;
+using System.Threading.Tasks;
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 using System.Net.Cache;
 using System.Net.Security;
@@ -421,20 +422,21 @@ namespace ModernKeePassLibPCL.Serialization
 				new Uri(ioc.Path)));
 		}
 #else
-		public static Stream OpenRead(IOConnectionInfo ioc)
+		public static async Task<Stream> OpenRead(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
 
-			return OpenReadLocal(ioc);
+			return await OpenReadLocal(ioc);
 		}
 #endif
 
-		private static Stream OpenReadLocal(IOConnectionInfo ioc)
+		private static async Task<Stream> OpenReadLocal(IOConnectionInfo ioc)
 		{
 #if ModernKeePassLibPCL
-		    /*if (ioc.StorageFile != null)
+            /*if (ioc.StorageFile != null)
 		    {*/
-		        return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetResults().AsStream();
+                var file = await ioc.StorageFile.OpenAsync(FileAccessMode.Read);
+		        return file.AsStream();
 		    /*}
 		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
 			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;*/
@@ -467,35 +469,36 @@ namespace ModernKeePassLibPCL.Serialization
 			return IocStream.WrapIfRequired(s);
 		}
 #else
-		public static Stream OpenWrite(IOConnectionInfo ioc)
+		public static async Task<Stream> OpenWrite(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
 
-			return OpenWriteLocal(ioc);
+			return await OpenWriteLocal(ioc);
 		}
 #endif
 
-		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
+		private static async Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
 		{
 #if ModernKeePassLibPCL
-		    /*if (ioc.StorageFile != null)
+            /*if (ioc.StorageFile != null)
 		    {*/
-		        return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream();
-		    /*}
+                var file = await ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite);
+                return file.AsStream();
+            /*}
             var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
 			return file.OpenAsync(FileAccess.ReadAndWrite).Result;*/
 #else
 			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
 				FileShare.None);
 #endif
-		}
+        }
 
-		public static bool FileExists(IOConnectionInfo ioc)
+		public static async Task<bool> FileExists(IOConnectionInfo ioc)
 		{
-			return FileExists(ioc, false);
+			return await FileExists(ioc, false);
 		}
 
-		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
+		public static async Task<bool> FileExists(IOConnectionInfo ioc, bool bThrowErrors)
 		{
 			if(ioc == null) { Debug.Assert(false); return false; }
 
@@ -520,7 +523,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 			try
 			{
-				Stream s = OpenRead(ioc);
+				Stream s = await OpenRead(ioc);
 				if(s == null) throw new FileNotFoundException();
 
 				try { s.ReadByte(); }
@@ -540,13 +543,13 @@ namespace ModernKeePassLibPCL.Serialization
 			return true;
 		}
 
-		public static void DeleteFile(IOConnectionInfo ioc)
+		public static async void DeleteFile(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
 
 #if ModernKeePassLibPCL
 		    if (!ioc.IsLocalFile()) return;
-		    ioc.StorageFile?.DeleteAsync().GetResults();
+		    await ioc.StorageFile?.DeleteAsync();
 		    /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
 		    file.DeleteAsync().RunSynchronously();*/
 #else
@@ -581,13 +584,13 @@ namespace ModernKeePassLibPCL.Serialization
 		/// </summary>
 		/// <param name="iocFrom">Source file path.</param>
 		/// <param name="iocTo">Target file path.</param>
-		public static void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
+		public static async void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
 			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
 
 #if ModernKeePassLibPCL
 		    if (!iocFrom.IsLocalFile()) return;
-		    iocFrom.StorageFile?.RenameAsync(iocTo.Path).GetResults();
+		    await iocFrom.StorageFile?.RenameAsync(iocTo.Path);
             /*var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
 		    file.MoveAsync(iocTo.Path).RunSynchronously();*/
 #else
@@ -676,13 +679,13 @@ namespace ModernKeePassLibPCL.Serialization
 			catch(Exception) { Debug.Assert(false); }
 		}
 #endif
-        public static byte[] ReadFile(IOConnectionInfo ioc)
+        public static async Task<byte[]> ReadFile(IOConnectionInfo ioc)
 		{
 			Stream sIn = null;
 			MemoryStream ms = null;
 			try
 			{
-				sIn = IOConnection.OpenRead(ioc);
+				sIn = await OpenRead(ioc);
 				if(sIn == null) return null;
 
 				ms = new MemoryStream();

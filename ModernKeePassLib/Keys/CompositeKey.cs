@@ -323,6 +323,9 @@ namespace ModernKeePassLibPCL.Keys
 			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
             var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
             var key = aes.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbKeySeed32));
+            var parameters = KeyDerivationParameters.BuildForPbkdf2(CryptographicBuffer.CreateFromByteArray(pbKeySeed32), (uint)uNumRounds);
+            var result = CryptographicEngine.DeriveKeyMaterial(key, parameters, 32);
+            CryptographicBuffer.CopyToByteArray(result, out pbNewKey32);
             
 #else
 			byte[] pbIV = new byte[16];
@@ -343,7 +346,7 @@ namespace ModernKeePassLibPCL.Keys
 #endif
 
             // !iCrypt.CanReuseTransform -- doesn't work with Mono
-            if ((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+            /*if ((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
 				(iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
@@ -356,7 +359,7 @@ namespace ModernKeePassLibPCL.Keys
 			{
 				iCrypt.TransformBlock(pbNewKey32, 0, 16, pbNewKey32, 0);
 				iCrypt.TransformBlock(pbNewKey32, 16, 16, pbNewKey32, 16);
-			}
+			}*/
 #endif
 
 			return true;
@@ -374,7 +377,7 @@ namespace ModernKeePassLibPCL.Keys
 		/// a value of <c>401</c> is recommended.</param>
 		/// <returns>Number of transformations performed in the specified
 		/// amount of time. Maximum value is <c>uint.MaxValue</c>.</returns>
-		public static ulong TransformKeyBenchmark(uint uMilliseconds, ulong uStep)
+		/*public static ulong TransformKeyBenchmark(uint uMilliseconds, ulong uStep)
 		{
 			ulong uRounds;
 
@@ -398,12 +401,10 @@ namespace ModernKeePassLibPCL.Keys
 			aes.Init(true, kp);
 #else
 #if ModernKeePassLibPCL
-            /*var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
+            var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKey);
-            var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
-            var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
-            var key = aes.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbKey));
-            
+            var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);
+
 #else
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);
@@ -422,8 +423,8 @@ namespace ModernKeePassLibPCL.Keys
 			ICryptoTransform iCrypt = r.CreateEncryptor();
 #endif
 
-			// !iCrypt.CanReuseTransform -- doesn't work with Mono
-			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+            // !iCrypt.CanReuseTransform -- doesn't work with Mono
+            if ((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
 				(iCrypt.OutputBlockSize != 16))
 			{
 				Debug.Assert(false, "Invalid ICryptoTransform.");
@@ -460,7 +461,7 @@ namespace ModernKeePassLibPCL.Keys
 			}
 
 			return uRounds;
-		}
+		}*/
 	}
 
 	public sealed class InvalidCompositeKeyException : Exception

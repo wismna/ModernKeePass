@@ -159,8 +159,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ModernKeePassLibPCL, Version=2.28.1.33588, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLibPCL.2.28.1.33588\lib\portable46-net451+win81+wpa81\ModernKeePassLibPCL.dll</HintPath>
+    <Reference Include="ModernKeePassLibPCL, Version=2.28.1.32210, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernKeePassLibPCL.2.28.1.32210\lib\netstandard1.2\ModernKeePassLibPCL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="PCLCrypto, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d4421c8a4786956c, processorArchitecture=MSIL">

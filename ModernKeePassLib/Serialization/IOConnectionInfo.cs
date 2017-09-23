@@ -32,6 +32,7 @@ using Windows.Storage;
 
 using ModernKeePassLibPCL.Interfaces;
 using ModernKeePassLibPCL.Utility;
+using System.Threading.Tasks;
 
 namespace ModernKeePassLibPCL.Serialization
 {
@@ -306,12 +307,15 @@ namespace ModernKeePassLibPCL.Serialization
 
 	    public StorageFile StorageFile { get; set; }
 
-	    public bool CanProbablyAccess()
+	    public async Task<bool> CanProbablyAccess()
 		{
 #if ModernKeePassLibPCL
-			if(IsLocalFile())
-				//return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
-                return StorageFile.GetFileFromPathAsync(m_strUrl).GetResults() != null;
+            if (IsLocalFile())
+            {
+                //return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
+                var file = await StorageFile.GetFileFromPathAsync(m_strUrl);
+                return file != null;
+            }
 #else
 			if(IsLocalFile()) return File.Exists(m_strUrl);
 #endif

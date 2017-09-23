@@ -122,12 +122,12 @@ namespace ModernKeePassLibPCL.Serialization
 				return sb.ToString();
 			}
 
-			public static LockFileInfo Load(IOConnectionInfo iocLockFile)
+			public static async Task<LockFileInfo> Load(IOConnectionInfo iocLockFile)
 			{
 				Stream s = null;
 				try
 				{
-					s = IOConnection.OpenRead(iocLockFile);
+					s = await IOConnection.OpenRead(iocLockFile);
 					if(s == null) return null;
 					StreamReader sr = new StreamReader(s, StrUtil.Utf8);
 					string str = sr.ReadToEnd();
@@ -149,7 +149,7 @@ namespace ModernKeePassLibPCL.Serialization
 			}
 
 			// Throws on error
-			public static LockFileInfo Create(IOConnectionInfo iocLockFile)
+			public static async Task<LockFileInfo> Create(IOConnectionInfo iocLockFile)
 			{
 				LockFileInfo lfi;
 				Stream s = null;
@@ -186,7 +186,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 					byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
 
-					s = IOConnection.OpenWrite(iocLockFile);
+					s = await IOConnection.OpenWrite(iocLockFile);
 					if(s == null) throw new IOException(iocLockFile.GetDisplayName());
 					s.Write(pbFile, 0, pbFile.Length);
 				}
@@ -203,7 +203,7 @@ namespace ModernKeePassLibPCL.Serialization
 			m_iocLockFile = iocBaseFile.CloneDeep();
 			m_iocLockFile.Path += LockFileExt;
 
-			LockFileInfo lfiEx = LockFileInfo.Load(m_iocLockFile);
+			LockFileInfo lfiEx = LockFileInfo.Load(m_iocLockFile).Result;
 			if(lfiEx != null)
 			{
 				m_iocLockFile = null; // Otherwise Dispose deletes the existing one

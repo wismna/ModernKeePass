@@ -566,7 +566,7 @@ namespace ModernKeePassLibPCL
 		/// <param name="ioSource">IO connection to load the database from.</param>
 		/// <param name="pwKey">Key used to open the specified database.</param>
 		/// <param name="slLogger">Logger, which gets all status messages.</param>
-		public void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
+		public async void Open(IOConnectionInfo ioSource, CompositeKey pwKey,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(ioSource != null);
@@ -589,7 +589,7 @@ namespace ModernKeePassLibPCL
 				KdbxFile kdbx = new KdbxFile(this);
 				kdbx.DetachBinaries = m_strDetachBins;
 
-				Stream s = IOConnection.OpenRead(ioSource);
+				Stream s = await IOConnection.OpenRead(ioSource);
 				kdbx.Load(s, KdbxFormat.Default, slLogger);
 				s.Dispose();
 
@@ -612,7 +612,7 @@ namespace ModernKeePassLibPCL
 		/// it has been opened from.
 		/// </summary>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(IStatusLogger slLogger)
+		public async void Save(IStatusLogger slLogger)
 		{
 			Debug.Assert(ValidateUuidUniqueness());
 
@@ -622,7 +622,7 @@ namespace ModernKeePassLibPCL
 			{
 				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
 					m_bUseFileTransactions);
-				Stream s = ft.OpenWrite();
+				Stream s = await ft.OpenWrite();
 
 				KdbxFile kdb = new KdbxFile(this);
 				kdb.Save(s, null, KdbxFormat.Default, slLogger);

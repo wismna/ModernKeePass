@@ -57,10 +57,10 @@ namespace ModernKeePassLibPCL.Serialization
 		/// <param name="strFilePath">File to load.</param>
 		/// <param name="kdbFormat">Format specifier.</param>
 		/// <param name="slLogger">Status logger (optional).</param>
-		public void Load(string strFilePath, KdbxFormat kdbFormat, IStatusLogger slLogger)
+		public async void Load(string strFilePath, KdbxFormat kdbFormat, IStatusLogger slLogger)
 		{
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFilePath);
-			Load(IOConnection.OpenRead(ioc), kdbFormat, slLogger);
+			Load(await IOConnection.OpenRead(ioc), kdbFormat, slLogger);
 		}
 
 		/// <summary>

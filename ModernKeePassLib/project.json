@@ -6,7 +6,7 @@
     "NETStandard.Library": "1.6.0",
     "PInvoke.Windows.Core": "0.5.97",
     "Splat": "2.0.0",
-    "System.Runtime.Extensions": "4.3.0",
+    "System.Runtime.WindowsRuntime": "4.3.0",
     "System.Xml.ReaderWriter": "4.3.0",
     "System.Xml.XmlSerializer": "4.3.0",
     "Validation": "2.4.15"
