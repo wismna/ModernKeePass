@@ -53,7 +53,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		public override bool CanRead
 		{
-			get { return !m_bWriting; }
+			get { return /*!m_bWriting;*/true; }
 		}
 
 		public override bool CanSeek
@@ -160,7 +160,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		public override int Read(byte[] pbBuffer, int nOffset, int nCount)
 		{
-			if(m_bWriting) throw new InvalidOperationException();
+			//if(m_bWriting) throw new InvalidOperationException();
 
 			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
 			int nPartialRead = nRead;

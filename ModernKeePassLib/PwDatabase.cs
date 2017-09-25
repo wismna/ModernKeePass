@@ -589,7 +589,7 @@ namespace ModernKeePassLibPCL
 				KdbxFile kdbx = new KdbxFile(this);
 				kdbx.DetachBinaries = m_strDetachBins;
 
-				Stream s = await IOConnection.OpenRead(ioSource);
+				var s = await IOConnection.OpenRead(ioSource);
 				kdbx.Load(s, KdbxFormat.Default, slLogger);
 				s.Dispose();
 
@@ -622,7 +622,7 @@ namespace ModernKeePassLibPCL
 			{
 				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
 					m_bUseFileTransactions);
-				Stream s = await ft.OpenWrite();
+				var s = await ft.OpenWrite();
 
 				KdbxFile kdb = new KdbxFile(this);
 				kdb.Save(s, null, KdbxFormat.Default, slLogger);

@@ -23,7 +23,7 @@ using System.Text;
 using System.IO;
 using System.Security;
 using System.Diagnostics;
-
+using Windows.Storage.Streams;
 #if ModernKeePassLibPCL
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
@@ -116,7 +116,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 
 		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
-			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
+			ValidateArguments(s, bEncrypt, pbKey, pbIV);
 
 			byte[] pbLocalIV = new byte[16];
 			Array.Copy(pbIV, pbLocalIV, 16);
@@ -201,12 +201,12 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 
 		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
 		{
-			return StandardAesEngine.CreateStream(sPlainText, true, pbKey, pbIV);
+			return CreateStream(sPlainText, true, pbKey, pbIV);
 		}
 
 		public Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV)
 		{
-			return StandardAesEngine.CreateStream(sEncrypted, false, pbKey, pbIV);
+			return CreateStream(sEncrypted, false, pbKey, pbIV);
 		}
 	}
 }

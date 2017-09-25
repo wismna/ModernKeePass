@@ -422,7 +422,7 @@ namespace ModernKeePassLibPCL.Serialization
 				new Uri(ioc.Path)));
 		}
 #else
-		public static async Task<Stream> OpenRead(IOConnectionInfo ioc)
+		public static async Task<IRandomAccessStream> OpenRead(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
 
@@ -430,20 +430,9 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 #endif
 
-		private static async Task<Stream> OpenReadLocal(IOConnectionInfo ioc)
+		private static async Task<IRandomAccessStream> OpenReadLocal(IOConnectionInfo ioc)
 		{
-#if ModernKeePassLibPCL
-            /*if (ioc.StorageFile != null)
-		    {*/
-                var file = await ioc.StorageFile.OpenAsync(FileAccessMode.Read);
-		        return file.AsStream();
-		    /*}
-		    var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(PCLStorage.FileAccess.Read).Result;*/
-#else
-			return new FileStream(ioc.Path, FileMode.Open, FileAccess.Read,
-				FileShare.Read);
-#endif
+             return await ioc.StorageFile.OpenAsync(FileAccessMode.Read);
 		}
 
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
@@ -469,7 +458,7 @@ namespace ModernKeePassLibPCL.Serialization
 			return IocStream.WrapIfRequired(s);
 		}
 #else
-		public static async Task<Stream> OpenWrite(IOConnectionInfo ioc)
+		public static async Task<IRandomAccessStream> OpenWrite(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
 
@@ -477,102 +466,32 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 #endif
 
-		private static async Task<Stream> OpenWriteLocal(IOConnectionInfo ioc)
+		private static async Task<IRandomAccessStream> OpenWriteLocal(IOConnectionInfo ioc)
 		{
-#if ModernKeePassLibPCL
-            /*if (ioc.StorageFile != null)
-		    {*/
-                var file = await ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite);
-                return file.AsStream();
-            /*}
-            var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-			return file.OpenAsync(FileAccess.ReadAndWrite).Result;*/
-#else
-			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
-				FileShare.None);
-#endif
+            return await ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite);
         }
 
-		public static async Task<bool> FileExists(IOConnectionInfo ioc)
+		public static bool FileExists(IOConnectionInfo ioc)
 		{
-			return await FileExists(ioc, false);
+			return FileExists(ioc, false);
 		}
 
-		public static async Task<bool> FileExists(IOConnectionInfo ioc, bool bThrowErrors)
+		public static bool FileExists(IOConnectionInfo ioc, bool bThrowErrors)
 		{
-			if(ioc == null) { Debug.Assert(false); return false; }
+			if(ioc == null) { Debug.Assert(false);
+			}
 
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
-
-#if ModernKeePassLibPCL
-            /*if(ioc.IsLocalFile())
-				return (FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result != null);*/
+            
             return ioc.StorageFile.IsAvailable;
-#else
-			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
-#endif
-
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
-			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
-			{
-				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
-				if(!b && bThrowErrors) throw new InvalidOperationException();
-				return b;
-			}
-#endif
-
-			try
-			{
-				Stream s = await OpenRead(ioc);
-				if(s == null) throw new FileNotFoundException();
-
-				try { s.ReadByte(); }
-				catch(Exception) { }
-
-				// We didn't download the file completely; close may throw
-				// an exception -- that's okay
-				try { s.Dispose(); }
-				catch(Exception) { }
-			}
-			catch(Exception)
-			{
-				if(bThrowErrors) throw;
-				return false;
-			}
-
-			return true;
 		}
 
 		public static async void DeleteFile(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
-
-#if ModernKeePassLibPCL
+            
 		    if (!ioc.IsLocalFile()) return;
 		    await ioc.StorageFile?.DeleteAsync();
-		    /*var file = FileSystem.Current.GetFileFromPathAsync(ioc.Path).Result;
-		    file.DeleteAsync().RunSynchronously();*/
-#else
-			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
-#endif
-
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
-			WebRequest req = CreateWebRequest(ioc);
-			if(req != null)
-			{
-				if(req is HttpWebRequest) req.Method = "DELETE";
-				else if(req is FtpWebRequest)
-					req.Method = WebRequestMethods.Ftp.DeleteFile;
-				else if(req is FileWebRequest)
-				{
-					File.Delete(UrlUtil.FileUrlToPath(ioc.Path));
-					return;
-				}
-				else req.Method = WrmDeleteFile;
-
-				DisposeResponse(req.GetResponse(), true);
-			}
-#endif
 		}
 
 		/// <summary>
@@ -587,63 +506,9 @@ namespace ModernKeePassLibPCL.Serialization
 		public static async void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
 			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
-
-#if ModernKeePassLibPCL
+            
 		    if (!iocFrom.IsLocalFile()) return;
 		    await iocFrom.StorageFile?.RenameAsync(iocTo.Path);
-            /*var file = FileSystem.Current.GetFileFromPathAsync(iocFrom.Path).Result;
-		    file.MoveAsync(iocTo.Path).RunSynchronously();*/
-#else
-			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
-#endif
-
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
-			WebRequest req = CreateWebRequest(iocFrom);
-			if(req != null)
-			{
-				if(req is HttpWebRequest)
-				{
-					req.Method = "MOVE";
-					req.Headers.Set("Destination", iocTo.Path); // Full URL supported
-				}
-				else if(req is FtpWebRequest)
-				{
-					req.Method = WebRequestMethods.Ftp.Rename;
-					string strTo = UrlUtil.GetFileName(iocTo.Path);
-
-					// We're affected by .NET bug 621450:
-					// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
-					// Prepending "./", "%2E/" or "Dummy/../" doesn't work.
-
-					((FtpWebRequest)req).RenameTo = strTo;
-				}
-				else if(req is FileWebRequest)
-				{
-					File.Move(UrlUtil.FileUrlToPath(iocFrom.Path),
-						UrlUtil.FileUrlToPath(iocTo.Path));
-					return;
-				}
-				else
-				{
-					req.Method = WrmMoveFile;
-					req.Headers.Set(WrhMoveFileTo, iocTo.Path);
-				}
-
-				DisposeResponse(req.GetResponse(), true);
-			}
-#endif
-
-            // using(Stream sIn = IOConnection.OpenRead(iocFrom))
-            // {
-            //	using(Stream sOut = IOConnection.OpenWrite(iocTo))
-            //	{
-            //		MemUtil.CopyStream(sIn, sOut);
-            //		sOut.Close();
-            //	}
-            //
-            //	sIn.Close();
-            // }
-            // DeleteFile(iocFrom);
         }
 
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
@@ -681,7 +546,7 @@ namespace ModernKeePassLibPCL.Serialization
 #endif
         public static async Task<byte[]> ReadFile(IOConnectionInfo ioc)
 		{
-			Stream sIn = null;
+		    IRandomAccessStream sIn = null;
 			MemoryStream ms = null;
 			try
 			{
@@ -689,7 +554,8 @@ namespace ModernKeePassLibPCL.Serialization
 				if(sIn == null) return null;
 
 				ms = new MemoryStream();
-				MemUtil.CopyStream(sIn, ms);
+                
+				MemUtil.CopyStream(sIn.AsStream(), ms);
 
 				return ms.ToArray();
 			}

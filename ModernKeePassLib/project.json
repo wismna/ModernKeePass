@@ -5,6 +5,7 @@
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.0",
     "PInvoke.Windows.Core": "0.5.97",
+    "Portable.BouncyCastle": "1.8.1.1",
     "Splat": "2.0.0",
     "System.Runtime.WindowsRuntime": "4.3.0",
     "System.Xml.ReaderWriter": "4.3.0",

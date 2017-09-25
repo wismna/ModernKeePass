@@ -27,7 +27,8 @@ using System.Threading.Tasks;
 using System.Threading;
 #endif
 using System.Diagnostics;
-
+using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Storage.Streams;
 using ModernKeePassLibPCL.Cryptography;
 using ModernKeePassLibPCL.Resources;
 using ModernKeePassLibPCL.Utility;
@@ -124,26 +125,34 @@ namespace ModernKeePassLibPCL.Serialization
 
 			public static async Task<LockFileInfo> Load(IOConnectionInfo iocLockFile)
 			{
-				Stream s = null;
+				using (var s = await IOConnection.OpenRead(iocLockFile))
 				try
 				{
-					s = await IOConnection.OpenRead(iocLockFile);
 					if(s == null) return null;
-					StreamReader sr = new StreamReader(s, StrUtil.Utf8);
-					string str = sr.ReadToEnd();
-					sr.Dispose();
-					if(str == null) { Debug.Assert(false); return null; }
+				    using (var sr = new StreamReader(s.AsStream(), StrUtil.Utf8))
+				    {
+				        string str = sr.ReadToEnd();
+				        if (str == null)
+				        {
+				            Debug.Assert(false);
+				        }
 
-					str = StrUtil.NormalizeNewLines(str, false);
-					string[] v = str.Split('\n');
-					if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
+				        str = StrUtil.NormalizeNewLines(str, false);
+				        string[] v = str.Split('\n');
+				        if ((v == null) || (v.Length < 6))
+				        {
+				            Debug.Assert(false);
+				        }
 
-					if(!v[0].StartsWith(LockFileHeader)) { Debug.Assert(false); return null; }
-					return new LockFileInfo(v[1], v[2], v[3], v[4], v[5]);
+				        if (!v[0].StartsWith(LockFileHeader))
+				        {
+				            Debug.Assert(false);
+				        }
+				        return new LockFileInfo(v[1], v[2], v[3], v[4], v[5]);
+				    }
 				}
 				catch(FileNotFoundException) { }
 				catch(Exception) { Debug.Assert(false); }
-				finally { if(s != null) s.Dispose(); }
 
 				return null;
 			}
@@ -151,46 +160,27 @@ namespace ModernKeePassLibPCL.Serialization
 			// Throws on error
 			public static async Task<LockFileInfo> Create(IOConnectionInfo iocLockFile)
 			{
-				LockFileInfo lfi;
-				Stream s = null;
-				try
+			    byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
+				string strTime = TimeUtil.SerializeUtc(DateTime.Now);
+                    
+				var lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
+					string.Empty, string.Empty, string.Empty);
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.AppendLine(LockFileHeader);
+				sb.AppendLine(lfi.ID);
+				sb.AppendLine(strTime);
+				sb.AppendLine(lfi.UserName);
+				sb.AppendLine(lfi.Machine);
+				sb.AppendLine(lfi.Domain);
+
+				using (var s = await IOConnection.OpenWrite(iocLockFile))
 				{
-					byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
-					string strTime = TimeUtil.SerializeUtc(DateTime.Now);
-
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
-					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
-						Environment.UserName, Environment.MachineName,
-						Environment.UserDomainName);
-#else
-					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
-						string.Empty, string.Empty, string.Empty);
-#endif
-
-					StringBuilder sb = new StringBuilder();
-#if !KeePassLibSD
-					sb.AppendLine(LockFileHeader);
-					sb.AppendLine(lfi.ID);
-					sb.AppendLine(strTime);
-					sb.AppendLine(lfi.UserName);
-					sb.AppendLine(lfi.Machine);
-					sb.AppendLine(lfi.Domain);
-#else
-					sb.Append(LockFileHeader + MessageService.NewLine);
-					sb.Append(lfi.ID + MessageService.NewLine);
-					sb.Append(strTime + MessageService.NewLine);
-					sb.Append(lfi.UserName + MessageService.NewLine);
-					sb.Append(lfi.Machine + MessageService.NewLine);
-					sb.Append(lfi.Domain + MessageService.NewLine);
-#endif
-
 					byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
-
-					s = await IOConnection.OpenWrite(iocLockFile);
-					if(s == null) throw new IOException(iocLockFile.GetDisplayName());
-					s.Write(pbFile, 0, pbFile.Length);
+				    if (s == null) throw new IOException(iocLockFile.GetDisplayName());
+				    await s.WriteAsync(pbFile.AsBuffer());
 				}
-				finally { if(s != null) s.Dispose(); }
 
 				return lfi;
 			}

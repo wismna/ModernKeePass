@@ -318,11 +318,11 @@ namespace ModernKeePassLibPCL.Keys
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			Stream sOut = await IOConnection.OpenWrite(ioc);
+			var sOut = await IOConnection.OpenWrite(ioc);
 
 #if ModernKeePassLibPCL
 			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };
-			var xtw = XmlWriter.Create(sOut, settings);
+			var xtw = XmlWriter.Create(sOut.AsStream(), settings);
 #else
 			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
 #endif

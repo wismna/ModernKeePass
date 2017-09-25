@@ -48,6 +48,7 @@ using ModernKeePassLibPCL.Resources;
 using ModernKeePassLibPCL.Security;
 using ModernKeePassLibPCL.Utility;
 using Windows.Security.Cryptography.Core;
+using Windows.Storage.Streams;
 
 namespace ModernKeePassLibPCL.Serialization
 {
@@ -76,7 +77,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// be written.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
+		public void Save(IRandomAccessStream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
@@ -85,7 +86,7 @@ namespace ModernKeePassLibPCL.Serialization
 			m_format = format;
 			m_slLogger = slLogger;
 
-			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo, true, null);
+			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo.AsStream(), true, null);
 
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			CryptoRandom cr = CryptoRandom.Instance;
@@ -145,7 +146,7 @@ namespace ModernKeePassLibPCL.Serialization
 			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
 		}
 
-		private void CommonCleanUpWrite(Stream sSaveTo, HashingStreamEx hashedStream)
+		private void CommonCleanUpWrite(IRandomAccessStream sSaveTo, HashingStreamEx hashedStream)
 		{
 			hashedStream.Dispose();
 			m_pbHashOfFileOnDisk = hashedStream.Hash;
@@ -158,50 +159,53 @@ namespace ModernKeePassLibPCL.Serialization
 
 		private void WriteHeader(Stream s)
 		{
-			MemoryStream ms = new MemoryStream();
+		    using (var ms = new MemoryStream())
+		    {
 
-			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature1));
-			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature2));
-			MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileVersion32));
+		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature1));
+		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature2));
+		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileVersion32));
 
-			WriteHeaderField(ms, KdbxHeaderFieldID.CipherID,
-				m_pwDatabase.DataCipherUuid.UuidBytes);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.CipherID,
+		            m_pwDatabase.DataCipherUuid.UuidBytes);
 
-			int nCprID = (int)m_pwDatabase.Compression;
-			WriteHeaderField(ms, KdbxHeaderFieldID.CompressionFlags,
-				MemUtil.UInt32ToBytes((uint)nCprID));
+		        int nCprID = (int) m_pwDatabase.Compression;
+		        WriteHeaderField(ms, KdbxHeaderFieldID.CompressionFlags,
+		            MemUtil.UInt32ToBytes((uint) nCprID));
 
-			WriteHeaderField(ms, KdbxHeaderFieldID.MasterSeed, m_pbMasterSeed);
-			WriteHeaderField(ms, KdbxHeaderFieldID.TransformSeed, m_pbTransformSeed);
-			WriteHeaderField(ms, KdbxHeaderFieldID.TransformRounds,
-				MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
-			WriteHeaderField(ms, KdbxHeaderFieldID.EncryptionIV, m_pbEncryptionIV);
-			WriteHeaderField(ms, KdbxHeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
-			WriteHeaderField(ms, KdbxHeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.MasterSeed, m_pbMasterSeed);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.TransformSeed, m_pbTransformSeed);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.TransformRounds,
+		            MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
+		        WriteHeaderField(ms, KdbxHeaderFieldID.EncryptionIV, m_pbEncryptionIV);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
+		        WriteHeaderField(ms, KdbxHeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
 
-			int nIrsID = (int)m_craInnerRandomStream;
-			WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamID,
-				MemUtil.UInt32ToBytes((uint)nIrsID));
+		        int nIrsID = (int) m_craInnerRandomStream;
+		        WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamID,
+		            MemUtil.UInt32ToBytes((uint) nIrsID));
 
-			WriteHeaderField(ms, KdbxHeaderFieldID.EndOfHeader, new byte[]{
-				(byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
+		        WriteHeaderField(ms, KdbxHeaderFieldID.EndOfHeader, new byte[]
+		        {
+		            (byte) '\r', (byte) '\n', (byte) '\r', (byte) '\n'
+		        });
 
-			byte[] pbHeader = ms.ToArray();
-			ms.Dispose();
+		        byte[] pbHeader = ms.ToArray();
 
 #if ModernKeePassLibPCL
-            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			m_pbHashOfHeader = sha256.HashData(pbHeader);*/
-            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbHeader));
-            CryptographicBuffer.CopyToByteArray(buffer, out m_pbHashOfHeader);
+		        /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+                m_pbHashOfHeader = sha256.HashData(pbHeader);*/
+		        var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+		        var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbHeader));
+		        CryptographicBuffer.CopyToByteArray(buffer, out m_pbHashOfHeader);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
 #endif
 
-            s.Write(pbHeader, 0, pbHeader.Length);
-			s.Flush();
+		        s.Write(pbHeader, 0, pbHeader.Length);
+		        s.Flush();
+		    }
 		}
 
 		private static void WriteHeaderField(Stream s, KdbxHeaderFieldID kdbID,
@@ -221,43 +225,42 @@ namespace ModernKeePassLibPCL.Serialization
 
 		private Stream AttachStreamEncryptor(Stream s)
 		{
-			MemoryStream ms = new MemoryStream();
+		    using (var ms = new MemoryStream())
+		    {
+		        Debug.Assert(m_pbMasterSeed != null);
+		        Debug.Assert(m_pbMasterSeed.Length == 32);
+		        ms.Write(m_pbMasterSeed, 0, 32);
 
-			Debug.Assert(m_pbMasterSeed != null);
-			Debug.Assert(m_pbMasterSeed.Length == 32);
-			ms.Write(m_pbMasterSeed, 0, 32);
-
-			Debug.Assert(m_pwDatabase != null);
-			Debug.Assert(m_pwDatabase.MasterKey != null);
-			ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
-				m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
-			Debug.Assert(pbinKey != null);
-			if(pbinKey == null)
-				throw new SecurityException(KLRes.InvalidCompositeKey);
-			byte[] pKey32 = pbinKey.ReadData();
-			if((pKey32 == null) || (pKey32.Length != 32))
-				throw new SecurityException(KLRes.InvalidCompositeKey);
-			ms.Write(pKey32, 0, 32);
+		        Debug.Assert(m_pwDatabase != null);
+		        Debug.Assert(m_pwDatabase.MasterKey != null);
+		        ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
+		            m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
+		        Debug.Assert(pbinKey != null);
+		        if (pbinKey == null)
+		            throw new SecurityException(KLRes.InvalidCompositeKey);
+		        byte[] pKey32 = pbinKey.ReadData();
+		        if ((pKey32 == null) || (pKey32.Length != 32))
+		            throw new SecurityException(KLRes.InvalidCompositeKey);
+		        ms.Write(pKey32, 0, 32);
 
 #if ModernKeePassLibPCL
-            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			var aesKey = sha256.HashData(ms.ToArray());*/
-            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
-            byte[] aesKey;
-            CryptographicBuffer.CopyToByteArray(buffer, out aesKey);
+		        /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
+                var aesKey = sha256.HashData(ms.ToArray());*/
+		        var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+		        var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
+		        byte[] aesKey;
+		        CryptographicBuffer.CopyToByteArray(buffer, out aesKey);
 #else
 			SHA256Managed sha256 = new SHA256Managed();
 			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
 #endif
+		        Array.Clear(pKey32, 0, 32);
 
-            ms.Dispose();
-			Array.Clear(pKey32, 0, 32);
-
-			Debug.Assert(CipherPool.GlobalPool != null);
-			ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
-			if(iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
-			return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
+		        Debug.Assert(CipherPool.GlobalPool != null);
+		        ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
+		        if (iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
+		        return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
+		    }
 		}
 
 		private void WriteDocument(PwGroup pgDataSource)
@@ -833,7 +836,7 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 
 		[Obsolete]
-		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase,
+		public static bool WriteEntries(IRandomAccessStream msOutput, PwDatabase pwDatabase,
 			PwEntry[] vEntries)
 		{
 			return WriteEntries(msOutput, vEntries);
@@ -846,7 +849,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// <param name="vEntries">Entries to serialize.</param>
 		/// <returns>Returns <c>true</c>, if the entries were written successfully
 		/// to the stream.</returns>
-		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
+		public static bool WriteEntries(IRandomAccessStream msOutput, PwEntry[] vEntries)
 		{
 			/* KdbxFile f = new KdbxFile(pwDatabase);
 			f.m_format = KdbxFormat.PlainXml;

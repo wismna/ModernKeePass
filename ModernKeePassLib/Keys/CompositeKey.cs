@@ -22,6 +22,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 #if ModernKeePassLibPCL
 using Windows.Security.Cryptography;
 #else
@@ -39,6 +40,8 @@ using ModernKeePassLibPCL.Security;
 using ModernKeePassLibPCL.Utility;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace ModernKeePassLibPCL.Keys
 {
@@ -286,7 +289,7 @@ namespace ModernKeePassLibPCL.Keys
 				return (new SHA256Managed()).ComputeHash(pbNewKey);
 #endif
 
-			if(TransformKeyManaged(pbNewKey, pbKeySeed32, uNumRounds) == false)
+			if(TransformKeyManaged(ref pbNewKey, pbKeySeed32, uNumRounds) == false)
 				return null;
 
 #if ModernKeePassLibPCL
@@ -303,7 +306,7 @@ namespace ModernKeePassLibPCL.Keys
 #endif
         }
 
-		public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+		public static bool TransformKeyManaged(ref byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
 		{
 #if KeePassRT
@@ -321,12 +324,21 @@ namespace ModernKeePassLibPCL.Keys
             /*var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKeySeed32);
 			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
-            var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
+            /*var aes = SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithmNames.AesEcb);
             var key = aes.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbKeySeed32));
             var parameters = KeyDerivationParameters.BuildForPbkdf2(CryptographicBuffer.CreateFromByteArray(pbKeySeed32), (uint)uNumRounds);
             var result = CryptographicEngine.DeriveKeyMaterial(key, parameters, 32);
-            CryptographicBuffer.CopyToByteArray(result, out pbNewKey32);
-            
+            CryptographicBuffer.CopyToByteArray(result, out pbNewKey32);*/
+		    KeyParameter kp = new KeyParameter(pbKeySeed32);
+		    AesEngine aes = new AesEngine();
+		    aes.Init(true, kp);
+
+		    for (ulong i = 0; i < uNumRounds; ++i)
+		    {
+		        aes.ProcessBlock(pbNewKey32, 0, pbNewKey32, 0);
+		        aes.ProcessBlock(pbNewKey32, 16, pbNewKey32, 16);
+		    }
+
 #else
 			byte[] pbIV = new byte[16];
 			Array.Clear(pbIV, 0, pbIV.Length);
@@ -362,7 +374,7 @@ namespace ModernKeePassLibPCL.Keys
 			}*/
 #endif
 
-			return true;
+            return true;
 		}
 
 		/// <summary>

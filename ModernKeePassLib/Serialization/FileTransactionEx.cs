@@ -30,6 +30,7 @@ using System.Security.AccessControl;
 using ModernKeePassLibPCL.Native;
 using ModernKeePassLibPCL.Utility;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 
 namespace ModernKeePassLibPCL.Serialization
 {
@@ -78,7 +79,7 @@ namespace ModernKeePassLibPCL.Serialization
 			else m_iocTemp = m_iocBase;
 		}
 
-		public async Task<Stream> OpenWrite()
+		public async Task<IRandomAccessStream> OpenWrite()
 		{
 			if(!m_bTransacted) m_bMadeUnhidden = UrlUtil.UnhideFile(m_iocTemp.Path);
 			else // m_bTransacted
@@ -108,7 +109,7 @@ namespace ModernKeePassLibPCL.Serialization
 			bool bEfsEncrypted = false;
 #endif
 
-			if(await IOConnection.FileExists(m_iocBase))
+			if(IOConnection.FileExists(m_iocBase))
 			{
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
 				if(m_iocBase.IsLocalFile())

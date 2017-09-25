@@ -25,8 +25,8 @@
   </metadata>
   <!-- DLLs and resources -->
   <files>
-    <!--<file src="bin\Release\ModernKeePassLib.dll" target="lib\netstandard1.2"/>
-    <file src="bin\ARM\Release\ModernKeePassLib.dll" target="lib\ARM\netstandard1.2"/>
+    <file src="bin\Release\ModernKeePassLib.dll" target="lib\netstandard1.2"/>
+    <!--<file src="bin\ARM\Release\ModernKeePassLib.dll" target="lib\ARM\netstandard1.2"/>
     <file src="bin\x64\Release\ModernKeePassLib.dll" target="lib\x64\netstandard1.2"/>
     <file src="bin\x86\Release\ModernKeePassLib.dll" target="lib\x86\netstandard1.2"/>-->
   </files>
