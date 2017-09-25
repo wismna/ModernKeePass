@@ -8,6 +8,7 @@ namespace ModernKeePass.ViewModels
         public string Password { get; set; }
         public Visibility Visibility { get; set; }
         public string ErrorMessage { get; set; }
+        public bool IsOpen { get; set; }
 
         public HomeVm()
         {

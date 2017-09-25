@@ -123,9 +123,9 @@ namespace ModernKeePassLibPCL.Serialization
 				return sb.ToString();
 			}
 
-			public static async Task<LockFileInfo> Load(IOConnectionInfo iocLockFile)
+			public static LockFileInfo Load(IOConnectionInfo iocLockFile)
 			{
-				using (var s = await IOConnection.OpenRead(iocLockFile))
+				using (var s = IOConnection.OpenRead(iocLockFile))
 				try
 				{
 					if(s == null) return null;
@@ -158,7 +158,7 @@ namespace ModernKeePassLibPCL.Serialization
 			}
 
 			// Throws on error
-			public static async Task<LockFileInfo> Create(IOConnectionInfo iocLockFile)
+			public static LockFileInfo Create(IOConnectionInfo iocLockFile)
 			{
 			    byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
 				string strTime = TimeUtil.SerializeUtc(DateTime.Now);
@@ -175,11 +175,11 @@ namespace ModernKeePassLibPCL.Serialization
 				sb.AppendLine(lfi.Machine);
 				sb.AppendLine(lfi.Domain);
 
-				using (var s = await IOConnection.OpenWrite(iocLockFile))
+				using (var s = IOConnection.OpenWrite(iocLockFile))
 				{
 					byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
 				    if (s == null) throw new IOException(iocLockFile.GetDisplayName());
-				    await s.WriteAsync(pbFile.AsBuffer());
+				    s.WriteAsync(pbFile.AsBuffer()).GetAwaiter().GetResult();
 				}
 
 				return lfi;
@@ -193,7 +193,7 @@ namespace ModernKeePassLibPCL.Serialization
 			m_iocLockFile = iocBaseFile.CloneDeep();
 			m_iocLockFile.Path += LockFileExt;
 
-			LockFileInfo lfiEx = LockFileInfo.Load(m_iocLockFile).Result;
+			LockFileInfo lfiEx = LockFileInfo.Load(m_iocLockFile);
 			if(lfiEx != null)
 			{
 				m_iocLockFile = null; // Otherwise Dispose deletes the existing one

@@ -87,9 +87,9 @@ namespace ModernKeePassLibPCL.Keys
 			Construct(iocKeyFile, bThrowIfDbFile);
 		}
 
-		private async void Construct(IOConnectionInfo iocFile, bool bThrowIfDbFile)
+		private void Construct(IOConnectionInfo iocFile, bool bThrowIfDbFile)
 		{
-			byte[] pbFileData = await IOConnection.ReadFile(iocFile);
+			byte[] pbFileData = IOConnection.ReadFile(iocFile);
 			if(pbFileData == null) throw new FileNotFoundException();
 
 			if(bThrowIfDbFile && (pbFileData.Length >= 8))
@@ -310,7 +310,7 @@ namespace ModernKeePassLibPCL.Keys
 			return pbKeyData;
 		}
 
-		private static async void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
+		private static void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
@@ -318,7 +318,7 @@ namespace ModernKeePassLibPCL.Keys
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			var sOut = await IOConnection.OpenWrite(ioc);
+			var sOut = IOConnection.OpenWrite(ioc);
 
 #if ModernKeePassLibPCL
 			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };

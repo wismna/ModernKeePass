@@ -31,8 +31,11 @@ namespace ModernKeePass.Common
                 _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
                 //_pwDatabase.Open(IOConnectionInfo.FromPath(databaseFile.Path), key, new NullStatusLogger());
                 IsOpen = _pwDatabase.IsOpen;
-                Name = databaseFile.DisplayName;
-                RootGroup = new GroupVm(_pwDatabase.RootGroup);
+                if (IsOpen)
+                {
+                    Name = databaseFile.DisplayName;
+                    RootGroup = new GroupVm(_pwDatabase.RootGroup);
+                }
             }
             catch (ArgumentNullException)
             {

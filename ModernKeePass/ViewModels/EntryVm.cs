@@ -5,7 +5,7 @@ namespace ModernKeePass.ViewModels
 {
     public class EntryVm : INotifyPropertyChanged
     {
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public string UserName { get; private set; }
         public string Password { get; private set; }
         public string URL { get; private set; }

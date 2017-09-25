@@ -32,27 +32,34 @@ namespace ModernKeePass.ViewModels
             Name = "GroupName";
             Entries = new ObservableCollection<EntryVm>();
             Groups = new ObservableCollection<GroupVm>();
-
         }
 
-        public GroupVm(PwGroup group)
+        public GroupVm(PwGroup pwGroup)
         {
-            _pwGroup = group;
-            Name = group.Name;
-            Entries = new ObservableCollection<EntryVm>(group.Entries.Select(e => new EntryVm(e)));
-            Groups = new ObservableCollection<GroupVm>(group.Groups.Select(g => new GroupVm(g)));
+            _pwGroup = pwGroup;
+            Name = pwGroup.Name;
+            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e)));
+            //Entries.Insert(0, new EntryVm { Title = " + New entry" });
+            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g)));
+            //Groups.Insert(0, new GroupVm { Name = " + New group" });
         }
 
-        public void AddGroup(string title)
+        public void CreateNewGroup(string title)
         {
-            var pwGroup = new PwGroup
-            {
-                Name = title
-            };
+            var pwGroup = new PwGroup(true, true, title, PwIcon.Folder);
+            _pwGroup.AddGroup(pwGroup, true);
             Groups.Add(new GroupVm(pwGroup));
             NotifyPropertyChanged("Groups");
-            this._pwGroup.Groups.Add(pwGroup);
         }
+        
+        public void CreateNewEntry(string title)
+        {
+            var pwEntry = new PwEntry(true, true);
+            _pwGroup.AddEntry(pwEntry, true);
+            Entries.Add(new EntryVm(pwEntry));
+            NotifyPropertyChanged("Entries");
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

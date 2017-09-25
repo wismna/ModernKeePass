@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-
+using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Pages;
 using ModernKeePass.ViewModels;
 
@@ -48,7 +48,8 @@ namespace ModernKeePass
             var homeVm = DataContext as HomeVm;
             var app = ((App)Application.Current);
             homeVm.ErrorMessage = app.Database.Open(homeVm.Password);
-            if (!app.Database.IsOpen) homeVm.NotifyPropertyChanged("ErrorMessage");
+            
+            if (!string.IsNullOrEmpty(homeVm.ErrorMessage)) homeVm.NotifyPropertyChanged("ErrorMessage");
             else Frame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
         }
 
@@ -70,6 +71,16 @@ namespace ModernKeePass
                 SaveButton.Visibility = Visibility.Visible;
                 SelectGrid.Visibility = Visibility.Collapsed;
             }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            var app = (App)Application.Current;
+            if (app.Database == null) return;
+            var homeVm = DataContext as HomeVm;
+            homeVm.IsOpen = app.Database.IsOpen;
+            homeVm.NotifyPropertyChanged("IsOpen");
         }
     }
 }

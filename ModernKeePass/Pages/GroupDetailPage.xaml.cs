@@ -89,11 +89,5 @@ namespace ModernKeePass.Pages
             var listView = sender as ListView;
             Frame.Navigate(typeof(EntryDetailPage), listView.SelectedItem as EntryVm);
         }
-
-        private void addGroupButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var group = DataContext as GroupVm;
-            group.AddGroup("New group");
-        }
     }
 }

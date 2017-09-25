@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
         <ListView Grid.Column="0" SelectionChanged="ListView_SelectionChanged">
             <ListView.Header>
-                <TextBlock Text="Open database from..." FontWeight="Bold" FontSize="36" />
+                <TextBlock Text="ModernKeePass" FontWeight="Bold" FontSize="36" />
             </ListView.Header>
             <ListView.ItemTemplate >
                 <DataTemplate>
@@ -37,6 +37,7 @@
                 <ListViewItem Name="NewItem">New</ListViewItem>
                 <ListViewItem Name="SelectItem">File</ListViewItem>
                 <ListViewItem Name="RecentItem">Recent files - Coming soon</ListViewItem>
+                <ListViewItem Name="UrlItem">Url files - Coming soon</ListViewItem>
             </ListView.Items>
         </ListView>
         <Grid Name="SelectGrid" Grid.Column="2" HorizontalAlignment="Left" Height="auto" VerticalAlignment="Top" Width="auto" Margin="0,30,0,0" Visibility="Collapsed" >
@@ -56,6 +57,6 @@
             <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="#FF9E1B1B" />
             <Button Grid.Column="1" Grid.Row="3" x:Name="OpenButton" Content="OK" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding Visibility}" Click="openBbutton_Click" Margin="0,0,7,0" Width="auto"/>
             </Grid>
-        <HyperlinkButton Grid.Column="2" Name="SaveButton" Content="Save file" Click="saveBbutton_Click" VerticalAlignment="Top" Margin="0,30,0,0" Visibility="Collapsed" />
+        <HyperlinkButton Grid.Column="2" Name="SaveButton" Content="Save file" Click="saveBbutton_Click" VerticalAlignment="Top" Margin="0,30,0,0" Visibility="Collapsed" IsEnabled="{Binding IsOpen}" />
     </Grid>
 </Page>
