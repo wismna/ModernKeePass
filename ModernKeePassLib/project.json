@@ -1,7 +1,6 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Microsoft.Bcl.Build": "1.0.21",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "2.0.0",
     "Portable.BouncyCastle": "1.8.1.3",
