@@ -4,7 +4,7 @@ using System.IO;
 #if KeePassLib
 using KeePassLib.Cryptography.Cipher;
 #else
-using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.Cipher;
 #endif
 
 using NUnit.Framework;

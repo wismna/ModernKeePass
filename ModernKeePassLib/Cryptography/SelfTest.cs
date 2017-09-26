@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
@@ -29,14 +29,14 @@ using System.Text;
 using System.Globalization;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Cryptography.Cipher;
-using ModernKeePassLibPCL.Keys;
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Utility;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Keys;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
 
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	/* /// <summary>
 	/// Return values of the <c>SelfTest.Perform</c> method.
@@ -64,7 +64,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			TestRijndael();
 			TestSalsa20();
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			TestNativeKeyTransform();
 #endif
 			
@@ -82,7 +82,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		internal static void TestFipsComplianceProblems()
 		{
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 			try { new RijndaelManaged(); }
 			catch(Exception exAes)
 			{
@@ -99,7 +99,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		private static void TestRijndael()
 		{
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 			// Test vector (official ECB test vector #356)
 			byte[] pbIV = new byte[16];
 			byte[] pbTestKey = new byte[32];
@@ -211,7 +211,7 @@ namespace ModernKeePassLibPCL.Cryptography
 		}
 #endif
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 		private static void TestNativeKeyTransform()
 		{
 #if DEBUG

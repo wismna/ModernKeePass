@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace ModernKeePassLibPCL.Translation
+namespace ModernKeePassLib.Translation
 {
 	public sealed class KPStringTableItem
 	{

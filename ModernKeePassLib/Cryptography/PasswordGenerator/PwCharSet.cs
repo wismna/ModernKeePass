@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace ModernKeePassLibPCL.Cryptography.PasswordGenerator
+namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
 	public sealed class PwCharSet
 	{

@@ -19,7 +19,7 @@
 
 using System;
 using System.Security;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
@@ -27,11 +27,11 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	/// <summary>
 	/// Cryptographically strong random number generator. The returned values
@@ -42,7 +42,7 @@ namespace ModernKeePassLibPCL.Cryptography
 	{
 		private byte[] m_pbEntropyPool = new byte[64];
 		private uint m_uCounter;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 		//private IRandomNumberGenerator m_rng = NetFxCrypto.RandomNumberGenerator;
 #else
 		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
@@ -107,7 +107,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			byte[] pbNewData = pbEntropy;
 			if(pbEntropy.Length >= 64)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var shaNew = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
 				pbNewData = shaNew.HashData(pbEntropy);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -132,7 +132,7 @@ namespace ModernKeePassLibPCL.Cryptography
 				ms.Write(pbNewData, 0, pbNewData.Length);
 
 				byte[] pbFinal = ms.ToArray();
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var shaPool = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha512);
 				m_pbEntropyPool = shaPool.HashData(pbFinal);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -164,7 +164,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			pb = TimeUtil.PackTime(DateTime.Now);
 			ms.Write(pb, 0, pb.Length);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			// In try-catch for systems without GUI;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/20335b73/
 			try
@@ -181,7 +181,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			pb = MemUtil.UInt32ToBytes((uint)rWeak.Next());
 			ms.Write(pb, 0, pb.Length);
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 			pb = MemUtil.UInt32ToBytes((uint)Environment.ProcessorCount);
 			ms.Write(pb, 0, pb.Length);
 
@@ -192,7 +192,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			ms.Write(pb, 0, pb.Length);
 #endif
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			Process p = null;
 			try
 			{
@@ -287,7 +287,7 @@ namespace ModernKeePassLibPCL.Cryptography
 				m_uGeneratedBytesCount += 32;
 			}
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			return sha256.HashData(pbFinal);*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -322,7 +322,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 				long lCopy = (long)((uRequestedBytes < 32) ? uRequestedBytes : 32);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 				Array.Copy(pbRandom256, 0, pbRes, lPos, lCopy);
 #else
 				Array.Copy(pbRandom256, 0, pbRes, (int)lPos, (int)lCopy);

@@ -20,18 +20,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Globalization;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
 #if (!KeePassLibSD && !KeePassRT)
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	/// <summary>
 	/// Generate HMAC-based one-time passwords as specified in RFC 4226.
@@ -47,7 +47,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
 			Array.Reverse(pbText); // Big-Endian
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var hsha1 = WinRTCrypto.MacAlgorithmProvider.OpenAlgorithm(MacAlgorithm.HmacSha1).CreateHash(pbSecret);
 			hsha1.Append(pbText);
 			var pbHash = hsha1.GetValueAndReset();*/

@@ -26,16 +26,16 @@ using System.Xml;
 using System.IO;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL;
-using ModernKeePassLibPCL.Collections;
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Cryptography.Cipher;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib;
+using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
@@ -99,7 +99,7 @@ namespace ModernKeePassLibPCL.Serialization
 			xrs.IgnoreProcessingInstructions = true;
 			xrs.IgnoreWhitespace = true;
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			// these are default values, so no need to set them
 #if !KeePassRT
 #if !KeePassLibSD
@@ -690,7 +690,7 @@ namespace ModernKeePassLibPCL.Serialization
 			}
 
 			m_bReadNextNode = false; // ReadElementString skips end tag
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 			return xr.ReadElementContentAsString();
 #else
 			return xr.ReadElementString();
@@ -700,7 +700,7 @@ namespace ModernKeePassLibPCL.Serialization
 		private string ReadStringRaw(XmlReader xr)
 		{
 			m_bReadNextNode = false; // ReadElementString skips end tag
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 			return xr.ReadElementContentAsString();
 #else
 			return xr.ReadElementString();

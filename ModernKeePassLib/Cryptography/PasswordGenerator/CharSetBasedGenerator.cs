@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Cryptography.PasswordGenerator
+namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
 	internal static class CharSetBasedGenerator
 	{

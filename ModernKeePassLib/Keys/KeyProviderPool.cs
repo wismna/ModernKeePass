@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	public sealed class KeyProviderPool : IEnumerable<KeyProvider>
 	{

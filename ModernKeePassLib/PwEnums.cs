@@ -19,7 +19,7 @@
 
 using System;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// Compression algorithm specifiers.

@@ -28,8 +28,8 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Utility;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -37,7 +37,7 @@ using System.IO.Compression;
 using ICSharpCode.SharpZipLib.GZip;
 #endif
 
-namespace ModernKeePassLibPCL.Translation
+namespace ModernKeePassLib.Translation
 {
 	[XmlRoot("Translation")]
 	public sealed class KPTranslation

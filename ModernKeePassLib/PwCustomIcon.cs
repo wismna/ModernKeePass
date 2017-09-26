@@ -19,16 +19,16 @@
 
 using System;
 using System.Diagnostics;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Image = Splat.IBitmap;
 #else
 using System.Drawing;
 #endif
 using System.IO;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// Custom icon. <c>PwCustomIcon</c> objects are immutable.

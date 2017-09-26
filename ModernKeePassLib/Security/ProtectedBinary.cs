@@ -21,16 +21,16 @@ using System;
 using System.Threading;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Cryptography.Cipher;
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLibPCL.Security
+namespace ModernKeePassLib.Security
 {
 	[Flags]
 	public enum PbCryptFlags

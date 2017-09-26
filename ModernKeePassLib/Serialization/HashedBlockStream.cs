@@ -19,7 +19,7 @@
 
 using System;
 using System.IO;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using System.Linq;
 using Windows.Security.Cryptography;
 #else
@@ -28,15 +28,15 @@ using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Text;
 
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	public sealed class HashedBlockStream : Stream
 	{
@@ -136,7 +136,7 @@ namespace ModernKeePassLibPCL.Serialization
 			if(m_bWriting) m_bwOutput.Flush();
 		}
 
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 		protected override void Dispose(bool disposing)
 		{
 			if(!disposing) return;
@@ -251,7 +251,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 			if(m_bVerify)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				var pbComputedHash = sha256.HashData(m_pbBuffer);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -302,7 +302,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 			if(m_nBufferPos > 0)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				var pbHash = sha256.HashData(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray());*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);

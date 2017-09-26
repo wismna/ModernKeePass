@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Org.BouncyCastle.Crypto;
@@ -31,16 +31,16 @@ using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 using Org.BouncyCastle.Crypto.Tls;
 
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	public sealed class HashingStreamEx : Stream
 	{
 		private Stream m_sBaseStream;
 		private bool m_bWriting;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
         //private ICryptoTransform m_hash;
         //private CryptographicHash m_hash;
 	    private IDigest m_hash;
@@ -81,7 +81,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			set { throw new NotSupportedException(); }
 		}
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
         //public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm? hashAlgorithm)
         public HashingStreamEx(Stream sBaseStream, bool bWriting, string hashAlgorithm)
 #else
@@ -93,7 +93,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             //m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
             //m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
             m_hash = new Sha256Digest();
@@ -125,7 +125,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			m_sBaseStream.Flush();
 		}
 
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 		protected override void Dispose(bool disposing)
 		{
 			if(!disposing) return;
@@ -138,7 +138,7 @@ namespace ModernKeePassLibPCL.Cryptography
 				try
 				{
                     //m_hash.TransformFinalBlock(new byte[0], 0, 0);
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                     //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
                     //CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
 				    m_pbFinalHash = new byte[32];

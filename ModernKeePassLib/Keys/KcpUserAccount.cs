@@ -22,12 +22,12 @@ using System.Security;
 using System.Security.Cryptography;
 using System.IO;
 
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	/// <summary>
 	/// A user key depending on the currently logged on Windows user account.

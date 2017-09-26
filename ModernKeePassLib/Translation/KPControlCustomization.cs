@@ -29,9 +29,9 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Drawing;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Translation
+namespace ModernKeePassLib.Translation
 {
 	public sealed class KpccLayout
 	{

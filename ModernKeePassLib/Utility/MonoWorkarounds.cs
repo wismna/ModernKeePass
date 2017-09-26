@@ -25,9 +25,9 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Native;
+using ModernKeePassLib.Native;
 
-namespace ModernKeePassLibPCL.Utility
+namespace ModernKeePassLib.Utility
 {
 	public static class MonoWorkarounds
 	{

@@ -5,7 +5,7 @@ using System;
 using KeePassLib.Utility;
 #else
 using Splat;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 #endif
 
 namespace ModernKeePassLib.Test.Shared.Utility

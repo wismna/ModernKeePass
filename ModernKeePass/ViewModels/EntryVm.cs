@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
-using ModernKeePassLibPCL;
-using ModernKeePassLibPCL.Security;
+using ModernKeePassLib;
+using ModernKeePassLib.Security;
 
 namespace ModernKeePass.ViewModels
 {

@@ -24,10 +24,10 @@ using System.Text;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Serialization;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Serialization;
 
-namespace ModernKeePassLibPCL.Utility
+namespace ModernKeePassLib.Utility
 {
 	public sealed class MessageServiceEventArgs : EventArgs
 	{

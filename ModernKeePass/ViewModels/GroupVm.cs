@@ -1,7 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using ModernKeePassLibPCL;
+using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {

@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 // COM settings
 [assembly: ComVisible(false)]
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 // Assembly GUID
 [assembly: Guid("395f6eec-a1e0-4438-aa82-b75099348134")]
 #endif

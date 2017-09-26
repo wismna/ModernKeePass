@@ -7,8 +7,8 @@
     <ProjectGuid>{2E710089-9559-4967-846C-E763DD1F3ACB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModernKeePassLibPCL</RootNamespace>
-    <AssemblyName>ModernKeePassLibPCL</AssemblyName>
+    <RootNamespace>ModernKeePassLib</RootNamespace>
+    <AssemblyName>ModernKeePassLib</AssemblyName>
     <SignAssembly>false</SignAssembly>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -28,7 +28,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;ModernKeePassLibPCL</DefineConstants>
+    <DefineConstants>DEBUG;ModernKeePassLib</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>ModernKeePassLibPCL</DefineConstants>
+    <DefineConstants>ModernKeePassLib</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Collections\AutoTypeConfig.cs" />
@@ -120,7 +120,7 @@
     <None Include="app.config" />
     <None Include="KeePassLib.pfx" />
     <None Include="Libs\Windows.winmd" />
-    <None Include="ModernKeePassLibPCL.nuspec" />
+    <None Include="ModernKeePassLib.nuspec" />
     <None Include="project.json" />
     <None Include="Utility\MessageService.cs" />
     <None Include="Native\NativeLib.cs" />

@@ -21,17 +21,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	public sealed class KcpCustomKey : IUserKey
 	{
@@ -60,7 +60,7 @@ namespace ModernKeePassLibPCL.Keys
 
 			if(bPerformHash)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				var pbRaw = sha256.HashData(pbKeyData);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);

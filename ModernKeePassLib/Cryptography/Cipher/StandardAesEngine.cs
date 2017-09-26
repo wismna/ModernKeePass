@@ -24,7 +24,7 @@ using System.IO;
 using System.Security;
 using System.Diagnostics;
 using Windows.Storage.Streams;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 #else
@@ -42,7 +42,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 #endif
 
-using ModernKeePassLibPCL.Resources;
+using ModernKeePassLib.Resources;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.IO;
@@ -50,14 +50,14 @@ using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace ModernKeePassLibPCL.Cryptography.Cipher
+namespace ModernKeePassLib.Cryptography.Cipher
 {
 	/// <summary>
 	/// Standard AES cipher implementation.
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 		private const CipherMode m_rCipherMode = CipherMode.CBC;
 		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
 #endif
@@ -129,8 +129,8 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
-#if !ModernKeePassLibPCL
-//#if ModernKeePassLibPCL
+#if !ModernKeePassLib
+//#if ModernKeePassLib
             /*var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
                 OpenAlgorithm(SymmetricAlgorithm.AesCbcPkcs7);
 			var key = provider.CreateSymmetricKey(pbLocalKey);
@@ -173,7 +173,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 //#else
 
 //#if !KeePassRT
-//#if !ModernKeePassLibPCL
+//#if !ModernKeePassLib
             RijndaelManaged r = new RijndaelManaged();
 			if(r.BlockSize != 128) // AES block size
 			{

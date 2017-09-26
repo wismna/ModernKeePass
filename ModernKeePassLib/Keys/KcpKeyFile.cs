@@ -22,7 +22,7 @@ using System.Text;
 using System.IO;
 using System.Xml;
 using System.Security;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -32,14 +32,14 @@ using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Serialization;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Serialization;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	/// <summary>
 	/// Key files as provided by the user.
@@ -139,7 +139,7 @@ namespace ModernKeePassLibPCL.Keys
 
 			if(pbKey == null)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				pbKey = sha256.HashData(pbFileData);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -206,7 +206,7 @@ namespace ModernKeePassLibPCL.Keys
 				ms.Write(pbAdditionalEntropy, 0, pbAdditionalEntropy.Length);
 				ms.Write(pbKey32, 0, 32);
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				pbFinalKey32 = sha256.HashData(ms.ToArray());*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -252,7 +252,7 @@ namespace ModernKeePassLibPCL.Keys
 
 			try
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 
 				var doc = XDocument.Load(ms);
 
@@ -320,7 +320,7 @@ namespace ModernKeePassLibPCL.Keys
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
 			var sOut = IOConnection.OpenWrite(ioc);
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };
 			var xtw = XmlWriter.Create(sOut, settings);
 #else

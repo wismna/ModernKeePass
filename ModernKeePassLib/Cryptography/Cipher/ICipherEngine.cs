@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 
-namespace ModernKeePassLibPCL.Cryptography.Cipher
+namespace ModernKeePassLib.Cryptography.Cipher
 {
 	/// <summary>
 	/// Interface of an encryption/decryption class.

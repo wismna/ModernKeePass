@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	public sealed class BinaryReaderEx
 	{

@@ -23,16 +23,16 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 using System.Security.AccessControl;
 #endif
 
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	public sealed class FileTransactionEx
 	{
@@ -61,8 +61,8 @@ namespace ModernKeePassLibPCL.Serialization
 			m_bTransacted = bTransacted;
 			m_iocBase = iocBaseFile.CloneDeep();
 
-// ModernKeePassLibPCL is currently targeting .NET 4.5
-#if !ModernKeePassLibPCL
+// ModernKeePassLib is currently targeting .NET 4.5
+#if !ModernKeePassLib
 			// Prevent transactions for FTP URLs under .NET 4.0 in order to
 			// avoid/workaround .NET bug 621450:
 			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
@@ -104,14 +104,14 @@ namespace ModernKeePassLibPCL.Serialization
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
 
 			if(IOConnection.FileExists(m_iocBase))
 			{
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 				if(m_iocBase.IsLocalFile())
 				{
 					try
@@ -133,7 +133,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 			IOConnection.RenameFile(m_iocTemp, m_iocBase);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			if(m_iocBase.IsLocalFile())
 			{
 				try

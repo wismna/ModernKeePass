@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using System.Threading.Tasks;
 #else
 using System.Threading;
@@ -29,11 +29,11 @@ using System.Threading;
 using System.Diagnostics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Storage.Streams;
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	public sealed class FileLockException : Exception
 	{
@@ -233,7 +233,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 				if(bFileDeleted) break;
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 				if(bDisposing)
 					Task.Delay(50).Wait();
 #else

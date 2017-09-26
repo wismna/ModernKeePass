@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
@@ -34,16 +34,16 @@ using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 #endif
 
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	/// <summary>
 	/// Represents a key. A key can be build up using several user key data sources
@@ -117,7 +117,7 @@ namespace ModernKeePassLibPCL.Keys
 			return m_vUserKeys.Remove(pKey);
 		}
 
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 		/// <summary>
 		/// Test whether the composite key contains a specific type of
 		/// user keys (password, key file, ...). If at least one user
@@ -182,7 +182,7 @@ namespace ModernKeePassLibPCL.Keys
 				}
 			}
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			var pbHash = sha256.HashData(ms.ToArray());*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -243,7 +243,7 @@ namespace ModernKeePassLibPCL.Keys
 
 		private void ValidateUserKeys()
 		{
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			int nAccounts = 0;
 
 			foreach(IUserKey uKey in m_vUserKeys)
@@ -283,7 +283,7 @@ namespace ModernKeePassLibPCL.Keys
 			byte[] pbNewKey = new byte[32];
 			Array.Copy(pbOriginalKey32, pbNewKey, pbNewKey.Length);
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			// Try to use the native library first
 			if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
 				return (new SHA256Managed()).ComputeHash(pbNewKey);
@@ -292,7 +292,7 @@ namespace ModernKeePassLibPCL.Keys
 			if(TransformKeyManaged(ref pbNewKey, pbKeySeed32, uNumRounds) == false)
 				return null;
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			return sha256.HashData(pbNewKey);*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -320,7 +320,7 @@ namespace ModernKeePassLibPCL.Keys
 				aes.ProcessBlock(pbNewKey32, 16, pbNewKey32, 16);
 			}
 #else
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKeySeed32);
 			var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);*/
@@ -393,7 +393,7 @@ namespace ModernKeePassLibPCL.Keys
 		{
 			ulong uRounds;
 
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			// Try native method
 			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
 				return uRounds;
@@ -412,7 +412,7 @@ namespace ModernKeePassLibPCL.Keys
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
 #else
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             var aes = WinRTCrypto.SymmetricKeyAlgorithmProvider.OpenAlgorithm(SymmetricAlgorithm.AesEcb);
 			var key = aes.CreateSymmetricKey(pbKey);
             var iCrypt = WinRTCrypto.CryptographicEngine.CreateEncryptor(key);

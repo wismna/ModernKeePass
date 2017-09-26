@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ModernKeePassLibPCL.Interfaces
+namespace ModernKeePassLib.Interfaces
 {
 	/// <summary>
 	/// Interface for objects that are deeply cloneable.

@@ -23,12 +23,12 @@ using System.Diagnostics;
 using System.Xml;
 using System.Drawing;
 
-using ModernKeePassLibPCL.Collections;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Collections;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// A class representing a password entry. A password entry consists of several
@@ -889,7 +889,7 @@ namespace ModernKeePassLibPCL
 
 			if(m_bCompareNaturally) return StrUtil.CompareNaturally(strA, strB);
 
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 			return string.Compare(strA, strB, m_bCaseInsensitive ?
 				StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture);
 #else

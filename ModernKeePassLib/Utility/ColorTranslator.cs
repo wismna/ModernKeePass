@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace ModernKeePassLibPCL.Utility
+namespace ModernKeePassLib.Utility
 {
 	/// <summary>
 	/// Replacement for System.Drawing.ColorTranslator.

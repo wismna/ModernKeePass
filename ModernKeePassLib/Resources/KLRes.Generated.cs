@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ModernKeePassLibPCL.Resources
+namespace ModernKeePassLib.Resources
 {
 	/// <summary>
 	/// A strongly-typed resource class, for looking up localized strings, etc.

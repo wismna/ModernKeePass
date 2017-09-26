@@ -2,7 +2,7 @@
 
 using PlatformID = System.UInt32;
 
-namespace ModernKeePassLibPCL.Native
+namespace ModernKeePassLib.Native
 {
 	internal static class NativeLib
 	{

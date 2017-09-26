@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	public static class PopularPasswords
 	{

@@ -23,22 +23,22 @@ using System.Diagnostics;
 using System.IO;
 using System.Drawing;
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Image = Splat.IBitmap;
 #endif
 
-using ModernKeePassLibPCL.Collections;
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Cryptography.Cipher;
-using ModernKeePassLibPCL.Delegates;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Keys;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Serialization;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Delegates;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Keys;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Serialization;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// The core password manager class. It contains a number of groups, which

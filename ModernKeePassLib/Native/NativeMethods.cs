@@ -24,9 +24,9 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Native
+namespace ModernKeePassLib.Native
 {
 	internal static partial class NativeMethods
 	{

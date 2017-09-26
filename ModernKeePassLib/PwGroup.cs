@@ -22,13 +22,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
-using ModernKeePassLibPCL.Collections;
-using ModernKeePassLibPCL.Delegates;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Collections;
+using ModernKeePassLib.Delegates;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// A group containing several password entries.
@@ -841,13 +841,13 @@ namespace ModernKeePassLibPCL
 			Regex rx = null;
 			if(sp.RegularExpression)
 			{
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 				RegexOptions ro = RegexOptions.None;
 #else
 				RegexOptions ro = RegexOptions.Compiled;
 #endif
 				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||
 #endif
 					(sp.ComparisonMode == StringComparison.OrdinalIgnoreCase))

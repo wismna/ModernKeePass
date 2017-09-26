@@ -5,7 +5,7 @@ using System.IO;
 #if KeePassLib
 using KeePassLib.Keys;
 #else
-using ModernKeePassLibPCL.Keys;
+using ModernKeePassLib.Keys;
 #endif
 
 namespace ModernKeePassLib.Test.Shared.Keys

@@ -22,9 +22,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Interfaces;
+using ModernKeePassLib.Interfaces;
 
-namespace ModernKeePassLibPCL.Collections
+namespace ModernKeePassLib.Collections
 {
 	/// <summary>
 	/// List of objects that implement <c>IDeepCloneable</c>,

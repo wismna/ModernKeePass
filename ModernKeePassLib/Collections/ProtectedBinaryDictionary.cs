@@ -23,15 +23,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;
 #endif
 
-namespace ModernKeePassLibPCL.Collections
+namespace ModernKeePassLib.Collections
 {
 	/// <summary>
 	/// A list of <c>ProtectedBinary</c> objects (dictionary).

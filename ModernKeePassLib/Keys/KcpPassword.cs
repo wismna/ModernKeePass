@@ -20,17 +20,17 @@
 using System;
 using System.Text;
 using System.Diagnostics;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 
-namespace ModernKeePassLibPCL.Keys
+namespace ModernKeePassLib.Keys
 {
 	/// <summary>
 	/// Master password / passphrase as provided by the user.
@@ -73,7 +73,7 @@ namespace ModernKeePassLibPCL.Keys
 			Debug.Assert(pbPasswordUtf8 != null);
 			if(pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			var pbRaw = sha256.HashData(pbPasswordUtf8);*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);

@@ -23,7 +23,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using System.Security;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
@@ -36,16 +36,16 @@ using System.IO.Compression;
 using KeePassLibSD;
 #endif
 
-using ModernKeePassLibPCL.Cryptography;
-using ModernKeePassLibPCL.Cryptography.Cipher;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Keys;
-using ModernKeePassLibPCL.Resources;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Keys;
+using ModernKeePassLib.Resources;
+using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	/// <summary>
 	/// Serialization to KeePass KDBX files.
@@ -156,7 +156,7 @@ namespace ModernKeePassLibPCL.Serialization
 				// GC.KeepAlive(br);
 				// GC.KeepAlive(brDecrypted);
 			}
-#if !ModernKeePassLibPCL
+#if !ModernKeePassLib
 			catch(CryptographicException) // Thrown on invalid padding
 			{
 				throw new CryptographicException(KLRes.FileCorrupted);
@@ -222,7 +222,7 @@ namespace ModernKeePassLibPCL.Serialization
 			byte[] pbHeader = msHeader.ToArray();
 			msHeader.Dispose();
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			m_pbHashOfHeader = sha256.HashData(pbHeader);*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
@@ -352,7 +352,7 @@ namespace ModernKeePassLibPCL.Serialization
 				throw new SecurityException(KLRes.InvalidCompositeKey);
 			ms.Write(pKey32, 0, 32);
 
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 			var aesKey = sha256.HashData(ms.ToArray());*/
             var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);

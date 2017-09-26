@@ -12,11 +12,11 @@ using KeePassLib.Security;
 using KeePassLib.Serialization;
 using KeePassLib.Collections;
 #else
-using ModernKeePassLibPCL;
-using ModernKeePassLibPCL.Keys;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Serialization;
-using ModernKeePassLibPCL.Collections;
+using ModernKeePassLib;
+using ModernKeePassLib.Keys;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Serialization;
+using ModernKeePassLib.Collections;
 #endif
 
 namespace ModernKeePassLib.Test.Shared.Serialization

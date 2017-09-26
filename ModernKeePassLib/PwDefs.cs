@@ -23,11 +23,11 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Delegates;
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Serialization;
+using ModernKeePassLib.Delegates;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Serialization;
 
-namespace ModernKeePassLibPCL
+namespace ModernKeePassLib
 {
 	/// <summary>
 	/// Contains KeePassLib-global definitions and enums.
@@ -318,7 +318,7 @@ namespace ModernKeePassLibPCL
 			set { m_bSearchInTags = value; }
 		}
 
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 		private StringComparison m_scType = StringComparison.OrdinalIgnoreCase;
 #else
 		private StringComparison m_scType = StringComparison.InvariantCultureIgnoreCase;

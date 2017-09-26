@@ -73,9 +73,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModernKeePassLib\ModernKeePassLibPCL.csproj">
+    <ProjectReference Include="..\ModernKeePassLib\ModernKeePassLib.csproj">
       <Project>{2e710089-9559-4967-846c-e763dd1f3acb}</Project>
-      <Name>ModernKeePassLibPCL</Name>
+      <Name>ModernKeePassLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -24,11 +24,11 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Cryptography.PasswordGenerator
+namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
 	/// <summary>
 	/// Type of the password generator. Different types like generators

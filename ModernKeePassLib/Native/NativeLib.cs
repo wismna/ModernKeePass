@@ -28,9 +28,9 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Utility;
 
-namespace ModernKeePassLibPCL.Native
+namespace ModernKeePassLib.Native
 {
 	/// <summary>
 	/// Interface to native library (library containing fast versions of

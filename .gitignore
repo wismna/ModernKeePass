@@ -35,3 +35,4 @@ Translation/TrlUtil.vshost.exe.manifest
 .vs/
 /UpgradeLog.htm
 packages/
+project.lock.json

@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass", "ModernKeePass\ModernKeePass.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePassLibPCL", "ModernKeePassLib\ModernKeePassLibPCL.csproj", "{2E710089-9559-4967-846C-E763DD1F3ACB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePassLib", "ModernKeePassLib\ModernKeePassLib.csproj", "{2E710089-9559-4967-846C-E763DD1F3ACB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePassLib.Test", "ModernKeePassLib.Test\ModernKeePassLib.Test.csproj", "{067456C0-086C-46A8-B37F-1405717B7BFC}"
 	ProjectSection(ProjectDependencies) = postProject

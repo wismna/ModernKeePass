@@ -4,7 +4,7 @@ using System;
 #if KeePassLib
 using KeePassLib.Cryptography;
 #else
-using ModernKeePassLibPCL.Cryptography;
+using ModernKeePassLib.Cryptography;
 #endif
 
 namespace ModernKeePassLib.Test.Shared.Cryptography

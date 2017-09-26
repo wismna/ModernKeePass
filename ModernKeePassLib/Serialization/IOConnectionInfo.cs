@@ -25,16 +25,16 @@ using System.Net;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using System.Diagnostics;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Storage;
 //using PCLStorage;
 #endif
 
-using ModernKeePassLibPCL.Interfaces;
-using ModernKeePassLibPCL.Utility;
+using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Utility;
 using System.Threading.Tasks;
 
-namespace ModernKeePassLibPCL.Serialization
+namespace ModernKeePassLib.Serialization
 {
 	public enum IOCredSaveMode
 	{
@@ -309,7 +309,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 	    public async Task<bool> CanProbablyAccess()
 		{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
             if (IsLocalFile())
             {
                 //return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);

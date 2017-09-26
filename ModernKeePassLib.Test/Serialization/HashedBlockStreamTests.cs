@@ -5,7 +5,7 @@ using System.IO;
 #if KeePassLib
 using KeePassLib.Serialization;
 #else
-using ModernKeePassLibPCL.Serialization;
+using ModernKeePassLib.Serialization;
 #endif
 
 namespace ModernKeePassLib.Test.Shared.Serialization

@@ -20,15 +20,15 @@
 using System;
 using System.Diagnostics;
 using Windows.Security.Cryptography.Core;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 
-using ModernKeePassLibPCL.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.Cipher;
 
-namespace ModernKeePassLibPCL.Cryptography
+namespace ModernKeePassLib.Cryptography
 {
 	/// <summary>
 	/// Algorithms supported by <c>CryptoRandomStream</c>.
@@ -116,7 +116,7 @@ namespace ModernKeePassLibPCL.Cryptography
 			}
 			else if(genAlgorithm == CrsAlgorithm.Salsa20)
 			{
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
                 /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
 				var pbKey32 = sha256.HashData(pbKey);*/
                 var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);

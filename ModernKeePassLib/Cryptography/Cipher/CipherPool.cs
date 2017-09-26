@@ -24,7 +24,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Security;
 
-namespace ModernKeePassLibPCL.Cryptography.Cipher
+namespace ModernKeePassLib.Cryptography.Cipher
 {
 	/// <summary>
 	/// Pool of encryption/decryption algorithms (ciphers).

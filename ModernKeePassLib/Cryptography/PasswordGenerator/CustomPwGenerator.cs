@@ -21,10 +21,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ModernKeePassLibPCL;
-using ModernKeePassLibPCL.Security;
+using ModernKeePassLib;
+using ModernKeePassLib.Security;
 
-namespace ModernKeePassLibPCL.Cryptography.PasswordGenerator
+namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
 	public abstract class CustomPwGenerator
 	{

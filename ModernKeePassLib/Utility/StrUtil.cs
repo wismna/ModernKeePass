@@ -24,7 +24,7 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
-#if ModernKeePassLibPCL
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
@@ -32,13 +32,13 @@ using System.Security.Cryptography;
 using System.Globalization;
 using System.Diagnostics;
 
-using ModernKeePassLibPCL.Collections;
-using ModernKeePassLibPCL.Cryptography.PasswordGenerator;
-using ModernKeePassLibPCL.Native;
-using ModernKeePassLibPCL.Security;
-using ModernKeePassLibPCL.Resources;
+using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography.PasswordGenerator;
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Security;
+using ModernKeePassLib.Resources;
 
-namespace ModernKeePassLibPCL.Utility
+namespace ModernKeePassLib.Utility
 {
 	/// <summary>
 	/// Character stream class.
@@ -223,7 +223,7 @@ namespace ModernKeePassLibPCL.Utility
 				List<StrEncodingInfo> l = new List<StrEncodingInfo>();
 
 				l.Add(new StrEncodingInfo(StrEncodingType.Default,
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 					StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
 #else
 #if !KeePassLibSD
@@ -234,7 +234,7 @@ namespace ModernKeePassLibPCL.Utility
 					Encoding.Default,
 					(uint)Encoding.Default.GetBytes("a").Length, null));
 #endif
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 				l.Add(new StrEncodingInfo(StrEncodingType.Ascii,
 					"ASCII", Encoding.ASCII, 1, null));
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf7,
@@ -248,7 +248,7 @@ namespace ModernKeePassLibPCL.Utility
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf16BE,
 					"Unicode (UTF-16 BE)", new UnicodeEncoding(true, false),
 					2, new byte[] { 0xFE, 0xFF }));
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 				l.Add(new StrEncodingInfo(StrEncodingType.Utf32LE,
 					"Unicode (UTF-32 LE)", new UTF32Encoding(false, false),
 					4, new byte[] { 0xFF, 0xFE, 0x0, 0x0 }));
@@ -499,7 +499,7 @@ namespace ModernKeePassLibPCL.Utility
 			if(excp.StackTrace != null)
 				strText += excp.StackTrace + Environment.NewLine;
 #if !KeePassLibSD
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 			if(excp.TargetSite != null)
 				strText += excp.TargetSite.ToString() + MessageService.NewLine;
 #endif
@@ -525,7 +525,7 @@ namespace ModernKeePassLibPCL.Utility
 				if(excp.InnerException.StackTrace != null)
 					strText += excp.InnerException.StackTrace + Environment.NewLine;
 #if !KeePassLibSD
-#if !ModernKeePassLibPCL && !KeePassRT
+#if !ModernKeePassLib && !KeePassRT
 				if(excp.InnerException.TargetSite != null)
 					strText += excp.InnerException.TargetSite.ToString();
 #endif
@@ -778,7 +778,7 @@ namespace ModernKeePassLibPCL.Utility
 
 			if(m_rxNaturalSplit == null)
 				m_rxNaturalSplit = new Regex(@"([0-9]+)",
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 					RegexOptions.None);
 #else
 					RegexOptions.Compiled);
@@ -1192,7 +1192,7 @@ namespace ModernKeePassLibPCL.Utility
 				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 				return Convert.ToBase64String(pbEnc, Base64FormattingOptions.None);
 #else
 				return Convert.ToBase64String(pbEnc);
@@ -1305,7 +1305,7 @@ namespace ModernKeePassLibPCL.Utility
 			Array.Reverse(pb);
 			for(int i = 0; i < pb.Length; ++i) pb[i] = (byte)(pb[i] ^ 0x65);
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			return Convert.ToBase64String(pb, Base64FormattingOptions.None);
 #else
 			return Convert.ToBase64String(pb);
@@ -1465,7 +1465,7 @@ namespace ModernKeePassLibPCL.Utility
 
 			if(strMimeType == null) strMimeType = "application/octet-stream";
 
-#if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			return ("data:" + strMimeType + ";base64," + Convert.ToBase64String(
 				pbData, Base64FormattingOptions.None));
 #else
@@ -1496,7 +1496,7 @@ namespace ModernKeePassLibPCL.Utility
 
 			MemoryStream ms = new MemoryStream();
 
-#if ModernKeePassLibPCL || KeePassRT
+#if ModernKeePassLib || KeePassRT
 			Encoding enc = StrUtil.Utf8;
 #else
 			Encoding enc = Encoding.ASCII;
