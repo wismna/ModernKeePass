@@ -16,7 +16,7 @@ namespace ModernKeePass
     {
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
         
         private async void Button_Click(object sender, RoutedEventArgs e)
