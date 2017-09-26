@@ -77,7 +77,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// be written.</param>
 		/// <param name="format">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(IRandomAccessStream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
+		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
@@ -86,7 +86,7 @@ namespace ModernKeePassLibPCL.Serialization
 			m_format = format;
 			m_slLogger = slLogger;
 
-			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo.AsStream(), true, null);
+			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo, true, null);
 
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			CryptoRandom cr = CryptoRandom.Instance;
@@ -146,7 +146,7 @@ namespace ModernKeePassLibPCL.Serialization
 			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
 		}
 
-		private void CommonCleanUpWrite(IRandomAccessStream sSaveTo, HashingStreamEx hashedStream)
+		private void CommonCleanUpWrite(Stream sSaveTo, HashingStreamEx hashedStream)
 		{
 			hashedStream.Dispose();
 			m_pbHashOfFileOnDisk = hashedStream.Hash;
@@ -836,7 +836,7 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 
 		[Obsolete]
-		public static bool WriteEntries(IRandomAccessStream msOutput, PwDatabase pwDatabase,
+		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase,
 			PwEntry[] vEntries)
 		{
 			return WriteEntries(msOutput, vEntries);
@@ -849,7 +849,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// <param name="vEntries">Entries to serialize.</param>
 		/// <returns>Returns <c>true</c>, if the entries were written successfully
 		/// to the stream.</returns>
-		public static bool WriteEntries(IRandomAccessStream msOutput, PwEntry[] vEntries)
+		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
 			/* KdbxFile f = new KdbxFile(pwDatabase);
 			f.m_format = KdbxFormat.PlainXml;

@@ -43,6 +43,12 @@ using Org.BouncyCastle.Crypto.Parameters;
 #endif
 
 using ModernKeePassLibPCL.Resources;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.IO;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Paddings;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace ModernKeePassLibPCL.Cryptography.Cipher
 {
@@ -123,8 +129,8 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
-
-#if ModernKeePassLibPCL
+#if !ModernKeePassLibPCL
+//#if ModernKeePassLibPCL
             /*var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
                 OpenAlgorithm(SymmetricAlgorithm.AesCbcPkcs7);
 			var key = provider.CreateSymmetricKey(pbLocalKey);
@@ -140,9 +146,11 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 				return new CryptoStream(s, decryptor, CryptoStreamMode.Read);
 			}
             */
+
             var provider = SymmetricKeyAlgorithmProvider.
                 OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
             var key = provider.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbLocalKey));
+
             using (var ms = new MemoryStream())
             {
                 s.CopyTo(ms);
@@ -152,18 +160,21 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
                 {
                     var encrypted = CryptographicEngine.Encrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
                     CryptographicBuffer.CopyToByteArray(encrypted, out resultByteArray);
+                    return new MemoryStream(resultByteArray);
                 }
                 else
                 {
                     var decrypted = CryptographicEngine.Decrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
                     CryptographicBuffer.CopyToByteArray(decrypted, out resultByteArray);
-                }
                     return new MemoryStream(resultByteArray, true);
+                }
             }
-#else
+            
+//#else
 
-#if !KeePassRT
-			RijndaelManaged r = new RijndaelManaged();
+//#if !KeePassRT
+//#if !ModernKeePassLibPCL
+            RijndaelManaged r = new RijndaelManaged();
 			if(r.BlockSize != 128) // AES block size
 			{
 				Debug.Assert(false);
@@ -183,6 +194,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
 				CryptoStreamMode.Read);
 #else
+
 			AesEngine aes = new AesEngine();
 			CbcBlockCipher cbc = new CbcBlockCipher(aes);
 			PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
@@ -196,7 +208,7 @@ namespace ModernKeePassLibPCL.Cryptography.Cipher
 			return new CipherStream(s, cpRead, cpWrite);
 #endif
 
-#endif
+//#endif
         }
 
 		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)

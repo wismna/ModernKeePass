@@ -129,7 +129,7 @@ namespace ModernKeePassLibPCL.Serialization
 				try
 				{
 					if(s == null) return null;
-				    using (var sr = new StreamReader(s.AsStream(), StrUtil.Utf8))
+				    using (var sr = new StreamReader(s, StrUtil.Utf8))
 				    {
 				        string str = sr.ReadToEnd();
 				        if (str == null)
@@ -179,7 +179,7 @@ namespace ModernKeePassLibPCL.Serialization
 				{
 					byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
 				    if (s == null) throw new IOException(iocLockFile.GetDisplayName());
-				    s.WriteAsync(pbFile.AsBuffer()).GetAwaiter().GetResult();
+				    s.WriteAsync(pbFile, 0, pbFile.Length).GetAwaiter().GetResult();
 				}
 
 				return lfi;

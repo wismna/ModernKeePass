@@ -322,7 +322,7 @@ namespace ModernKeePassLibPCL.Keys
 
 #if ModernKeePassLibPCL
 			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };
-			var xtw = XmlWriter.Create(sOut.AsStream(), settings);
+			var xtw = XmlWriter.Create(sOut, settings);
 #else
 			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
 #endif

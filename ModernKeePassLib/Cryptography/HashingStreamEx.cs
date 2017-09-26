@@ -23,13 +23,16 @@ using System.Text;
 using System.IO;
 #if ModernKeePassLibPCL
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Digests;
 #else
 using System.Security.Cryptography;
 #endif
 using System.Diagnostics;
-
+using System.Runtime.InteropServices.ComTypes;
 using ModernKeePassLibPCL.Utility;
-using Windows.Security.Cryptography.Core;
+using Org.BouncyCastle.Crypto.Tls;
 
 namespace ModernKeePassLibPCL.Cryptography
 {
@@ -39,7 +42,8 @@ namespace ModernKeePassLibPCL.Cryptography
 		private bool m_bWriting;
 #if ModernKeePassLibPCL
         //private ICryptoTransform m_hash;
-        private CryptographicHash m_hash;
+        //private CryptographicHash m_hash;
+	    private IDigest m_hash;
 #else
 		private HashAlgorithm m_hash;
 #endif
@@ -53,7 +57,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		public override bool CanRead
 		{
-			get { return /*!m_bWriting;*/true; }
+			get { return !m_bWriting; }
 		}
 
 		public override bool CanSeek
@@ -91,7 +95,8 @@ namespace ModernKeePassLibPCL.Cryptography
 			m_bWriting = bWriting;
 #if ModernKeePassLibPCL
             //m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
-            m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
+            //m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
+            m_hash = new Sha256Digest();
 #elif !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
 #else // KeePassLibSD
@@ -135,7 +140,10 @@ namespace ModernKeePassLibPCL.Cryptography
                     //m_hash.TransformFinalBlock(new byte[0], 0, 0);
 #if ModernKeePassLibPCL
                     //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
-                    CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
+                    //CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
+				    m_pbFinalHash = new byte[32];
+                    m_hash.DoFinal(m_pbFinalHash, 0);
+                    m_hash.Reset();
 #else
 					m_pbFinalHash = m_hash.Hash;
 #endif
@@ -160,7 +168,7 @@ namespace ModernKeePassLibPCL.Cryptography
 
 		public override int Read(byte[] pbBuffer, int nOffset, int nCount)
 		{
-			//if(m_bWriting) throw new InvalidOperationException();
+			if(m_bWriting) throw new InvalidOperationException();
 
 			int nRead = m_sBaseStream.Read(pbBuffer, nOffset, nCount);
 			int nPartialRead = nRead;
@@ -178,7 +186,8 @@ namespace ModernKeePassLibPCL.Cryptography
 
 			if((m_hash != null) && (nRead > 0))
                 //m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
-                m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
+                //m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
+                m_hash.BlockUpdate(pbBuffer, nOffset, nRead);
 
 #if DEBUG
             Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
@@ -198,10 +207,10 @@ namespace ModernKeePassLibPCL.Cryptography
 
             if ((m_hash != null) && (nCount > 0))
                 //m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
-                m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
-
+                //m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
+                m_hash.BlockUpdate(pbBuffer, nOffset, nCount);
 #if DEBUG
-			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
+            Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
 #endif
 
 			m_sBaseStream.Write(pbBuffer, nOffset, nCount);

@@ -71,7 +71,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// a KDBX stream.</param>
 		/// <param name="kdbFormat">Format specifier.</param>
 		/// <param name="slLogger">Status logger (optional).</param>
-		public void Load(IRandomAccessStream sSource, KdbxFormat kdbFormat, IStatusLogger slLogger)
+		public void Load(Stream sSource, KdbxFormat kdbFormat, IStatusLogger slLogger)
 		{
 			Debug.Assert(sSource != null);
 			if(sSource == null) throw new ArgumentNullException("sSource");
@@ -79,7 +79,7 @@ namespace ModernKeePassLibPCL.Serialization
 			m_format = kdbFormat;
 			m_slLogger = slLogger;
 
-			HashingStreamEx hashedStream = new HashingStreamEx(sSource.AsStream(), false, null);
+			HashingStreamEx hashedStream = new HashingStreamEx(sSource, false, null);
 
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			try
@@ -165,7 +165,7 @@ namespace ModernKeePassLibPCL.Serialization
 			finally { CommonCleanUpRead(sSource, hashedStream); }
 		}
 
-		private void CommonCleanUpRead(IRandomAccessStream sSource, HashingStreamEx hashedStream)
+		private void CommonCleanUpRead(Stream sSource, HashingStreamEx hashedStream)
 		{
 			hashedStream.Dispose();
 			m_pbHashOfFileOnDisk = hashedStream.Hash;
@@ -376,7 +376,7 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 
 		[Obsolete]
-		public static List<PwEntry> ReadEntries(PwDatabase pwDatabase, IRandomAccessStream msData)
+		public static List<PwEntry> ReadEntries(PwDatabase pwDatabase, Stream msData)
 		{
 			return ReadEntries(msData);
 		}
@@ -386,7 +386,7 @@ namespace ModernKeePassLibPCL.Serialization
 		/// </summary>
 		/// <param name="msData">Input stream to read the entries from.</param>
 		/// <returns>Extracted entries.</returns>
-		public static List<PwEntry> ReadEntries(IRandomAccessStream msData)
+		public static List<PwEntry> ReadEntries(Stream msData)
 		{
 			/* KdbxFile f = new KdbxFile(pwDatabase);
 			f.m_format = KdbxFormat.PlainXml;

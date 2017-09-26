@@ -3,9 +3,6 @@
   "version": 2,
   "targets": {
     ".NETStandard,Version=v1.2": {
-      "Microsoft.Bcl.Build/1.0.21": {
-        "type": "package"
-      },
       "Microsoft.NETCore.Jit/1.0.2": {
         "type": "package"
       },
@@ -545,17 +542,6 @@
     }
   },
   "libraries": {
-    "Microsoft.Bcl.Build/1.0.21": {
-      "sha512": "sgHu4mIt0+NVGyI12Bj4hLPypNK55UOH+ologj2LqDCjxq3EbIxe/uAtHjY+fEwbE1dtsAHG8SXHf+V/EYbKTg==",
-      "type": "package",
-      "files": [
-        "License-Stable.rtf",
-        "Microsoft.Bcl.Build.1.0.21.nupkg.sha512",
-        "Microsoft.Bcl.Build.nuspec",
-        "build/Microsoft.Bcl.Build.Tasks.dll",
-        "build/Microsoft.Bcl.Build.targets"
-      ]
-    },
     "Microsoft.NETCore.Jit/1.0.2": {
       "sha512": "Ok2vWofa6X8WD9vc4pfLHwvJz1/B6t3gOAoZcjrjrQf7lQOlNIuZIZtLn3wnWX28DuQGpPJkRlBxFj7Z5txNqw==",
       "type": "package",
@@ -2959,7 +2945,6 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.Bcl.Build >= 1.0.21",
       "Microsoft.NETCore.Portable.Compatibility >= 1.0.1",
       "NETStandard.Library >= 1.6.0",
       "PInvoke.Windows.Core >= 0.5.97",

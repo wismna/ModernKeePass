@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using ModernKeePass.Common;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.ViewModels;
 
@@ -31,10 +21,7 @@ namespace ModernKeePass.Pages
         /// NavigationHelper est utilisé sur chaque page pour faciliter la navigation et 
         /// gestion de la durée de vie des processus
         /// </summary>
-        public NavigationHelper NavigationHelper
-        {
-            get { return this.navigationHelper; }
-        }
+        public NavigationHelper NavigationHelper => navigationHelper;
 
         public EntryDetailPage()
         {
@@ -51,16 +38,11 @@ namespace ModernKeePass.Pages
         /// Source de l'événement ; en général <see cref="Common.NavigationHelper"/>
         /// </param>
         /// <param name="e">Données d'événement qui fournissent le paramètre de navigation transmis à
-        /// <see cref="Frame.Navigate(Type, Object)"/> lors de la requête initiale de cette page et
+        /// <see cref="Frame.Navigate(Type, object)"/> lors de la requête initiale de cette page et
         /// un dictionnaire d'état conservé par cette page durant une session
         /// antérieure.  L'état n'aura pas la valeur Null lors de la première visite de la page.</param>
         private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            object navigationParameter;
-            if (e.PageState != null && e.PageState.ContainsKey("SelectedItem"))
-            {
-                navigationParameter = e.PageState["SelectedItem"];
-            }
         }
 
         #region Inscription de NavigationHelper

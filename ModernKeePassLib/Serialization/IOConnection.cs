@@ -422,7 +422,7 @@ namespace ModernKeePassLibPCL.Serialization
 				new Uri(ioc.Path)));
 		}
 #else
-		public static IRandomAccessStream OpenRead(IOConnectionInfo ioc)
+		public static Stream OpenRead(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Read);
 
@@ -430,9 +430,9 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 #endif
 
-		private static IRandomAccessStream OpenReadLocal(IOConnectionInfo ioc)
+		private static Stream OpenReadLocal(IOConnectionInfo ioc)
 		{
-             return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetAwaiter().GetResult();
+             return ioc.StorageFile.OpenAsync(FileAccessMode.Read).GetAwaiter().GetResult().AsStream();
 		}
 
 #if (!ModernKeePassLibPCL && !KeePassLibSD && !KeePassRT)
@@ -458,7 +458,7 @@ namespace ModernKeePassLibPCL.Serialization
 			return IocStream.WrapIfRequired(s);
 		}
 #else
-		public static IRandomAccessStream OpenWrite(IOConnectionInfo ioc)
+		public static Stream OpenWrite(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Write);
 
@@ -466,9 +466,9 @@ namespace ModernKeePassLibPCL.Serialization
 		}
 #endif
 
-		private static IRandomAccessStream OpenWriteLocal(IOConnectionInfo ioc)
+		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
-            return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult();
+            return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult().AsStream();
         }
 
 		public static bool FileExists(IOConnectionInfo ioc)
@@ -546,7 +546,7 @@ namespace ModernKeePassLibPCL.Serialization
 #endif
         public static byte[] ReadFile(IOConnectionInfo ioc)
 		{
-		    IRandomAccessStream sIn = null;
+		    Stream sIn = null;
 			MemoryStream ms = null;
 			try
 			{
@@ -555,7 +555,7 @@ namespace ModernKeePassLibPCL.Serialization
 
 				ms = new MemoryStream();
                 
-				MemUtil.CopyStream(sIn.AsStream(), ms);
+				MemUtil.CopyStream(sIn, ms);
 
 				return ms.ToArray();
 			}

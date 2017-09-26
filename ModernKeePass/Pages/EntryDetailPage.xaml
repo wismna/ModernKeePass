@@ -44,7 +44,7 @@
             <TextBox x:Name="passwordTextBox" Grid.Row="3" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Password, Mode=TwoWay}" VerticalAlignment="Top" Width="250" FontSize="14,667" MaxLength="256" AllowDrop="True" Visibility="Collapsed"/>
             <CheckBox x:Name="checkBox" Grid.Row="4" Content="Show password" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Checked="checkBox_Checked" Unchecked="checkBox_Unchecked"/>
             <TextBlock x:Name="urlTextBlock" Grid.Row="5" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="URL" VerticalAlignment="Top" FontSize="18"/>
-            <TextBox x:Name="urlTextBox" Grid.Row="6" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding URL, Mode=TwoWay}" VerticalAlignment="Top" Width="250" FontSize="14,667" MaxLength="256" AllowDrop="True"/>
+            <TextBox x:Name="urlTextBox" Grid.Row="6" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Url, Mode=TwoWay}" VerticalAlignment="Top" Width="250" FontSize="14,667" MaxLength="256" AllowDrop="True"/>
             <TextBlock x:Name="notesTextBlock" Grid.Row="7" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="Notes" VerticalAlignment="Top" FontSize="18"/>
             <TextBox x:Name="notesTextBox" Grid.Row="8" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" VerticalAlignment="Top" Width="250" Height="32" IsSpellCheckEnabled="True" AllowDrop="True"/>
             </Grid>

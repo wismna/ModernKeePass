@@ -79,7 +79,7 @@ namespace ModernKeePassLibPCL.Serialization
 			else m_iocTemp = m_iocBase;
 		}
 
-		public IRandomAccessStream OpenWrite()
+		public Stream OpenWrite()
 		{
 			if(!m_bTransacted) m_bMadeUnhidden = UrlUtil.UnhideFile(m_iocTemp.Path);
 			else // m_bTransacted
@@ -100,7 +100,7 @@ namespace ModernKeePassLibPCL.Serialization
 			}
 		}
 
-		private async void CommitWriteTransaction()
+		private void CommitWriteTransaction()
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
