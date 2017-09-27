@@ -59,13 +59,11 @@ namespace ModernKeePass.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
-            
-            if (e.Parameter is GroupVm)
-            {
-                DataContext = e.Parameter as GroupVm;
-                groupsGridView.SelectedIndex = -1;
-                entriesListView.SelectedIndex = -1;
-            }
+
+            if (!(e.Parameter is GroupVm)) return;
+            DataContext = (GroupVm) e.Parameter;
+            groupsGridView.SelectedIndex = -1;
+            entriesListView.SelectedIndex = -1;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -78,14 +76,14 @@ namespace ModernKeePass.Pages
         private void groupsGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var gridView = sender as GridView;
-            Frame.Navigate(typeof(GroupDetailPage), gridView.SelectedItem as GroupVm);
+            Frame.Navigate(typeof(GroupDetailPage), gridView?.SelectedItem as GroupVm);
         }
         
 
         private void entriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
-            Frame.Navigate(typeof(EntryDetailPage), listView.SelectedItem as EntryVm);
+            Frame.Navigate(typeof(EntryDetailPage), listView?.SelectedItem as EntryVm);
         }
     }
 }

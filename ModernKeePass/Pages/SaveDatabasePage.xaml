@@ -1,0 +1,28 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
+    x:Class="ModernKeePass.Pages.SaveDatabasePage"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <viewModels:DatabaseVm/>
+    </Page.DataContext>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <HyperlinkButton Grid.Row="0" x:Name="SaveButton" Content="Save and close" Click="SaveButton_OnClick" VerticalAlignment="Top" IsEnabled="{Binding IsOpen}" />
+        <HyperlinkButton Grid.Row="1" x:Name="SaveAsButton" Content="Save as..." VerticalAlignment="Top" IsEnabled="{Binding IsOpen}" />
+
+    </Grid>
+</Page>

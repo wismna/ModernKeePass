@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ModernKeePass")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A port of KeePass 2.x to Modern UI as a Windows Store application")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("wismna")]
 [assembly: AssemblyProduct("ModernKeePass")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]

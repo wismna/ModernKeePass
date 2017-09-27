@@ -59,8 +59,7 @@ namespace ModernKeePass.ViewModels
             Entries.Add(new EntryVm(pwEntry));
             NotifyPropertyChanged("Entries");
         }
-
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void NotifyPropertyChanged(string propertyName)

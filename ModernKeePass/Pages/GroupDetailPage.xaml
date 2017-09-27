@@ -37,6 +37,7 @@
             x:Name="groupsGridView"
             AutomationProperties.AutomationId="ItemGridView"
             AutomationProperties.Name="Groups"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             TabIndex="1"
             Grid.RowSpan="2"
             Padding="120,126,120,50"

@@ -60,7 +60,11 @@ namespace ModernKeePass.Common
         public void Save()
         {
             _pwDatabase.Save(new NullStatusLogger());
-            //_pwDatabase.Close();
+        }
+
+        public void Close()
+        {
+            _pwDatabase.Close();
         }
     }
 }
