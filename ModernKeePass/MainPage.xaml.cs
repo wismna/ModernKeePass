@@ -1,5 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Models;
 using ModernKeePass.Pages;
 using ModernKeePass.ViewModels;
@@ -16,26 +19,35 @@ namespace ModernKeePass
         public MainPage()
         {
             InitializeComponent();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
             var mainMenuItems = new ObservableCollection<MainMenuItem>
             {
-                new MainMenuItem {Title = "File", PageType = typeof(OpenDatabasePage)},
-                new MainMenuItem {Title = "New" /*, PageType = typeof(NewDatabasePage)*/},
-                new MainMenuItem {Title = "Save" , PageType = typeof(SaveDatabasePage)},
-                new MainMenuItem {Title = "Recent files - Coming soon" /*, PageType = typeof(RecentDatabasesPage)*/},
-                new MainMenuItem {Title = "Url files - Coming soon" /*, PageType = typeof(OpenUrlPage)*/}
+                new MainMenuItem {Title = "Open", PageType = typeof(OpenDatabasePage), Destination = MenuFrame, Parameter = Frame},
+                new MainMenuItem {Title = "New" /*, PageType = typeof(NewDatabasePage)*/, Destination = MenuFrame},
+                new MainMenuItem {Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = MenuFrame, Parameter = Frame},
+                new MainMenuItem {Title = "Recent" /*, PageType = typeof(RecentDatabasesPage)*/, Destination = MenuFrame}
             };
-            DataContext = new MainVm {MainMenuItems = mainMenuItems};
+            var app = (App)Application.Current;
+            if (app.Database != null && app.Database.IsOpen)
+                mainMenuItems.Add(new MainMenuItem { Title = app.Database.Name, PageType = typeof(GroupDetailPage), Destination = Frame, Parameter = app.Database.RootGroup, Group = 1});
+            var result = from item in mainMenuItems group item by item.Group into grp orderby grp.Key select grp;
+            MenuItemsSource.Source = result;
+            //DataContext = new MainVm {MainMenuItems = mainMenuItems};
+            
             MenuListView.SelectedIndex = -1;
         }
-        
+
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Frame == null) return;
             var listView = sender as ListView;
             if (listView == null) return;
             if (listView.SelectedIndex == -1) return;
             var selectedItem = listView.SelectedItem as MainMenuItem;
-            if (selectedItem != null) MenuFrame.Navigate(selectedItem.PageType, Frame);
+            selectedItem?.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
         }
     }
 }

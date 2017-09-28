@@ -12,21 +12,22 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class SaveDatabasePage : Page
     {
+        private Frame _mainFrame;
         public SaveDatabasePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             DataContext = new DatabaseVm();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            _mainFrame = e.Parameter as Frame;
             var app = (App)Application.Current;
             if (app.Database == null) return;
             var databaseVm = DataContext as DatabaseVm;
             if (databaseVm == null) return;
-            databaseVm.IsOpen = app.Database.IsOpen;
-            databaseVm.NotifyPropertyChanged("IsOpen");
+            UpdateDatabaseStatus(app, databaseVm);
         }
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
@@ -34,6 +35,14 @@ namespace ModernKeePass.Pages
             var app = (App) Application.Current;
             app.Database.Save();
             app.Database.Close();
+            UpdateDatabaseStatus(app, DataContext as DatabaseVm);
+            _mainFrame.Navigate(typeof(MainPage));
+        }
+
+        private void UpdateDatabaseStatus(App app, DatabaseVm databaseVm)
+        {
+            databaseVm.IsOpen = app.Database.IsOpen;
+            databaseVm.NotifyPropertyChanged("IsOpen");
         }
     }
 }

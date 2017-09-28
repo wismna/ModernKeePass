@@ -11,16 +11,18 @@ namespace ModernKeePass.Common
 {
     public class DatabaseHelper
     {
-        private PwDatabase _pwDatabase = new PwDatabase();
-        private StorageFile databaseFile;
+        private readonly PwDatabase _pwDatabase = new PwDatabase();
+        private readonly StorageFile _databaseFile;
 
         public GroupVm RootGroup { get; set; }
-        public bool IsOpen { get; set; }
-        public string Name { get; set; }
+
+        public bool IsOpen => _pwDatabase.IsOpen;
+
+        public string Name => _databaseFile.Name;
 
         public DatabaseHelper(StorageFile databaseFile)
         {
-            this.databaseFile = databaseFile;
+            this._databaseFile = databaseFile;
         }
         public string Open(string password)
         {
@@ -28,14 +30,10 @@ namespace ModernKeePass.Common
             try
             {
                 key.AddUserKey(new KcpPassword(password));
-                _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
+                _pwDatabase.Open(IOConnectionInfo.FromFile(_databaseFile), key, new NullStatusLogger());
                 //_pwDatabase.Open(IOConnectionInfo.FromPath(databaseFile.Path), key, new NullStatusLogger());
-                IsOpen = _pwDatabase.IsOpen;
-                if (IsOpen)
-                {
-                    Name = databaseFile.DisplayName;
-                    RootGroup = new GroupVm(_pwDatabase.RootGroup);
-                }
+
+                if (IsOpen) RootGroup = new GroupVm(_pwDatabase.RootGroup);
             }
             catch (ArgumentNullException)
             {

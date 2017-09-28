@@ -14,7 +14,7 @@
     <Page.Resources>
         <CollectionViewSource 
             x:Name="MenuItemsSource" 
-            Source="{Binding MainMenuItems}" />
+            Source="{Binding MainMenuItems}" IsSourceGrouped="True" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
@@ -40,6 +40,17 @@
                     <Setter Property="Padding" Value="20,5,0,0" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.GroupStyle>
+                <GroupStyle HidesIfEmpty="True">
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <Grid Background="DarkGray" Margin="20,0,0,0">
+                                <Border Height="1" Width="240" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ListView.GroupStyle>
         </controls:ListViewWithDisable>
         <Frame Grid.Column="2" Name="MenuFrame" Width="auto" Margin="0,60,0,0" />
     </Grid>
