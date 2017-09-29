@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Windows.UI.Xaml.Controls;
+using ModernKeePass.Mappings;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
@@ -13,17 +15,16 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<GroupVm> Groups { get; set; }
         public string Name { get; set; }
 
-        public string EntryCount {
-            get
-            {
-                return $"{Entries?.Count} entries.";
-            }
-        }
-        public string GroupCount
+        public int EntryCount => Entries.Count;
+
+        public int GroupCount => Groups.Count;
+
+        public Symbol IconSymbol
         {
             get
             {
-                return $"{Groups?.Count} groups.";
+                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
+                return result == Symbol.More ? Symbol.Folder : result;
             }
         }
 

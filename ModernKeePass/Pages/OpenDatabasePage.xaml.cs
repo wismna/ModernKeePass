@@ -1,7 +1,9 @@
 ﻿using System;
 using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
@@ -49,6 +51,7 @@ namespace ModernKeePass.Pages
             databaseVm.Name = file.Name;
             databaseVm.NotifyPropertyChanged("SelectedVisibility");
             databaseVm.NotifyPropertyChanged("Name");
+            PasswordBox.Focus(FocusState.Programmatic);
         }
 
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
@@ -56,6 +59,11 @@ namespace ModernKeePass.Pages
             var app = (App)Application.Current;
             StatusTextBlock.Text = app.Database.Open(PasswordBox.Password);
             if (string.IsNullOrEmpty(StatusTextBlock.Text)) _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter) OpenButton_OnClick(null, null);
         }
     }
 }

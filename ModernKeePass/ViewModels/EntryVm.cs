@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using Windows.UI.Xaml.Controls;
+using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Security;
 
@@ -30,6 +32,15 @@ namespace ModernKeePass.ViewModels
         {
             get { return GetEntryValue(PwDefs.NotesField); }
             set { SetEntryValue(PwDefs.NotesField, value); }
+        }
+
+        public Symbol IconSymbol
+        {
+            get
+            {
+                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwEntry.IconId);
+                return result == Symbol.More ? Symbol.Permissions : result;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

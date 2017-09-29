@@ -116,10 +116,12 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
+    <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
     <Compile Include="Models\MainMenuItem.cs" />
     <Compile Include="Pages\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>

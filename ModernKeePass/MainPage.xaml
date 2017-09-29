@@ -26,13 +26,17 @@
         <controls:ListViewWithDisable Grid.Column="0" 
                   x:Name="MenuListView"
                   SelectionChanged="ListView_SelectionChanged" 
-                  ItemsSource="{Binding Source={StaticResource MenuItemsSource}}">
+                  ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
+                  IsSynchronizedWithCurrentItem="False">
             <ListView.Header>
                 <TextBlock Text="ModernKeePass" FontWeight="Bold" FontSize="36" Margin="20" />
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate >
-                    <TextBlock Text="{Binding Title}" />
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="{Binding SymbolIcon}" />
+                        <TextBlock Text="{Binding Title}" Margin="10,5,0,0" />
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>

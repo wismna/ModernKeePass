@@ -62,8 +62,6 @@ namespace ModernKeePass.Pages
 
             if (!(e.Parameter is GroupVm)) return;
             DataContext = (GroupVm) e.Parameter;
-            groupsGridView.SelectedIndex = -1;
-            entriesListView.SelectedIndex = -1;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

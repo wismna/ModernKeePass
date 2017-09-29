@@ -18,6 +18,7 @@ namespace ModernKeePass.Models
         public object Parameter { get; set; }
         public Frame Destination { get; set; }
         public int Group { get; set; } = 0;
+        public Symbol SymbolIcon { get; set; }
         public bool IsEnabled => PageType != null;
 
         public override string ToString()

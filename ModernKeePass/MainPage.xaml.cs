@@ -26,26 +26,22 @@ namespace ModernKeePass
             base.OnNavigatedTo(e);
             var mainMenuItems = new ObservableCollection<MainMenuItem>
             {
-                new MainMenuItem {Title = "Open", PageType = typeof(OpenDatabasePage), Destination = MenuFrame, Parameter = Frame},
-                new MainMenuItem {Title = "New" /*, PageType = typeof(NewDatabasePage)*/, Destination = MenuFrame},
-                new MainMenuItem {Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = MenuFrame, Parameter = Frame},
-                new MainMenuItem {Title = "Recent" /*, PageType = typeof(RecentDatabasesPage)*/, Destination = MenuFrame}
+                new MainMenuItem {Title = "Open", PageType = typeof(OpenDatabasePage), Destination = MenuFrame, Parameter = Frame, SymbolIcon = Symbol.Page2},
+                new MainMenuItem {Title = "New" /*, PageType = typeof(NewDatabasePage)*/, Destination = MenuFrame, SymbolIcon = Symbol.Add},
+                new MainMenuItem {Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = MenuFrame, Parameter = Frame, SymbolIcon = Symbol.Save},
+                new MainMenuItem {Title = "Recent" /*, PageType = typeof(RecentDatabasesPage)*/, Destination = MenuFrame, SymbolIcon = Symbol.Copy}
             };
             var app = (App)Application.Current;
             if (app.Database != null && app.Database.IsOpen)
-                mainMenuItems.Add(new MainMenuItem { Title = app.Database.Name, PageType = typeof(GroupDetailPage), Destination = Frame, Parameter = app.Database.RootGroup, Group = 1});
+                mainMenuItems.Add(new MainMenuItem { Title = app.Database.Name, PageType = typeof(GroupDetailPage), Destination = Frame, Parameter = app.Database.RootGroup, Group = 1, SymbolIcon = Symbol.ProtectedDocument});
             var result = from item in mainMenuItems group item by item.Group into grp orderby grp.Key select grp;
             MenuItemsSource.Source = result;
-            //DataContext = new MainVm {MainMenuItems = mainMenuItems};
-            
-            MenuListView.SelectedIndex = -1;
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
             if (listView == null) return;
-            if (listView.SelectedIndex == -1) return;
             var selectedItem = listView.SelectedItem as MainMenuItem;
             selectedItem?.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
         }
