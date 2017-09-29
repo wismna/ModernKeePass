@@ -18,7 +18,6 @@
     </Page.DataContext>
 
     <Grid>
-
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="groupsViewSource"
@@ -36,7 +35,6 @@
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <!-- Horizontal scrolling grid -->
         <GridView
             x:Name="groupsGridView"
@@ -80,9 +78,9 @@
                     IsSynchronizedWithCurrentItem="False" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Background="{Binding BackgroundColor}">
                                 <SymbolIcon Symbol="{Binding IconSymbol}" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0"/>
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,10" Foreground="{Binding ForegroundColor}"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -91,6 +89,12 @@
                             <TextBlock Text="Entries" FontSize="20" Margin="0,20,0,20" />
                         </DataTemplate>
                     </ListView.HeaderTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
                 </ListView>
             </GridView.Header>
             <GridView.ItemContainerStyle>

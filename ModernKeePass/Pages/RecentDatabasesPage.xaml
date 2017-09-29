@@ -1,0 +1,36 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ModernKeePass.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
+    x:Class="ModernKeePass.Pages.RecentDatabasesPage"
+    mc:Ignorable="d">
+    <Page.DataContext>
+        <viewModels:RecentVm/>
+    </Page.DataContext>
+    <Page.Resources>
+        <CollectionViewSource 
+            x:Name="RecentItemsSource" 
+            Source="{Binding RecentItems}" />
+    </Page.Resources>
+    <ListView 
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
+        x:Name="RecentListView" 
+        SelectionChanged="RecentListView_SelectionChanged"
+        IsSynchronizedWithCurrentItem="False">
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Name}" Width="350" Padding="5" />
+            </DataTemplate>
+        </ListView.ItemTemplate>
+        <ListView.ItemContainerStyle>
+            <Style TargetType="ListViewItem">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            </Style>
+        </ListView.ItemContainerStyle>
+    </ListView>
+</Page>

@@ -1,12 +1,15 @@
 ﻿using System.ComponentModel;
+using System.Drawing;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Security;
+using Windows.UI.Xaml.Media;
+using Windows.UI;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : INotifyPropertyChanged
+    public class EntryVm
     {
         public string Title
         {
@@ -34,6 +37,10 @@ namespace ModernKeePass.ViewModels
             set { SetEntryValue(PwDefs.NotesField, value); }
         }
 
+        public SolidColorBrush BackgroundColor => CreateFromColor(_pwEntry.BackgroundColor, Colors.Transparent);
+
+        public SolidColorBrush ForegroundColor => CreateFromColor(_pwEntry.ForegroundColor, Colors.White);
+
         public Symbol IconSymbol
         {
             get
@@ -42,9 +49,7 @@ namespace ModernKeePass.ViewModels
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        
         private readonly PwEntry _pwEntry;
 
         public EntryVm() { }
@@ -61,6 +66,16 @@ namespace ModernKeePass.ViewModels
         private void SetEntryValue(string key, string newValue)
         {
             _pwEntry.Strings.Set(key, new ProtectedString(true, newValue));
+        }
+
+        private SolidColorBrush CreateFromColor(System.Drawing.Color color, Windows.UI.Color defaultValue)
+        {
+            if (color == System.Drawing.Color.Empty) return new SolidColorBrush(defaultValue);
+            return new SolidColorBrush(Windows.UI.Color.FromArgb(
+                color.A,
+                color.R,
+                color.G,
+                color.B));
         }
     }
 }

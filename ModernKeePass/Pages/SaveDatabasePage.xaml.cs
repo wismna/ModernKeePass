@@ -16,7 +16,6 @@ namespace ModernKeePass.Pages
         public SaveDatabasePage()
         {
             InitializeComponent();
-            DataContext = new DatabaseVm();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

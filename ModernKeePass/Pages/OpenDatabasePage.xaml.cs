@@ -7,6 +7,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
+using Windows.Storage.AccessCache;
+using Windows.Storage;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,7 +24,6 @@ namespace ModernKeePass.Pages
         public OpenDatabasePage()
         {
             InitializeComponent();
-            DataContext = new DatabaseVm();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -42,9 +43,28 @@ namespace ModernKeePass.Pages
             picker.FileTypeFilter.Add(".kdbx");
 
             var file = await picker.PickSingleFileAsync();
-            if (file == null) return;
             // Application now has read/write access to the picked file
+            if (file == null) return;
+            // Initialize KDBX database
             ((App)Application.Current).Database = new DatabaseHelper(file);
+            AddToRecentFiles(file);
+            ShowPassword(file);
+        }
+
+        private void AddToRecentFiles(StorageFile file)
+        {
+            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            var mruToken = mru.Add(file, file.DisplayName);
+
+            /*var localSettings = ApplicationData.Current.LocalSettings;
+            if (!localSettings.Containers.ContainsKey("Recent"))
+                localSettings.CreateContainer("Recent", ApplicationDataCreateDisposition.Always);
+
+            localSettings.Containers["Recent"].Values[file.DisplayName] = mruToken;*/
+        }
+
+        private void ShowPassword(StorageFile file)
+        {
             var databaseVm = DataContext as DatabaseVm;
             if (databaseVm == null) return;
             databaseVm.SelectedVisibility = Visibility.Visible;
