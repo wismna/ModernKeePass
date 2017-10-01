@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using ModernKeePass.Common;
-using ModernKeePass.Models;
-using ModernKeePass.ViewModels;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Common;
+using ModernKeePass.Models;
+using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -30,7 +30,6 @@ namespace ModernKeePass.Pages
         {
             base.OnNavigatedTo(e);
             _mainFrame = e.Parameter as Frame;
-            //RecentListView.SelectedIndex = -1;
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             var recentVm = DataContext as RecentVm;
             recentVm.RecentItems = new ObservableCollection<RecentItem>(
@@ -41,15 +40,20 @@ namespace ModernKeePass.Pages
 
         private async void RecentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //if (RecentListView == null || e.RemovedItems.Count > 0) return;
             var recentItem = e.AddedItems[0] as RecentItem;
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             var file = await mru.GetFileAsync(recentItem.Token) as StorageFile;
 
             var app = (App)Application.Current;
             app.Database = new DatabaseHelper(file);
-            app.Database.Open("test");
-            _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
+            recentItem.PasswordVisibility = Visibility.Visible;
+            recentItem.NotifyPropertyChanged("PasswordVisibility");
+        }
+
+        private void PasswordUserControl_PasswordChecked(object sender, Events.DatabaseEventArgs e)
+        {
+            var app = (App)Application.Current;
+            if (e.IsOpen) _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
         }
     }
 }

@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Events;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -21,7 +12,23 @@ namespace ModernKeePass.Controls
     {
         public PasswordUserControl()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+            PasswordBox.Focus(FocusState.Programmatic);
+        }
+
+        public delegate void PasswordCheckedEventHandler(object sender, DatabaseEventArgs e);
+        public event PasswordCheckedEventHandler PasswordChecked;
+
+        private void OpenButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var app = (App)Application.Current;
+            StatusTextBlock.Text = app.Database.Open(PasswordBox.Password);
+            PasswordChecked(this, new DatabaseEventArgs { IsOpen = app.Database.IsOpen });
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter) OpenButton_OnClick(null, null);
         }
     }
 }

@@ -120,6 +120,7 @@
       <DependentUpon>PasswordUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\PluralizationConverter.cs" />
+    <Compile Include="Events\DatabaseEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

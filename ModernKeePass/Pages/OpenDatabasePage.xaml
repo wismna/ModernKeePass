@@ -4,36 +4,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
+    xmlns:local="using:ModernKeePass.Controls"
     x:Class="ModernKeePass.Pages.OpenDatabasePage"
     mc:Ignorable="d">
     <Page.DataContext>
         <viewModels:DatabaseVm/>
     </Page.DataContext>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ChildrenTransitions>
-            <TransitionCollection>
-                <EntranceThemeTransition/>
-            </TransitionCollection>
-        </Grid.ChildrenTransitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <HyperlinkButton Grid.Row="0" Grid.ColumnSpan="2" Content="Browse files..." Click="ButtonBase_OnClick" />
-        <HyperlinkButton Grid.Row="1" Grid.ColumnSpan="2" Content="From Url..." IsEnabled="False" />
-        <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Visibility="{Binding SelectedVisibility}" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <TextBlock Grid.Row="3" Grid.Column="0" HorizontalAlignment="Left" Visibility="{Binding SelectedVisibility}" TextWrapping="Wrap" Text="Password" VerticalAlignment="Center" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <PasswordBox Grid.Row="3" Grid.Column="1" x:Name="PasswordBox" Visibility="{Binding SelectedVisibility}" Width="500" IsPasswordRevealButtonEnabled="True" Margin="0,0,10,0" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="StatusTextBlock"  Visibility="{Binding SelectedVisibility}" Height="auto" Width="auto" Foreground="#FF9E1B1B" FontSize="16" />
-        <Button Grid.Row="5" Grid.Column="1" Content="OK"  Visibility="{Binding SelectedVisibility}" HorizontalAlignment="Right" VerticalAlignment="Top" Click="OpenButton_OnClick" Margin="0,0,7,0" Width="auto"/>
-    </Grid>
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
+        <HyperlinkButton Content="From Url..." IsEnabled="False" />
+        <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
+        <local:PasswordUserControl Visibility="{Binding SelectedVisibility}" PasswordChecked="PasswordUserControl_PasswordChecked" />
+    </StackPanel>
 </Page>
