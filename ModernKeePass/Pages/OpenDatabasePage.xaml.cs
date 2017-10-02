@@ -54,13 +54,7 @@ namespace ModernKeePass.Pages
         private void AddToRecentFiles(StorageFile file)
         {
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            var mruToken = mru.Add(file, file.DisplayName);
-
-            /*var localSettings = ApplicationData.Current.LocalSettings;
-            if (!localSettings.Containers.ContainsKey("Recent"))
-                localSettings.CreateContainer("Recent", ApplicationDataCreateDisposition.Always);
-
-            localSettings.Containers["Recent"].Values[file.DisplayName] = mruToken;*/
+            mru.Add(file, file.DisplayName);
         }
 
         private void ShowPassword(StorageFile file)

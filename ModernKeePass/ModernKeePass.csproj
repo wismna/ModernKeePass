@@ -125,8 +125,8 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
-    <Compile Include="ViewModels\MainMenuItemVm.cs" />
-    <Compile Include="ViewModels\RecentItemVm.cs" />
+    <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
+    <Compile Include="ViewModels\Items\RecentItemVm.cs" />
     <Compile Include="Pages\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>
     </Compile>
@@ -216,9 +216,7 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />

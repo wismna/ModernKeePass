@@ -1,29 +1,27 @@
 ﻿<Page
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ModernKeePass.Pages"
-    xmlns:common="using:ModernKeePass.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ViewModels="using:ModernKeePass.ViewModels"
-    xmlns:Converters="using:ModernKeePass.Converters"
-    x:Name="pageRoot"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
+    xmlns:converters="using:ModernKeePass.Converters"
+    x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
     <Page.Resources>
-        <Converters:PluralizationConverter x:Key="PluralizationConverter"/>
+        <converters:PluralizationConverter x:Key="PluralizationConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <ViewModels:GroupVm />
+        <viewModels:GroupVm />
     </Page.DataContext>
 
     <Grid>
         <Grid.Resources>
             <CollectionViewSource
-                x:Name="groupsViewSource"
+                x:Name="GroupsViewSource"
                 Source="{Binding Groups}"/>
             <CollectionViewSource
-                x:Name="entriesViewSource"
+                x:Name="EntriesViewSource"
                 Source="{Binding Entries}"/>
         </Grid.Resources>
         <Grid.ChildrenTransitions>
@@ -36,88 +34,116 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Horizontal scrolling grid -->
-        <GridView
-            x:Name="groupsGridView"
-            AutomationProperties.AutomationId="ItemGridView"
-            AutomationProperties.Name="Groups"
+        <SemanticZoom
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            TabIndex="1"
             Grid.RowSpan="2"
-            Padding="120,126,120,50"
-            ItemsSource="{Binding Source={StaticResource groupsViewSource}}"
-            IsSwipeEnabled="false" 
-            SelectionChanged="groupsGridView_SelectionChanged"
-            IsSynchronizedWithCurrentItem="False" >
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Border BorderThickness="2" BorderBrush="DimGray" Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" Margin="0,10,0,0" >
-                        <Grid Height="110" Width="480" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" />
-                            <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0">
-                                <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
-                                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
-                                <TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60"/>
-                                <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60"/>
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-            <GridView.Header>
-                <ListView 
-                    x:Name="entriesListView" 
-                    Height="auto" 
-                    Width="480" 
-                    ItemsSource="{Binding Source={StaticResource entriesViewSource}}" 
-                    Margin="10,0,0,0" 
-                    SelectionChanged="entriesListView_SelectionChanged"
+            Padding="20,126,20,50">
+            <SemanticZoom.ZoomedInView>
+                <GridView
+                    AutomationProperties.AutomationId="ItemGridView"
+                    AutomationProperties.Name="Groups"
+                    TabIndex="1"
+                    ItemsSource="{Binding Source={StaticResource GroupsViewSource}}"
+                    IsSwipeEnabled="false" 
+                    SelectionChanged="groups_SelectionChanged"
+                    IsSynchronizedWithCurrentItem="False" >
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Border 
+                                BorderThickness="2" 
+                                BorderBrush="DimGray" 
+                                Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" 
+                                Margin="0,10,0,0" >
+                                <Grid Height="110" Width="480" >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" />
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0" Visibility="{Binding DetailsVisibility}" >
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
+                                        <TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                        <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Visibility="{Binding NewVisibility}" VerticalAlignment="Center" Margin="13,0,0,5"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.Header>
+                        <ListView 
+                            Height="auto" 
+                            Width="480" 
+                            ItemsSource="{Binding Source={StaticResource EntriesViewSource}}" 
+                            Margin="10,0,0,0" 
+                            SelectionChanged="entriesListView_SelectionChanged"
+                            IsSwipeEnabled="false" 
+                            IsSynchronizedWithCurrentItem="False" >
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Background="{Binding BackgroundColor}">
+                                        <SymbolIcon Symbol="{Binding IconSymbol}" />
+                                        <TextBlock Text="{Binding Title}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" Foreground="{Binding ForegroundColor}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                            <ListView.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" FontSize="20" Margin="0,20,0,20" />
+                                </DataTemplate>
+                            </ListView.HeaderTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                        </ListView>
+                    </GridView.Header>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="FrameworkElement">
+                            <Setter Property="Margin" Value="52,0,0,2"/>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                </GridView>
+            </SemanticZoom.ZoomedInView>
+
+            <SemanticZoom.ZoomedOutView>
+                <ListView
+                    ItemsSource="{Binding Source={StaticResource GroupsViewSource}}"
+                    IsSwipeEnabled="false" 
+                    SelectionChanged="groups_SelectionChanged"
                     IsSynchronizedWithCurrentItem="False" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Background="{Binding BackgroundColor}">
-                                <SymbolIcon Symbol="{Binding IconSymbol}" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,10" Foreground="{Binding ForegroundColor}"/>
-                            </StackPanel>
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                         </DataTemplate>
                     </ListView.ItemTemplate>
-                    <ListView.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="Entries" FontSize="20" Margin="0,20,0,20" />
-                        </DataTemplate>
-                    </ListView.HeaderTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
                 </ListView>
-            </GridView.Header>
-            <GridView.ItemContainerStyle>
-                <Style TargetType="FrameworkElement">
-                    <Setter Property="Margin" Value="52,0,0,2"/>
-                </Style>
-            </GridView.ItemContainerStyle>
-        </GridView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+        
 
         <!-- Back button and page title -->
-        <Grid>
+        <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="backButton" Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+            <Button Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"
                         VerticalAlignment="Top"
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="pageTitle" Text="{Binding Name}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
+            <TextBlock Text="{Binding Name}" Style="{StaticResource HeaderTextBlockStyle}" Grid.Column="1" 
                         IsHitTestVisible="false" TextWrapping="NoWrap" VerticalAlignment="Bottom" Margin="0,0,30,40"/>
+            <CommandBar Grid.Column="2" Margin="0,40,0,0" Background="Transparent" IsOpen="True">
+                <AppBarButton Icon="Edit" Label="Edit" />
+                <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="AppBarButton_Click" />
+            </CommandBar>
         </Grid>
     </Grid>
 </Page>

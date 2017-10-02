@@ -22,7 +22,7 @@ namespace ModernKeePass.Common
 
         public DatabaseHelper(StorageFile databaseFile)
         {
-            this._databaseFile = databaseFile;
+            _databaseFile = databaseFile;
         }
         public string Open(string password)
         {
@@ -31,9 +31,8 @@ namespace ModernKeePass.Common
             {
                 key.AddUserKey(new KcpPassword(password));
                 _pwDatabase.Open(IOConnectionInfo.FromFile(_databaseFile), key, new NullStatusLogger());
-                //_pwDatabase.Open(IOConnectionInfo.FromPath(databaseFile.Path), key, new NullStatusLogger());
 
-                if (IsOpen) RootGroup = new GroupVm(_pwDatabase.RootGroup);
+                if (IsOpen) RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
             }
             catch (ArgumentNullException)
             {
@@ -47,11 +46,6 @@ namespace ModernKeePass.Common
             {
                 return ex.Message;
             }
-            /*finally
-            {
-                // TODO: move this when implementing write mode
-                _pwDatabase.Close();
-            }*/
             return string.Empty;
         }
 

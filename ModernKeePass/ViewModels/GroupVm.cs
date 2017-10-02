@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
@@ -9,63 +10,76 @@ namespace ModernKeePass.ViewModels
 {
     public class GroupVm : INotifyPropertyChanged
     {
-        private PwGroup _pwGroup;
+        public GroupVm ParentGroup { get; }
+        public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
+        public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
+        public string Name => _pwGroup == null ? "New group" : _pwGroup.Name;
 
-        public ObservableCollection<EntryVm> Entries { get; set; }
-        public ObservableCollection<GroupVm> Groups { get; set; }
-        public string Name { get; set; }
+        public int EntryCount => Entries.Count - 1;
 
-        public int EntryCount => Entries.Count;
+        public int GroupCount => Groups.Count - 1;
 
-        public int GroupCount => Groups.Count;
+        public Visibility DetailsVisibility => _pwGroup == null ? Visibility.Collapsed : Visibility.Visible;
+        public Visibility NewVisibility => _pwGroup == null ? Visibility.Visible : Visibility.Collapsed;
 
         public Symbol IconSymbol
         {
             get
             {
+                if (_pwGroup == null) return Symbol.Add;
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
                 return result == Symbol.More ? Symbol.Folder : result;
             }
         }
 
-        public GroupVm()
-        {
-            Name = "GroupName";
-            Entries = new ObservableCollection<EntryVm>();
-            Groups = new ObservableCollection<GroupVm>();
-        }
+        public bool IsNotRoot => ParentGroup != null;
 
-        public GroupVm(PwGroup pwGroup)
+        private readonly PwGroup _pwGroup;
+        public GroupVm() {}
+
+        public GroupVm(PwGroup pwGroup, GroupVm parent)
         {
             _pwGroup = pwGroup;
-            Name = pwGroup.Name;
-            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e)));
-            //Entries.Insert(0, new EntryVm { Title = " + New entry" });
-            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g)));
+            ParentGroup = parent;
+            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
+            Entries.Insert(0, new EntryVm ());
+            //Entries.Add(new EntryVm { Title = " New entry" });
+            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this)));
             //Groups.Insert(0, new GroupVm { Name = " + New group" });
+            Groups.Insert(0, new GroupVm ());
         }
 
-        public void CreateNewGroup(string title)
+        public void CreateNewGroup()
         {
-            var pwGroup = new PwGroup(true, true, title, PwIcon.Folder);
+            var pwGroup = new PwGroup(true, true, "New group", PwIcon.Folder);
             _pwGroup.AddGroup(pwGroup, true);
-            Groups.Add(new GroupVm(pwGroup));
-            NotifyPropertyChanged("Groups");
+            Groups.Add(new GroupVm(pwGroup, this));
         }
         
-        public void CreateNewEntry(string title)
+        public void CreateNewEntry()
         {
             var pwEntry = new PwEntry(true, true);
             _pwGroup.AddEntry(pwEntry, true);
-            Entries.Add(new EntryVm(pwEntry));
-            NotifyPropertyChanged("Entries");
+            Entries.Add(new EntryVm(pwEntry, this));
+        }
+
+        public void RemoveGroup()
+        {
+            _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
+            ParentGroup.Groups.Remove(this);
         }
         
+        public void RemoveEntry(EntryVm entry)
+        {
+            _pwGroup.Entries.Remove(entry.Entry);
+            Entries.Remove(entry);
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
     }
 }

@@ -14,20 +14,18 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class GroupDetailPage : Page
     {
-        private NavigationHelper navigationHelper;
-        
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
         /// process lifetime management
         /// </summary>
-        public NavigationHelper NavigationHelper => navigationHelper;
+        public NavigationHelper NavigationHelper { get; }
 
 
         public GroupDetailPage()
         {
             InitializeComponent();
-            navigationHelper = new NavigationHelper(this);
-            navigationHelper.LoadState += navigationHelper_LoadState;
+            NavigationHelper = new NavigationHelper(this);
+            NavigationHelper.LoadState += navigationHelper_LoadState;
         }
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace ModernKeePass.Pages
         /// 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedTo(e);
+            NavigationHelper.OnNavigatedTo(e);
 
             if (!(e.Parameter is GroupVm)) return;
             DataContext = (GroupVm) e.Parameter;
@@ -66,22 +64,53 @@ namespace ModernKeePass.Pages
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedFrom(e);
+            NavigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
 
-        private void groupsGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var gridView = sender as GridView;
-            Frame.Navigate(typeof(GroupDetailPage), gridView?.SelectedItem as GroupVm);
+            GroupVm selectedItem = null;
+            if (sender is GridView)
+            {
+                var gridView = (GridView) sender;
+                if (gridView.SelectedIndex == 0)
+                {
+                    var currentGroup = DataContext as GroupVm;
+                    currentGroup?.CreateNewGroup();
+                    gridView.SelectedIndex = -1;
+                    // TODO: Navigate to new group?
+                    return;
+                }
+                selectedItem = gridView.SelectedItem as GroupVm;
+            }
+            if (sender is ListView) selectedItem = ((ListView) sender).SelectedItem as GroupVm;
+            if (selectedItem == null) return;
+            Frame.Navigate(typeof(GroupDetailPage), selectedItem);
         }
         
 
         private void entriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
+            if (listView != null && listView.SelectedIndex == -1) return;
+            if (listView.SelectedIndex == 0)
+            {
+                var currentGroup = DataContext as GroupVm;
+                currentGroup?.CreateNewEntry();
+                listView.SelectedIndex = -1;
+                // TODO: Navigate to new entry?
+                return;
+            }
             Frame.Navigate(typeof(EntryDetailPage), listView?.SelectedItem as EntryVm);
+        }
+
+        private void AppBarButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var group = DataContext as GroupVm;
+            group?.RemoveGroup();
+            if (Frame.CanGoBack) Frame.GoBack();
         }
     }
 }

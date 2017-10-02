@@ -83,5 +83,12 @@ namespace ModernKeePass.Pages
             passwordBox.Visibility = Visibility.Visible;
             passwordTextBox.Visibility = Visibility.Collapsed;
         }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            var entry = DataContext as EntryVm;
+            entry?.RemoveEntry();
+            if (Frame.CanGoBack) Frame.GoBack();
+        }
     }
 }

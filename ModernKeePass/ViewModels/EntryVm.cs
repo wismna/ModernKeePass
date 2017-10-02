@@ -1,19 +1,25 @@
-﻿using System.ComponentModel;
-using System.Drawing;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Security;
 using Windows.UI.Xaml.Media;
 using Windows.UI;
+using Windows.UI.Text;
+using Windows.UI.Xaml;
 
 namespace ModernKeePass.ViewModels
 {
     public class EntryVm
     {
+        public GroupVm ParentGroup { get; }
+        public PwEntry Entry => _pwEntry;
         public string Title
         {
-            get { return GetEntryValue(PwDefs.TitleField); }
+            get
+            {
+                var title = GetEntryValue(PwDefs.TitleField);
+                return title == null ? "New entry" : title;
+            }
             set { SetEntryValue(PwDefs.TitleField, value); }
         }
         public string UserName
@@ -37,14 +43,17 @@ namespace ModernKeePass.ViewModels
             set { SetEntryValue(PwDefs.NotesField, value); }
         }
 
-        public SolidColorBrush BackgroundColor => CreateFromColor(_pwEntry.BackgroundColor, Colors.Transparent);
+        public SolidColorBrush BackgroundColor => CreateFromColor(_pwEntry?.BackgroundColor, Colors.Transparent);
 
-        public SolidColorBrush ForegroundColor => CreateFromColor(_pwEntry.ForegroundColor, Colors.White);
+        public SolidColorBrush ForegroundColor => CreateFromColor(_pwEntry?.ForegroundColor, Colors.White);
+
+        public FontWeight FontWeight => _pwEntry == null ? FontWeights.Bold : FontWeights.Normal;
 
         public Symbol IconSymbol
         {
             get
             {
+                if (_pwEntry == null) return Symbol.Add;
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwEntry.IconId);
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
@@ -53,29 +62,35 @@ namespace ModernKeePass.ViewModels
         private readonly PwEntry _pwEntry;
 
         public EntryVm() { }
-        public EntryVm(PwEntry entry)
+        public EntryVm(PwEntry entry, GroupVm parent)
         {
             _pwEntry = entry;
+            ParentGroup = parent;
+        }
+
+        public void RemoveEntry()
+        {
+            ParentGroup.RemoveEntry(this);
         }
 
         private string GetEntryValue(string key)
         {
-            return _pwEntry.Strings.GetSafe(key).ReadString();
+            return _pwEntry?.Strings.GetSafe(key).ReadString();
         }
         
         private void SetEntryValue(string key, string newValue)
         {
-            _pwEntry.Strings.Set(key, new ProtectedString(true, newValue));
+            _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
         }
 
-        private SolidColorBrush CreateFromColor(System.Drawing.Color color, Windows.UI.Color defaultValue)
+        private SolidColorBrush CreateFromColor(System.Drawing.Color? color, Windows.UI.Color defaultValue)
         {
-            if (color == System.Drawing.Color.Empty) return new SolidColorBrush(defaultValue);
+            if (!color.HasValue || color.Value == System.Drawing.Color.Empty) return new SolidColorBrush(defaultValue);
             return new SolidColorBrush(Windows.UI.Color.FromArgb(
-                color.A,
-                color.R,
-                color.G,
-                color.B));
+                color.Value.A,
+                color.Value.R,
+                color.Value.G,
+                color.Value.B));
         }
     }
 }
