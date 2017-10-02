@@ -25,7 +25,7 @@
             <DataTemplate>
                 <StackPanel>
                     <TextBlock Text="{Binding Name}" Width="350" Padding="5" />
-                    <local:PasswordUserControl Visibility="{Binding PasswordVisibility}" PasswordChecked="PasswordUserControl_PasswordChecked" />
+                    <local:OpenDatabaseUserControl Visibility="{Binding PasswordVisibility}" ValidationChecked="PasswordUserControl_PasswordChecked" />
                 </StackPanel>
             </DataTemplate>
         </ListView.ItemTemplate>

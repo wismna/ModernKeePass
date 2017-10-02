@@ -22,12 +22,12 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General assembly properties
-[assembly: AssemblyTitle("KeePassLib")]
-[assembly: AssemblyDescription("KeePass Password Management Library")]
+[assembly: AssemblyTitle("ModernKeePassLib")]
+[assembly: AssemblyDescription("KeePass Password Management Library for .Net Standard")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Panteam")]
-[assembly: AssemblyProduct("KeePassLib")]
-[assembly: AssemblyCopyright("Copyright © 2003-2017 Dominik Reichl")]
+[assembly: AssemblyCompany("wismna")]
+[assembly: AssemblyProduct("ModernKeePassLib")]
+[assembly: AssemblyCopyright("Copyright © 2017 Geoffroy Bonneville")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -40,5 +40,5 @@ using System.Runtime.InteropServices;
 #endif
 
 // Assembly version information
-[assembly: AssemblyVersion("2.28.1.*")]
-[assembly: AssemblyFileVersion("2.28.1.0")]
+[assembly: AssemblyVersion("2.28.1.4000")]
+[assembly: AssemblyFileVersion("2.28.1.4000")]

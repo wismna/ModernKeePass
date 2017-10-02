@@ -73,10 +73,10 @@ namespace ModernKeePass.Pages
             databaseVm.NotifyPropertyChanged("Name");
         }
 
-        private void PasswordUserControl_PasswordChecked(object sender, Events.DatabaseEventArgs e)
+        private void PasswordUserControl_PasswordChecked(object sender, EventArgs e)
         {
             var app = (App)Application.Current;
-            if (e.IsOpen) _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
+            if (app.Database.IsOpen) _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
         }
     }
 }

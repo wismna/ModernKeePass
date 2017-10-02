@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml;
 
-namespace ModernKeePass.Models
+namespace ModernKeePass.ViewModels
 {
-    public class RecentItem: INotifyPropertyChanged
+    public class RecentItemVm: INotifyPropertyChanged
     {
         public string Token { get; set; }
         public string Name { get; set; }

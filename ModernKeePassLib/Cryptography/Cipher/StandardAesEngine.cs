@@ -18,30 +18,9 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Security;
 using System.Diagnostics;
-using Windows.Storage.Streams;
 #if ModernKeePassLib
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-#else
-
-#if !KeePassRT
-using System.Security.Cryptography;
-#else
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.IO;
-using Org.BouncyCastle.Crypto.Modes;
-using Org.BouncyCastle.Crypto.Paddings;
-using Org.BouncyCastle.Crypto.Parameters;
-#endif
-
-#endif
-
 using ModernKeePassLib.Resources;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
@@ -49,6 +28,9 @@ using Org.BouncyCastle.Crypto.IO;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
 using Org.BouncyCastle.Crypto.Parameters;
+#else
+using System.Security.Cryptography;
+#endif
 
 namespace ModernKeePassLib.Cryptography.Cipher
 {
@@ -86,12 +68,9 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		/// <summary>
 		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
 		/// </summary>
-		public PwUuid CipherUuid
-		{
-			get { return StandardAesEngine.AesUuid; }
-		}
+		public PwUuid CipherUuid => StandardAesEngine.AesUuid;
 
-		/// <summary>
+	    /// <summary>
 		/// Get a displayable name describing this cipher engine.
 		/// </summary>
 		public string DisplayName { get { return KLRes.EncAlgorithmAes; } }

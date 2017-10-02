@@ -1,12 +1,11 @@
-﻿using ModernKeePass.Models;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace ModernKeePass.ViewModels
 {
     public class RecentVm : INotifyPropertyChanged
     {
-        public ObservableCollection<RecentItem> RecentItems { get; set; }
+        public ObservableCollection<RecentItemVm> RecentItems { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

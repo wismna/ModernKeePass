@@ -18,18 +18,16 @@
 */
 
 using System;
-using System.Security;
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
+using ModernKeePassLib.Utility;
+using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
 #endif
 using System.IO;
 using System.Diagnostics;
 
-using ModernKeePassLib.Native;
-using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLib.Cryptography
 {

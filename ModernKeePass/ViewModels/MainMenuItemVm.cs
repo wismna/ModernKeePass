@@ -2,9 +2,9 @@
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
 
-namespace ModernKeePass.Models
+namespace ModernKeePass.ViewModels
 {
-    public class MainMenuItem: IIsEnabled
+    public class MainMenuItemVm: IIsEnabled
     {
         private string _title;
 

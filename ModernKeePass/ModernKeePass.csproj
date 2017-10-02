@@ -116,18 +116,17 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
-    <Compile Include="Controls\PasswordUserControl.xaml.cs">
-      <DependentUpon>PasswordUserControl.xaml</DependentUpon>
+    <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">
+      <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\PluralizationConverter.cs" />
-    <Compile Include="Events\DatabaseEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
-    <Compile Include="Models\MainMenuItem.cs" />
-    <Compile Include="Models\RecentItem.cs" />
+    <Compile Include="ViewModels\MainMenuItemVm.cs" />
+    <Compile Include="ViewModels\RecentItemVm.cs" />
     <Compile Include="Pages\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>
     </Compile>
@@ -166,7 +165,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\PasswordUserControl.xaml">
+    <Page Include="Controls\OpenDatabaseUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -217,7 +216,9 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
