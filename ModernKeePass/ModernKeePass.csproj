@@ -155,7 +155,9 @@
     </AppxManifest>
     <None Include="ModernKeePass_StoreKey.pfx" />
     <None Include="ModernKeePass_TemporaryKey.pfx" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
