@@ -1,17 +1,37 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentVm : INotifyPropertyChanged
+    public class RecentVm : NotifyPropertyChangedBase
     {
-        public ObservableCollection<RecentItemVm> RecentItems { get; set; }
+        private RecentItemVm _selectedItem;
+        private ObservableCollection<RecentItemVm> _recentItems;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string propertyName)
+        public ObservableCollection<RecentItemVm> RecentItems
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _recentItems; }
+            set { SetProperty(ref _recentItems, value); }
+        }
+
+        public RecentItemVm SelectedItem
+        {
+            get { return _selectedItem; }
+            set
+            {
+                if (_selectedItem == value) return;
+                if (_selectedItem != null)
+                {
+                    _selectedItem.IsSelected = false;
+                }
+
+                SetProperty(ref _selectedItem, value);
+
+                if (_selectedItem != null)
+                {
+                    _selectedItem.IsSelected = true;
+                }
+            }
         }
     }
 }

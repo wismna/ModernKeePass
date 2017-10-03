@@ -34,20 +34,17 @@ namespace ModernKeePass.Pages
             recentVm.RecentItems = new ObservableCollection<RecentItemVm>(
                 from entry in mru.Entries
                 select new RecentItemVm {Name = entry.Metadata, Token = entry.Token});
-            recentVm.NotifyPropertyChanged("RecentItems");
         }
 
         private async void RecentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var recentItem = e.AddedItems[0] as RecentItemVm;
+            var recentVm = DataContext as RecentVm;
+            if (recentVm.SelectedItem == null) return;
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            if (recentItem == null) return;
-            var file = await mru.GetFileAsync(recentItem.Token);
+            var file = await mru.GetFileAsync(recentVm.SelectedItem.Token);
 
             var app = (App)Application.Current;
             app.Database = new DatabaseHelper(file);
-            recentItem.PasswordVisibility = Visibility.Visible;
-            recentItem.NotifyPropertyChanged("PasswordVisibility");
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, EventArgs e)

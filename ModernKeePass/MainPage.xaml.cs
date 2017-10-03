@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -32,11 +33,23 @@ namespace ModernKeePass
             };
             var app = (App)Application.Current;
             if (app.Database != null && app.Database.IsOpen)
-                mainMenuItems.Add(new MainMenuItemVm { Title = app.Database.Name, PageType = typeof(GroupDetailPage), Destination = Frame, Parameter = app.Database.RootGroup, Group = 1, SymbolIcon = Symbol.ProtectedDocument});
-            
+                mainMenuItems.Add(new MainMenuItemVm
+                {
+                    Title = app.Database.Name,
+                    PageType = typeof(GroupDetailPage),
+                    Destination = Frame,
+                    Parameter = app.Database.RootGroup,
+                    Group = 1,
+                    SymbolIcon = Symbol.ProtectedDocument
+                });
             var mainVm = DataContext as MainVm;
             mainVm.MainMenuItems = from item in mainMenuItems group item by item.Group into grp orderby grp.Key select grp;
-            mainVm.NotifyPropertyChanged("MainMenuItems");
+            /*if (app.Database == null || !app.Database.IsOpen)
+            {
+                var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+                if (mru.Entries.Count > 0) MenuListView.SelectedIndex = 3;
+            }*/
+            //mainVm.NotifyPropertyChanged("MainMenuItems");
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,19 +1,19 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentItemVm: INotifyPropertyChanged
+    public class RecentItemVm: NotifyPropertyChangedBase
     {
+        private bool _isSelected;
         public string Token { get; set; }
         public string Name { get; set; }
-        public Visibility PasswordVisibility { get; set; } = Visibility.Collapsed;
-        
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        public void NotifyPropertyChanged(string propertyName)
+        public bool IsSelected
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _isSelected; }
+            internal set { SetProperty(ref _isSelected, value); }
         }
     }
 }

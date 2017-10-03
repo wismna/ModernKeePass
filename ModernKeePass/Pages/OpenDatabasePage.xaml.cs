@@ -63,8 +63,6 @@ namespace ModernKeePass.Pages
             if (databaseVm == null) return;
             databaseVm.SelectedVisibility = Visibility.Visible;
             databaseVm.Name = file.Name;
-            databaseVm.NotifyPropertyChanged("SelectedVisibility");
-            databaseVm.NotifyPropertyChanged("Name");
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, EventArgs e)

@@ -1,17 +1,16 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
-    public class MainVm : INotifyPropertyChanged
+    public class MainVm : NotifyPropertyChangedBase
     {
-        public IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> MainMenuItems { get; set; }
+        private IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> _mainMenuItems;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string propertyName)
+        public IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> MainMenuItems
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _mainMenuItems; }
+            set { SetProperty(ref _mainMenuItems, value); }
         }
     }
 }

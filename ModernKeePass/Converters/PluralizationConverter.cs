@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Windows.UI.Xaml.Data;
 
 namespace ModernKeePass.Converters

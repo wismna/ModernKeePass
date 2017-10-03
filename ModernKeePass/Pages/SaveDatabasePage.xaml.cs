@@ -41,7 +41,6 @@ namespace ModernKeePass.Pages
         private void UpdateDatabaseStatus(App app, DatabaseVm databaseVm)
         {
             databaseVm.IsOpen = app.Database.IsOpen;
-            databaseVm.NotifyPropertyChanged("IsOpen");
         }
     }
 }

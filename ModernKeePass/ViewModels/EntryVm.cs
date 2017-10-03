@@ -42,11 +42,10 @@ namespace ModernKeePass.ViewModels
             get { return GetEntryValue(PwDefs.NotesField); }
             set { SetEntryValue(PwDefs.NotesField, value); }
         }
+        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
 
-        public SolidColorBrush BackgroundColor => CreateFromColor(_pwEntry?.BackgroundColor, Colors.Transparent);
-
-        public SolidColorBrush ForegroundColor => CreateFromColor(_pwEntry?.ForegroundColor, Colors.White);
-
+        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
+        
         public FontWeight FontWeight => _pwEntry == null ? FontWeights.Bold : FontWeights.Normal;
 
         public Symbol IconSymbol
@@ -81,16 +80,6 @@ namespace ModernKeePass.ViewModels
         private void SetEntryValue(string key, string newValue)
         {
             _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
-        }
-
-        private SolidColorBrush CreateFromColor(System.Drawing.Color? color, Windows.UI.Color defaultValue)
-        {
-            if (!color.HasValue || color.Value == System.Drawing.Color.Empty) return new SolidColorBrush(defaultValue);
-            return new SolidColorBrush(Windows.UI.Color.FromArgb(
-                color.Value.A,
-                color.Value.R,
-                color.Value.G,
-                color.Value.B));
         }
     }
 }

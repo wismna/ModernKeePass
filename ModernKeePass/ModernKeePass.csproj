@@ -112,13 +112,17 @@
     </Compile>
     <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
+    <Compile Include="Common\NotifyPropertyChangedBase.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Controls\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">
       <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Converters\ColorToBrushConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">

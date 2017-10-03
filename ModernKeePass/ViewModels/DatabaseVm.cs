@@ -1,25 +1,29 @@
-﻿using System;
-using System.ComponentModel;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
-    public class DatabaseVm : INotifyPropertyChanged
+    public class DatabaseVm : NotifyPropertyChangedBase
     {
         private string _name;
-        public Visibility SelectedVisibility { get; set; } = Visibility.Collapsed;
+        private Visibility _selectedVisibility = Visibility.Collapsed;
+        private bool _isOpen;
 
-        public bool IsOpen { get; set; }
-        public string Name {
-            get { return string.IsNullOrEmpty(_name) ? string.Empty : $"Database {_name} selected"; }
-            set { _name = value; }
+        public Visibility SelectedVisibility
+        {
+            get { return _selectedVisibility; }
+            set { SetProperty(ref _selectedVisibility, value); }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string propertyName)
+        public bool IsOpen
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get { return _isOpen; }
+            set { SetProperty(ref _isOpen, value); }
+        }
+
+        public string Name {
+            get { return string.IsNullOrEmpty(_name) ? string.Empty : $"Database {_name} selected"; }
+            set { SetProperty(ref _name, value); }
         }
     }
 }

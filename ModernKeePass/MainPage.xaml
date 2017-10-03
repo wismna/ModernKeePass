@@ -14,7 +14,8 @@
     <Page.Resources>
         <CollectionViewSource 
             x:Name="MenuItemsSource" 
-            Source="{Binding MainMenuItems}" IsSourceGrouped="True" />
+            Source="{Binding MainMenuItems}" 
+            IsSourceGrouped="True" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >

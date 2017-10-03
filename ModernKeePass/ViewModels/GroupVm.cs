@@ -1,14 +1,13 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Common;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupVm : INotifyPropertyChanged
+    public class GroupVm : NotifyPropertyChangedBase
     {
         public GroupVm ParentGroup { get; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
@@ -18,10 +17,7 @@ namespace ModernKeePass.ViewModels
         public int EntryCount => Entries.Count - 1;
 
         public int GroupCount => Groups.Count - 1;
-
-        public Visibility DetailsVisibility => _pwGroup == null ? Visibility.Collapsed : Visibility.Visible;
-        public Visibility NewVisibility => _pwGroup == null ? Visibility.Visible : Visibility.Collapsed;
-
+        
         public Symbol IconSymbol
         {
             get
@@ -74,12 +70,5 @@ namespace ModernKeePass.ViewModels
             _pwGroup.Entries.Remove(entry.Entry);
             Entries.Remove(entry);
         }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
     }
 }

@@ -46,6 +46,14 @@ namespace ModernKeePass.Common
             this.Add(item.Key, item.Value);
         }
 
+        public void AddRange(IEnumerable<KeyValuePair<string, object>> values)
+        {
+            foreach (var value in values)
+            {
+                Add(value);
+            }
+        }
+
         public bool Remove(string key)
         {
             if (this._dictionary.Remove(key))
