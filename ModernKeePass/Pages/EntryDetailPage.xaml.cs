@@ -41,9 +41,7 @@ namespace ModernKeePass.Pages
         /// <see cref="Frame.Navigate(Type, object)"/> lors de la requête initiale de cette page et
         /// un dictionnaire d'état conservé par cette page durant une session
         /// antérieure.  L'état n'aura pas la valeur Null lors de la première visite de la page.</param>
-        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
-        {
-        }
+        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e) {}
 
         #region Inscription de NavigationHelper
 

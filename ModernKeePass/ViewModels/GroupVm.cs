@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Mappings;
@@ -29,6 +30,7 @@ namespace ModernKeePass.ViewModels
         }
 
         public bool IsNotRoot => ParentGroup != null;
+        public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
 
         private readonly PwGroup _pwGroup;
         public GroupVm() {}

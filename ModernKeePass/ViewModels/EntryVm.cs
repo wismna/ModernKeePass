@@ -46,8 +46,6 @@ namespace ModernKeePass.ViewModels
 
         public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
         
-        public FontWeight FontWeight => _pwEntry == null ? FontWeights.Bold : FontWeights.Normal;
-
         public Symbol IconSymbol
         {
             get

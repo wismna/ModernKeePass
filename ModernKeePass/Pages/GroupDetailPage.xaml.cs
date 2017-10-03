@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -19,13 +20,14 @@ namespace ModernKeePass.Pages
         /// process lifetime management
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
-
-
+        
         public GroupDetailPage()
         {
             InitializeComponent();
             NavigationHelper = new NavigationHelper(this);
             NavigationHelper.LoadState += navigationHelper_LoadState;
+            LeftListView.ItemTemplate = (DataTemplate)LeftListView.Resources["Collapsed"];
+            LeftListView.HeaderTemplate = (DataTemplate)LeftListView.Resources["Forward"];
         }
 
         /// <summary>
@@ -39,9 +41,7 @@ namespace ModernKeePass.Pages
         /// <see cref="Frame.Navigate(Type, object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
-        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
-        {
-        }
+        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e) {}
 
         #region NavigationHelper registration
 
@@ -71,39 +71,33 @@ namespace ModernKeePass.Pages
 
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GroupVm selectedItem = null;
-            if (sender is GridView)
+            if (LeftListView.SelectedIndex == 0)
             {
-                var gridView = (GridView) sender;
-                if (gridView.SelectedIndex == 0)
-                {
-                    var currentGroup = DataContext as GroupVm;
-                    currentGroup?.CreateNewGroup();
-                    gridView.SelectedIndex = -1;
-                    // TODO: Navigate to new group?
-                    return;
-                }
-                selectedItem = gridView.SelectedItem as GroupVm;
+                var currentGroup = DataContext as GroupVm;
+                currentGroup?.CreateNewGroup();
+                LeftListView.SelectedIndex = -1;
+                // TODO: Navigate to new group?
+                return;
             }
-            if (sender is ListView) selectedItem = ((ListView) sender).SelectedItem as GroupVm;
+            var selectedItem = LeftListView.SelectedItem as GroupVm;
             if (selectedItem == null) return;
             Frame.Navigate(typeof(GroupDetailPage), selectedItem);
         }
         
-
-        private void entriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void entries_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var listView = sender as ListView;
-            if (listView != null && listView.SelectedIndex == -1) return;
-            if (listView.SelectedIndex == 0)
+            switch (GridView.SelectedIndex)
             {
-                var currentGroup = DataContext as GroupVm;
-                currentGroup?.CreateNewEntry();
-                listView.SelectedIndex = -1;
-                // TODO: Navigate to new entry?
-                return;
+                case -1:
+                    return;
+                case 0:
+                    var currentGroup = DataContext as GroupVm;
+                    currentGroup?.CreateNewEntry();
+                    GridView.SelectedIndex = -1;
+                    // TODO: Navigate to new entry?
+                    return;
             }
-            Frame.Navigate(typeof(EntryDetailPage), listView?.SelectedItem as EntryVm);
+            Frame.Navigate(typeof(EntryDetailPage), GridView.SelectedItem as EntryVm);
         }
 
         private void AppBarButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -111,6 +105,23 @@ namespace ModernKeePass.Pages
             var group = DataContext as GroupVm;
             group?.RemoveGroup();
             if (Frame.CanGoBack) Frame.GoBack();
+        }
+
+        private void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button == null) return;
+            switch (button.Name)
+            {
+                case "ForwardButton":
+                    LeftListView.ItemTemplate = (DataTemplate) LeftListView.Resources["Expanded"];
+                    LeftListView.HeaderTemplate = (DataTemplate) LeftListView.Resources["Back"];
+                    break;
+                case "BackButton":
+                    LeftListView.ItemTemplate = (DataTemplate)LeftListView.Resources["Collapsed"];
+                    LeftListView.HeaderTemplate = (DataTemplate)LeftListView.Resources["Forward"];
+                    break;
+            }
         }
     }
 }
