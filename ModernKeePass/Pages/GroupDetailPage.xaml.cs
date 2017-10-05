@@ -26,8 +26,6 @@ namespace ModernKeePass.Pages
             InitializeComponent();
             NavigationHelper = new NavigationHelper(this);
             NavigationHelper.LoadState += navigationHelper_LoadState;
-            LeftListView.ItemTemplate = (DataTemplate)LeftListView.Resources["Collapsed"];
-            LeftListView.HeaderTemplate = (DataTemplate)LeftListView.Resources["Forward"];
         }
 
         /// <summary>
@@ -105,23 +103,6 @@ namespace ModernKeePass.Pages
             var group = DataContext as GroupVm;
             group?.RemoveGroup();
             if (Frame.CanGoBack) Frame.GoBack();
-        }
-
-        private void Button_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            if (button == null) return;
-            switch (button.Name)
-            {
-                case "ForwardButton":
-                    LeftListView.ItemTemplate = (DataTemplate) LeftListView.Resources["Expanded"];
-                    LeftListView.HeaderTemplate = (DataTemplate) LeftListView.Resources["Back"];
-                    break;
-                case "BackButton":
-                    LeftListView.ItemTemplate = (DataTemplate)LeftListView.Resources["Collapsed"];
-                    LeftListView.HeaderTemplate = (DataTemplate)LeftListView.Resources["Forward"];
-                    break;
-            }
         }
     }
 }

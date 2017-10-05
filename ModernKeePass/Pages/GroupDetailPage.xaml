@@ -6,6 +6,8 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:local="using:ModernKeePass.Controls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
@@ -18,7 +20,6 @@
     <Page.DataContext>
         <viewModels:GroupVm />
     </Page.DataContext>
-
     <Grid>
         <Grid.Resources>
             <CollectionViewSource
@@ -45,13 +46,9 @@
                     AutomationProperties.AutomationId="ItemGridView"
                     AutomationProperties.Name="Entries"
                     TabIndex="1"
-                    ItemsSource="{Binding Source={StaticResource EntriesViewSource}}"
                     IsSwipeEnabled="false" 
                     SelectionChanged="entries_SelectionChanged"
                     IsSynchronizedWithCurrentItem="False" >
-                    <GridView.DataContext>
-                        <viewModels:EntryVm></viewModels:EntryVm>
-                    </GridView.DataContext>
                     <GridView.Resources>
                         <DataTemplate x:Name="GroupFirstItem">
                             <Border 
@@ -93,6 +90,12 @@
                             </Border>
                         </DataTemplate>
                     </GridView.Resources>
+                    <GridView.ItemsSource>
+                        <Binding Source="{StaticResource EntriesViewSource}"/>
+                    </GridView.ItemsSource>
+                    <GridView.DataContext>
+                        <viewModels:EntryVm/>
+                    </GridView.DataContext>
                     <GridView.ItemTemplateSelector>
                         <local:FirstItemDataTemplateSelector 
                             FirstItem="{StaticResource GroupFirstItem}" 
@@ -110,17 +113,13 @@
                             Width="auto"
                             Background="LightGray"
                             Foreground="DarkSlateGray"
-                            ItemsSource="{Binding Source={StaticResource GroupsViewSource}}"
                             SelectionChanged="groups_SelectionChanged"
                             IsSwipeEnabled="false"
                             IsSynchronizedWithCurrentItem="False"
                             DataContext="{Binding DataContext, ElementName=PageRoot}">
                             <ListView.Resources>
                                 <DataTemplate x:Name="Collapsed">
-                                    <StackPanel
-                                        Margin="10,0,0,0"
-                                        Width="30"
-                                        Orientation="Horizontal" >
+                                    <StackPanel Margin="10,0,0,0" Width="30" Orientation="Horizontal" >
                                         <SymbolIcon Symbol="{Binding IconSymbol}" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -131,23 +130,29 @@
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
                                 </DataTemplate>
-                                <DataTemplate x:Name="Forward">
-                                    <Button x:Name="ForwardButton" Click="Button_Click" BorderBrush="LightGray" HorizontalAlignment="Right">
-                                        <SymbolIcon Symbol="Forward" Foreground="DimGray" />
-                                    </Button>
-                                </DataTemplate>
-                                <DataTemplate x:Name="Back">
-                                    <Button x:Name="BackButton" Click="Button_Click" BorderBrush="LightGray" HorizontalAlignment="Right">
-                                        <SymbolIcon Symbol="Back" Foreground="DimGray" />
-                                    </Button>
-                                </DataTemplate>
                             </ListView.Resources>
+                            <ListView.ItemsSource>
+                                <Binding Source="{StaticResource GroupsViewSource}"/>
+                            </ListView.ItemsSource>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
+                            <ListView.HeaderTemplate>
+                                <DataTemplate>
+                                    <ToggleButton IsChecked="{Binding IsLeftPaneOpen, Mode=TwoWay}" Style="{StaticResource HamburgerToggleButton}" Margin="0" />
+                                </DataTemplate>
+                            </ListView.HeaderTemplate>
+                            <Interactivity:Interaction.Behaviors>
+                                <Core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="True">
+                                    <Core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}"/>
+                                </Core:DataTriggerBehavior>
+                                <Core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="False">
+                                    <Core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}"/>
+                                </Core:DataTriggerBehavior>
+                            </Interactivity:Interaction.Behaviors>
                         </ListView>
                     </GridView.Header>
                 </GridView>
@@ -196,11 +201,11 @@
                 Margin="0,40,0,0" 
                 Background="Transparent" 
                 IsOpen="True">
-                <AppBarButton Icon="Save" Label="Save" />
                 <CommandBar.SecondaryCommands>
                     <AppBarButton Icon="Edit" Label="Edit" />
                     <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="AppBarButton_Click" />
                 </CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Save" Label="Save" />
             </CommandBar>
         </Grid>
     </Grid>

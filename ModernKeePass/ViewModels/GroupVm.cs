@@ -14,10 +14,10 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
         public string Name => _pwGroup == null ? "New group" : _pwGroup.Name;
-
         public int EntryCount => Entries.Count - 1;
-
         public int GroupCount => Groups.Count - 1;
+        public bool IsNotRoot => ParentGroup != null;
+        public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
         
         public Symbol IconSymbol
         {
@@ -29,10 +29,15 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsNotRoot => ParentGroup != null;
-        public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
+        public bool IsLeftPaneOpen
+        {
+            get { return _isLeftPaneOpen; }
+            set { SetProperty(ref _isLeftPaneOpen, value); }
+        }
 
         private readonly PwGroup _pwGroup;
+        private bool _isLeftPaneOpen;
+
         public GroupVm() {}
 
         public GroupVm(PwGroup pwGroup, GroupVm parent)
