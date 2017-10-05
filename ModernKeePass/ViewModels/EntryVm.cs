@@ -1,11 +1,8 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Text;
+using Windows.UI.Xaml.Controls;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Security;
-using Windows.UI.Xaml.Media;
-using Windows.UI;
-using Windows.UI.Text;
-using Windows.UI.Xaml;
 
 namespace ModernKeePass.ViewModels
 {
@@ -13,6 +10,9 @@ namespace ModernKeePass.ViewModels
     {
         public GroupVm ParentGroup { get; }
         public PwEntry Entry => _pwEntry;
+        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
+        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
+
         public string Title
         {
             get
@@ -42,10 +42,7 @@ namespace ModernKeePass.ViewModels
             get { return GetEntryValue(PwDefs.NotesField); }
             set { SetEntryValue(PwDefs.NotesField, value); }
         }
-        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
 
-        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
-        
         public Symbol IconSymbol
         {
             get

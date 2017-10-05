@@ -33,7 +33,7 @@ _ReSharper*/
 Translation/TrlUtil.vshost.exe.manifest
 *.nupkg
 .vs/
-/UpgradeLog.htm
+/UpgradeLog*.htm
 packages/
 project.lock.json
 AppPackages/

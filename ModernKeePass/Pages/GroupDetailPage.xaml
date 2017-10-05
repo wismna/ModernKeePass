@@ -6,21 +6,21 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:local="using:ModernKeePass.Controls"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
     <Page.Resources>
         <SolidColorBrush x:Key="Transparent" Color="Transparent"/>
-        <SolidColorBrush x:Key="White" Color="White"/>
+        <SolidColorBrush x:Key="SystemColor" Color="{StaticResource SystemColorButtonFaceColor}" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:PluralizationConverter x:Key="PluralizationConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
     </Page.DataContext>
-    <Grid>
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="GroupsViewSource"
@@ -29,17 +29,17 @@
                 x:Name="EntriesViewSource"
                 Source="{Binding Entries}"/>
         </Grid.Resources>
-        <!--<Grid.ChildrenTransitions>
+        <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
             </TransitionCollection>
-        </Grid.ChildrenTransitions>-->
+        </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="140"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Horizontal scrolling grid -->
-        <SemanticZoom Grid.RowSpan="2" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="0,140,0,0">
+        <SemanticZoom Grid.Row="1" >
             <SemanticZoom.ZoomedInView>
                 <GridView
                     x:Name="GridView"
@@ -48,13 +48,29 @@
                     TabIndex="1"
                     IsSwipeEnabled="false" 
                     SelectionChanged="entries_SelectionChanged"
-                    IsSynchronizedWithCurrentItem="False" >
+                    IsSynchronizedWithCurrentItem="False">
                     <GridView.Resources>
                         <DataTemplate x:Name="GroupFirstItem">
                             <Border 
                                 BorderThickness="2" 
-                                BorderBrush="DimGray" 
-                                Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" 
+                                BorderBrush="{StaticResource ListViewItemFocusBorderThemeBrush}" 
+                                Background="{StaticResource HubSectionHeaderPressedForegroundThemeBrush}" 
+                                Margin="0,10,0,0" >
+                                <Grid Height="110" Width="480">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="Bold" Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="13,0,0,5"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                        <DataTemplate x:Name="GroupOtherItem">
+                            <Border 
+                                BorderThickness="2" 
+                                BorderBrush="{StaticResource ListViewItemFocusBorderThemeBrush}"
+                                Background="{Binding BackgroundColor, ConverterParameter={StaticResource Transparent}, Converter={StaticResource ColorToBrushConverter}}" 
                                 Margin="0,10,0,0" >
                                 <Grid Height="110" Width="480" >
                                     <Grid.ColumnDefinitions>
@@ -62,24 +78,8 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" />
-                                    <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="{Binding FontWeight}"  Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="13,0,0,5"/>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                        <DataTemplate x:Name="GroupOtherItem">
-                            <Border 
-                                    BorderThickness="2" 
-                                    BorderBrush="DimGray" 
-                                    Background="{Binding BackgroundColor, ConverterParameter={StaticResource Transparent}, Converter={StaticResource ColorToBrushConverter}}" 
-                                    Margin="0,10,0,0" >
-                                <Grid Height="110" Width="480" >
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" />
                                     <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,0,0,0" >
-                                        <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource White}, Converter={StaticResource ColorToBrushConverter}}"/>
+                                        <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
                                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
                                         <!--<TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
                                         <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />-->
@@ -109,23 +109,22 @@
                     <GridView.Header>
                         <ListView 
                             x:Name="LeftListView"
-                            Height="auto" 
-                            Width="auto"
-                            Background="LightGray"
-                            Foreground="DarkSlateGray"
                             SelectionChanged="groups_SelectionChanged"
                             IsSwipeEnabled="false"
                             IsSynchronizedWithCurrentItem="False"
-                            DataContext="{Binding DataContext, ElementName=PageRoot}">
+                            DataContext="{Binding DataContext, ElementName=PageRoot}" 
+                            RequestedTheme="Dark"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
                             <ListView.Resources>
                                 <DataTemplate x:Name="Collapsed">
-                                    <StackPanel Margin="10,0,0,0" Width="30" Orientation="Horizontal" >
+                                    <StackPanel Width="30" Orientation="Horizontal" Margin="20,0,0,0" >
                                         <SymbolIcon Symbol="{Binding IconSymbol}" />
                                     </StackPanel>
                                 </DataTemplate>
                                 <DataTemplate x:Name="Expanded">
-                                    <StackPanel Margin="10,0,0,0" Width="200" Orientation="Horizontal" >
-                                        <SymbolIcon Symbol="{Binding IconSymbol}" />
+                                    <StackPanel Width="200" Orientation="Horizontal" >
+                                        <SymbolIcon Symbol="{Binding IconSymbol}" Margin="20,0,0,0" />
                                         <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,0,0" />
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
@@ -136,7 +135,7 @@
                             </ListView.ItemsSource>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <!--<Setter Property="HorizontalContentAlignment" Value="Stretch" />-->
                                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                 </Style>
                             </ListView.ItemContainerStyle>
@@ -145,14 +144,14 @@
                                     <ToggleButton IsChecked="{Binding IsLeftPaneOpen, Mode=TwoWay}" Style="{StaticResource HamburgerToggleButton}" Margin="0" />
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="True">
-                                    <Core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}"/>
-                                </Core:DataTriggerBehavior>
-                                <Core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="False">
-                                    <Core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}"/>
-                                </Core:DataTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
+                            <interactivity:Interaction.Behaviors>
+                                <core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="True">
+                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}"/>
+                                </core:DataTriggerBehavior>
+                                <core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="False">
+                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}"/>
+                                </core:DataTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
                         </ListView>
                     </GridView.Header>
                 </GridView>
