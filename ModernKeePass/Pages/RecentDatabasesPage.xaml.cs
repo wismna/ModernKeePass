@@ -43,6 +43,7 @@ namespace ModernKeePass.Pages
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             var file = await mru.GetFileAsync(recentVm.SelectedItem.Token);
 
+            // TODO: this closes the current opened database
             var app = (App)Application.Current;
             app.Database = new DatabaseHelper(file);
         }

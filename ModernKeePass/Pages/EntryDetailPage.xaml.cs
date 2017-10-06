@@ -76,5 +76,18 @@ namespace ModernKeePass.Pages
             entry?.RemoveEntry();
             if (Frame.CanGoBack) Frame.GoBack();
         }
+
+        private async void UrlButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var uri = new Uri(urlTextBox.Text);
+                await Windows.System.Launcher.LaunchUriAsync(uri);
+            }
+            catch
+            {
+                // TODO: Show some error
+            }
+        }
     }
 }

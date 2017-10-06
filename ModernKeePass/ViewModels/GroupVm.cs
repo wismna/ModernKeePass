@@ -12,18 +12,32 @@ namespace ModernKeePass.ViewModels
     {
         public GroupVm ParentGroup { get; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
+        
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
 
-        public int EntryCount => Entries.Count - 1;
+        public int EntryCount => Entries.Count() - 1;
         public int GroupCount => Groups.Count - 1;
         public bool IsNotRoot => ParentGroup != null;
         public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
-        
+
+        public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut
+        {
+            get
+            {
+                return from e in Entries
+                       where e.Entry != null
+                       group e by e.Title.FirstOrDefault() into grp
+                       orderby grp.Key
+                       select grp;
+            }
+        }
+
         public string Name
         {
             get { return _pwGroup == null ? "New group" : _pwGroup.Name; }
             set { _pwGroup.Name = value; }
         }
+
         public Symbol IconSymbol
         {
             get
@@ -56,11 +70,9 @@ namespace ModernKeePass.ViewModels
         {
             _pwGroup = pwGroup;
             ParentGroup = parent;
-            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
+            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)).OrderBy(e => e.Title));
             Entries.Insert(0, new EntryVm ());
-            //Entries.Add(new EntryVm { Title = " New entry" });
-            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this)));
-            //Groups.Insert(0, new GroupVm { Name = " + New group" });
+            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this)).OrderBy(g => g.Name));
             Groups.Insert(0, new GroupVm ());
         }
 
