@@ -53,7 +53,7 @@
                         <DataTemplate x:Name="GroupFirstItem">
                             <Border 
                                 BorderThickness="2" 
-                                BorderBrush="{StaticResource ListViewItemFocusBorderThemeBrush}" 
+                                BorderBrush="{StaticResource SystemColor}" 
                                 Background="{StaticResource HubSectionHeaderPressedForegroundThemeBrush}" 
                                 Margin="0,10,0,0" >
                                 <Grid Height="110" Width="480">
@@ -69,7 +69,7 @@
                         <DataTemplate x:Name="GroupOtherItem">
                             <Border 
                                 BorderThickness="2" 
-                                BorderBrush="{StaticResource ListViewItemFocusBorderThemeBrush}"
+                                BorderBrush="{StaticResource SystemColor}"
                                 Background="{Binding BackgroundColor, ConverterParameter={StaticResource Transparent}, Converter={StaticResource ColorToBrushConverter}}" 
                                 Margin="0,10,0,0" >
                                 <Grid Height="110" Width="480" >
@@ -113,19 +113,20 @@
                             IsSwipeEnabled="false"
                             IsSynchronizedWithCurrentItem="False"
                             DataContext="{Binding DataContext, ElementName=PageRoot}" 
-                            RequestedTheme="Dark"
+                            RequestedTheme="Light"
                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                             Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
                             <ListView.Resources>
                                 <DataTemplate x:Name="Collapsed">
-                                    <StackPanel Width="30" Orientation="Horizontal" Margin="20,0,0,0" >
-                                        <SymbolIcon Symbol="{Binding IconSymbol}" />
-                                    </StackPanel>
+                                    <SymbolIcon Symbol="{Binding IconSymbol}" />
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{Binding Name}" />
+                                    </ToolTipService.ToolTip>
                                 </DataTemplate>
                                 <DataTemplate x:Name="Expanded">
-                                    <StackPanel Width="200" Orientation="Horizontal" >
-                                        <SymbolIcon Symbol="{Binding IconSymbol}" Margin="20,0,0,0" />
-                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,0,0" />
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="{Binding IconSymbol}" />
+                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
                                 </DataTemplate>
@@ -135,8 +136,12 @@
                             </ListView.ItemsSource>
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
-                                    <!--<Setter Property="HorizontalContentAlignment" Value="Stretch" />-->
+                                    <!--<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="BorderThickness" Value="0"/>-->
                                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Padding" Value="20,0,0,0"/>
+                                    <Setter Property="Margin" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.HeaderTemplate>
@@ -180,10 +185,10 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="39,59,39,0" 
+            <Button Margin="39,0,39,0" 
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Style="{StaticResource NavigationBackButtonNormalStyle}"
-                    VerticalAlignment="Top"
+                    VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"/>
@@ -191,6 +196,7 @@
                 Grid.Column="1" 
                 Text="{Binding Name, Mode=TwoWay}" 
                 Style="{StaticResource HeaderTextBoxStyle}"
+                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                 IsHitTestVisible="{Binding IsEditMode}" 
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 

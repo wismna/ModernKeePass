@@ -7,7 +7,7 @@
     xmlns:controls="using:ModernKeePass.Controls"
     x:Class="ModernKeePass.MainPage"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+    Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
     <Page.DataContext>
         <viewModels:MainVm />
     </Page.DataContext>
@@ -18,17 +18,19 @@
             IsSourceGrouped="True" />
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" >
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <controls:ListViewWithDisable Grid.Column="0" 
-                  x:Name="MenuListView"
-                  SelectionChanged="ListView_SelectionChanged" 
-                  ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
-                  IsSynchronizedWithCurrentItem="False">
+            x:Name="MenuListView"
+            RequestedTheme="Light"
+            SelectionChanged="ListView_SelectionChanged" 
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
+            IsSynchronizedWithCurrentItem="False">
             <ListView.Header>
                 <TextBlock Text="ModernKeePass" FontWeight="Bold" FontSize="36" Margin="20" />
             </ListView.Header>

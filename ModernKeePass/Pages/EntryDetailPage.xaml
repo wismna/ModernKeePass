@@ -50,9 +50,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="39,59,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
+            <Button Margin="39,0,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=pageRoot}"
                         Style="{StaticResource NavigationBackButtonNormalStyle}"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         AutomationProperties.Name="Back"
                         AutomationProperties.AutomationId="BackButton"
                         AutomationProperties.ItemType="Navigation Button"/>
@@ -60,6 +60,7 @@
                 Grid.Column="1"
                 Text="{Binding Title, Mode=TwoWay}" 
                 Style="{StaticResource HeaderTextBoxStyle}"
+                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                 IsHitTestVisible="{Binding IsEditMode}" 
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
