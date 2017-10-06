@@ -61,7 +61,14 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isEditMode, value); }
         }
 
+        public bool IsRevealPassword
+        {
+            get { return _isRevealPassword; }
+            set { SetProperty(ref _isRevealPassword, value); }
+        }
+
         private bool _isEditMode;
+        private bool _isRevealPassword;
 
         public EntryVm() { }
         public EntryVm(PwEntry entry, GroupVm parent)

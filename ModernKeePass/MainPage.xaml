@@ -26,7 +26,7 @@
         </Grid.ColumnDefinitions>
         <controls:ListViewWithDisable Grid.Column="0" 
             x:Name="MenuListView"
-            RequestedTheme="Light"
+            RequestedTheme="Dark"
             SelectionChanged="ListView_SelectionChanged" 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
@@ -45,6 +45,7 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Padding" Value="20,5,0,0" />
+                    <Setter Property="Margin" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.GroupStyle>

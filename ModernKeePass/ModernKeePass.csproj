@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToBrushConverter.cs" />
+    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">

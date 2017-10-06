@@ -33,7 +33,7 @@ namespace ModernKeePass.Mappings
                 case PwIcon.Configuration: return Symbol.Setting;
                 case PwIcon.ClipboardReady: return Symbol.Paste;
                 case PwIcon.PaperNew: return Symbol.Page2;
-                //case PwIcon.Screen: return Symbol.Document;
+                case PwIcon.Screen: return Symbol.GoToStart;
                 case PwIcon.EnergyCareful: return Symbol.FourBars;
                 case PwIcon.Disk: return Symbol.Save;
                 //case PwIcon.Drive: return Symbol.;

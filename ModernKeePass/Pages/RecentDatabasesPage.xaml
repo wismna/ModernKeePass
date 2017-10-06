@@ -25,7 +25,7 @@
         SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
         <ListView.ItemTemplate>
             <DataTemplate>
-                <StackPanel>
+                <StackPanel Margin="10,0,10,0">
                     <TextBlock Text="{Binding Name}" Width="350" Padding="5" />
                     <local:OpenDatabaseUserControl Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
                 </StackPanel>

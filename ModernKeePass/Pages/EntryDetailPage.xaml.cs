@@ -69,19 +69,7 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
-
-        private void checkBox_Checked(object sender, RoutedEventArgs e)
-        {
-            passwordBox.Visibility = Visibility.Collapsed;
-            passwordTextBox.Visibility = Visibility.Visible;
-        }
-
-        private void checkBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            passwordBox.Visibility = Visibility.Visible;
-            passwordTextBox.Visibility = Visibility.Collapsed;
-        }
-
+        
         private void AppBarButton_Click(object sender, RoutedEventArgs e)
         {
             var entry = DataContext as EntryVm;

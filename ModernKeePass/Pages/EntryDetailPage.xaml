@@ -6,14 +6,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ViewModels="using:ModernKeePass.ViewModels"
+    xmlns:Converters="using:ModernKeePass.Converters"
     x:Name="pageRoot"
     x:Class="ModernKeePass.Pages.EntryDetailPage"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
+    </Page.Resources>
+
     <Page.DataContext>
         <ViewModels:EntryVm/>
     </Page.DataContext>
-    
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
@@ -34,9 +40,9 @@
             <TextBlock x:Name="userTextBlock"  TextWrapping="Wrap" Text="User name or login" FontSize="18"/>
             <TextBox x:Name="userTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding UserName, Mode=TwoWay}" Width="350" />
             <TextBlock x:Name="passwordTextBlock" TextWrapping="Wrap" Text="Password"  FontSize="18"/>
-            <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" IsPasswordRevealButtonEnabled="True" />
-            <TextBox x:Name="passwordTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Password, Mode=TwoWay}" Width="350" Visibility="Collapsed"/>
-            <CheckBox x:Name="checkBox" HorizontalAlignment="Left" Margin="-3,0,0,0" Content="Show password" Checked="checkBox_Checked" Unchecked="checkBox_Unchecked" />
+            <PasswordBox x:Name="passwordBox" HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+            <TextBox x:Name="passwordTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Password, Mode=TwoWay}" Width="350" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <CheckBox x:Name="checkBox" HorizontalAlignment="Left" Margin="-3,0,0,0" Content="Show password" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}"/>
             <TextBlock x:Name="urlTextBlock" TextWrapping="Wrap" Text="URL" FontSize="18"/>
             <TextBox x:Name="urlTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Url, Mode=TwoWay}" Width="350" MaxLength="256" />
             <TextBlock x:Name="notesTextBlock" TextWrapping="Wrap" Text="Notes" FontSize="18"/>
@@ -65,7 +71,7 @@
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
                 Margin="0,0,30,0"/>
-            <CommandBar Grid.Column="2" Margin="0,40,0,0" Background="Transparent" IsOpen="True">
+            <CommandBar Grid.Column="2" Background="Transparent" IsOpen="True" VerticalAlignment="Center" Margin="0,20,0,0">
                 <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" />
                 <AppBarButton Icon="Delete" Label="Delete" Click="AppBarButton_Click" />
             </CommandBar>
