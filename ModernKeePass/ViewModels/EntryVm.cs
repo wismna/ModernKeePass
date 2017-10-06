@@ -1,17 +1,19 @@
 ﻿using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Common;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Security;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm
+    public class EntryVm: NotifyPropertyChangedBase
     {
         public GroupVm ParentGroup { get; }
-        public PwEntry Entry => _pwEntry;
-        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
-        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
+        public PwEntry Entry { get; }
+
+        public System.Drawing.Color? BackgroundColor => Entry?.BackgroundColor;
+        public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
 
         public string Title
         {
@@ -47,18 +49,24 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                if (_pwEntry == null) return Symbol.Add;
-                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwEntry.IconId);
+                if (Entry == null) return Symbol.Add;
+                var result = PwIconToSegoeMapping.GetSymbolFromIcon(Entry.IconId);
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
         }
-        
-        private readonly PwEntry _pwEntry;
+
+        public bool IsEditMode
+        {
+            get { return _isEditMode; }
+            set { SetProperty(ref _isEditMode, value); }
+        }
+
+        private bool _isEditMode;
 
         public EntryVm() { }
         public EntryVm(PwEntry entry, GroupVm parent)
         {
-            _pwEntry = entry;
+            Entry = entry;
             ParentGroup = parent;
         }
 
@@ -69,12 +77,12 @@ namespace ModernKeePass.ViewModels
 
         private string GetEntryValue(string key)
         {
-            return _pwEntry?.Strings.GetSafe(key).ReadString();
+            return Entry?.Strings.GetSafe(key).ReadString();
         }
         
         private void SetEntryValue(string key, string newValue)
         {
-            _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
+            Entry?.Strings.Set(key, new ProtectedString(true, newValue));
         }
     }
 }

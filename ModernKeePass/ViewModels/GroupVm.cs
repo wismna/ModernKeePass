@@ -13,12 +13,17 @@ namespace ModernKeePass.ViewModels
         public GroupVm ParentGroup { get; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
-        public string Name => _pwGroup == null ? "New group" : _pwGroup.Name;
+
         public int EntryCount => Entries.Count - 1;
         public int GroupCount => Groups.Count - 1;
         public bool IsNotRoot => ParentGroup != null;
         public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
         
+        public string Name
+        {
+            get { return _pwGroup == null ? "New group" : _pwGroup.Name; }
+            set { _pwGroup.Name = value; }
+        }
         public Symbol IconSymbol
         {
             get
@@ -35,8 +40,15 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isLeftPaneOpen, value); }
         }
 
+        public bool IsEditMode
+        {
+            get { return _isEditMode; }
+            set { SetProperty(ref _isEditMode, value); }
+        }
+
         private readonly PwGroup _pwGroup;
         private bool _isLeftPaneOpen;
+        private bool _isEditMode;
 
         public GroupVm() {}
 

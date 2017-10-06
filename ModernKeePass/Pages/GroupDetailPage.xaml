@@ -187,24 +187,21 @@
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock  
+            <TextBox  
                 Grid.Column="1" 
-                Text="{Binding Name}" 
-                Style="{StaticResource HeaderTextBlockStyle}"
-                IsHitTestVisible="false" 
+                Text="{Binding Name, Mode=TwoWay}" 
+                Style="{StaticResource HeaderTextBoxStyle}"
+                IsHitTestVisible="{Binding IsEditMode}" 
                 TextWrapping="NoWrap" 
-                VerticalAlignment="Bottom" 
-                Margin="0,0,30,40"/>
+                VerticalAlignment="Center" 
+                Margin="0,0,30,0"/>
             <CommandBar 
                 Grid.Column="2" 
                 Margin="0,40,0,0" 
                 Background="Transparent" 
                 IsOpen="True">
-                <CommandBar.SecondaryCommands>
-                    <AppBarButton Icon="Edit" Label="Edit" />
-                    <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="AppBarButton_Click" />
-                </CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Save" Label="Save" />
+                <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" />
+                <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="AppBarButton_Click" />
             </CommandBar>
         </Grid>
     </Grid>
