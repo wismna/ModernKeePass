@@ -44,12 +44,14 @@
             <TextBox x:Name="passwordTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <CheckBox x:Name="checkBox" HorizontalAlignment="Left" Margin="-3,0,0,0" Content="Show password" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}"/>
             <TextBlock x:Name="urlTextBlock" TextWrapping="Wrap" Text="URL" FontSize="18"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="350" >
-                <TextBox x:Name="urlTextBox" TextWrapping="Wrap" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="300" MaxLength="256" />
-                <Button Click="UrlButton_Click" Height="32" BorderThickness="0" Background="Transparent" Margin="0">
-                    <SymbolIcon Symbol="Forward" VerticalAlignment="Center" />
-                </Button>
-            </StackPanel>
+            <Border Width="350" HorizontalAlignment="Left" BorderBrush="{StaticResource TextBoxBorderThemeBrush}" BorderThickness="2">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox x:Name="urlTextBox" TextWrapping="Wrap" Text="{Binding Url, Mode=TwoWay}" BorderThickness="0" Height="32" Width="300" MaxLength="256" />
+                    <Button Click="UrlButton_Click" Height="32" BorderThickness="0" Background="Transparent" Margin="0">
+                        <SymbolIcon Symbol="Forward" VerticalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Border>
             <TextBlock x:Name="notesTextBlock" TextWrapping="Wrap" Text="Notes" FontSize="18"/>
             <TextBox x:Name="notesTextBox" HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
         </StackPanel>
