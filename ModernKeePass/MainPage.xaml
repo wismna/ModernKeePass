@@ -30,6 +30,7 @@
             SelectionChanged="ListView_SelectionChanged" 
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
+            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
             IsSynchronizedWithCurrentItem="False">
             <ListView.Header>
                 <TextBlock Text="ModernKeePass" FontWeight="Bold" FontSize="36" Margin="20" />

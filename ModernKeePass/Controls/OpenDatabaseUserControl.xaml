@@ -7,14 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     d:DesignHeight="65"
-    d:DesignWidth="400">
+    d:DesignWidth="335" Loaded="UserControl_Loaded">
     <StackPanel>
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Margin="0,-1,0,-1" >
             <PasswordBox x:Name="PasswordBox" Width="300" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password"/>
-            <Button Click="OpenButton_OnClick" Width="auto">
+            <Button Click="OpenButton_OnClick" Width="auto" Padding="2,0">
                 <SymbolIcon Symbol="Forward" />
             </Button>
         </StackPanel>
-        <TextBlock x:Name="StatusTextBlock" Height="auto" Width="auto" Foreground="#FF9E1B1B" FontSize="16" />
+        <TextBlock x:Name="StatusTextBlock" Height="32" Width="auto" Foreground="#FFBF6969" FontSize="16" FontWeight="Bold" />
     </StackPanel>
 </UserControl>

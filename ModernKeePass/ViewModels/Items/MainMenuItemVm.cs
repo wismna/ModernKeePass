@@ -1,12 +1,14 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class MainMenuItemVm: IIsEnabled
+    public class MainMenuItemVm: NotifyPropertyChangedBase, IIsEnabled
     {
         private string _title;
+        private bool _isSelected;
 
         public string Title
         {
@@ -20,6 +22,12 @@ namespace ModernKeePass.ViewModels
         public int Group { get; set; } = 0;
         public Symbol SymbolIcon { get; set; }
         public bool IsEnabled => PageType != null;
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value); }
+        }
 
         public override string ToString()
         {

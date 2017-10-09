@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -13,11 +15,10 @@ namespace ModernKeePass.Controls
         public OpenDatabaseUserControl()
         {
             InitializeComponent();
-            PasswordBox.Focus(FocusState.Programmatic);
         }
 
-        public delegate void PasswordCheckedEventHandler(object sender, EventArgs e);
         public event PasswordCheckedEventHandler ValidationChecked;
+        public delegate void PasswordCheckedEventHandler(object sender, EventArgs e);
 
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -29,6 +30,13 @@ namespace ModernKeePass.Controls
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter) OpenButton_OnClick(null, null);
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        () => PasswordBox.Focus(FocusState.Programmatic)));
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
+using Windows.Storage.AccessCache;
 using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
@@ -7,6 +9,16 @@ namespace ModernKeePass.ViewModels
     {
         private RecentItemVm _selectedItem;
         private ObservableCollection<RecentItemVm> _recentItems;
+
+        public RecentVm()
+        {
+            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            RecentItems = new ObservableCollection<RecentItemVm>(
+                from entry in mru.Entries
+                select new RecentItemVm { Name = entry.Metadata, Token = entry.Token });
+            if (RecentItems.Count > 0)
+                SelectedItem = RecentItems[0];
+        }
 
         public ObservableCollection<RecentItemVm> RecentItems
         {

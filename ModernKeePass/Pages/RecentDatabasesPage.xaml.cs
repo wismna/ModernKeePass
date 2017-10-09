@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage.AccessCache;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -28,12 +28,6 @@ namespace ModernKeePass.Pages
         {
             base.OnNavigatedTo(e);
             _mainFrame = e.Parameter as Frame;
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            var recentVm = DataContext as RecentVm;
-            if (recentVm == null) return;
-            recentVm.RecentItems = new ObservableCollection<RecentItemVm>(
-                from entry in mru.Entries
-                select new RecentItemVm {Name = entry.Metadata, Token = entry.Token});
         }
 
         private async void RecentListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

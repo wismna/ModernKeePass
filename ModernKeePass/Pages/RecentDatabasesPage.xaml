@@ -5,22 +5,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:local="using:ModernKeePass.Controls"
-    xmlns:Converters="using:ModernKeePass.Converters"
+    xmlns:converters="using:ModernKeePass.Converters"
     x:Class="ModernKeePass.Pages.RecentDatabasesPage"
     mc:Ignorable="d">
     <Page.Resources>
-        <Converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <CollectionViewSource 
-            x:Name="RecentItemsSource" 
-            Source="{Binding RecentItems}" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <CollectionViewSource x:Name="RecentItemsSource" Source="{Binding RecentItems}" />
     </Page.Resources>
     <Page.DataContext>
         <viewModels:RecentVm/>
     </Page.DataContext>
     <ListView 
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
         ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
-        x:Name="RecentListView" 
         SelectionChanged="RecentListView_SelectionChanged"
         SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
         <ListView.ItemTemplate>

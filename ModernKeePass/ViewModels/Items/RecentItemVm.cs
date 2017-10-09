@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using Windows.UI.Xaml;
-using ModernKeePass.Common;
+﻿using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
