@@ -231,9 +231,7 @@
                 <AppBarButton Icon="Find" Label="Search">
                     <AppBarButton.Flyout>
                         <Flyout>
-                            <StackPanel>
-                                <SearchBox PlaceholderText="Search..." Width="350" />
-                            </StackPanel>
+                            <SearchBox PlaceholderText="Search..." Width="350" />
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
