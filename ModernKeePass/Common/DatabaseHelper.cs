@@ -1,6 +1,5 @@
 ﻿using System;
 using Windows.Storage;
-using System.Threading.Tasks;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Interfaces;
@@ -11,18 +10,27 @@ namespace ModernKeePass.Common
 {
     public class DatabaseHelper
     {
+        public enum DatabaseStatus
+        {
+            Closed = 0,
+            Opening = 1,
+            Opened = 2
+        }
         private readonly PwDatabase _pwDatabase = new PwDatabase();
-        private readonly StorageFile _databaseFile;
+        private StorageFile _databaseFile;
 
         public GroupVm RootGroup { get; set; }
-
-        public bool IsOpen => _pwDatabase.IsOpen;
-
-        public string Name => _databaseFile.Name;
-
-        public DatabaseHelper(StorageFile databaseFile)
+        public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
+        public string Name => DatabaseFile.Name;
+        
+        public StorageFile DatabaseFile
         {
-            _databaseFile = databaseFile;
+            get { return _databaseFile; }
+            set
+            {
+                _databaseFile = value;
+                Status = DatabaseStatus.Opening;
+            }
         }
         public string Open(string password)
         {
@@ -30,9 +38,13 @@ namespace ModernKeePass.Common
             try
             {
                 key.AddUserKey(new KcpPassword(password));
-                _pwDatabase.Open(IOConnectionInfo.FromFile(_databaseFile), key, new NullStatusLogger());
+                _pwDatabase.Open(IOConnectionInfo.FromFile(DatabaseFile), key, new NullStatusLogger());
 
-                if (IsOpen) RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
+                if (_pwDatabase.IsOpen)
+                {
+                    Status = DatabaseStatus.Opened;
+                    RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
+                }
             }
             catch (ArgumentNullException)
             {
@@ -51,12 +63,14 @@ namespace ModernKeePass.Common
 
         public void Save()
         {
-            _pwDatabase.Save(new NullStatusLogger());
+            if (_pwDatabase != null && _pwDatabase.IsOpen)
+                _pwDatabase.Save(new NullStatusLogger());
         }
 
         public void Close()
         {
-            _pwDatabase.Close();
+            _pwDatabase?.Close();
+            Status = DatabaseStatus.Closed;
         }
     }
 }

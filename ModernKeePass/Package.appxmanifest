@@ -28,6 +28,15 @@
             </SupportedFileTypes>
           </FileOpenPicker>
         </Extension>
+        <Extension Category="windows.fileTypeAssociation">
+          <FileTypeAssociation Name="kdbx">
+            <DisplayName>KeePass 2.x database</DisplayName>
+            <EditFlags OpenIsSafe="true" />
+            <SupportedFileTypes>
+              <FileType ContentType="application/xml">.kdbx</FileType>
+            </SupportedFileTypes>
+          </FileTypeAssociation>
+        </Extension>
       </Extensions>
     </Application>
   </Applications>

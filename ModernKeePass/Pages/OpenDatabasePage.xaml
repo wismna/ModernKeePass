@@ -5,16 +5,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:local="using:ModernKeePass.Controls"
+    xmlns:converters="using:ModernKeePass.Converters"
     x:Class="ModernKeePass.Pages.OpenDatabasePage"
     mc:Ignorable="d">
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Page.Resources>
     <Page.DataContext>
-        <viewModels:DatabaseVm/>
+        <viewModels:OpenVm/>
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
         <HyperlinkButton Content="From Url..." IsEnabled="False" />
         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <local:OpenDatabaseUserControl Visibility="{Binding SelectedVisibility}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+        <local:OpenDatabaseUserControl Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
     </StackPanel>
 </Page>

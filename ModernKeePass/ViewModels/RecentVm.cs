@@ -1,6 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Storage.AccessCache;
+using Windows.UI.Xaml;
 using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
@@ -43,6 +45,11 @@ namespace ModernKeePass.ViewModels
                 {
                     _selectedItem.IsSelected = true;
                 }
+
+                var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+                var file = mru.GetFileAsync(SelectedItem.Token).GetAwaiter().GetResult();
+                var app = (App)Application.Current;
+                app.Database.DatabaseFile = file;
             }
         }
     }

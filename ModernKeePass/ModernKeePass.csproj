@@ -125,6 +125,7 @@
     <Compile Include="Converters\ColorToBrushConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
+    <Compile Include="Events\PasswordEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -148,11 +149,12 @@
       <DependentUpon>SaveDatabasePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\DatabaseVm.cs" />
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />
+    <Compile Include="ViewModels\OpenVm.cs" />
     <Compile Include="ViewModels\RecentVm.cs" />
+    <Compile Include="ViewModels\SaveVm.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

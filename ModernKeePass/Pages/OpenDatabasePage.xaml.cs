@@ -1,14 +1,10 @@
 ﻿using System;
 using Windows.Storage.Pickers;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Common;
+using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
-using Windows.Storage.AccessCache;
-using Windows.Storage;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -41,34 +37,15 @@ namespace ModernKeePass.Pages
                     SuggestedStartLocation = PickerLocationId.DocumentsLibrary
                 };
             picker.FileTypeFilter.Add(".kdbx");
-
-            var file = await picker.PickSingleFileAsync();
+            
+            var viewModel = DataContext as OpenVm;
             // Application now has read/write access to the picked file
-            if (file == null) return;
-            // Initialize KDBX database
-            ((App)Application.Current).Database = new DatabaseHelper(file);
-            AddToRecentFiles(file);
-            ShowPassword(file);
+            viewModel.OpenFile(await picker.PickSingleFileAsync());
         }
 
-        private void AddToRecentFiles(StorageFile file)
+        private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)
         {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            mru.Add(file, file.DisplayName);
-        }
-
-        private void ShowPassword(StorageFile file)
-        {
-            var databaseVm = DataContext as DatabaseVm;
-            if (databaseVm == null) return;
-            databaseVm.SelectedVisibility = Visibility.Visible;
-            databaseVm.Name = file.Name;
-        }
-
-        private void PasswordUserControl_PasswordChecked(object sender, EventArgs e)
-        {
-            var app = (App)Application.Current;
-            if (app.Database.IsOpen) _mainFrame.Navigate(typeof(GroupDetailPage), app.Database.RootGroup);
+            _mainFrame.Navigate(typeof(GroupDetailPage), e.RootGroup);
         }
     }
 }

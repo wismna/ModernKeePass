@@ -22,25 +22,13 @@ namespace ModernKeePass.Pages
         {
             base.OnNavigatedTo(e);
             _mainFrame = e.Parameter as Frame;
-            var app = (App)Application.Current;
-            if (app.Database == null) return;
-            var databaseVm = DataContext as DatabaseVm;
-            if (databaseVm == null) return;
-            UpdateDatabaseStatus(app, databaseVm);
         }
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var app = (App) Application.Current;
-            app.Database.Save();
-            app.Database.Close();
-            UpdateDatabaseStatus(app, DataContext as DatabaseVm);
+            var viewModel = DataContext as SaveVm;
+            viewModel.Save();
             _mainFrame.Navigate(typeof(MainPage));
-        }
-
-        private void UpdateDatabaseStatus(App app, DatabaseVm databaseVm)
-        {
-            databaseVm.IsOpen = app.Database.IsOpen;
         }
     }
 }

@@ -48,15 +48,25 @@ namespace ModernKeePass.ViewModels
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
-                new MainMenuItemVm {Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2},
+                new MainMenuItemVm
+                {
+                    Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2,
+                    IsSelected = app.Database.Status == DatabaseHelper.DatabaseStatus.Opening
+                },
                 new MainMenuItemVm {Title = "New" /*, PageType = typeof(NewDatabasePage)*/, Destination = destinationFrame, SymbolIcon = Symbol.Add},
-                new MainMenuItemVm {Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Save},
-                new MainMenuItemVm {Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
-                    IsSelected = (app.Database == null || !app.Database.IsOpen) && mru.Entries.Count > 0}
+                new MainMenuItemVm
+                {
+                    Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Save,
+                    IsSelected = app.Database != null && app.Database.Status == DatabaseHelper.DatabaseStatus.Opened
+                },
+                new MainMenuItemVm {
+                    Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
+                    IsSelected = (app.Database == null || app.Database.Status == DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0
+                }
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
-            if (app.Database != null && app.Database.IsOpen)
+            if (app.Database != null && app.Database.Status == DatabaseHelper.DatabaseStatus.Opened)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
                     Title = app.Database.Name,
@@ -66,7 +76,7 @@ namespace ModernKeePass.ViewModels
                     Group = 1,
                     SymbolIcon = Symbol.ProtectedDocument
                 });
-
+                
             MainMenuItems = from item in mainMenuItems group item by item.Group into grp orderby grp.Key select grp;
         }
     }

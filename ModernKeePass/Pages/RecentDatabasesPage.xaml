@@ -18,7 +18,6 @@
     <ListView 
         Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
         ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
-        SelectionChanged="RecentListView_SelectionChanged"
         SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
         <ListView.ItemTemplate>
             <DataTemplate>

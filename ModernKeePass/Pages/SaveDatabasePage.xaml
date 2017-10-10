@@ -8,11 +8,11 @@
     mc:Ignorable="d">
 
     <Page.DataContext>
-        <viewModels:DatabaseVm/>
+        <viewModels:SaveVm/>
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Name="SaveButton" Content="Save and close" Click="SaveButton_OnClick" VerticalAlignment="Top" IsEnabled="{Binding IsOpen}" />
+        <HyperlinkButton x:Name="SaveButton" Content="Save and close" Click="SaveButton_OnClick" VerticalAlignment="Top" IsEnabled="{Binding IsSaveEnabled}" />
         <HyperlinkButton x:Name="SaveAsButton" Content="Save as..." VerticalAlignment="Top" IsEnabled="False" />
     </StackPanel>
 </Page>
