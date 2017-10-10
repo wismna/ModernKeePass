@@ -98,7 +98,7 @@ namespace ModernKeePass.Pages
             Frame.Navigate(typeof(EntryDetailPage), GridView.SelectedItem as EntryVm);
         }
 
-        private void AppBarButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void DeleteButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             var group = DataContext as GroupVm;
             group?.RemoveGroup();

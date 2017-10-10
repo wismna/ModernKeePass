@@ -1,6 +1,8 @@
 ﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Search;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -99,7 +101,7 @@ namespace ModernKeePass
             Database.Save();
             deferral.Complete();
         }
-
+        
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             base.OnFileActivated(args);

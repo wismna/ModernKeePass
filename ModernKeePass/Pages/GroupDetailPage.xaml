@@ -24,7 +24,7 @@
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="GroupsViewSource"
-                Source="{Binding Groups}"/>
+                Source="{Binding Groups}" />
             <CollectionViewSource
                 x:Name="EntriesViewSource"
                 Source="{Binding Entries}" />
@@ -209,7 +209,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="300"/>
             </Grid.ColumnDefinitions>
             <Button Margin="39,0,39,0" 
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
@@ -228,8 +228,17 @@
                 VerticalAlignment="Center" 
                 Margin="0,0,30,0"/>
             <CommandBar Grid.Column="2" Background="Transparent" IsOpen="True" VerticalAlignment="Center" Margin="0,20,0,0">
+                <AppBarButton Icon="Find" Label="Search">
+                    <AppBarButton.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <SearchBox PlaceholderText="Search..." Width="350" />
+                            </StackPanel>
+                        </Flyout>
+                    </AppBarButton.Flyout>
+                </AppBarButton>
                 <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" />
-                <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="AppBarButton_Click" />
+                <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
             </CommandBar>
         </Grid>
     </Grid>
