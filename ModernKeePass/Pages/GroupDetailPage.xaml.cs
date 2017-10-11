@@ -1,5 +1,6 @@
 ﻿using System;
-using Windows.UI.Xaml;
+using System.Linq;
+using Windows.Storage.Streams;
 using ModernKeePass.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -111,6 +112,24 @@ namespace ModernKeePass.Pages
             {
                 e.DestinationItem.Item = e.SourceItem.Item;
             }
+        }
+
+        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        {
+            var viewModel = DataContext as GroupVm;
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/Logo.scale-80.png"));
+            var results = viewModel.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            foreach (var result in results)
+            {
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
+            }
+        }
+
+        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
+        {
+            var viewModel = DataContext as GroupVm;
+            var entry = viewModel.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
+            Frame.Navigate(typeof(EntryDetailPage), entry);
         }
     }
 }

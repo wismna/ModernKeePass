@@ -24,6 +24,9 @@ namespace ModernKeePass.ViewModels
             }
             set { SetEntryValue(PwDefs.TitleField, value); }
         }
+
+        public string Id => Entry.Uuid.ToHexString();
+
         public string UserName
         {
             get { return GetEntryValue(PwDefs.UserNameField); }

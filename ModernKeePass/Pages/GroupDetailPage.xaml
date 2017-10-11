@@ -231,7 +231,7 @@
                 <AppBarButton Icon="Find" Label="Search">
                     <AppBarButton.Flyout>
                         <Flyout>
-                            <SearchBox PlaceholderText="Search..." Width="350" />
+                            <SearchBox PlaceholderText="Search..." Width="350" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False"  ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>

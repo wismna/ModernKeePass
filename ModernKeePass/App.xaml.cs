@@ -98,7 +98,8 @@ namespace ModernKeePass
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            Database.Save();
+            // TODO: save state?
+            //Database.Save();
             deferral.Complete();
         }
         

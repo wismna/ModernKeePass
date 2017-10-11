@@ -1,13 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.Storage.AccessCache;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Common;
 using ModernKeePass.Events;
-using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
 
