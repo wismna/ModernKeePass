@@ -18,6 +18,13 @@ namespace ModernKeePass.ViewModels
             get { return ((App)Application.Current).Database.Name; }
         }
 
+        public OpenVm()
+        {
+            var database = ((App)Application.Current).Database;
+            if (database == null || database.Status != DatabaseHelper.DatabaseStatus.Opening) return;
+            OpenFile(database.DatabaseFile);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         
         private void NotifyPropertyChanged(string propertyName)

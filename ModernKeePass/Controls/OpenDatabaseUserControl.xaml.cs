@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
