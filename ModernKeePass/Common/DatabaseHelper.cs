@@ -16,23 +16,38 @@ namespace ModernKeePass.Common
             Opening = 1,
             Opened = 2
         }
-        private readonly PwDatabase _pwDatabase = new PwDatabase();
+        private PwDatabase _pwDatabase = new PwDatabase();
+        private StorageFile _databaseFile;
 
         public GroupVm RootGroup { get; set; }
         public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
+        public string Name => _pwDatabase?.Name;
 
-        public string Name { get; private set; }
-        public string Open(StorageFile databaseFile, string password)
+        public StorageFile DatabaseFile
+        {
+            get { return _databaseFile; }
+            set
+            {
+                _databaseFile = value;
+                Status = DatabaseStatus.Opening;
+            }
+        }
+        
+        public string Open(string password, bool createNew = false)
         {
             var key = new CompositeKey();
             try
             {
                 key.AddUserKey(new KcpPassword(password));
-                _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
+                var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
+                if (createNew)
+                {
+                    _pwDatabase.New(ioConnection, key);
+                }
+                _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
                 if (_pwDatabase.IsOpen)
                 {
-                    Name = databaseFile.Name;
                     Status = DatabaseStatus.Opened;
                     RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
                 }
@@ -51,7 +66,7 @@ namespace ModernKeePass.Common
             }
             return string.Empty;
         }
-
+        
         public void Save()
         {
             if (_pwDatabase != null && _pwDatabase.IsOpen)

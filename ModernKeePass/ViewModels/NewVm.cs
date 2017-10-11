@@ -6,7 +6,7 @@ using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
-    public class OpenVm: INotifyPropertyChanged
+    public class NewVm : INotifyPropertyChanged
     {
         public bool ShowPasswordBox
         {
@@ -19,7 +19,7 @@ namespace ModernKeePass.ViewModels
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -33,7 +33,7 @@ namespace ModernKeePass.ViewModels
             NotifyPropertyChanged("ShowPasswordBox");
             AddToRecentList(file);
         }
-        
+
         private void AddToRecentList(StorageFile file)
         {
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;

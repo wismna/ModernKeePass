@@ -53,7 +53,10 @@ namespace ModernKeePass.ViewModels
                     Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2,
                     IsSelected = app.Database.Status == DatabaseHelper.DatabaseStatus.Opening
                 },
-                new MainMenuItemVm {Title = "New" /*, PageType = typeof(NewDatabasePage)*/, Destination = destinationFrame, SymbolIcon = Symbol.Add},
+                new MainMenuItemVm
+                {
+                    Title = "New" , PageType = typeof(NewDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Add
+                },
                 new MainMenuItemVm
                 {
                     Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Save,

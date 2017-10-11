@@ -132,6 +132,9 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
+    <Compile Include="Pages\NewDatabasePage.xaml.cs">
+      <DependentUpon>NewDatabasePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />
     <Compile Include="Pages\EntryDetailPage.xaml.cs">
@@ -153,6 +156,7 @@
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />
+    <Compile Include="ViewModels\NewVm.cs" />
     <Compile Include="ViewModels\OpenVm.cs" />
     <Compile Include="ViewModels\RecentVm.cs" />
     <Compile Include="ViewModels\SaveVm.cs" />
@@ -188,6 +192,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\GroupDetailPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\NewDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

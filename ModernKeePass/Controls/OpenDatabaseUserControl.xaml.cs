@@ -14,15 +14,15 @@ namespace ModernKeePass.Controls
 {
     public sealed partial class OpenDatabaseUserControl : UserControl
     {
-        public StorageFile DatabaseFile
+        public bool CreateNew
         {
-            get { return (StorageFile)GetValue(DatabaseFileProperty); }
-            set { SetValue(DatabaseFileProperty, value); }
+            get { return (bool)GetValue(CreateNewProperty); }
+            set { SetValue(CreateNewProperty, value); }
         }
-        public static readonly DependencyProperty DatabaseFileProperty =
+        public static readonly DependencyProperty CreateNewProperty =
             DependencyProperty.Register(
-                "DatabaseFile",
-                typeof(StorageFile),
+                "CreateNew",
+                typeof(bool),
                 typeof(OpenDatabaseUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
@@ -37,7 +37,7 @@ namespace ModernKeePass.Controls
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
             var app = (App)Application.Current;
-            StatusTextBlock.Text = app.Database.Open(DatabaseFile, PasswordBox.Password);
+            StatusTextBlock.Text = app.Database.Open(PasswordBox.Password, CreateNew);
             if (app.Database.Status == DatabaseHelper.DatabaseStatus.Opened)
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(app.Database.RootGroup));
         }

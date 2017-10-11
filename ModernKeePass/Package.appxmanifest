@@ -37,6 +37,13 @@
             </SupportedFileTypes>
           </FileTypeAssociation>
         </Extension>
+        <Extension Category="windows.fileSavePicker">
+          <FileSavePicker>
+            <SupportedFileTypes>
+              <FileType>.kdbx</FileType>
+            </SupportedFileTypes>
+          </FileSavePicker>
+        </Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -1,24 +1,23 @@
 ﻿<Page
+    x:Class="ModernKeePass.Pages.NewDatabasePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:local="using:ModernKeePass.Controls"
+    xmlns:controls="using:ModernKeePass.Controls"
     xmlns:converters="using:ModernKeePass.Converters"
-    x:Class="ModernKeePass.Pages.OpenDatabasePage"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
     mc:Ignorable="d">
     <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:OpenVm/>
+        <viewModels:OpenVm />
     </Page.DataContext>
-
+    
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
-        <HyperlinkButton Content="From Url..." IsEnabled="False" />
+        <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <local:OpenDatabaseUserControl Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+        <controls:OpenDatabaseUserControl CreateNew="True" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
     </StackPanel>
 </Page>

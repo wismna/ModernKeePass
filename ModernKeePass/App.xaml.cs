@@ -20,6 +20,7 @@ namespace ModernKeePass
     sealed partial class App : Application
     {
         public DatabaseHelper Database { get; set; } = new DatabaseHelper();
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -106,11 +107,11 @@ namespace ModernKeePass
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             base.OnFileActivated(args);
-            /*Database.DatabaseFile = args.Files[0] as StorageFile;
             var rootFrame = new Frame();
+            Database.DatabaseFile = args.Files[0] as StorageFile;
             rootFrame.Navigate(typeof(MainPage), args);
             Window.Current.Content = rootFrame;
-            Window.Current.Activate();*/
+            Window.Current.Activate();
         }
     }
 }
