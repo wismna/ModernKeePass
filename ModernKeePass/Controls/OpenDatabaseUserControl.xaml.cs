@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -13,6 +14,18 @@ namespace ModernKeePass.Controls
 {
     public sealed partial class OpenDatabaseUserControl : UserControl
     {
+        public StorageFile DatabaseFile
+        {
+            get { return (StorageFile)GetValue(DatabaseFileProperty); }
+            set { SetValue(DatabaseFileProperty, value); }
+        }
+        public static readonly DependencyProperty DatabaseFileProperty =
+            DependencyProperty.Register(
+                "DatabaseFile",
+                typeof(StorageFile),
+                typeof(OpenDatabaseUserControl),
+                new PropertyMetadata(null, (o, args) => { }));
+
         public OpenDatabaseUserControl()
         {
             InitializeComponent();
@@ -24,7 +37,7 @@ namespace ModernKeePass.Controls
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
             var app = (App)Application.Current;
-            StatusTextBlock.Text = app.Database.Open(PasswordBox.Password);
+            StatusTextBlock.Text = app.Database.Open(DatabaseFile, PasswordBox.Password);
             if (app.Database.Status == DatabaseHelper.DatabaseStatus.Opened)
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(app.Database.RootGroup));
         }

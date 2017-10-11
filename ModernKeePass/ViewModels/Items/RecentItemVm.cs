@@ -1,4 +1,5 @@
-﻿using ModernKeePass.Common;
+﻿using Windows.Storage;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
@@ -7,6 +8,7 @@ namespace ModernKeePass.ViewModels
         private bool _isSelected;
         public string Token { get; set; }
         public string Name { get; set; }
+        public StorageFile File { get; set; }
 
         public bool IsSelected
         {

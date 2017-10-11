@@ -98,7 +98,7 @@ namespace ModernKeePass
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            // TODO: save state?
+            //TODO: Save application state and stop any background activity
             //Database.Save();
             deferral.Complete();
         }
@@ -106,11 +106,11 @@ namespace ModernKeePass
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             base.OnFileActivated(args);
-            Database.DatabaseFile = args.Files[0] as StorageFile;
+            /*Database.DatabaseFile = args.Files[0] as StorageFile;
             var rootFrame = new Frame();
             rootFrame.Navigate(typeof(MainPage), args);
             Window.Current.Content = rootFrame;
-            Window.Current.Activate();
+            Window.Current.Activate();*/
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Storage.AccessCache;
-using Windows.UI.Xaml;
 using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
@@ -11,17 +10,7 @@ namespace ModernKeePass.ViewModels
     {
         private RecentItemVm _selectedItem;
         private ObservableCollection<RecentItemVm> _recentItems;
-
-        public RecentVm()
-        {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            RecentItems = new ObservableCollection<RecentItemVm>(
-                from entry in mru.Entries
-                select new RecentItemVm { Name = entry.Metadata, Token = entry.Token });
-            if (RecentItems.Count > 0)
-                SelectedItem = RecentItems[0];
-        }
-
+        
         public ObservableCollection<RecentItemVm> RecentItems
         {
             get { return _recentItems; }
@@ -47,10 +36,19 @@ namespace ModernKeePass.ViewModels
                 }
 
                 var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-                var file = mru.GetFileAsync(SelectedItem.Token).GetAwaiter().GetResult();
-                var app = (App)Application.Current;
-                app.Database.DatabaseFile = file;
+                _selectedItem.File = mru.GetFileAsync(SelectedItem.Token).GetAwaiter().GetResult();
             }
         }
+
+        public RecentVm()
+        {
+            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            RecentItems = new ObservableCollection<RecentItemVm>(
+                from entry in mru.Entries
+                select new RecentItemVm { Name = entry.Metadata, Token = entry.Token });
+            if (RecentItems.Count > 0)
+                SelectedItem = RecentItems[0];
+        }
+
     }
 }

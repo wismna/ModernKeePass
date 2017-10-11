@@ -17,31 +17,22 @@ namespace ModernKeePass.Common
             Opened = 2
         }
         private readonly PwDatabase _pwDatabase = new PwDatabase();
-        private StorageFile _databaseFile;
 
         public GroupVm RootGroup { get; set; }
         public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
-        public string Name => DatabaseFile.Name;
-        
-        public StorageFile DatabaseFile
-        {
-            get { return _databaseFile; }
-            set
-            {
-                _databaseFile = value;
-                Status = DatabaseStatus.Opening;
-            }
-        }
-        public string Open(string password)
+
+        public string Name { get; private set; }
+        public string Open(StorageFile databaseFile, string password)
         {
             var key = new CompositeKey();
             try
             {
                 key.AddUserKey(new KcpPassword(password));
-                _pwDatabase.Open(IOConnectionInfo.FromFile(DatabaseFile), key, new NullStatusLogger());
+                _pwDatabase.Open(IOConnectionInfo.FromFile(databaseFile), key, new NullStatusLogger());
 
                 if (_pwDatabase.IsOpen)
                 {
+                    Name = databaseFile.Name;
                     Status = DatabaseStatus.Opened;
                     RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
                 }

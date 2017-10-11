@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Windows.Storage.Streams;
+using Windows.UI.Popups;
 using ModernKeePass.Common;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -68,6 +69,9 @@ namespace ModernKeePass.Pages
 
         #endregion
 
+
+        #region Event Handlers
+
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (LeftListView.SelectedIndex == 0)
@@ -99,13 +103,30 @@ namespace ModernKeePass.Pages
             Frame.Navigate(typeof(EntryDetailPage), GridView.SelectedItem as EntryVm);
         }
 
-        private void DeleteButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            var group = DataContext as GroupVm;
-            group?.RemoveGroup();
-            if (Frame.CanGoBack) Frame.GoBack();
-        }
+            // Create the message dialog and set its content
+            var messageDialog = new MessageDialog("Are you sure you want to delete the whole group and all its entries?");
 
+            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
+            messageDialog.Commands.Add(new UICommand("Delete", delete =>
+            {
+                var group = DataContext as GroupVm;
+                group?.RemoveGroup();
+                if (Frame.CanGoBack) Frame.GoBack();
+            }));
+            messageDialog.Commands.Add(new UICommand("Cancel"));
+
+            // Set the command that will be invoked by default
+            messageDialog.DefaultCommandIndex = 1;
+
+            // Set the command to be invoked when escape is pressed
+            messageDialog.CancelCommandIndex = 1;
+
+            // Show the message dialog
+            await messageDialog.ShowAsync();
+        }
+        
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             if (e.IsSourceZoomedInView == false)
@@ -131,5 +152,8 @@ namespace ModernKeePass.Pages
             var entry = viewModel.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
+
+        #endregion
+        
     }
 }

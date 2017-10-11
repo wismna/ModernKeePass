@@ -19,6 +19,6 @@
         <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
         <HyperlinkButton Content="From Url..." IsEnabled="False" />
         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <local:OpenDatabaseUserControl Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+        <local:OpenDatabaseUserControl DatabaseFile="{Binding File}" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
     </StackPanel>
 </Page>
