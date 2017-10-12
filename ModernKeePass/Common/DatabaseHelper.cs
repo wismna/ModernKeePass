@@ -21,7 +21,7 @@ namespace ModernKeePass.Common
 
         public GroupVm RootGroup { get; set; }
         public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
-        public string Name => _pwDatabase?.Name;
+        public string Name => DatabaseFile?.Name;
 
         public StorageFile DatabaseFile
         {

@@ -22,8 +22,9 @@
         <ListView.ItemTemplate>
             <DataTemplate>
                 <StackPanel Margin="10,0,10,0">
-                    <TextBlock Text="{Binding Name}" Width="350" Padding="5" />
-                    <local:OpenDatabaseUserControl Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+                    <TextBlock Text="{Binding Name}" Width="350" Padding="5,0,0,0" />
+                    <TextBlock Text="{Binding Path}" Width="350" Padding="5,0,0,0" FontSize="10" />
+                    <local:OpenDatabaseUserControl Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecking="OpenDatabaseUserControl_OnValidationChecking" ValidationChecked="PasswordUserControl_PasswordChecked" />
                 </StackPanel>
             </DataTemplate>
         </ListView.ItemTemplate>

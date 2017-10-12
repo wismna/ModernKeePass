@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using Windows.Storage.AccessCache;
-using Windows.UI.Xaml;
 using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
@@ -10,7 +8,7 @@ namespace ModernKeePass.ViewModels
     public class RecentVm : NotifyPropertyChangedBase
     {
         private RecentItemVm _selectedItem;
-        private ObservableCollection<RecentItemVm> _recentItems;
+        private ObservableCollection<RecentItemVm> _recentItems = new ObservableCollection<RecentItemVm>();
         
         public ObservableCollection<RecentItemVm> RecentItems
         {
@@ -30,30 +28,27 @@ namespace ModernKeePass.ViewModels
                 }
 
                 SetProperty(ref _selectedItem, value);
-
-                if (_selectedItem != null)
-                {
-                    _selectedItem.IsSelected = true;
-                }
-
-                var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-                var database = ((App)Application.Current).Database;
-                try
-                {
-                    database.DatabaseFile = mru.GetFileAsync(SelectedItem.Token).GetAwaiter().GetResult();
-                }
-                catch (Exception e)
-                {
-                }
+                
+                if (_selectedItem == null) return;
+                _selectedItem.IsSelected = true;
             }
         }
 
         public RecentVm()
         {
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            RecentItems = new ObservableCollection<RecentItemVm>(
-                from entry in mru.Entries
-                select new RecentItemVm { Name = entry.Metadata, Token = entry.Token });
+            foreach (var entry in mru.Entries)
+            {
+                try
+                {
+                    var file = mru.GetFileAsync(entry.Token).GetAwaiter().GetResult();
+                    RecentItems.Add(new RecentItemVm(entry, file));
+                }
+                catch (Exception)
+                {
+                    mru.Remove(entry.Token);
+                }
+            }
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];
         }

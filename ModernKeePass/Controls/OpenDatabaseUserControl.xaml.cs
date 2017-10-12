@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -30,11 +31,14 @@ namespace ModernKeePass.Controls
             InitializeComponent();
         }
 
+        public event PasswordCheckingEventHandler ValidationChecking;
+        public delegate void PasswordCheckingEventHandler(object sender, EventArgs e);
         public event PasswordCheckedEventHandler ValidationChecked;
         public delegate void PasswordCheckedEventHandler(object sender, PasswordEventArgs e);
 
         private void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
+            ValidationChecking?.Invoke(this, new EventArgs());
             var app = (App)Application.Current;
             StatusTextBlock.Text = app.Database.Open(PasswordBox.Password, CreateNew);
             if (app.Database.Status == DatabaseHelper.DatabaseStatus.Opened)
