@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
+using System;
+using Windows.Storage;
 
 namespace ModernKeePass.ViewModels
 {
@@ -27,6 +29,13 @@ namespace ModernKeePass.ViewModels
             app.Database.Save();
             if (!close) return;
             app.Database.Close();
+            NotifyPropertyChanged("IsSaveEnabled");
+        }
+
+        internal void Save(StorageFile file)
+        {
+            var app = (App)Application.Current;
+            app.Database.Save(file);
             NotifyPropertyChanged("IsSaveEnabled");
         }
     }

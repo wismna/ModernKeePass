@@ -156,7 +156,6 @@
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />
-    <Compile Include="ViewModels\NewVm.cs" />
     <Compile Include="ViewModels\OpenVm.cs" />
     <Compile Include="ViewModels\RecentVm.cs" />
     <Compile Include="ViewModels\SaveVm.cs" />

@@ -6,13 +6,12 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     x:Class="ModernKeePass.Pages.SaveDatabasePage"
     mc:Ignorable="d">
-
     <Page.DataContext>
         <viewModels:SaveVm/>
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <HyperlinkButton x:Name="SaveButton" Content="Save and close" Click="SaveButton_OnClick" VerticalAlignment="Top" IsEnabled="{Binding IsSaveEnabled}" />
-        <HyperlinkButton x:Name="SaveAsButton" Content="Save as..." VerticalAlignment="Top" IsEnabled="False" />
+        <HyperlinkButton x:Name="SaveAsButton" Content="Save as..." Click="SaveAsButton_OnClick" VerticalAlignment="Top" IsEnabled="{Binding IsSaveEnabled}" />
     </StackPanel>
 </Page>

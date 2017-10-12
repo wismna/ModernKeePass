@@ -63,7 +63,14 @@ namespace ModernKeePass.Common
             }
             return string.Empty;
         }
-        
+
+        internal void Save(StorageFile file)
+        {
+            DatabaseFile = file;
+            _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
+            Status = DatabaseStatus.Opened;
+        }
+
         public void Save()
         {
             if (_pwDatabase != null && _pwDatabase.IsOpen)
