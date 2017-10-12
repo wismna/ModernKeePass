@@ -14,7 +14,7 @@ namespace ModernKeePass.Pages
     /// Page affichant les détails d'un élément au sein d'un groupe, offrant la possibilité de
     /// consulter les autres éléments qui appartiennent au même groupe.
     /// </summary>
-    public sealed partial class EntryDetailPage : Page
+    public sealed partial class EntryDetailPage
     {
         private NavigationHelper navigationHelper;        
 

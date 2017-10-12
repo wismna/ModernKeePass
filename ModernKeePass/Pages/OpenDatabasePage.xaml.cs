@@ -1,11 +1,8 @@
 ﻿using System;
 using Windows.Storage.Pickers;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
 
@@ -16,7 +13,7 @@ namespace ModernKeePass.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class OpenDatabasePage : Page
+    public sealed partial class OpenDatabasePage
     {
         private Frame _mainFrame;
 
@@ -43,7 +40,7 @@ namespace ModernKeePass.Pages
             
             var viewModel = DataContext as OpenVm;
             // Application now has read/write access to the picked file
-            viewModel.OpenFile(await picker.PickSingleFileAsync());
+            viewModel?.OpenFile(await picker.PickSingleFileAsync());
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)

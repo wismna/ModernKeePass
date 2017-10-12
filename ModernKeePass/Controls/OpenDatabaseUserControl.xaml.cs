@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
@@ -12,7 +11,7 @@ using ModernKeePass.Events;
 
 namespace ModernKeePass.Controls
 {
-    public sealed partial class OpenDatabaseUserControl : UserControl
+    public sealed partial class OpenDatabaseUserControl
     {
         public bool CreateNew
         {

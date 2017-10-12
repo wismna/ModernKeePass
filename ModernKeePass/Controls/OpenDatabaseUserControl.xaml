@@ -334,11 +334,6 @@
     </UserControl.Resources>
     <StackPanel>
         <PasswordBox x:Name="PasswordBox" Width="300" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}"/>
-        <!--<StackPanel Orientation="Horizontal" Margin="0,-1,0,-1" >
-            <Button Click="OpenButton_OnClick" Width="auto" Padding="2,0">
-                <SymbolIcon Symbol="Forward" />
-            </Button>
-        </StackPanel>-->
         <TextBlock x:Name="StatusTextBlock" Height="32" Width="auto" Foreground="#FFBF6969" FontSize="16" FontWeight="Bold" />
     </StackPanel>
 </UserControl>

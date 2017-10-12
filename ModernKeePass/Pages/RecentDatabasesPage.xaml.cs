@@ -12,7 +12,7 @@ namespace ModernKeePass.Pages
     /// <summary>
     /// Une page vide peut être utilisée seule ou constituer une page de destination au sein d'un frame.
     /// </summary>
-    public sealed partial class RecentDatabasesPage : Page
+    public sealed partial class RecentDatabasesPage
     {
         private Frame _mainFrame;
 
@@ -37,7 +37,7 @@ namespace ModernKeePass.Pages
             //throw new NotImplementedException();
             var viewModel = DataContext as RecentVm;
             var app = (App)Application.Current;
-            app.Database.DatabaseFile = viewModel.SelectedItem.DatabaseFile;
+            app.Database.DatabaseFile = viewModel?.SelectedItem.DatabaseFile;
         }
     }
 }

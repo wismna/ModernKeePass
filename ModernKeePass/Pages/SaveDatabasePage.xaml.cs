@@ -13,7 +13,7 @@ namespace ModernKeePass.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SaveDatabasePage : Page
+    public sealed partial class SaveDatabasePage
     {
         private Frame _mainFrame;
         public SaveDatabasePage()
@@ -30,7 +30,7 @@ namespace ModernKeePass.Pages
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
             var viewModel = DataContext as SaveVm;
-            viewModel.Save();
+            viewModel?.Save();
             _mainFrame.Navigate(typeof(MainPage));
         }
 
@@ -46,7 +46,7 @@ namespace ModernKeePass.Pages
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
             var viewModel = DataContext as SaveVm;
-            viewModel.Save(file);
+            viewModel?.Save(file);
 
             _mainFrame.Navigate(typeof(MainPage));
         }

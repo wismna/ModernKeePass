@@ -15,7 +15,7 @@ namespace ModernKeePass.Pages
     /// A page that displays an overview of a single group, including a preview of the items
     /// within the group.
     /// </summary>
-    public sealed partial class GroupDetailPage : Page
+    public sealed partial class GroupDetailPage
     {
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
@@ -139,7 +139,7 @@ namespace ModernKeePass.Pages
         {
             var viewModel = DataContext as GroupVm;
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/Logo.scale-80.png"));
-            var results = viewModel.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            var results = viewModel?.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {
                 args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
@@ -149,7 +149,7 @@ namespace ModernKeePass.Pages
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
             var viewModel = DataContext as GroupVm;
-            var entry = viewModel.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
+            var entry = viewModel?.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 

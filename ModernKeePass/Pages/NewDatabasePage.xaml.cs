@@ -14,7 +14,7 @@ namespace ModernKeePass.Pages
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class NewDatabasePage : Page
+    public sealed partial class NewDatabasePage
     {
         private Frame _mainFrame;
 
@@ -41,7 +41,7 @@ namespace ModernKeePass.Pages
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
             var viewModel = DataContext as OpenVm;
-            viewModel.OpenFile(file);
+            viewModel?.OpenFile(file);
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)
