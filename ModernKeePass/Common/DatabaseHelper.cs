@@ -40,11 +40,8 @@ namespace ModernKeePass.Common
             {
                 key.AddUserKey(new KcpPassword(password));
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
-                /*if (createNew)
-                {
-                    _pwDatabase.Save(new NullStatusLogger());
-                }*/
-                _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
+                if (createNew) _pwDatabase.New(ioConnection, key);
+                else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
                 if (_pwDatabase.IsOpen)
                 {
