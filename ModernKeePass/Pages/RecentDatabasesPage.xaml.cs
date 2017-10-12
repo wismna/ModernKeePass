@@ -16,6 +16,8 @@ namespace ModernKeePass.Pages
     {
         private Frame _mainFrame;
 
+        public RecentVm Model => (RecentVm)DataContext;
+
         public RecentDatabasesPage()
         {
             InitializeComponent();
@@ -34,10 +36,8 @@ namespace ModernKeePass.Pages
 
         private void OpenDatabaseUserControl_OnValidationChecking(object sender, EventArgs e)
         {
-            //throw new NotImplementedException();
-            var viewModel = DataContext as RecentVm;
             var app = (App)Application.Current;
-            app.Database.DatabaseFile = viewModel?.SelectedItem.DatabaseFile;
+            app.Database.DatabaseFile = Model.SelectedItem.DatabaseFile;
         }
     }
 }

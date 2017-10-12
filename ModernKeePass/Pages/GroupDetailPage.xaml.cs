@@ -22,7 +22,8 @@ namespace ModernKeePass.Pages
         /// process lifetime management
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
-        
+        public GroupVm Model => (GroupVm)DataContext;
+
         public GroupDetailPage()
         {
             InitializeComponent();
@@ -94,8 +95,7 @@ namespace ModernKeePass.Pages
                 case -1:
                     return;
                 case 0:
-                    var currentGroup = DataContext as GroupVm;
-                    currentGroup?.CreateNewEntry();
+                    Model.CreateNewEntry();
                     GridView.SelectedIndex = -1;
                     // TODO: Navigate to new entry?
                     return;
@@ -111,8 +111,7 @@ namespace ModernKeePass.Pages
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand("Delete", delete =>
             {
-                var group = DataContext as GroupVm;
-                group?.RemoveGroup();
+                Model.RemoveGroup();
                 if (Frame.CanGoBack) Frame.GoBack();
             }));
             messageDialog.Commands.Add(new UICommand("Cancel"));
@@ -137,9 +136,8 @@ namespace ModernKeePass.Pages
 
         private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
-            var viewModel = DataContext as GroupVm;
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/Logo.scale-80.png"));
-            var results = viewModel?.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            var results = Model.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {
                 args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
@@ -148,8 +146,7 @@ namespace ModernKeePass.Pages
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            var viewModel = DataContext as GroupVm;
-            var entry = viewModel?.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
+            var entry = Model.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 

@@ -11,6 +11,8 @@ namespace ModernKeePass
     /// </summary>
     public sealed partial class MainPage
     {
+        public MainVm Model => (MainVm)DataContext;
+
         public MainPage()
         {
             InitializeComponent();
@@ -24,8 +26,7 @@ namespace ModernKeePass
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var mainVm = DataContext as MainVm;
-            mainVm?.SelectedItem?.Destination.Navigate(mainVm.SelectedItem.PageType, mainVm.SelectedItem.Parameter);
+            Model.SelectedItem?.Destination.Navigate(Model.SelectedItem.PageType, Model.SelectedItem.Parameter);
         }
     }
 }

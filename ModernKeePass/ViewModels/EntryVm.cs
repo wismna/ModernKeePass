@@ -14,6 +14,7 @@ namespace ModernKeePass.ViewModels
 
         public System.Drawing.Color? BackgroundColor => Entry?.BackgroundColor;
         public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
+        public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
 
         public string Title
         {

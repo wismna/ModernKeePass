@@ -99,7 +99,7 @@ namespace ModernKeePass.Pages
         {
             try
             {
-                var uri = new Uri(urlTextBox.Text);
+                var uri = new Uri(UrlTextBox.Text);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
             catch

@@ -16,6 +16,7 @@ namespace ModernKeePass.Pages
     public sealed partial class SaveDatabasePage
     {
         private Frame _mainFrame;
+        public SaveVm Model => (SaveVm)DataContext;
         public SaveDatabasePage()
         {
             InitializeComponent();
@@ -29,8 +30,7 @@ namespace ModernKeePass.Pages
 
         private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as SaveVm;
-            viewModel?.Save();
+            Model.Save();
             _mainFrame.Navigate(typeof(MainPage));
         }
 
@@ -45,8 +45,7 @@ namespace ModernKeePass.Pages
 
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
-            var viewModel = DataContext as SaveVm;
-            viewModel?.Save(file);
+            Model.Save(file);
 
             _mainFrame.Navigate(typeof(MainPage));
         }

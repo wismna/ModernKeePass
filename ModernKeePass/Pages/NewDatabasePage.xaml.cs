@@ -18,6 +18,8 @@ namespace ModernKeePass.Pages
     {
         private Frame _mainFrame;
 
+        public OpenVm Model => (OpenVm)DataContext;
+
         public NewDatabasePage()
         {
             InitializeComponent();
@@ -40,8 +42,7 @@ namespace ModernKeePass.Pages
 
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
-            var viewModel = DataContext as OpenVm;
-            viewModel?.OpenFile(file);
+            Model.OpenFile(file);
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)

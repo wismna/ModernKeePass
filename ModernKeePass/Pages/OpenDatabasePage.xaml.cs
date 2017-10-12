@@ -17,6 +17,8 @@ namespace ModernKeePass.Pages
     {
         private Frame _mainFrame;
 
+        public OpenVm Model => (OpenVm)DataContext;
+
         public OpenDatabasePage()
         {
             InitializeComponent();
@@ -38,9 +40,8 @@ namespace ModernKeePass.Pages
                 };
             picker.FileTypeFilter.Add(".kdbx");
             
-            var viewModel = DataContext as OpenVm;
             // Application now has read/write access to the picked file
-            viewModel?.OpenFile(await picker.PickSingleFileAsync());
+            Model.OpenFile(await picker.PickSingleFileAsync());
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)

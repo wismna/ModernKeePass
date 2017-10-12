@@ -18,7 +18,7 @@ namespace ModernKeePass.ViewModels
 
         public StorageFile DatabaseFile { get; private set; }
         public string Token { get; private set; }
-        public string Name { get; private set; }
+        public string Name { get; private set; } = "Recent file";
         public string Path => DatabaseFile.Path;
 
         public bool IsSelected
