@@ -122,6 +122,7 @@
     <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">
       <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TextBoxWithButton.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToBrushConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
@@ -209,6 +210,11 @@
     <Page Include="Pages\SaveDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\HamburgerButtonStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Styles\TextBoxWithButtonStyle.xaml">
       <SubType>Designer</SubType>
