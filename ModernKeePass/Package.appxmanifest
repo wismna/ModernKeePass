@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="wismna.ModernKeePass" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="1.2.0.14" />
+  <Identity Name="wismna.ModernKeePass" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="1.3.0.14" />
   <Properties>
     <DisplayName>ModernKeePass</DisplayName>
     <PublisherDisplayName>wismna</PublisherDisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ModernKeePass.App">
-      <m2:VisualElements DisplayName="ModernKeePass" Square150x150Logo="Assets\ModernKeePass-Logo.png" Square30x30Logo="Assets\ModernKeePass-SmallLogo.png" Description="A port of the KeePass application for the Windows store. For now, it only features read-only capabilites and only opens password protected databases." ForegroundText="light" BackgroundColor="#464646" ToastCapable="true">
+      <m2:VisualElements DisplayName="ModernKeePass" Square150x150Logo="Assets\ModernKeePass-Logo.png" Square30x30Logo="Assets\ModernKeePass-SmallLogo.png" Description="A port of the KeePass application for the Windows store. You can create, open and edit KeePass 2.x password databases in a modern fashion." ForegroundText="light" BackgroundColor="#464646" ToastCapable="true">
         <m2:DefaultTile Square310x310Logo="Assets\Square310x310Logo.png" Wide310x150Logo="Assets\Wide310x150Logo.png" Square70x70Logo="Assets\Square70x70Logo.png">
         </m2:DefaultTile>
         <m2:SplashScreen Image="Assets\ModernKeePass-SplashScreen.png" />
