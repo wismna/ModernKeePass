@@ -1,4 +1,4 @@
-MainPackage=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.2.0.14_AnyCPU.appx
-SymbolPackage=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\AppPackages\ModernKeePass_1.2.0.14_Test\ModernKeePass_1.2.0.14_AnyCPU.appxsym
-ResourcePack=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.2.0.14_scale-140.appx
-ResourcePack=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.2.0.14_scale-180.appx
+MainPackage=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.3.0.17_AnyCPU.appx
+SymbolPackage=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\AppPackages\ModernKeePass_1.3.0.17_Test\ModernKeePass_1.3.0.17_AnyCPU.appxsym
+ResourcePack=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.3.0.17_scale-140.appx
+ResourcePack=C:\Users\GBE\Source\Repos\ModernKeePass\ModernKeePass\bin\Release\ModernKeePass_1.3.0.17_scale-180.appx
