@@ -17,7 +17,8 @@
     
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Create a new password database to the location of your chosing.</TextBlock>
         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <local:OpenDatabaseUserControl CreateNew="True" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+        <local:OpenDatabaseUserControl HorizontalAlignment="Left" CreateNew="True" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
     </StackPanel>
 </Page>

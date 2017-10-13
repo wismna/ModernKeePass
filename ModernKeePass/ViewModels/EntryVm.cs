@@ -1,4 +1,4 @@
-﻿using Windows.UI.Text;
+﻿using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Mappings;
@@ -7,7 +7,7 @@ using ModernKeePassLib.Security;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm: NotifyPropertyChangedBase
+    public class EntryVm : INotifyPropertyChanged
     {
         public GroupVm ParentGroup { get; }
         public PwEntry Entry { get; }
@@ -36,7 +36,11 @@ namespace ModernKeePass.ViewModels
         public string Password
         {
             get { return GetEntryValue(PwDefs.PasswordField); }
-            set { SetEntryValue(PwDefs.PasswordField, value); }
+            set
+            {
+                SetEntryValue(PwDefs.PasswordField, value);
+                NotifyPropertyChanged("Password");
+            }
         }
         public string Url
         {
@@ -62,17 +66,31 @@ namespace ModernKeePass.ViewModels
         public bool IsEditMode
         {
             get { return _isEditMode; }
-            set { SetProperty(ref _isEditMode, value); }
+            set
+            {
+                _isEditMode = value;
+                NotifyPropertyChanged("IsEditMode");
+            }
         }
 
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }
-            set { SetProperty(ref _isRevealPassword, value); }
+            set
+            {
+                _isRevealPassword = value;
+                NotifyPropertyChanged("IsRevealPassword");
+            }
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isEditMode;
         private bool _isRevealPassword;
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public EntryVm() { }
         public EntryVm(PwEntry entry, GroupVm parent)

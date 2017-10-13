@@ -7,21 +7,16 @@ namespace ModernKeePass.ViewModels
 {
     public class MainMenuItemVm: NotifyPropertyChangedBase, IIsEnabled
     {
-        private string _title;
         private bool _isSelected;
 
-        public string Title
-        {
-            get { return IsEnabled ? _title : _title + " - Coming soon"; }
-            set { _title = value; }
-        }
+        public string Title { get; set; }
 
         public Type PageType { get; set; }
         public object Parameter { get; set; }
         public Frame Destination { get; set; }
         public int Group { get; set; } = 0;
         public Symbol SymbolIcon { get; set; }
-        public bool IsEnabled => PageType != null;
+        public bool IsEnabled { get; set; } = true;
 
         public bool IsSelected
         {

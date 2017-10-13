@@ -45,6 +45,7 @@ namespace ModernKeePass.ViewModels
         {
             var app = (App)Application.Current;
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            var isDatabaseOpen = app.Database != null && app.Database.Status == DatabaseHelper.DatabaseStatus.Opened;
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
@@ -60,11 +61,11 @@ namespace ModernKeePass.ViewModels
                 new MainMenuItemVm
                 {
                     Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Save,
-                    IsSelected = app.Database != null && app.Database.Status == DatabaseHelper.DatabaseStatus.Opened
+                    IsSelected = isDatabaseOpen, IsEnabled = isDatabaseOpen
                 },
                 new MainMenuItemVm {
                     Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
-                    IsSelected = (app.Database == null || app.Database.Status == DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0
+                    IsSelected = (app.Database == null || app.Database.Status == DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
                 }
             };
             // Auto-select the Recent Items menu item if the conditions are met

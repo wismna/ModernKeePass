@@ -136,6 +136,9 @@
     <Compile Include="Pages\NewDatabasePage.xaml.cs">
       <DependentUpon>NewDatabasePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\WelcomePage.xaml.cs">
+      <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />
     <Compile Include="Pages\EntryDetailPage.xaml.cs">
@@ -208,6 +211,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\SaveDatabasePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
