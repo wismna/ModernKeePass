@@ -63,13 +63,15 @@
                         AutomationProperties.ItemType="Navigation Button"/>
             <TextBox 
                 Grid.Column="1"
+                x:Name="TitleTextBox"
                 Text="{Binding Title, Mode=TwoWay}" 
                 Style="{StaticResource HeaderTextBoxStyle}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                 IsHitTestVisible="{Binding IsEditMode}" 
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
-                Margin="0,0,30,0"/>
+                Margin="0,0,30,0"
+                PlaceholderText="New entry name..."/>
             <CommandBar Grid.Column="2" Background="Transparent" IsOpen="True" VerticalAlignment="Center" Margin="0,20,0,0">
                 <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" />
                 <AppBarButton Icon="Delete" Label="Delete" Click="AppBarButton_Click" />

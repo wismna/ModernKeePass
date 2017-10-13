@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Popups;
-using ModernKeePass.Common;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -61,6 +64,10 @@ namespace ModernKeePass.Pages
 
             if (!(e.Parameter is GroupVm)) return;
             DataContext = (GroupVm) e.Parameter;
+            if (Model.IsEditMode)
+                Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => TitleTextBox.Focus(FocusState.Programmatic)));
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -75,32 +82,36 @@ namespace ModernKeePass.Pages
 
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (LeftListView.SelectedIndex == 0)
+            GroupVm group;
+            switch (LeftListView.SelectedIndex)
             {
-                var currentGroup = DataContext as GroupVm;
-                currentGroup?.CreateNewGroup();
-                LeftListView.SelectedIndex = -1;
-                // TODO: Navigate to new group?
-                return;
+                case -1:
+                    return;
+                case 0:
+                    group = Model.CreateNewGroup();
+                    break;
+                default:
+                    group = LeftListView.SelectedItem as GroupVm;
+                    break;
             }
-            var selectedItem = LeftListView.SelectedItem as GroupVm;
-            if (selectedItem == null) return;
-            Frame.Navigate(typeof(GroupDetailPage), selectedItem);
+            Frame.Navigate(typeof(GroupDetailPage), group);
         }
         
         private void entries_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            EntryVm entry;
             switch (GridView.SelectedIndex)
             {
                 case -1:
                     return;
                 case 0:
-                    Model.CreateNewEntry();
-                    GridView.SelectedIndex = -1;
-                    // TODO: Navigate to new entry?
-                    return;
+                    entry = Model.CreateNewEntry();
+                    break;
+                default:
+                    entry = GridView.SelectedItem as EntryVm;
+                    break;
             }
-            Frame.Navigate(typeof(EntryDetailPage), GridView.SelectedItem as EntryVm);
+            Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 
         private async void DeleteButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -128,6 +139,7 @@ namespace ModernKeePass.Pages
         
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
+            // We need to synchronize the two lists (zoomed-in and zoomed-out) because the source is different
             if (e.IsSourceZoomedInView == false)
             {
                 e.DestinationItem.Item = e.SourceItem.Item;

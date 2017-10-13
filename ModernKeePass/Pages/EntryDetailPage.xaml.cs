@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Popups;
-using ModernKeePass.Common;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page Détail de l'élément, consultez la page http://go.microsoft.com/fwlink/?LinkId=234232
@@ -16,7 +18,9 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class EntryDetailPage
     {
-        private NavigationHelper navigationHelper;        
+        private NavigationHelper navigationHelper;
+
+        public EntryVm Model => (EntryVm) DataContext;
 
         /// <summary>
         /// NavigationHelper est utilisé sur chaque page pour faciliter la navigation et 
@@ -58,10 +62,12 @@ namespace ModernKeePass.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             navigationHelper.OnNavigatedTo(e);
-            if (e.Parameter is EntryVm)
-            {
-                DataContext = e.Parameter as EntryVm;
-            }
+            if (!(e.Parameter is EntryVm)) return;
+            DataContext = (EntryVm)e.Parameter;
+            if (Model.IsEditMode)
+                Task.Factory.StartNew(
+                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        () => TitleTextBox.Focus(FocusState.Programmatic)));
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

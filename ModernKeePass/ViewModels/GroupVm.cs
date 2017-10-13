@@ -76,18 +76,22 @@ namespace ModernKeePass.ViewModels
             Groups.Insert(0, new GroupVm ());
         }
 
-        public void CreateNewGroup()
+        public GroupVm CreateNewGroup()
         {
-            var pwGroup = new PwGroup(true, true, "New group", PwIcon.Folder);
+            var pwGroup = new PwGroup(true, true, string.Empty, PwIcon.Folder);
             _pwGroup.AddGroup(pwGroup, true);
-            Groups.Add(new GroupVm(pwGroup, this));
+            var newGroup = new GroupVm(pwGroup, this) {IsEditMode = true};
+            Groups.Add(newGroup);
+            return newGroup;
         }
         
-        public void CreateNewEntry()
+        public EntryVm CreateNewEntry()
         {
             var pwEntry = new PwEntry(true, true);
             _pwGroup.AddEntry(pwEntry, true);
-            Entries.Add(new EntryVm(pwEntry, this));
+            var newEntry = new EntryVm(pwEntry, this) {IsEditMode = true};
+            Entries.Add(newEntry);
+            return newEntry;
         }
 
         public void RemoveGroup()
