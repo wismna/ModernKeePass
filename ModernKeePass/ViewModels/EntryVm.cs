@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Common;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
+using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
 
 namespace ModernKeePass.ViewModels
@@ -15,6 +15,17 @@ namespace ModernKeePass.ViewModels
         public System.Drawing.Color? BackgroundColor => Entry?.BackgroundColor;
         public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
+
+        public double PasswordLength { get; set; } = 25;
+        public bool UpperCasePatternSelected { get; set; } = true;
+        public bool LowerCasePatternSelected { get; set; } = true;
+        public bool DigitsPatternSelected { get; set; } = true;
+        public bool MinusPatternSelected { get; set; }
+        public bool UnderscorePatternSelected { get; set; }
+        public bool SpacePatternSelected { get; set; }
+        public bool SpecialPatternSelected { get; set; }
+        public bool BracketsPatternSelected { get; set; }
+        public string CustomChars { get; set; } = string.Empty;
 
         public string Title
         {
@@ -82,7 +93,7 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("IsRevealPassword");
             }
         }
-
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isEditMode;
@@ -102,6 +113,34 @@ namespace ModernKeePass.ViewModels
         public void RemoveEntry()
         {
             ParentGroup.RemoveEntry(this);
+        }
+
+        public void GeneratePassword()
+        {
+            var pwProfile = new PwProfile()
+            {
+                GeneratorType = PasswordGeneratorType.CharSet,
+                Length = (uint)PasswordLength,
+                CharSet = new PwCharSet()
+            };
+
+            if (UpperCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.UpperCase);
+            if (LowerCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.LowerCase);
+            if (DigitsPatternSelected) pwProfile.CharSet.Add(PwCharSet.Digits);
+            if (SpecialPatternSelected) pwProfile.CharSet.Add(PwCharSet.SpecialChars);
+            if (MinusPatternSelected) pwProfile.CharSet.Add('-');
+            if (UnderscorePatternSelected) pwProfile.CharSet.Add('_');
+            if (SpacePatternSelected) pwProfile.CharSet.Add(' ');
+            if (BracketsPatternSelected) pwProfile.CharSet.Add(PwCharSet.Brackets);
+
+            pwProfile.CharSet.Add(CustomChars);
+
+            ProtectedString password;
+            PwGenerator.Generate(out password, pwProfile, null, new CustomPwGeneratorPool());
+
+            Entry?.Strings.Set(PwDefs.PasswordField, password);
+            NotifyPropertyChanged("Password");
+            NotifyPropertyChanged("IsRevealPasswordEnabled");
         }
 
         private string GetEntryValue(string key)

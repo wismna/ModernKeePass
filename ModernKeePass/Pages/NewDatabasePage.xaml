@@ -25,7 +25,7 @@
                 <TextBlock Margin="25,10,0,10" Text="{Binding Name}" />
                 <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True"  ValidationChecked="PasswordUserControl_PasswordChecked" />
                 <TextBlock Margin="25,0,0,10">Password complexity</TextBlock>
-                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,100, Converter={StaticResource ProgressBarLegalValuesConverter}, Mode=OneWay}" Width="300" HorizontalAlignment="Left" />
+                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}, Mode=OneWay}" Maximum="128" Width="300" HorizontalAlignment="Left" />
             </StackPanel>
         </Border>
     </StackPanel>
