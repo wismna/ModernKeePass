@@ -41,7 +41,9 @@ namespace ModernKeePass.Pages
             picker.FileTypeFilter.Add(".kdbx");
             
             // Application now has read/write access to the picked file
-            Model.OpenFile(await picker.PickSingleFileAsync());
+            var file = await picker.PickSingleFileAsync();
+            if (file == null) return;
+            Model.OpenFile(file);
         }
 
         private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)

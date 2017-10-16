@@ -66,6 +66,10 @@ namespace ModernKeePass.ViewModels
                 new MainMenuItemVm {
                     Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
                     IsSelected = (app.Database == null || app.Database.Status == DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
+                },
+                new MainMenuItemVm
+                {
+                    Title = "About" , PageType = typeof(AboutPage), Destination = destinationFrame, SymbolIcon = Symbol.Help
                 }
             };
             // Auto-select the Recent Items menu item if the conditions are met

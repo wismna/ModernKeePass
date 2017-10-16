@@ -14,8 +14,9 @@
     <Page.DataContext>
         <viewModels:OpenVm />
     </Page.DataContext>
-    
+
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">New</TextBlock>
         <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Create a new password database to the location of your chosing.</TextBlock>
         <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
