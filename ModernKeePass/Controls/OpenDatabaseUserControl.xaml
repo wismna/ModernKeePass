@@ -1,11 +1,11 @@
-﻿<UserControl
+﻿<UserControl x:Name="UserControl"
     x:Class="ModernKeePass.Controls.OpenDatabaseUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    d:DesignHeight="65"
+    d:DesignHeight="60"
     d:DesignWidth="335" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
@@ -333,7 +333,7 @@
         </Style>
     </UserControl.Resources>
     <StackPanel>
-        <PasswordBox x:Name="PasswordBox" Width="300" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}"/>
+        <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Width="300" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}"/>
         <TextBlock x:Name="StatusTextBlock" Height="32" Width="auto" Foreground="#FFBF6969" FontSize="16" FontWeight="Bold" />
     </StackPanel>
 </UserControl>

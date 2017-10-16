@@ -9,17 +9,24 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     mc:Ignorable="d">
     <Page.Resources>
-    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:OpenVm />
+        <viewModels:NewVm />
     </Page.DataContext>
-
+    
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">New</TextBlock>
         <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Create a new password database to the location of your chosing.</TextBlock>
-        <TextBlock TextWrapping="Wrap" Text="{Binding Name}" Height="auto" Width="auto" FontSize="16" Margin="10,7,0,6" />
-        <local:OpenDatabaseUserControl HorizontalAlignment="Left" CreateNew="True" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}" ValidationChecked="PasswordUserControl_PasswordChecked" />
+        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="350" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel>
+                <TextBlock Margin="25,10,0,10" Text="{Binding Name}" />
+                <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True"  ValidationChecked="PasswordUserControl_PasswordChecked" />
+                <TextBlock Margin="25,0,0,10">Password complexity</TextBlock>
+                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,100, Converter={StaticResource ProgressBarLegalValuesConverter}, Mode=OneWay}" Width="300" HorizontalAlignment="Left" />
+            </StackPanel>
+        </Border>
     </StackPanel>
 </Page>

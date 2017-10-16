@@ -6,6 +6,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
+using ModernKeePassLib.Cryptography;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -23,7 +24,19 @@ namespace ModernKeePass.Controls
                 "CreateNew",
                 typeof(bool),
                 typeof(OpenDatabaseUserControl),
-                new PropertyMetadata(null, (o, args) => { }));
+                new PropertyMetadata(false, (o, args) => { }));
+
+        public string Password
+        {
+            get { return (string)GetValue(PasswordProperty); }
+            set { SetValue(PasswordProperty, value); }
+        }
+        public static readonly DependencyProperty PasswordProperty =
+            DependencyProperty.Register(
+                "Password",
+                typeof(string),
+                typeof(OpenDatabaseUserControl),
+                new PropertyMetadata(string.Empty, (o, args) => { }));
 
         public OpenDatabaseUserControl()
         {

@@ -9,7 +9,7 @@ namespace ModernKeePass.ViewModels
     {
         private RecentItemVm _selectedItem;
         private ObservableCollection<RecentItemVm> _recentItems = new ObservableCollection<RecentItemVm>();
-        
+
         public ObservableCollection<RecentItemVm> RecentItems
         {
             get { return _recentItems; }

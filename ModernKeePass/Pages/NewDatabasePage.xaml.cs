@@ -18,7 +18,7 @@ namespace ModernKeePass.Pages
     {
         private Frame _mainFrame;
 
-        public OpenVm Model => (OpenVm)DataContext;
+        public NewVm Model => (NewVm)DataContext;
 
         public NewDatabasePage()
         {
