@@ -174,7 +174,7 @@ namespace ModernKeePass.Pages
         private async void ShowToast(string entityType, IPwEntity entity)
         {
             // Construct the visuals of the toast
-            var visual = new ToastVisual
+            /*var visual = new ToastVisual
             {
                 BindingGeneric = new ToastBindingGeneric
                 {
@@ -184,13 +184,7 @@ namespace ModernKeePass.Pages
                         {
                             Text = $"{entityType} {entity.Name} deleted."
                         }
-                    }/*,
-
-                    AppLogoOverride = new ToastGenericAppLogo()
-                    {
-                        Source = logo,
-                        HintCrop = ToastGenericAppLogoCrop.Circle
-                    }*/
+                    }
                 }
             };
             
@@ -233,16 +227,23 @@ namespace ModernKeePass.Pages
 
             var toast = new ToastNotification(toastXml) {ExpirationTime = DateTime.Now.AddSeconds(5)};
             toast.Dismissed += Toast_Dismissed;
-
-            /*var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            */
+            var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");
             toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} deleted"));
             toastElements[1].AppendChild(notificationXml.CreateTextNode("Click me to undo"));
+            var toastNode = notificationXml.SelectSingleNode("/toast");
+            ((XmlElement)toastNode).SetAttribute("launch", new QueryString
+                {
+                    { "entityType", entityType },
+                    { "entityId", entity.Id }
 
+                }.ToString());
+            
             var toast = new ToastNotification(notificationXml)
             {
                 ExpirationTime = DateTime.Now.AddSeconds(5)
-            };*/
+            };
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
