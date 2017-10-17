@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
+using Windows.Data.Xml.Dom;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.QueryStringDotNET;
+using Microsoft.Toolkit.Uwp.Notifications;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -114,7 +120,7 @@ namespace ModernKeePass.Pages
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 
-        private async void DeleteButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             // Create the message dialog and set its content
             var messageDialog = new MessageDialog("Are you sure you want to delete the whole group and all its entries?");
@@ -122,7 +128,8 @@ namespace ModernKeePass.Pages
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand("Delete", delete =>
             {
-                Model.RemoveGroup();
+                ShowToast("Group", Model);
+                Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             }));
             messageDialog.Commands.Add(new UICommand("Cancel"));
@@ -149,10 +156,10 @@ namespace ModernKeePass.Pages
         private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/Logo.scale-80.png"));
-            var results = Model.Entries.Skip(1).Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            var results = Model.Entries.Skip(1).Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Name, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
             }
         }
 
@@ -163,6 +170,91 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
-        
+
+        private async void ShowToast(string entityType, IPwEntity entity)
+        {
+            // Construct the visuals of the toast
+            var visual = new ToastVisual
+            {
+                BindingGeneric = new ToastBindingGeneric
+                {
+                    Children =
+                    {
+                        new AdaptiveText
+                        {
+                            Text = $"{entityType} {entity.Name} deleted."
+                        }
+                    }/*,
+
+                    AppLogoOverride = new ToastGenericAppLogo()
+                    {
+                        Source = logo,
+                        HintCrop = ToastGenericAppLogoCrop.Circle
+                    }*/
+                }
+            };
+            
+            // Construct the actions for the toast (inputs and buttons)
+            var actions = new ToastActionsCustom
+            {
+                Buttons =
+                {
+                    new ToastButton("Undo", new QueryString
+                    {
+                        { "action", "undo" },
+                        { "entityType", entityType },
+                        { "entityId", entity.Id }
+
+                    }.ToString())
+                }
+            };
+
+            // Now we can construct the final toast content
+            var toastContent = new ToastContent
+            {
+                Visual = visual,
+                Actions = actions,
+                // Arguments when the user taps body of toast
+                Launch = new QueryString()
+                {
+                    { "action", "undo" },
+                    { "entityType", "group" },
+                    { "entityId", entity.Id }
+
+                }.ToString()
+            };
+
+            // And create the toast notification
+            var toastXml = new XmlDocument();
+            toastXml.LoadXml(toastContent.GetContent());
+
+            var visualXml = toastXml.GetElementsByTagName("visual")[0];
+            ((XmlElement)visualXml.ChildNodes[0]).SetAttribute("template", "ToastText02");
+
+            var toast = new ToastNotification(toastXml) {ExpirationTime = DateTime.Now.AddSeconds(5)};
+            toast.Dismissed += Toast_Dismissed;
+
+            /*var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            var toastElements = notificationXml.GetElementsByTagName("text");
+            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} deleted"));
+            toastElements[1].AppendChild(notificationXml.CreateTextNode("Click me to undo"));
+
+            var toast = new ToastNotification(notificationXml)
+            {
+                ExpirationTime = DateTime.Now.AddSeconds(5)
+            };*/
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
+        }
+
+        private void Toast_Dismissed(ToastNotification sender, ToastDismissedEventArgs args)
+        {
+            var app = (App)Application.Current;
+            if (app.PendingDeleteQueue.Count == 0) return;
+            var entity = app.PendingDeleteQueue.Dequeue();
+            if (entity is GroupVm)
+            {
+                entity.CommitDelete();
+            }
+        }
     }
 }

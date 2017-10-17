@@ -68,7 +68,7 @@
                                             <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
                                         </SymbolIcon.RenderTransform>
                                     </SymbolIcon>
-                                    <TextBlock Grid.Column="1" Text="{Binding Title}" FontWeight="Bold" Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="13,0,0,5"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="Bold" Style="{ThemeResource TitleTextBlockStyle}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="13,0,0,5"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -90,7 +90,7 @@
                                     </SymbolIcon>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
-                                        <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
+                                        <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
                                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
                                         <!--<TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
                                         <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />-->
@@ -185,7 +185,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

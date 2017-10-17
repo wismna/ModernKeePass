@@ -1,14 +1,17 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
+using System;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupVm : NotifyPropertyChangedBase
+    public class GroupVm : NotifyPropertyChangedBase, IPwEntity
     {
         public GroupVm ParentGroup { get; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
@@ -19,6 +22,7 @@ namespace ModernKeePass.ViewModels
         public int GroupCount => Groups.Count - 1;
         public bool IsNotRoot => ParentGroup != null;
         public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
+        public string Id => _pwGroup.Uuid.ToHexString();
 
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut
         {
@@ -26,7 +30,7 @@ namespace ModernKeePass.ViewModels
             {
                 return from e in Entries
                        where e.Entry != null
-                       group e by e.Title.FirstOrDefault() into grp
+                       group e by e.Name.FirstOrDefault() into grp
                        orderby grp.Key
                        select grp;
             }
@@ -70,7 +74,7 @@ namespace ModernKeePass.ViewModels
         {
             _pwGroup = pwGroup;
             ParentGroup = parent;
-            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)).OrderBy(e => e.Title));
+            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)).OrderBy(e => e.Name));
             Entries.Insert(0, new EntryVm ());
             Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this)).OrderBy(g => g.Name));
             Groups.Insert(0, new GroupVm ());
@@ -104,6 +108,18 @@ namespace ModernKeePass.ViewModels
         {
             _pwGroup.Entries.Remove(entry.Entry);
             Entries.Remove(entry);
+        }
+
+        public void MarkForDelete()
+        {
+            var app = (App)Application.Current;
+            app.PendingDeleteQueue.Enqueue(this);
+            ParentGroup.Groups.Remove(this);
+        }
+
+        public void CommitDelete()
+        {
+            _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
         }
     }
 }

@@ -51,23 +51,23 @@
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
                                                                                                Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverForegroundThemeBrush}" />
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverBackgroundThemeBrush}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                 </Storyboard>
                                                             </VisualState>
                                                             <VisualState x:Name="Pressed">
                                                                 <Storyboard>
-                                                                    <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
+                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
                                                                                                Storyboard.TargetProperty="Background">
                                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPressedBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>-->
+                                                                    </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                                                Storyboard.TargetProperty="BorderBrush">
                                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPressedBorderThemeBrush}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement"
                                                                                                Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverBackgroundThemeBrush}" />
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverForegroundThemeBrush}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                 </Storyboard>
                                                             </VisualState>
@@ -406,7 +406,7 @@
             <TextBox 
                 Grid.Column="1"
                 x:Name="TitleTextBox"
-                Text="{Binding Title, Mode=TwoWay}" 
+                Text="{Binding Name, Mode=TwoWay}" 
                 Style="{StaticResource HeaderTextBoxStyle}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                 IsHitTestVisible="{Binding IsEditMode}" 

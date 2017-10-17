@@ -1,13 +1,15 @@
 ﻿using System.ComponentModel;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
+using System;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : INotifyPropertyChanged
+    public class EntryVm : INotifyPropertyChanged, IPwEntity
     {
         public GroupVm ParentGroup { get; }
         public PwEntry Entry { get; }
@@ -27,7 +29,7 @@ namespace ModernKeePass.ViewModels
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
 
-        public string Title
+        public string Name
         {
             get
             {
@@ -151,6 +153,11 @@ namespace ModernKeePass.ViewModels
         private void SetEntryValue(string key, string newValue)
         {
             Entry?.Strings.Set(key, new ProtectedString(true, newValue));
+        }
+
+        public void CommitDelete()
+        {
+            throw new NotImplementedException();
         }
     }
 }
