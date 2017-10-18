@@ -66,7 +66,7 @@ namespace ModernKeePass.Common
             */
             var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");
-            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} deleted"));
+            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} {entity.Name} deleted"));
             toastElements[1].AppendChild(notificationXml.CreateTextNode("Click me to undo"));
             var toastNode = notificationXml.SelectSingleNode("/toast");
             ((XmlElement)toastNode)?.SetAttribute("launch", new QueryString

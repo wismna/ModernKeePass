@@ -126,6 +126,7 @@
     <Compile Include="Controls\TextBoxWithButton.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\ColorToBrushConverter.cs" />
+    <Compile Include="Converters\DoubleToForegroungBrushComplexityConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />

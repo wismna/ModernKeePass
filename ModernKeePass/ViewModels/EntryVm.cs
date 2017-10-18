@@ -19,6 +19,7 @@ namespace ModernKeePass.ViewModels
         public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
 
+
         public double PasswordLength { get; set; } = 25;
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
@@ -72,9 +73,21 @@ namespace ModernKeePass.ViewModels
             get
             {
                 if (Entry == null) return Symbol.Add;
+                //if ()
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(Entry.IconId);
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
+        }
+
+        public DateTimeOffset ExpiryDate
+        {
+            get { return new DateTimeOffset(Entry.ExpiryTime.Date); }
+            set { Entry.ExpiryTime = value.DateTime; }
+        }
+        public TimeSpan ExpiryTime
+        {
+            get { return Entry.ExpiryTime.TimeOfDay; }
+            set { Entry.ExpiryTime = Entry.ExpiryTime.Date.Add(value); }
         }
 
         public bool IsEditMode
@@ -96,11 +109,21 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("IsRevealPassword");
             }
         }
+        public bool HasExpirationDate
+        {
+            get { return Entry.Expires; }
+            set
+            {
+                Entry.Expires = value;
+                NotifyPropertyChanged("HasExpirationDate");
+            }
+        }
         
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isEditMode;
         private bool _isRevealPassword;
+
         private void NotifyPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -6,6 +6,7 @@ namespace ModernKeePass.ViewModels
     {
         private string _password = string.Empty;
 
+        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
         public string Password
         {
             get { return _password; }
@@ -16,6 +17,5 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
     }
 }

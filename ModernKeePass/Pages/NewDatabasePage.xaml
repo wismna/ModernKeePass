@@ -11,6 +11,7 @@
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
+        <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:NewVm />
@@ -25,14 +26,7 @@
                 <TextBlock Margin="25,10,0,10" Text="{Binding Name}" />
                 <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True"  ValidationChecked="PasswordUserControl_PasswordChecked" />
                 <TextBlock Margin="25,0,0,10">Password complexity</TextBlock>
-                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}, Mode=OneWay}" Maximum="128" Width="300" HorizontalAlignment="Left" >
-                    <ProgressBar.Background>
-                        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                            <GradientStop Color="#FFFD0000"/>
-                            <GradientStop Color="#FF2EFF00" Offset="1"/>
-                        </LinearGradientBrush>
-                    </ProgressBar.Background>
-                </ProgressBar>
+                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="300" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             </StackPanel>
         </Border>
     </StackPanel>

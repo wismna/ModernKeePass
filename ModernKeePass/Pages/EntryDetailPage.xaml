@@ -41,10 +41,6 @@
                                                             <VisualState x:Name="Normal" />
                                                             <VisualState x:Name="PointerOver">
                                                                 <Storyboard>
-                                                                    <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
-                                                                                               Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>-->
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                                                Storyboard.TargetProperty="BorderBrush">
                                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPointerOverBorderThemeBrush}" />
@@ -57,10 +53,6 @@
                                                             </VisualState>
                                                             <VisualState x:Name="Pressed">
                                                                 <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
-                                                                                               Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPressedBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                                                Storyboard.TargetProperty="BorderBrush">
                                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPressedBorderThemeBrush}" />
@@ -343,8 +335,6 @@
                                             <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}">Space ( )</CheckBox>
                                             <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}">Special (!, $, %, ...)</CheckBox>
                                             <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}">Brackets ([], {}, (), ...)</CheckBox>
-                                            <TextBlock>Additional characters:</TextBlock>
-                                            <TextBox Text="{Binding CustomChars}" />
                                             <Button Click="PasswordGenerationButton_Click">Generate</Button>
                                         </StackPanel>
                                     </Flyout>
@@ -377,6 +367,9 @@
                 <Style TargetType="TextBlock">
                     <Setter Property="Margin" Value="0,20,0,0"/>
                 </Style>
+                <Style TargetType="CheckBox">
+                    <Setter Property="Margin" Value="0,20,0,0"/>
+                </Style>
             </StackPanel.Resources>
             <TextBlock TextWrapping="Wrap" Text="User name or login" FontSize="18"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding UserName, Mode=TwoWay}" Width="350"  Height="32" />
@@ -388,6 +381,11 @@
             <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" GotoClick="UrlButton_Click" />
             <TextBlock TextWrapping="Wrap" Text="Notes" FontSize="18"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
+            <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}">Expiration date</CheckBox>
+            <StackPanel Orientation="Horizontal" IsHitTestVisible="{Binding HasExpirationDate}">
+                <DatePicker Margin="0,0,20,0" ></DatePicker>
+                <TimePicker ></TimePicker>
+            </StackPanel>
         </StackPanel>
 
         <!-- Bouton Précédent et titre de la page -->
