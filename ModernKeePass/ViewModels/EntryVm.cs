@@ -73,7 +73,7 @@ namespace ModernKeePass.ViewModels
             get
             {
                 if (Entry == null) return Symbol.Add;
-                //if ()
+                if (HasExpired) return Symbol.Priority;
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(Entry.IconId);
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
@@ -82,12 +82,12 @@ namespace ModernKeePass.ViewModels
         public DateTimeOffset ExpiryDate
         {
             get { return new DateTimeOffset(Entry.ExpiryTime.Date); }
-            set { Entry.ExpiryTime = value.DateTime; }
+            set { if (HasExpirationDate) Entry.ExpiryTime = value.DateTime; }
         }
         public TimeSpan ExpiryTime
         {
             get { return Entry.ExpiryTime.TimeOfDay; }
-            set { Entry.ExpiryTime = Entry.ExpiryTime.Date.Add(value); }
+            set { if (HasExpirationDate) Entry.ExpiryTime = Entry.ExpiryTime.Date.Add(value); }
         }
 
         public bool IsEditMode
@@ -117,6 +117,10 @@ namespace ModernKeePass.ViewModels
                 Entry.Expires = value;
                 NotifyPropertyChanged("HasExpirationDate");
             }
+        }
+        public bool HasExpired
+        {
+            get { return HasExpirationDate && Entry.ExpiryTime < DateTime.Now; }
         }
         
         public event PropertyChangedEventHandler PropertyChanged;

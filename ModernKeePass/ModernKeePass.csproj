@@ -130,6 +130,7 @@
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />
+    <Compile Include="Converters\TextToWidthConverter.cs" />
     <Compile Include="Events\PasswordEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="Interfaces\IPwEntity.cs" />

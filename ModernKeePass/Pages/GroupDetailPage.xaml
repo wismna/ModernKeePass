@@ -16,6 +16,8 @@
         <SolidColorBrush x:Key="SystemColor" Color="{StaticResource SystemColorButtonFaceColor}" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:PluralizationConverter x:Key="PluralizationConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:TextToWidthConverter x:Key="TextToWidthConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
@@ -73,7 +75,7 @@
                             </Border>
                         </DataTemplate>
                         <DataTemplate x:Name="GroupOtherItem">
-                            <Grid Height="110" Width="480" >
+                            <Grid Height="110" Width="480" x:Name="EntryGrid" >
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
@@ -90,14 +92,15 @@
                                     </SymbolIcon>
                                 </Border>
                                 <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
-                                        <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
-                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
-                                        <!--<TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                        <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />-->
-                                        <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                        <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                    </StackPanel>
-                                </Grid>
+                                    <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
+                                    <!--<Line Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,-10,0,0" Stretch="Fill" Stroke="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" StrokeThickness="1" X1="1" Width="{Binding Name, Converter={StaticResource TextToWidthConverter}, ConverterParameter=7}" HorizontalAlignment="Left" VerticalAlignment="Center" />-->
+                                    <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
+                                    <!--<TextBlock Text="{Binding EntryCount, ConverterParameter=entry\,entries, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                    <TextBlock Text="{Binding GroupCount, ConverterParameter=group\,groups, Converter={StaticResource PluralizationConverter}}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />-->
+                                    <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                    <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                </StackPanel>
+                            </Grid>
                         </DataTemplate>
                     </GridView.Resources>
                     <GridView.ItemsSource>

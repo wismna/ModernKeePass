@@ -383,8 +383,13 @@
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
             <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}">Expiration date</CheckBox>
             <StackPanel Orientation="Horizontal" IsHitTestVisible="{Binding HasExpirationDate}">
-                <DatePicker Margin="0,0,20,0" ></DatePicker>
-                <TimePicker ></TimePicker>
+                <SymbolIcon Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="Password has expired" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+                <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" ></DatePicker>
+                <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"></TimePicker>
             </StackPanel>
         </StackPanel>
 
