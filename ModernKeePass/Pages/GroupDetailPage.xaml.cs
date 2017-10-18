@@ -128,7 +128,7 @@ namespace ModernKeePass.Pages
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand("Delete", delete =>
             {
-                ShowToast("Group", Model);
+                ToastNotificationHelper.ShowUndoToast("Group", Model);
                 Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             }));
@@ -171,91 +171,5 @@ namespace ModernKeePass.Pages
 
         #endregion
 
-        private async void ShowToast(string entityType, IPwEntity entity)
-        {
-            // Construct the visuals of the toast
-            /*var visual = new ToastVisual
-            {
-                BindingGeneric = new ToastBindingGeneric
-                {
-                    Children =
-                    {
-                        new AdaptiveText
-                        {
-                            Text = $"{entityType} {entity.Name} deleted."
-                        }
-                    }
-                }
-            };
-            
-            // Construct the actions for the toast (inputs and buttons)
-            var actions = new ToastActionsCustom
-            {
-                Buttons =
-                {
-                    new ToastButton("Undo", new QueryString
-                    {
-                        { "action", "undo" },
-                        { "entityType", entityType },
-                        { "entityId", entity.Id }
-
-                    }.ToString())
-                }
-            };
-
-            // Now we can construct the final toast content
-            var toastContent = new ToastContent
-            {
-                Visual = visual,
-                Actions = actions,
-                // Arguments when the user taps body of toast
-                Launch = new QueryString()
-                {
-                    { "action", "undo" },
-                    { "entityType", "group" },
-                    { "entityId", entity.Id }
-
-                }.ToString()
-            };
-
-            // And create the toast notification
-            var toastXml = new XmlDocument();
-            toastXml.LoadXml(toastContent.GetContent());
-
-            var visualXml = toastXml.GetElementsByTagName("visual")[0];
-            ((XmlElement)visualXml.ChildNodes[0]).SetAttribute("template", "ToastText02");
-
-            var toast = new ToastNotification(toastXml) {ExpirationTime = DateTime.Now.AddSeconds(5)};
-            toast.Dismissed += Toast_Dismissed;
-            */
-            var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-            var toastElements = notificationXml.GetElementsByTagName("text");
-            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} deleted"));
-            toastElements[1].AppendChild(notificationXml.CreateTextNode("Click me to undo"));
-            var toastNode = notificationXml.SelectSingleNode("/toast");
-            ((XmlElement)toastNode).SetAttribute("launch", new QueryString
-                {
-                    { "entityType", entityType },
-                    { "entityId", entity.Id }
-
-                }.ToString());
-            
-            var toast = new ToastNotification(notificationXml)
-            {
-                ExpirationTime = DateTime.Now.AddSeconds(5)
-            };
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
-        }
-
-        private void Toast_Dismissed(ToastNotification sender, ToastDismissedEventArgs args)
-        {
-            var app = (App)Application.Current;
-            if (app.PendingDeleteQueue.Count == 0) return;
-            var entity = app.PendingDeleteQueue.Dequeue();
-            if (entity is GroupVm)
-            {
-                entity.CommitDelete();
-            }
-        }
     }
 }

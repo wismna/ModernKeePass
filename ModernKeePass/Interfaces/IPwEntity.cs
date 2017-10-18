@@ -12,5 +12,6 @@ namespace ModernKeePass.Interfaces
         bool IsEditMode { get; }
 
         void CommitDelete();
+        void UndoDelete();
     }
 }

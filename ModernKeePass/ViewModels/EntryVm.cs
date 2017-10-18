@@ -6,6 +6,7 @@ using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
 using System;
+using Windows.UI.Xaml;
 
 namespace ModernKeePass.ViewModels
 {
@@ -112,10 +113,6 @@ namespace ModernKeePass.ViewModels
             ParentGroup = parent;
         }
 
-        public void RemoveEntry()
-        {
-            ParentGroup.RemoveEntry(this);
-        }
 
         public void GeneratePassword()
         {
@@ -154,10 +151,22 @@ namespace ModernKeePass.ViewModels
         {
             Entry?.Strings.Set(key, new ProtectedString(true, newValue));
         }
-
+        
+        public void MarkForDelete()
+        {
+            var app = (App)Application.Current;
+            app.PendingDeleteEntities.Add(Id, this);
+            ParentGroup.Entries.Remove(this);
+        }
         public void CommitDelete()
         {
-            throw new NotImplementedException();
+            Entry.ParentGroup.Entries.Remove(Entry);
         }
+
+        public void UndoDelete()
+        {
+            ParentGroup.Entries.Add(this);
+        }
+
     }
 }

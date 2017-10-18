@@ -86,8 +86,8 @@ namespace ModernKeePass.Pages
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand("Delete", delete =>
             {
-                var entry = DataContext as EntryVm;
-                entry?.RemoveEntry();
+                ToastNotificationHelper.ShowUndoToast("Entry", Model);
+                Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             }));
             messageDialog.Commands.Add(new UICommand("Cancel"));

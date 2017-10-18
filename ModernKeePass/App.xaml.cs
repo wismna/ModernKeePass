@@ -9,7 +9,6 @@ using Windows.UI.Xaml.Navigation;
 using Microsoft.QueryStringDotNET;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.ViewModels;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -21,7 +20,7 @@ namespace ModernKeePass
     sealed partial class App : Application
     {
         public DatabaseHelper Database { get; set; } = new DatabaseHelper();
-        public Queue<IPwEntity> PendingDeleteQueue = new Queue<IPwEntity>();
+        public Dictionary<string, IPwEntity> PendingDeleteEntities = new Dictionary<string, IPwEntity>();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -33,6 +32,7 @@ namespace ModernKeePass
             Suspending += OnSuspending;
         }
 
+        #region Event Handlers
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -90,25 +90,20 @@ namespace ModernKeePass
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
                 }
-            }
-            //if (e is ToastNotificationActivatedEventArgs)
-            else
-            {
-                /*var toastActivationArgs = e as ToastNotificationActivatedEventArgs;
-
-                // Parse the query string (using QueryString.NET)
-                QueryString args = QueryString.Parse(toastActivationArgs.Argument);
-
-                // See what action is being requested 
-                switch (args["action"])
+                else
                 {
-                }*/
-                var entity = PendingDeleteQueue.Dequeue();
-                if (entity is GroupVm)
-                {
-                    entity.ParentGroup.Groups.Add(entity as GroupVm);
+                    // App is "launched" via the Toast Activation event
+                    UndoEntityDelete(lauchActivatedEventArgs.Arguments);
                 }
             }
+            // This is only available on Windows 10...
+            /*else if (e is ToastNotificationActivatedEventArgs)
+            {
+                var toastActivationArgs = e as ToastNotificationActivatedEventArgs;
+
+                // Parse the query string (using QueryString.NET)
+                UndoEntityDelete(QueryString.Parse(toastActivationArgs.Argument));
+            }*/
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -138,6 +133,10 @@ namespace ModernKeePass
             deferral.Complete();
         }
         
+        /// <summary>
+        /// Invoked when application is launched from opening a file in Windows Explorer 
+        /// </summary>
+        /// <param name="args">Details about the file being opened</param>
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             base.OnFileActivated(args);
@@ -146,6 +145,15 @@ namespace ModernKeePass
             rootFrame.Navigate(typeof(MainPage), args);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
+        }
+        #endregion
+
+        private void UndoEntityDelete(string arguments)
+        {
+            var args = QueryString.Parse(arguments);
+            var entity = PendingDeleteEntities[args["entityId"]];
+            PendingDeleteEntities.Remove(args["entityId"]);
+            entity.UndoDelete();
         }
     }
 }

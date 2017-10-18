@@ -117,6 +117,7 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Common\ToastNotificationHelper.cs" />
     <Compile Include="Controls\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">

@@ -97,29 +97,21 @@ namespace ModernKeePass.ViewModels
             Entries.Add(newEntry);
             return newEntry;
         }
-
-        public void RemoveGroup()
-        {
-            _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
-            ParentGroup.Groups.Remove(this);
-        }
         
-        public void RemoveEntry(EntryVm entry)
-        {
-            _pwGroup.Entries.Remove(entry.Entry);
-            Entries.Remove(entry);
-        }
-
         public void MarkForDelete()
         {
             var app = (App)Application.Current;
-            app.PendingDeleteQueue.Enqueue(this);
+            app.PendingDeleteEntities.Add(Id, this);
             ParentGroup.Groups.Remove(this);
         }
 
         public void CommitDelete()
         {
             _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
+        }
+        public void UndoDelete()
+        {
+            ParentGroup.Groups.Add(this);
         }
     }
 }
