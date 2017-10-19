@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
-using ModernKeePassLib.Cryptography.PasswordGenerator;
 
 // Pour en savoir plus sur le modèle d'élément Page Détail de l'élément, consultez la page http://go.microsoft.com/fwlink/?LinkId=234232
 
@@ -118,8 +117,6 @@ namespace ModernKeePass.Pages
         private void PasswordGenerationButton_Click(object sender, RoutedEventArgs e)
         {
             Model.GeneratePassword();
-            /*var button = (Button)sender;
-            button?.Flyout?.Hide();*/
         }
     }
 }

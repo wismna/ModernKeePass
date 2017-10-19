@@ -6,6 +6,8 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters" 
     xmlns:local="using:ModernKeePass.Controls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Actions="using:ModernKeePass.Actions"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.EntryDetailPage"
     mc:Ignorable="d">
@@ -315,7 +317,7 @@
                                 Visibility="Collapsed"
                                 FontSize="{TemplateBinding FontSize}"
                                 VerticalAlignment="Stretch"/>
-                            <Button x:Name="GeneratorButton"
+                            <Button
                                 Grid.Row="1"
                                 Style="{StaticResource GeneratorButtonStyle}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -325,20 +327,28 @@
                                 FontSize="{TemplateBinding FontSize}"
                                 VerticalAlignment="Stretch" >
                                 <Button.Flyout>
-                                    <Flyout>
+                                    <Flyout x:Name="GenerateButtonFlyout">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:DataTriggerBehavior Binding="{Binding Password}" ComparisonCondition="NotEqual" Value="" >
+                                                <Actions:CloseFlyoutAction />
+                                            </Core:DataTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
                                         <StackPanel>
-                                            <TextBlock>Password Length:</TextBlock>
+                                            <TextBlock>
+                                                <Run Text="Password Length:"/>
+                                            </TextBlock>
                                             <Slider Value="{Binding PasswordLength, Mode=TwoWay}" Margin="0,-10,0,-20" />
-                                            <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}">Upper case (A, B, C, ...)</CheckBox>
-                                            <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}">Lower case (a, b, c, ...)</CheckBox>
-                                            <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}">Digits (0, 1, 2, ...)</CheckBox>
-                                            <CheckBox IsChecked="{Binding MinusPatternSelected, Mode=TwoWay}">Minus (-)</CheckBox>
-                                            <CheckBox IsChecked="{Binding UnderscorePatternSelected, Mode=TwoWay}">Underscore (_)</CheckBox>
-                                            <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}">Space ( )</CheckBox>
-                                            <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}">Special (!, $, %, ...)</CheckBox>
-                                            <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}">Brackets ([], {}, (), ...)</CheckBox>
-                                            <Button Click="PasswordGenerationButton_Click">Generate</Button>
+                                            <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}" Content="Upper case (A, B, C, ...)"/>
+                                            <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}" Content="Lower case (a, b, c, ...)"/>
+                                            <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}" Content="Digits (0, 1, 2, ...)"/>
+                                            <CheckBox IsChecked="{Binding MinusPatternSelected, Mode=TwoWay}" Content="Minus (-)"/>
+                                            <CheckBox IsChecked="{Binding UnderscorePatternSelected, Mode=TwoWay}" Content="Underscore (_)"/>
+                                            <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}" Content="Space ( )"/>
+                                            <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}" Content="Special (!, $, %, ...)"/>
+                                            <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" Content="Brackets ([], {}, (), ...)"/>
+                                            <Button Click="PasswordGenerationButton_Click" Content="Generate"/>
                                         </StackPanel>
+
                                     </Flyout>
                                 </Button.Flyout>
                             </Button>
@@ -384,15 +394,15 @@
             <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" GotoClick="UrlButton_Click" />
             <TextBlock TextWrapping="Wrap" Text="Notes" FontSize="18"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
-            <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}">Expiration date</CheckBox>
+            <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" Content="Expiration date"/>
             <StackPanel Orientation="Horizontal" IsHitTestVisible="{Binding HasExpirationDate}">
                 <SymbolIcon Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ToolTipService.ToolTip>
                         <ToolTip Content="Password has expired" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
-                <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" ></DatePicker>
-                <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"></TimePicker>
+                <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
+                <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
             </StackPanel>
         </StackPanel>
 
