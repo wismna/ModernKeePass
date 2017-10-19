@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Data.Json;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.QueryStringDotNET;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 
@@ -65,9 +65,8 @@ namespace ModernKeePass
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                rootFrame = new Frame {Language = Windows.Globalization.ApplicationLanguages.Languages[0]};
                 // Set the default language
-                rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
@@ -82,7 +81,7 @@ namespace ModernKeePass
 
             if (e is LaunchActivatedEventArgs)
             {
-                var lauchActivatedEventArgs = e as LaunchActivatedEventArgs;
+                var lauchActivatedEventArgs = (LaunchActivatedEventArgs) e;
                 if (rootFrame.Content == null)
                 {
                     // When the navigation stack isn't restored navigate to the first page,
@@ -128,7 +127,6 @@ namespace ModernKeePass
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
             Database.Save();
             deferral.Complete();
         }
@@ -150,9 +148,10 @@ namespace ModernKeePass
 
         private void UndoEntityDelete(string arguments)
         {
-            var args = QueryString.Parse(arguments);
-            var entity = PendingDeleteEntities[args["entityId"]];
-            PendingDeleteEntities.Remove(args["entityId"]);
+            if (arguments == null) return;
+            var args = JsonObject.Parse(arguments);
+            var entity = PendingDeleteEntities[args["entityId"].GetString()];
+            PendingDeleteEntities.Remove(args["entityId"].GetString());
             entity.UndoDelete();
         }
     }

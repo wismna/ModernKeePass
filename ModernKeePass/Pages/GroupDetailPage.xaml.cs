@@ -1,19 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Background;
-using Windows.Data.Xml.Dom;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
-using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.QueryStringDotNET;
-using Microsoft.Toolkit.Uwp.Notifications;
 using ModernKeePass.Common;
-using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229

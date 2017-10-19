@@ -1,8 +1,8 @@
 ﻿using System;
+using Windows.Data.Json;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
-using Microsoft.QueryStringDotNET;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Common
@@ -69,12 +69,13 @@ namespace ModernKeePass.Common
             toastElements[0].AppendChild(notificationXml.CreateTextNode($"{entityType} {entity.Name} deleted"));
             toastElements[1].AppendChild(notificationXml.CreateTextNode("Click me to undo"));
             var toastNode = notificationXml.SelectSingleNode("/toast");
-            ((XmlElement)toastNode)?.SetAttribute("launch", new QueryString
-                {
-                    { "entityType", entityType },
-                    { "entityId", entity.Id }
 
-                }.ToString());
+            var launch = new JsonObject
+            {
+                {"entityType", JsonValue.CreateStringValue(entityType)},
+                {"entityId", JsonValue.CreateStringValue(entity.Id)}
+            };
+            ((XmlElement)toastNode)?.SetAttribute("launch", launch.Stringify());
 
             var toast = new ToastNotification(notificationXml)
             {
@@ -87,10 +88,11 @@ namespace ModernKeePass.Common
         private static void Toast_Dismissed(ToastNotification sender, ToastDismissedEventArgs args)
         {
             var toastNode = sender.Content.SelectSingleNode("/toast");
-            var launchArguments = QueryString.Parse(((XmlElement)toastNode)?.GetAttribute("launch"));
+            if (toastNode == null) return;
+            var launchArguments = JsonObject.Parse(((XmlElement)toastNode).GetAttribute("launch"));
             var app = (App)Application.Current;
-            var entity = app.PendingDeleteEntities[launchArguments["entityId"]];
-            app.PendingDeleteEntities.Remove(launchArguments["entityId"]);
+            var entity = app.PendingDeleteEntities[launchArguments["entityId"].GetString()];
+            app.PendingDeleteEntities.Remove(launchArguments["entityId"].GetString());
             entity.CommitDelete();
         }
     }
