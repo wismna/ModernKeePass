@@ -8,7 +8,7 @@
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">About</TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}">ModernKeePass version 1.4</TextBlock>
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding }" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">A modern password manager for the Windows Store</TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">Homepage: <Hyperlink NavigateUri="https://github.com/wismna/ModernKeePass">https://github.com/wismna/ModernKeePass</Hyperlink></TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}">Credits:</TextBlock>
