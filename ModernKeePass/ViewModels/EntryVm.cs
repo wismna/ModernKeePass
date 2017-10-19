@@ -7,6 +7,7 @@ using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
 using System;
 using Windows.UI.Xaml;
+using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePass.ViewModels
 {
@@ -18,7 +19,8 @@ namespace ModernKeePass.ViewModels
         public System.Drawing.Color? BackgroundColor => Entry?.BackgroundColor;
         public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
-
+        public bool HasExpired => HasExpirationDate && Entry.ExpiryTime < DateTime.Now;
+        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
 
         public double PasswordLength { get; set; } = 25;
         public bool UpperCasePatternSelected { get; set; } = true;
@@ -55,6 +57,7 @@ namespace ModernKeePass.ViewModels
             {
                 SetEntryValue(PwDefs.PasswordField, value);
                 NotifyPropertyChanged("Password");
+                NotifyPropertyChanged("PasswordComplexityIndicator");
             }
         }
         public string Url
@@ -118,11 +121,7 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("HasExpirationDate");
             }
         }
-        public bool HasExpired
-        {
-            get { return HasExpirationDate && Entry.ExpiryTime < DateTime.Now; }
-        }
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _isEditMode;
@@ -167,6 +166,7 @@ namespace ModernKeePass.ViewModels
             Entry?.Strings.Set(PwDefs.PasswordField, password);
             NotifyPropertyChanged("Password");
             NotifyPropertyChanged("IsRevealPasswordEnabled");
+            NotifyPropertyChanged("PasswordComplexityIndicator");
         }
 
         private string GetEntryValue(string key)
