@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Security;
 using System.Drawing;
@@ -58,13 +60,17 @@ namespace ModernKeePassLib.Serialization
 			DeletedObject,
 			Group,
 			GroupTimes,
+			GroupCustomData,
+			GroupCustomDataItem,
 			Entry,
 			EntryTimes,
 			EntryString,
 			EntryBinary,
 			EntryAutoType,
 			EntryAutoTypeItem,
-			EntryHistory
+			EntryHistory,
+			EntryCustomData,
+			EntryCustomDataItem
 		}
 
 		private bool m_bReadNextNode = true;
@@ -84,10 +90,14 @@ namespace ModernKeePassLib.Serialization
 		private byte[] m_pbCustomIconData = null;
 		private string m_strCustomDataKey = null;
 		private string m_strCustomDataValue = null;
+		private string m_strGroupCustomDataKey = null;
+		private string m_strGroupCustomDataValue = null;
+		private string m_strEntryCustomDataKey = null;
+		private string m_strEntryCustomDataValue = null;
 
-		private void ReadXmlStreamed(Stream readerStream, Stream sParentStream)
+		private void ReadXmlStreamed(Stream sXml, Stream sParent)
 		{
-			ReadDocumentStreamed(CreateXmlReader(readerStream), sParentStream);
+			ReadDocumentStreamed(CreateXmlReader(sXml), sParent);
 		}
 
 		internal static XmlReaderSettings CreateStdXmlReaderSettings()
@@ -125,7 +135,6 @@ namespace ModernKeePassLib.Serialization
 			if(xr == null) throw new ArgumentNullException("xr");
 
 			m_ctxGroups.Clear();
-			m_dictBinPool = new Dictionary<string, ProtectedBinary>();
 
 			KdbContext ctx = KdbContext.Null;
 
@@ -216,15 +225,25 @@ namespace ModernKeePassLib.Serialization
 						ReadString(xr); // Ignore
 					else if(xr.Name == ElemHeaderHash)
 					{
+						// The header hash is typically only stored in
+						// KDBX <= 3.1 files, not in KDBX >= 4 files
+						// (here, the header is verified via a HMAC),
+						// but we also support it for KDBX >= 4 files
+						// (i.e. if it's present, we check it)
+
 						string strHash = ReadString(xr);
 						if(!string.IsNullOrEmpty(strHash) && (m_pbHashOfHeader != null) &&
 							!m_bRepairMode)
 						{
+							Debug.Assert(m_uFileVersion < FileVersion32_4);
+
 							byte[] pbHash = Convert.FromBase64String(strHash);
 							if(!MemUtil.ArraysEqual(pbHash, m_pbHashOfHeader))
-								throw new IOException(KLRes.FileCorrupted);
+								throw new InvalidDataException(KLRes.FileCorrupted);
 						}
 					}
+					else if(xr.Name == ElemSettingsChanged)
+						m_pwDatabase.SettingsChanged = ReadTime(xr);
 					else if(xr.Name == ElemDbName)
 						m_pwDatabase.Name = ReadString(xr);
 					else if(xr.Name == ElemDbNameChanged)
@@ -251,6 +270,8 @@ namespace ModernKeePassLib.Serialization
 						m_pwDatabase.MasterKeyChangeRec = ReadLong(xr, -1);
 					else if(xr.Name == ElemDbKeyChangeForce)
 						m_pwDatabase.MasterKeyChangeForce = ReadLong(xr, -1);
+					else if(xr.Name == ElemDbKeyChangeForceOnce)
+						m_pwDatabase.MasterKeyChangeForceOnce = ReadBool(xr, false);
 					else if(xr.Name == ElemMemoryProt)
 						return SwitchContext(ctx, KdbContext.MemoryProtection, xr);
 					else if(xr.Name == ElemCustomIcons)
@@ -323,7 +344,14 @@ namespace ModernKeePassLib.Serialization
 							string strKey = xr.Value;
 							ProtectedBinary pbData = ReadProtectedBinary(xr);
 
-							m_dictBinPool[strKey ?? string.Empty] = pbData;
+							int iKey;
+							if(!StrUtil.TryParseIntInvariant(strKey, out iKey))
+								throw new FormatException();
+							if(iKey < 0) throw new FormatException();
+
+							Debug.Assert(m_pbsBinaries.Get(iKey) == null);
+							Debug.Assert(m_pbsBinaries.Find(pbData) < 0);
+							m_pbsBinaries.Set(iKey, pbData);
 						}
 						else ReadUnknown(xr);
 					}
@@ -369,7 +397,7 @@ namespace ModernKeePassLib.Serialization
 					else if(xr.Name == ElemNotes)
 						m_ctxGroup.Notes = ReadString(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxGroup.IconId = (PwIcon)ReadInt(xr, (int)PwIcon.Folder);
+						m_ctxGroup.IconId = ReadIconId(xr, PwIcon.Folder);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxGroup.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemTimes)
@@ -384,6 +412,8 @@ namespace ModernKeePassLib.Serialization
 						m_ctxGroup.EnableSearching = StrUtil.StringToBoolEx(ReadString(xr));
 					else if(xr.Name == ElemLastTopVisibleEntry)
 						m_ctxGroup.LastTopVisibleEntry = ReadUuid(xr);
+					else if(xr.Name == ElemCustomData)
+						return SwitchContext(ctx, KdbContext.GroupCustomData, xr);
 					else if(xr.Name == ElemGroup)
 					{
 						m_ctxGroup = new PwGroup(false, false);
@@ -404,11 +434,25 @@ namespace ModernKeePassLib.Serialization
 					else ReadUnknown(xr);
 					break;
 
+				case KdbContext.GroupCustomData:
+					if(xr.Name == ElemStringDictExItem)
+						return SwitchContext(ctx, KdbContext.GroupCustomDataItem, xr);
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.GroupCustomDataItem:
+					if(xr.Name == ElemKey)
+						m_strGroupCustomDataKey = ReadString(xr);
+					else if(xr.Name == ElemValue)
+						m_strGroupCustomDataValue = ReadString(xr);
+					else ReadUnknown(xr);
+					break;
+
 				case KdbContext.Entry:
 					if(xr.Name == ElemUuid)
 						m_ctxEntry.Uuid = ReadUuid(xr);
 					else if(xr.Name == ElemIcon)
-						m_ctxEntry.IconId = (PwIcon)ReadInt(xr, (int)PwIcon.Key);
+						m_ctxEntry.IconId = ReadIconId(xr, PwIcon.Key);
 					else if(xr.Name == ElemCustomIconID)
 						m_ctxEntry.CustomIconUuid = ReadUuid(xr);
 					else if(xr.Name == ElemFgColor)
@@ -435,6 +479,8 @@ namespace ModernKeePassLib.Serialization
 						return SwitchContext(ctx, KdbContext.EntryBinary, xr);
 					else if(xr.Name == ElemAutoType)
 						return SwitchContext(ctx, KdbContext.EntryAutoType, xr);
+					else if(xr.Name == ElemCustomData)
+						return SwitchContext(ctx, KdbContext.EntryCustomData, xr);
 					else if(xr.Name == ElemHistory)
 					{
 						Debug.Assert(m_bEntryInHistory == false);
@@ -506,6 +552,20 @@ namespace ModernKeePassLib.Serialization
 						m_ctxATName = ReadString(xr);
 					else if(xr.Name == ElemKeystrokeSequence)
 						m_ctxATSeq = ReadString(xr);
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.EntryCustomData:
+					if(xr.Name == ElemStringDictExItem)
+						return SwitchContext(ctx, KdbContext.EntryCustomDataItem, xr);
+					else ReadUnknown(xr);
+					break;
+
+				case KdbContext.EntryCustomDataItem:
+					if(xr.Name == ElemKey)
+						m_strEntryCustomDataKey = ReadString(xr);
+					else if(xr.Name == ElemValue)
+						m_strEntryCustomDataValue = ReadString(xr);
 					else ReadUnknown(xr);
 					break;
 
@@ -610,6 +670,19 @@ namespace ModernKeePassLib.Serialization
 			}
 			else if((ctx == KdbContext.GroupTimes) && (xr.Name == ElemTimes))
 				return KdbContext.Group;
+			else if((ctx == KdbContext.GroupCustomData) && (xr.Name == ElemCustomData))
+				return KdbContext.Group;
+			else if((ctx == KdbContext.GroupCustomDataItem) && (xr.Name == ElemStringDictExItem))
+			{
+				if((m_strGroupCustomDataKey != null) && (m_strGroupCustomDataValue != null))
+					m_ctxGroup.CustomData.Set(m_strGroupCustomDataKey, m_strGroupCustomDataValue);
+				else { Debug.Assert(false); }
+
+				m_strGroupCustomDataKey = null;
+				m_strGroupCustomDataValue = null;
+
+				return KdbContext.GroupCustomData;
+			}
 			else if((ctx == KdbContext.Entry) && (xr.Name == ElemEntry))
 			{
 				// Create new UUID if absent
@@ -660,6 +733,19 @@ namespace ModernKeePassLib.Serialization
 				m_ctxATSeq = null;
 				return KdbContext.EntryAutoType;
 			}
+			else if((ctx == KdbContext.EntryCustomData) && (xr.Name == ElemCustomData))
+				return KdbContext.Entry;
+			else if((ctx == KdbContext.EntryCustomDataItem) && (xr.Name == ElemStringDictExItem))
+			{
+				if((m_strEntryCustomDataKey != null) && (m_strEntryCustomDataValue != null))
+					m_ctxEntry.CustomData.Set(m_strEntryCustomDataKey, m_strEntryCustomDataValue);
+				else { Debug.Assert(false); }
+
+				m_strEntryCustomDataKey = null;
+				m_strEntryCustomDataValue = null;
+
+				return KdbContext.EntryCustomData;
+			}
 			else if((ctx == KdbContext.EntryHistory) && (xr.Name == ElemHistory))
 			{
 				m_bEntryInHistory = false;
@@ -707,6 +793,55 @@ namespace ModernKeePassLib.Serialization
 #endif
 		}
 
+		private byte[] ReadBase64(XmlReader xr, bool bRaw)
+		{
+			// if(bRaw) return ReadBase64RawInChunks(xr);
+
+			string str = (bRaw ? ReadStringRaw(xr) : ReadString(xr));
+			if(string.IsNullOrEmpty(str)) return MemUtil.EmptyByteArray;
+
+			return Convert.FromBase64String(str);
+		}
+
+		/* private byte[] m_pbBase64ReadBuf = new byte[1024 * 1024 * 3];
+		private byte[] ReadBase64RawInChunks(XmlReader xr)
+		{
+			xr.MoveToContent();
+
+			List<byte[]> lParts = new List<byte[]>();
+			byte[] pbBuf = m_pbBase64ReadBuf;
+			while(true)
+			{
+				int cb = xr.ReadElementContentAsBase64(pbBuf, 0, pbBuf.Length);
+				if(cb == 0) break;
+
+				byte[] pb = new byte[cb];
+				Array.Copy(pbBuf, 0, pb, 0, cb);
+				lParts.Add(pb);
+
+				// No break when cb < pbBuf.Length, because ReadElementContentAsBase64
+				// moves to the next XML node only when returning 0
+			}
+			m_bReadNextNode = false;
+
+			if(lParts.Count == 0) return MemUtil.EmptyByteArray;
+			if(lParts.Count == 1) return lParts[0];
+
+			long cbRes = 0;
+			for(int i = 0; i < lParts.Count; ++i)
+				cbRes += lParts[i].Length;
+
+			byte[] pbRes = new byte[cbRes];
+			int cbCur = 0;
+			for(int i = 0; i < lParts.Count; ++i)
+			{
+				Array.Copy(lParts[i], 0, pbRes, cbCur, lParts[i].Length);
+				cbCur += lParts[i].Length;
+			}
+
+			return pbRes;
+		} */
+
 		private bool ReadBool(XmlReader xr, bool bDefault)
 		{
 			string str = ReadString(xr);
@@ -719,9 +854,9 @@ namespace ModernKeePassLib.Serialization
 
 		private PwUuid ReadUuid(XmlReader xr)
 		{
-			string str = ReadString(xr);
-			if(string.IsNullOrEmpty(str)) return PwUuid.Zero;
-			return new PwUuid(Convert.FromBase64String(str));
+			byte[] pb = ReadBase64(xr, false);
+			if(pb.Length == 0) return PwUuid.Zero;
+			return new PwUuid(pb);
 		}
 
 		private int ReadInt(XmlReader xr, int nDefault)
@@ -782,13 +917,42 @@ namespace ModernKeePassLib.Serialization
 
 		private DateTime ReadTime(XmlReader xr)
 		{
-			string str = ReadString(xr);
+			// Cf. WriteObject(string, DateTime)
+			if((m_format == KdbxFormat.Default) && (m_uFileVersion >= FileVersion32_4))
+			{
+				// long l = ReadLong(xr, -1);
+				// if(l != -1) return DateTime.FromBinary(l);
 
-			DateTime dt;
-			if(TimeUtil.TryDeserializeUtc(str, out dt)) return dt;
+				byte[] pb = ReadBase64(xr, false);
+				if(pb.Length != 8)
+				{
+					Debug.Assert(false);
+					byte[] pb8 = new byte[8];
+					Array.Copy(pb, pb8, Math.Min(pb.Length, 8)); // Little-endian
+					pb = pb8;
+				}
+				long lSec = MemUtil.BytesToInt64(pb);
+				return new DateTime(lSec * TimeSpan.TicksPerSecond, DateTimeKind.Utc);
+			}
+			else
+			{
+				string str = ReadString(xr);
+
+				DateTime dt;
+				if(TimeUtil.TryDeserializeUtc(str, out dt)) return dt;
+			}
 
 			Debug.Assert(false);
 			return m_dtNow;
+		}
+
+		private PwIcon ReadIconId(XmlReader xr, PwIcon icDefault)
+		{
+			int i = ReadInt(xr, (int)icDefault);
+			if((i >= 0) && (i < (int)PwIcon.Count)) return (PwIcon)i;
+
+			Debug.Assert(false);
+			return icDefault;
 		}
 
 		private ProtectedString ReadProtectedString(XmlReader xr)
@@ -815,10 +979,27 @@ namespace ModernKeePassLib.Serialization
 			if(xr.MoveToAttribute(AttrRef))
 			{
 				string strRef = xr.Value;
-				if(strRef != null)
+				if(!string.IsNullOrEmpty(strRef))
 				{
-					ProtectedBinary pb = BinPoolGet(strRef);
-					if(pb != null) return pb;
+					int iRef;
+					if(StrUtil.TryParseIntInvariant(strRef, out iRef))
+					{
+						ProtectedBinary pb = m_pbsBinaries.Get(iRef);
+						if(pb != null)
+						{
+							// https://sourceforge.net/p/keepass/feature-requests/2023/
+							xr.MoveToElement();
+#if DEBUG
+							string strInner = ReadStringRaw(xr);
+							Debug.Assert(string.IsNullOrEmpty(strInner));
+#else
+							ReadStringRaw(xr);
+#endif
+
+							return pb;
+						}
+						else { Debug.Assert(false); }
+					}
 					else { Debug.Assert(false); }
 				}
 				else { Debug.Assert(false); }
@@ -835,10 +1016,9 @@ namespace ModernKeePassLib.Serialization
 				return new ProtectedBinary(true, xb);
 			}
 
-			string strValue = ReadString(xr);
-			if(strValue.Length == 0) return new ProtectedBinary();
+			byte[] pbData = ReadBase64(xr, true);
+			if(pbData.Length == 0) return new ProtectedBinary();
 
-			byte[] pbData = Convert.FromBase64String(strValue);
 			if(bCompressed) pbData = MemUtil.Decompress(pbData);
 			return new ProtectedBinary(false, pbData);
 		}
@@ -875,13 +1055,8 @@ namespace ModernKeePassLib.Serialization
 					if(xr.Value == ValTrue)
 					{
 						xr.MoveToElement();
-						string strEncrypted = ReadStringRaw(xr);
 
-						byte[] pbEncrypted;
-						if(strEncrypted.Length > 0)
-							pbEncrypted = Convert.FromBase64String(strEncrypted);
-						else pbEncrypted = new byte[0];
-
+						byte[] pbEncrypted = ReadBase64(xr, true);
 						byte[] pbPad = m_randomStream.GetRandomBytes((uint)pbEncrypted.Length);
 
 						xb = new XorredBuffer(pbEncrypted, pbPad);

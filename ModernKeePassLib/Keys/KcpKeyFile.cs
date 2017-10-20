@@ -138,18 +138,7 @@ namespace ModernKeePassLib.Keys
 			else if(iLength == 64) pbKey = LoadHexKey32(pbFileData);
 
 			if(pbKey == null)
-			{
-#if ModernKeePassLib
-                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				pbKey = sha256.HashData(pbFileData);*/
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbFileData));
-                CryptographicBuffer.CopyToByteArray(buffer, out pbKey);
-#else
-				SHA256Managed sha256 = new SHA256Managed();
-				pbKey = sha256.ComputeHash(pbFileData);
-#endif
-            }
+				pbKey = CryptoUtil.HashSha256(pbFileData);
 
 			return pbKey;
 		}
@@ -169,12 +158,15 @@ namespace ModernKeePassLib.Keys
 
 			try
 			{
-				string strHex = StrUtil.Utf8.GetString(pbFileData, 0, 64);
-				if(!StrUtil.IsHexString(strHex, true)) return null;
+				if(!StrUtil.IsHexString(pbFileData, true)) return null;
 
+				string strHex = StrUtil.Utf8.GetString(pbFileData, 0, pbFileData.Length);
 				byte[] pbKey = MemUtil.HexStringToByteArray(strHex);
 				if((pbKey == null) || (pbKey.Length != 32))
+				{
+					Debug.Assert(false);
 					return null;
+				}
 
 				return pbKey;
 			}
@@ -202,21 +194,13 @@ namespace ModernKeePassLib.Keys
 				pbFinalKey32 = pbKey32;
 			else
 			{
-				MemoryStream ms = new MemoryStream();
-				ms.Write(pbAdditionalEntropy, 0, pbAdditionalEntropy.Length);
-				ms.Write(pbKey32, 0, 32);
+				using(MemoryStream ms = new MemoryStream())
+				{
+					MemUtil.Write(ms, pbAdditionalEntropy);
+					MemUtil.Write(ms, pbKey32);
 
-#if ModernKeePassLib
-                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				pbFinalKey32 = sha256.HashData(ms.ToArray());*/
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
-                CryptographicBuffer.CopyToByteArray(buffer, out pbFinalKey32);
-#else
-				SHA256Managed sha256 = new SHA256Managed();
-				pbFinalKey32 = sha256.ComputeHash(ms.ToArray());
-#endif
-                ms.Dispose();
+					pbFinalKey32 = CryptoUtil.HashSha256(ms.ToArray());
+				}
 			}
 
 			CreateXmlKeyFile(strFilePath, pbFinalKey32);
@@ -318,11 +302,14 @@ namespace ModernKeePassLib.Keys
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
-			var sOut = IOConnection.OpenWrite(ioc);
+			Stream sOut = IOConnection.OpenWrite(ioc);
 
 #if ModernKeePassLib
-			var settings = new XmlWriterSettings() { Encoding = StrUtil.Utf8 };
-			var xtw = XmlWriter.Create(sOut, settings);
+			XmlWriterSettings xws = new XmlWriterSettings();
+			xws.Encoding = StrUtil.Utf8;
+			xws.Indent = false;
+
+			XmlWriter xtw = XmlWriter.Create(sOut, xws);
 #else
 			XmlTextWriter xtw = new XmlTextWriter(sOut, StrUtil.Utf8);
 #endif

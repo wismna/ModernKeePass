@@ -24,7 +24,9 @@ using System.Text;
 using System.Globalization;
 using System.IO;
 using System.Diagnostics;
-
+using System.Security;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 #if !KeePassLibSD
 using System.IO.Compression;
 #endif
@@ -36,8 +38,11 @@ using Windows.Storage;
 
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
+using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 
@@ -82,7 +87,10 @@ namespace ModernKeePassLib.Serialization
 		/// The first 2 bytes are critical (i.e. loading will fail, if the
 		/// file version is too high), the last 2 bytes are informational.
 		/// </summary>
-		private const uint FileVersion32 = 0x00030001;
+		private const uint FileVersion32 = 0x00040000;
+
+		internal const uint FileVersion32_4 = 0x00040000; // First of 4.x series
+		internal const uint FileVersion32_3 = 0x00030001; // Old format 3.1
 
 		private const uint FileVersionCriticalMask = 0xFFFF0000;
 
@@ -101,6 +109,7 @@ namespace ModernKeePassLib.Serialization
 
 		private const string ElemGenerator = "Generator";
 		private const string ElemHeaderHash = "HeaderHash";
+		private const string ElemSettingsChanged = "SettingsChanged";
 		private const string ElemDbName = "DatabaseName";
 		private const string ElemDbNameChanged = "DatabaseNameChanged";
 		private const string ElemDbDesc = "DatabaseDescription";
@@ -112,6 +121,7 @@ namespace ModernKeePassLib.Serialization
 		private const string ElemDbKeyChanged = "MasterKeyChanged";
 		private const string ElemDbKeyChangeRec = "MasterKeyChangeRec";
 		private const string ElemDbKeyChangeForce = "MasterKeyChangeForce";
+		private const string ElemDbKeyChangeForceOnce = "MasterKeyChangeForceOnce";
 		private const string ElemRecycleBinEnabled = "RecycleBinEnabled";
 		private const string ElemRecycleBinUuid = "RecycleBinUUID";
 		private const string ElemRecycleBinChanged = "RecycleBinChanged";
@@ -195,6 +205,7 @@ namespace ModernKeePassLib.Serialization
 		private const string ElemStringDictExItem = "Item";
 
 		private PwDatabase m_pwDatabase; // Not null, see constructor
+		private bool m_bUsedOnce = false;
 
 #if ModernKeePassLib
 		private XmlWriter m_xmlWriter = null;
@@ -205,23 +216,23 @@ namespace ModernKeePassLib.Serialization
 		private KdbxFormat m_format = KdbxFormat.Default;
 		private IStatusLogger m_slLogger = null;
 
+		private uint m_uFileVersion = 0;
 		private byte[] m_pbMasterSeed = null;
-		private byte[] m_pbTransformSeed = null;
+		// private byte[] m_pbTransformSeed = null;
 		private byte[] m_pbEncryptionIV = null;
-		private byte[] m_pbProtectedStreamKey = null;
 		private byte[] m_pbStreamStartBytes = null;
 
-		// ArcFourVariant only for compatibility; KeePass will default to a
-		// different (more secure) algorithm when *writing* databases
+		// ArcFourVariant only for backward compatibility; KeePass defaults
+		// to a more secure algorithm when *writing* databases
 		private CrsAlgorithm m_craInnerRandomStream = CrsAlgorithm.ArcFourVariant;
+		private byte[] m_pbInnerRandomStreamKey = null;
 
-		private Dictionary<string, ProtectedBinary> m_dictBinPool =
-			new Dictionary<string, ProtectedBinary>();
+		private ProtectedBinarySet m_pbsBinaries = new ProtectedBinarySet();
 
 		private byte[] m_pbHashOfHeader = null;
 		private byte[] m_pbHashOfFileOnDisk = null;
 
-		private readonly DateTime m_dtNow = DateTime.Now; // Cache current time
+		private readonly DateTime m_dtNow = DateTime.UtcNow; // Cache current time
 
 		private const uint NeutralLanguageOffset = 0x100000; // 2^20, see 32-bit Unicode specs
 		private const uint NeutralLanguageIDSec = 0x7DC5C; // See 32-bit Unicode specs
@@ -235,12 +246,30 @@ namespace ModernKeePassLib.Serialization
 			CipherID = 2,
 			CompressionFlags = 3,
 			MasterSeed = 4,
-			TransformSeed = 5,
-			TransformRounds = 6,
+			TransformSeed = 5, // KDBX 3.1, for backward compatibility only
+			TransformRounds = 6, // KDBX 3.1, for backward compatibility only
 			EncryptionIV = 7,
-			ProtectedStreamKey = 8,
-			StreamStartBytes = 9,
-			InnerRandomStreamID = 10
+			InnerRandomStreamKey = 8, // KDBX 3.1, for backward compatibility only
+			StreamStartBytes = 9, // KDBX 3.1, for backward compatibility only
+			InnerRandomStreamID = 10, // KDBX 3.1, for backward compatibility only
+			KdfParameters = 11, // KDBX 4, superseding Transform*
+			PublicCustomData = 12 // KDBX 4
+		}
+
+		// Inner header in KDBX >= 4 files
+		private enum KdbxInnerHeaderFieldID : byte
+		{
+			EndOfHeader = 0,
+			InnerRandomStreamID = 1, // Supersedes KdbxHeaderFieldID.InnerRandomStreamID
+			InnerRandomStreamKey = 2, // Supersedes KdbxHeaderFieldID.InnerRandomStreamKey
+			Binary = 3
+		}
+
+		[Flags]
+		private enum KdbxBinaryFlags : byte
+		{
+			None = 0,
+			Protected = 1
 		}
 
 		public byte[] HashOfFileOnDisk
@@ -253,6 +282,13 @@ namespace ModernKeePassLib.Serialization
 		{
 			get { return m_bRepairMode; }
 			set { m_bRepairMode = value; }
+		}
+
+		private uint m_uForceVersion = 0;
+		internal uint ForceVersion
+		{
+			get { return m_uForceVersion; }
+			set { m_uForceVersion = value; }
 		}
 
 		private string m_strDetachBins = null;
@@ -299,64 +335,173 @@ namespace ModernKeePassLib.Serialization
 			}
 		}
 
-		private void BinPoolBuild(PwGroup pgDataSource)
+		private uint GetMinKdbxVersion()
 		{
-			m_dictBinPool = new Dictionary<string, ProtectedBinary>();
+			if(m_uForceVersion != 0) return m_uForceVersion;
 
-			if(pgDataSource == null) { Debug.Assert(false); return; }
+			// See also KeePassKdb2x3.Export (KDBX 3.1 export module)
 
-			EntryHandler eh = delegate(PwEntry pe)
+			AesKdf kdfAes = new AesKdf();
+			if(!kdfAes.Uuid.Equals(m_pwDatabase.KdfParameters.KdfUuid))
+				return FileVersion32;
+
+			if(m_pwDatabase.PublicCustomData.Count > 0)
+				return FileVersion32;
+
+			bool bCustomData = false;
+			GroupHandler gh = delegate(PwGroup pg)
 			{
-				foreach(PwEntry peHistory in pe.History)
-				{
-					BinPoolAdd(peHistory.Binaries);
-				}
-
-				BinPoolAdd(pe.Binaries);
+				if(pg == null) { Debug.Assert(false); return true; }
+				if(pg.CustomData.Count > 0) { bCustomData = true; return false; }
 				return true;
 			};
-
-			pgDataSource.TraverseTree(TraversalMethod.PreOrder, null, eh);
-		}
-
-		private void BinPoolAdd(ProtectedBinaryDictionary dict)
-		{
-			foreach(KeyValuePair<string, ProtectedBinary> kvp in dict)
+			EntryHandler eh = delegate(PwEntry pe)
 			{
-				BinPoolAdd(kvp.Value);
-			}
+				if(pe == null) { Debug.Assert(false); return true; }
+				if(pe.CustomData.Count > 0) { bCustomData = true; return false; }
+				return true;
+			};
+			gh(m_pwDatabase.RootGroup);
+			m_pwDatabase.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+			if(bCustomData) return FileVersion32;
+
+			return FileVersion32_3; // KDBX 3.1 is sufficient
 		}
 
-		private void BinPoolAdd(ProtectedBinary pb)
+		private void ComputeKeys(out byte[] pbCipherKey, int cbCipherKey,
+			out byte[] pbHmacKey64)
 		{
-			if(pb == null) { Debug.Assert(false); return; }
-
-			if(BinPoolFind(pb) != null) return; // Exists already
-
-			m_dictBinPool.Add(m_dictBinPool.Count.ToString(
-				NumberFormatInfo.InvariantInfo), pb);
-		}
-
-		private string BinPoolFind(ProtectedBinary pb)
-		{
-			if(pb == null) { Debug.Assert(false); return null; }
-
-			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_dictBinPool)
+			byte[] pbCmp = new byte[32 + 32 + 1];
+			try
 			{
-				if(pb.Equals(kvp.Value)) return kvp.Key;
-			}
+				Debug.Assert(m_pbMasterSeed != null);
+				if(m_pbMasterSeed == null)
+					throw new ArgumentNullException("m_pbMasterSeed");
+				Debug.Assert(m_pbMasterSeed.Length == 32);
+				if(m_pbMasterSeed.Length != 32)
+					throw new FormatException(KLRes.MasterSeedLengthInvalid);
+				Array.Copy(m_pbMasterSeed, 0, pbCmp, 0, 32);
 
-			return null;
+				Debug.Assert(m_pwDatabase != null);
+				Debug.Assert(m_pwDatabase.MasterKey != null);
+				ProtectedBinary pbinUser = m_pwDatabase.MasterKey.GenerateKey32(
+					m_pwDatabase.KdfParameters);
+				Debug.Assert(pbinUser != null);
+				if(pbinUser == null)
+					throw new SecurityException(KLRes.InvalidCompositeKey);
+				byte[] pUserKey32 = pbinUser.ReadData();
+				if((pUserKey32 == null) || (pUserKey32.Length != 32))
+					throw new SecurityException(KLRes.InvalidCompositeKey);
+				Array.Copy(pUserKey32, 0, pbCmp, 32, 32);
+				MemUtil.ZeroByteArray(pUserKey32);
+
+				pbCipherKey = CryptoUtil.ResizeKey(pbCmp, 0, 64, cbCipherKey);
+
+				pbCmp[64] = 1;
+#if ModernKeePassLib
+			    var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+			    var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
+			    CryptographicBuffer.CopyToByteArray(buffer, out pbHmacKey64);
+#else
+                using(SHA512Managed h = new SHA512Managed())
+				{
+					pbHmacKey64 = h.ComputeHash(pbCmp);
+				}
+#endif
+            }
+			finally { MemUtil.ZeroByteArray(pbCmp); }
 		}
 
-		private ProtectedBinary BinPoolGet(string strKey)
+		private ICipherEngine GetCipher(out int cbEncKey, out int cbEncIV)
 		{
-			if(strKey == null) { Debug.Assert(false); return null; }
+			PwUuid pu = m_pwDatabase.DataCipherUuid;
+			ICipherEngine iCipher = CipherPool.GlobalPool.GetCipher(pu);
+			if(iCipher == null) // CryptographicExceptions are translated to "file corrupted"
+				throw new Exception(KLRes.FileUnknownCipher +
+					Environment.NewLine + KLRes.FileNewVerOrPlgReq +
+					Environment.NewLine + "UUID: " + pu.ToHexString() + ".");
 
-			ProtectedBinary pb;
-			if(m_dictBinPool.TryGetValue(strKey, out pb)) return pb;
+			ICipherEngine2 iCipher2 = (iCipher as ICipherEngine2);
+			if(iCipher2 != null)
+			{
+				cbEncKey = iCipher2.KeyLength;
+				if(cbEncKey < 0) throw new InvalidOperationException("EncKey.Length");
 
-			return null;
+				cbEncIV = iCipher2.IVLength;
+				if(cbEncIV < 0) throw new InvalidOperationException("EncIV.Length");
+			}
+			else
+			{
+				cbEncKey = 32;
+				cbEncIV = 16;
+			}
+
+			return iCipher;
+		}
+
+		private Stream EncryptStream(Stream s, ICipherEngine iCipher,
+			byte[] pbKey, int cbIV, bool bEncrypt)
+		{
+			byte[] pbIV = (m_pbEncryptionIV ?? MemUtil.EmptyByteArray);
+			if(pbIV.Length != cbIV)
+			{
+				Debug.Assert(false);
+				throw new Exception(KLRes.FileCorrupted);
+			}
+
+			if(bEncrypt)
+				return iCipher.EncryptStream(s, pbKey, pbIV);
+			return iCipher.DecryptStream(s, pbKey, pbIV);
+		}
+
+		private byte[] ComputeHeaderHmac(byte[] pbHeader, byte[] pbKey)
+		{
+			byte[] pbHeaderHmac;
+			byte[] pbBlockKey = HmacBlockStream.GetHmacKey64(
+				pbKey, ulong.MaxValue);
+#if ModernKeePassLib
+            var h = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(CryptographicBuffer.CreateFromByteArray(pbHeader));
+		    CryptographicBuffer.CopyToByteArray(h.GetValueAndReset(), out pbHeaderHmac);
+#else
+            using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
+			{
+				pbHeaderHmac = h.ComputeHash(pbHeader);
+			}
+#endif
+            MemUtil.ZeroByteArray(pbBlockKey);
+
+			return pbHeaderHmac;
+		}
+
+		private void CloseStreams(List<Stream> lStreams)
+		{
+			if(lStreams == null) { Debug.Assert(false); return; }
+
+			// Typically, closing a stream also closes its base
+			// stream; however, there may be streams that do not
+			// do this (e.g. some cipher plugin), thus for safety
+			// we close all streams manually, from the innermost
+			// to the outermost
+
+			for(int i = lStreams.Count - 1; i >= 0; --i)
+			{
+				// Check for duplicates
+				Debug.Assert((lStreams.IndexOf(lStreams[i]) == i) &&
+					(lStreams.LastIndexOf(lStreams[i]) == i));
+
+				try { lStreams[i].Dispose(); }
+				catch(Exception) { Debug.Assert(false); }
+			}
+
+			// Do not clear the list
+		}
+
+		private void CleanUpInnerRandomStream()
+		{
+			if(m_randomStream != null) m_randomStream.Dispose();
+
+			if(m_pbInnerRandomStreamKey != null)
+				MemUtil.ZeroByteArray(m_pbInnerRandomStreamKey);
 		}
 
 		private static void SaveBinary(string strName, ProtectedBinary pb,
@@ -368,22 +513,22 @@ namespace ModernKeePassLib.Serialization
 
 			string strPath;
 			int iTry = 1;
-            do
-            {
-                strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
+			do
+			{
+				strPath = UrlUtil.EnsureTerminatingSeparator(strSaveDir, false);
 
-                string strExt = UrlUtil.GetExtension(strName);
-                string strDesc = UrlUtil.StripExtension(strName);
+				string strExt = UrlUtil.GetExtension(strName);
+				string strDesc = UrlUtil.StripExtension(strName);
 
-                strPath += strDesc;
-                if (iTry > 1)
-                    strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
-                        ")";
+				strPath += strDesc;
+				if(iTry > 1)
+					strPath += " (" + iTry.ToString(NumberFormatInfo.InvariantInfo) +
+						")";
 
-                if (!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
+				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 
-                ++iTry;
-            }
+              ++iTry;
+          }
 #if ModernKeePassLib
             //while(FileSystem.Current.GetFileFromPathAsync(strPath).Result != null);
             while (StorageFile.GetFileFromPathAsync(strPath).GetResults() != null);

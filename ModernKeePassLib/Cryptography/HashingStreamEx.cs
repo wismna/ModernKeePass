@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
@@ -29,7 +29,6 @@ using Org.BouncyCastle.Crypto.Digests;
 #else
 using System.Security.Cryptography;
 #endif
-using System.Diagnostics;
 using System.Runtime.InteropServices.ComTypes;
 using ModernKeePassLib.Utility;
 using Org.BouncyCastle.Crypto.Tls;
@@ -38,12 +37,12 @@ namespace ModernKeePassLib.Cryptography
 {
 	public sealed class HashingStreamEx : Stream
 	{
-		private Stream m_sBaseStream;
-		private bool m_bWriting;
-#if ModernKeePassLib
+		private readonly Stream m_sBaseStream;
+		private readonly bool m_bWriting;
+    #if ModernKeePassLib
         //private ICryptoTransform m_hash;
         //private CryptographicHash m_hash;
-	    private IDigest m_hash;
+        private IDigest m_hash;
 #else
 		private HashAlgorithm m_hash;
 #endif
@@ -78,7 +77,7 @@ namespace ModernKeePassLib.Cryptography
 		public override long Position
 		{
 			get { return m_sBaseStream.Position; }
-			set { throw new NotSupportedException(); }
+			set { Debug.Assert(false); throw new NotSupportedException(); }
 		}
 
 #if ModernKeePassLib
@@ -88,8 +87,7 @@ namespace ModernKeePassLib.Cryptography
 		public HashingStreamEx(Stream sBaseStream, bool bWriting, HashAlgorithm hashAlgorithm)
 #endif
         {
-			if(sBaseStream == null)
-                throw new ArgumentNullException("sBaseStream");
+            if (sBaseStream == null) throw new ArgumentNullException("sBaseStream");
 
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
@@ -107,53 +105,51 @@ namespace ModernKeePassLib.Cryptography
 			try { if(m_hash == null) m_hash = HashAlgorithm.Create(); }
 			catch(Exception) { }
 #endif
-            if (m_hash == null) { Debug.Assert(false); return; }
+			if(m_hash == null) { Debug.Assert(false); return; }
 
 			// Validate hash algorithm
-			/*if((!m_hash.CanReuseTransform) || (!m_hash.CanTransformMultipleBlocks) ||
-				(m_hash.InputBlockSize != 1) || (m_hash.OutputBlockSize != 1))
+			/*if(!m_hash.CanReuseTransform || !m_hash.CanTransformMultipleBlocks)
 			{
-#if false && DEBUG
-				MessageService.ShowWarning("Broken HashAlgorithm object in HashingStreamEx.");
-#endif
+				Debug.Assert(false);
 				m_hash = null;
 			}*/
 		}
 
-		public override void Flush()
-		{
-			m_sBaseStream.Flush();
-		}
-
 #if ModernKeePassLib || KeePassRT
-		protected override void Dispose(bool disposing)
-		{
-			if(!disposing) return;
+	    protected override void Dispose(bool disposing)
+	    {
+	        if (!disposing) return;
 #else
 		public override void Close()
 		{
 #endif
-			if(m_hash != null)
-			{
-				try
-				{
-                    //m_hash.TransformFinalBlock(new byte[0], 0, 0);
+	        if (m_hash != null)
+	        {
+	            try
+	            {
+	                //m_hash.TransformFinalBlock(new byte[0], 0, 0);
 #if ModernKeePassLib
-                    //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
-                    //CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
-				    m_pbFinalHash = new byte[32];
-                    m_hash.DoFinal(m_pbFinalHash, 0);
-                    m_hash.Reset();
+	                //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
+	                //CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
+	                m_pbFinalHash = new byte[32];
+	                m_hash.DoFinal(m_pbFinalHash, 0);
+	                m_hash.Reset();
 #else
 					m_pbFinalHash = m_hash.Hash;
 #endif
-                }
-				catch(Exception) { Debug.Assert(false); }
+	            }
+	            catch (Exception)
+	            {
+	                Debug.Assert(false);
+	            }
 
-				m_hash = null;
-			}
+	            base.Dispose(disposing);
+	        }
+	    }
 
-			m_sBaseStream.Dispose();
+	    public override void Flush()
+		{
+			m_sBaseStream.Flush();
 		}
 
 		public override long Seek(long lOffset, SeekOrigin soOrigin)
@@ -185,12 +181,11 @@ namespace ModernKeePassLib.Cryptography
 #endif
 
 			if((m_hash != null) && (nRead > 0))
-                //m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
-                //m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
-                m_hash.BlockUpdate(pbBuffer, nOffset, nRead);
+				//m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
+        m_hash.BlockUpdate(pbBuffer, nOffset, nRead);
 
 #if DEBUG
-            Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
+			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
 #endif
 
 			return nRead;
@@ -205,12 +200,12 @@ namespace ModernKeePassLib.Cryptography
 			Array.Copy(pbBuffer, pbOrg, pbBuffer.Length);
 #endif
 
-            if ((m_hash != null) && (nCount > 0))
-                //m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
-                //m_hash.Append(CryptographicBuffer.CreateFromByteArray(pbBuffer));
-                m_hash.BlockUpdate(pbBuffer, nOffset, nCount);
+			if((m_hash != null) && (nCount > 0))
+				//m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
+        m_hash.BlockUpdate(pbBuffer, nOffset, nCount);
+
 #if DEBUG
-            Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
+			Debug.Assert(MemUtil.ArraysEqual(pbBuffer, pbOrg));
 #endif
 
 			m_sBaseStream.Write(pbBuffer, nOffset, nCount);

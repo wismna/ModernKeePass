@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using System.Security.Cryptography;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePassLib.Keys
 {
@@ -60,18 +61,8 @@ namespace ModernKeePassLib.Keys
 
 			if(bPerformHash)
 			{
-#if ModernKeePassLib
-                /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-				var pbRaw = sha256.HashData(pbKeyData);*/
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbKeyData));
-                byte[] pbRaw;
-                CryptographicBuffer.CopyToByteArray(buffer, out pbRaw);
-#else
-				SHA256Managed sha256 = new SHA256Managed();
-				byte[] pbRaw = sha256.ComputeHash(pbKeyData);
-#endif
-                m_pbKey = new ProtectedBinary(true, pbRaw);
+				byte[] pbRaw = CryptoUtil.HashSha256(pbKeyData);
+				m_pbKey = new ProtectedBinary(true, pbRaw);
 			}
 			else m_pbKey = new ProtectedBinary(true, pbKeyData);
 		}

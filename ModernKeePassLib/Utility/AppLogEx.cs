@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -38,8 +38,7 @@ namespace ModernKeePassLib.Utility
 
 		public static void Open(string strPrefix)
 		{
-			return; // Logging is not enabled in normal builds of KeePass!
-
+			// Logging is not enabled in normal builds of KeePass!
 			/*
 			AppLogEx.Close();
 
@@ -58,7 +57,7 @@ namespace ModernKeePassLib.Utility
 				string strPath = strTemp + strPrefix + "-";
 				Debug.Assert(strPath.IndexOf('/') < 0);
 
-				DateTime dtNow = DateTime.Now;
+				DateTime dtNow = DateTime.UtcNow;
 				string strTime = dtNow.ToString("s");
 				strTime = strTime.Replace('T', '-');
 				strTime = strTime.Replace(':', '-');

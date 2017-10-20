@@ -125,34 +125,26 @@ namespace ModernKeePassLib.Serialization
 
 			public static LockFileInfo Load(IOConnectionInfo iocLockFile)
 			{
-				using (var s = IOConnection.OpenRead(iocLockFile))
+				Stream s = null;
 				try
 				{
+					s = IOConnection.OpenRead(iocLockFile);
 					if(s == null) return null;
-				    using (var sr = new StreamReader(s, StrUtil.Utf8))
-				    {
-				        string str = sr.ReadToEnd();
-				        if (str == null)
-				        {
-				            Debug.Assert(false);
-				        }
+					StreamReader sr = new StreamReader(s, StrUtil.Utf8);
+					string str = sr.ReadToEnd();
+					sr.Dispose();
+					if(str == null) { Debug.Assert(false); return null; }
 
-				        str = StrUtil.NormalizeNewLines(str, false);
-				        string[] v = str.Split('\n');
-				        if ((v == null) || (v.Length < 6))
-				        {
-				            Debug.Assert(false);
-				        }
+					str = StrUtil.NormalizeNewLines(str, false);
+					string[] v = str.Split('\n');
+					if((v == null) || (v.Length < 6)) { Debug.Assert(false); return null; }
 
-				        if (!v[0].StartsWith(LockFileHeader))
-				        {
-				            Debug.Assert(false);
-				        }
-				        return new LockFileInfo(v[1], v[2], v[3], v[4], v[5]);
-				    }
+					if(!v[0].StartsWith(LockFileHeader)) { Debug.Assert(false); return null; }
+					return new LockFileInfo(v[1], v[2], v[3], v[4], v[5]);
 				}
 				catch(FileNotFoundException) { }
 				catch(Exception) { Debug.Assert(false); }
+				finally { if(s != null) s.Dispose(); }
 
 				return null;
 			}
@@ -160,27 +152,48 @@ namespace ModernKeePassLib.Serialization
 			// Throws on error
 			public static LockFileInfo Create(IOConnectionInfo iocLockFile)
 			{
-			    byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
-				string strTime = TimeUtil.SerializeUtc(DateTime.Now);
-                    
-				var lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
-					string.Empty, string.Empty, string.Empty);
-
-				StringBuilder sb = new StringBuilder();
-
-				sb.AppendLine(LockFileHeader);
-				sb.AppendLine(lfi.ID);
-				sb.AppendLine(strTime);
-				sb.AppendLine(lfi.UserName);
-				sb.AppendLine(lfi.Machine);
-				sb.AppendLine(lfi.Domain);
-
-				using (var s = IOConnection.OpenWrite(iocLockFile))
+				LockFileInfo lfi;
+				Stream s = null;
+				try
 				{
+					byte[] pbID = CryptoRandom.Instance.GetRandomBytes(16);
+					string strTime = TimeUtil.SerializeUtc(DateTime.UtcNow);
+
+					lfi = new LockFileInfo(Convert.ToBase64String(pbID), strTime,
+#if KeePassUAP
+						EnvironmentExt.UserName, EnvironmentExt.MachineName,
+						EnvironmentExt.UserDomainName);
+#elif ModernKeePassLib|| KeePassLibSD
+						string.Empty, string.Empty, string.Empty);
+#else
+						Environment.UserName, Environment.MachineName,
+						Environment.UserDomainName);
+#endif
+
+					StringBuilder sb = new StringBuilder();
+#if !KeePassLibSD
+					sb.AppendLine(LockFileHeader);
+					sb.AppendLine(lfi.ID);
+					sb.AppendLine(strTime);
+					sb.AppendLine(lfi.UserName);
+					sb.AppendLine(lfi.Machine);
+					sb.AppendLine(lfi.Domain);
+#else
+					sb.Append(LockFileHeader + Environment.NewLine);
+					sb.Append(lfi.ID + Environment.NewLine);
+					sb.Append(strTime + Environment.NewLine);
+					sb.Append(lfi.UserName + Environment.NewLine);
+					sb.Append(lfi.Machine + Environment.NewLine);
+					sb.Append(lfi.Domain + Environment.NewLine);
+#endif
+
 					byte[] pbFile = StrUtil.Utf8.GetBytes(sb.ToString());
-				    if (s == null) throw new IOException(iocLockFile.GetDisplayName());
-				    s.WriteAsync(pbFile, 0, pbFile.Length).GetAwaiter().GetResult();
+
+					s = IOConnection.OpenWrite(iocLockFile);
+					if(s == null) throw new IOException(iocLockFile.GetDisplayName());
+					s.Write(pbFile, 0, pbFile.Length);
 				}
+				finally { if(s != null) s.Dispose(); }
 
 				return lfi;
 			}
@@ -241,8 +254,8 @@ namespace ModernKeePassLib.Serialization
 #endif
 			}
 
-			if(bDisposing && !bFileDeleted)
-				IOConnection.DeleteFile(m_iocLockFile); // Possibly with exception
+			// if(bDisposing && !bFileDeleted)
+			//	IOConnection.DeleteFile(m_iocLockFile); // Possibly with exception
 
 			m_iocLockFile = null;
 		}

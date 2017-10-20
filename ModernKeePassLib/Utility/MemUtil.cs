@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,14 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-#if !KeePassLibSD
-using System.IO.Compression;
-#else
+#if KeePassLibSD
 using KeePassLibSD;
+#else
+using System.IO.Compression;
 #endif
 
 namespace ModernKeePassLib.Utility
@@ -36,6 +37,8 @@ namespace ModernKeePassLib.Utility
 	/// </summary>
 	public static class MemUtil
 	{
+		internal static readonly byte[] EmptyByteArray = new byte[0];
+
 		private static readonly uint[] m_vSBox = new uint[256] {
 			0xCD2FACB3, 0xE78A7F5C, 0x6F0803FC, 0xBCF6E230,
 			0x3A321712, 0x06403DB1, 0xD2F84B95, 0xDF22A6E4,
@@ -253,66 +256,139 @@ namespace ModernKeePassLib.Utility
 			Debug.Assert(pbArray != null);
 			if(pbArray == null) throw new ArgumentNullException("pbArray");
 
-			// for(int i = 0; i < pbArray.Length; ++i)
-			//	pbArray[i] = 0;
-
 			Array.Clear(pbArray, 0, pbArray.Length);
 		}
 
 		/// <summary>
-		/// Convert 2 bytes to a 16-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Set all elements of an array to the default value.
 		/// </summary>
-		/// <param name="pb">Input bytes. Array must contain at least 2 bytes.</param>
-		/// <returns>16-bit unsigned integer.</returns>
+		/// <param name="v">Input array.</param>
+#if KeePassLibSD
+		[MethodImpl(MethodImplOptions.NoInlining)]
+#else
+		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
+#endif
+		public static void ZeroArray<T>(T[] v)
+		{
+			if(v == null) { Debug.Assert(false); throw new ArgumentNullException("v"); }
+
+			Array.Clear(v, 0, v.Length);
+		}
+
+		/// <summary>
+		/// Convert 2 bytes to a 16-bit unsigned integer (little-endian).
+		/// </summary>
 		public static ushort BytesToUInt16(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 2));
 			if(pb == null) throw new ArgumentNullException("pb");
-			if(pb.Length != 2) throw new ArgumentException();
+			if(pb.Length != 2) throw new ArgumentOutOfRangeException("pb");
 
 			return (ushort)((ushort)pb[0] | ((ushort)pb[1] << 8));
 		}
 
 		/// <summary>
-		/// Convert 4 bytes to a 32-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Convert 2 bytes to a 16-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="pb">Input bytes.</param>
-		/// <returns>32-bit unsigned integer.</returns>
+		public static ushort BytesToUInt16(byte[] pb, int iOffset)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+			if((iOffset < 0) || ((iOffset + 1) >= pb.Length))
+			{
+				Debug.Assert(false);
+				throw new ArgumentOutOfRangeException("iOffset");
+			}
+
+			return (ushort)((ushort)pb[iOffset] | ((ushort)pb[iOffset + 1] << 8));
+		}
+
+		/// <summary>
+		/// Convert 4 bytes to a 32-bit unsigned integer (little-endian).
+		/// </summary>
 		public static uint BytesToUInt32(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 4));
 			if(pb == null) throw new ArgumentNullException("pb");
-			if(pb.Length != 4) throw new ArgumentException("Input array must contain 4 bytes!");
+			if(pb.Length != 4) throw new ArgumentOutOfRangeException("pb");
 
-			return (uint)pb[0] | ((uint)pb[1] << 8) | ((uint)pb[2] << 16) |
-				((uint)pb[3] << 24);
+			return ((uint)pb[0] | ((uint)pb[1] << 8) | ((uint)pb[2] << 16) |
+				((uint)pb[3] << 24));
 		}
 
 		/// <summary>
-		/// Convert 8 bytes to a 64-bit unsigned integer using Little-Endian
-		/// encoding.
+		/// Convert 4 bytes to a 32-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="pb">Input bytes.</param>
-		/// <returns>64-bit unsigned integer.</returns>
+		public static uint BytesToUInt32(byte[] pb, int iOffset)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+			if((iOffset < 0) || ((iOffset + 3) >= pb.Length))
+			{
+				Debug.Assert(false);
+				throw new ArgumentOutOfRangeException("iOffset");
+			}
+
+			return ((uint)pb[iOffset] | ((uint)pb[iOffset + 1] << 8) |
+				((uint)pb[iOffset + 2] << 16) | ((uint)pb[iOffset + 3] << 24));
+		}
+
+		/// <summary>
+		/// Convert 8 bytes to a 64-bit unsigned integer (little-endian).
+		/// </summary>
 		public static ulong BytesToUInt64(byte[] pb)
 		{
 			Debug.Assert((pb != null) && (pb.Length == 8));
 			if(pb == null) throw new ArgumentNullException("pb");
-			if(pb.Length != 8) throw new ArgumentException();
+			if(pb.Length != 8) throw new ArgumentOutOfRangeException("pb");
 
-			return (ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
+			return ((ulong)pb[0] | ((ulong)pb[1] << 8) | ((ulong)pb[2] << 16) |
 				((ulong)pb[3] << 24) | ((ulong)pb[4] << 32) | ((ulong)pb[5] << 40) |
-				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56);
+				((ulong)pb[6] << 48) | ((ulong)pb[7] << 56));
 		}
 
 		/// <summary>
-		/// Convert a 16-bit unsigned integer to 2 bytes using Little-Endian
-		/// encoding.
+		/// Convert 8 bytes to a 64-bit unsigned integer (little-endian).
 		/// </summary>
-		/// <param name="uValue">16-bit input word.</param>
-		/// <returns>Two bytes representing the 16-bit value.</returns>
+		public static ulong BytesToUInt64(byte[] pb, int iOffset)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+			if((iOffset < 0) || ((iOffset + 7) >= pb.Length))
+			{
+				Debug.Assert(false);
+				throw new ArgumentOutOfRangeException("iOffset");
+			}
+
+			// if(BitConverter.IsLittleEndian)
+			//	return BitConverter.ToUInt64(pb, iOffset);
+
+			return ((ulong)pb[iOffset] | ((ulong)pb[iOffset + 1] << 8) |
+				((ulong)pb[iOffset + 2] << 16) | ((ulong)pb[iOffset + 3] << 24) |
+				((ulong)pb[iOffset + 4] << 32) | ((ulong)pb[iOffset + 5] << 40) |
+				((ulong)pb[iOffset + 6] << 48) | ((ulong)pb[iOffset + 7] << 56));
+		}
+
+		public static int BytesToInt32(byte[] pb)
+		{
+			return (int)BytesToUInt32(pb);
+		}
+
+		public static int BytesToInt32(byte[] pb, int iOffset)
+		{
+			return (int)BytesToUInt32(pb, iOffset);
+		}
+
+		public static long BytesToInt64(byte[] pb)
+		{
+			return (long)BytesToUInt64(pb);
+		}
+
+		public static long BytesToInt64(byte[] pb, int iOffset)
+		{
+			return (long)BytesToUInt64(pb, iOffset);
+		}
+
+		/// <summary>
+		/// Convert a 16-bit unsigned integer to 2 bytes (little-endian).
+		/// </summary>
 		public static byte[] UInt16ToBytes(ushort uValue)
 		{
 			byte[] pb = new byte[2];
@@ -327,11 +403,8 @@ namespace ModernKeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a 32-bit unsigned integer to 4 bytes using Little-Endian
-		/// encoding.
+		/// Convert a 32-bit unsigned integer to 4 bytes (little-endian).
 		/// </summary>
-		/// <param name="uValue">32-bit input word.</param>
-		/// <returns>Four bytes representing the 32-bit value.</returns>
 		public static byte[] UInt32ToBytes(uint uValue)
 		{
 			byte[] pb = new byte[4];
@@ -348,11 +421,29 @@ namespace ModernKeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a 64-bit unsigned integer to 8 bytes using Little-Endian
-		/// encoding.
+		/// Convert a 32-bit unsigned integer to 4 bytes (little-endian).
 		/// </summary>
-		/// <param name="uValue">64-bit input word.</param>
-		/// <returns>Eight bytes representing the 64-bit value.</returns>
+		public static void UInt32ToBytesEx(uint uValue, byte[] pb, int iOffset)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+			if((iOffset < 0) || ((iOffset + 3) >= pb.Length))
+			{
+				Debug.Assert(false);
+				throw new ArgumentOutOfRangeException("iOffset");
+			}
+
+			unchecked
+			{
+				pb[iOffset] = (byte)uValue;
+				pb[iOffset + 1] = (byte)(uValue >> 8);
+				pb[iOffset + 2] = (byte)(uValue >> 16);
+				pb[iOffset + 3] = (byte)(uValue >> 24);
+			}
+		}
+
+		/// <summary>
+		/// Convert a 64-bit unsigned integer to 8 bytes (little-endian).
+		/// </summary>
 		public static byte[] UInt64ToBytes(ulong uValue)
 		{
 			byte[] pb = new byte[8];
@@ -372,6 +463,61 @@ namespace ModernKeePassLib.Utility
 			return pb;
 		}
 
+		/// <summary>
+		/// Convert a 64-bit unsigned integer to 8 bytes (little-endian).
+		/// </summary>
+		public static void UInt64ToBytesEx(ulong uValue, byte[] pb, int iOffset)
+		{
+			if(pb == null) { Debug.Assert(false); throw new ArgumentNullException("pb"); }
+			if((iOffset < 0) || ((iOffset + 7) >= pb.Length))
+			{
+				Debug.Assert(false);
+				throw new ArgumentOutOfRangeException("iOffset");
+			}
+
+			unchecked
+			{
+				pb[iOffset] = (byte)uValue;
+				pb[iOffset + 1] = (byte)(uValue >> 8);
+				pb[iOffset + 2] = (byte)(uValue >> 16);
+				pb[iOffset + 3] = (byte)(uValue >> 24);
+				pb[iOffset + 4] = (byte)(uValue >> 32);
+				pb[iOffset + 5] = (byte)(uValue >> 40);
+				pb[iOffset + 6] = (byte)(uValue >> 48);
+				pb[iOffset + 7] = (byte)(uValue >> 56);
+			}
+		}
+
+		public static byte[] Int32ToBytes(int iValue)
+		{
+			return UInt32ToBytes((uint)iValue);
+		}
+
+		public static byte[] Int64ToBytes(long lValue)
+		{
+			return UInt64ToBytes((ulong)lValue);
+		}
+
+		public static uint RotateLeft32(uint u, int nBits)
+		{
+			return ((u << nBits) | (u >> (32 - nBits)));
+		}
+
+		public static uint RotateRight32(uint u, int nBits)
+		{
+			return ((u >> nBits) | (u << (32 - nBits)));
+		}
+
+		public static ulong RotateLeft64(ulong u, int nBits)
+		{
+			return ((u << nBits) | (u >> (64 - nBits)));
+		}
+
+		public static ulong RotateRight64(ulong u, int nBits)
+		{
+			return ((u >> nBits) | (u << (64 - nBits)));
+		}
+
 		public static bool ArraysEqual(byte[] x, byte[] y)
 		{
 			// Return false if one of them is null (not comparable)!
@@ -387,19 +533,21 @@ namespace ModernKeePassLib.Utility
 			return true;
 		}
 
-		public static void XorArray(byte[] pbSource, int nSourceOffset,
-			byte[] pbBuffer, int nBufferOffset, int nLength)
+		public static void XorArray(byte[] pbSource, int iSourceOffset,
+			byte[] pbBuffer, int iBufferOffset, int cb)
 		{
 			if(pbSource == null) throw new ArgumentNullException("pbSource");
-			if(nSourceOffset < 0) throw new ArgumentException();
+			if(iSourceOffset < 0) throw new ArgumentOutOfRangeException("iSourceOffset");
 			if(pbBuffer == null) throw new ArgumentNullException("pbBuffer");
-			if(nBufferOffset < 0) throw new ArgumentException();
-			if(nLength < 0) throw new ArgumentException();
-			if((nSourceOffset + nLength) > pbSource.Length) throw new ArgumentException();
-			if((nBufferOffset + nLength) > pbBuffer.Length) throw new ArgumentException();
+			if(iBufferOffset < 0) throw new ArgumentOutOfRangeException("iBufferOffset");
+			if(cb < 0) throw new ArgumentOutOfRangeException("cb");
+			if(iSourceOffset > (pbSource.Length - cb))
+				throw new ArgumentOutOfRangeException("cb");
+			if(iBufferOffset > (pbBuffer.Length - cb))
+				throw new ArgumentOutOfRangeException("cb");
 
-			for(int i = 0; i < nLength; ++i)
-				pbBuffer[nBufferOffset + i] ^= pbSource[nSourceOffset + i];
+			for(int i = 0; i < cb; ++i)
+				pbBuffer[iBufferOffset + i] ^= pbSource[iSourceOffset + i];
 		}
 
 		/// <summary>
@@ -478,7 +626,8 @@ namespace ModernKeePassLib.Utility
 			if(s == null) { Debug.Assert(false); return; }
 			if(pbData == null) { Debug.Assert(false); return; }
 
-			s.Write(pbData, 0, pbData.Length);
+			Debug.Assert(pbData.Length >= 0);
+			if(pbData.Length > 0) s.Write(pbData, 0, pbData.Length);
 		}
 
 		public static byte[] Compress(byte[] pbData)
@@ -486,15 +635,21 @@ namespace ModernKeePassLib.Utility
 			if(pbData == null) throw new ArgumentNullException("pbData");
 			if(pbData.Length == 0) return pbData;
 
-			MemoryStream msCompressed = new MemoryStream();
-			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Compress);
-			MemoryStream msSource = new MemoryStream(pbData, false);
-			MemUtil.CopyStream(msSource, gz);
-			gz.Dispose();
-			msSource.Dispose();
+			byte[] pbCompressed;
+			using(MemoryStream msSource = new MemoryStream(pbData, false))
+			{
+				using(MemoryStream msCompressed = new MemoryStream())
+				{
+					using(GZipStream gz = new GZipStream(msCompressed,
+						CompressionMode.Compress))
+					{
+						MemUtil.CopyStream(msSource, gz);
+					}
 
-			byte[] pbCompressed = msCompressed.ToArray();
-			msCompressed.Dispose();
+					pbCompressed = msCompressed.ToArray();
+				}
+			}
+
 			return pbCompressed;
 		}
 
@@ -503,15 +658,21 @@ namespace ModernKeePassLib.Utility
 			if(pbCompressed == null) throw new ArgumentNullException("pbCompressed");
 			if(pbCompressed.Length == 0) return pbCompressed;
 
-			MemoryStream msCompressed = new MemoryStream(pbCompressed, false);
-			GZipStream gz = new GZipStream(msCompressed, CompressionMode.Decompress);
-			MemoryStream msData = new MemoryStream();
-			MemUtil.CopyStream(gz, msData);
-			gz.Dispose();
-			msCompressed.Dispose();
+			byte[] pbData;
+			using(MemoryStream msData = new MemoryStream())
+			{
+				using(MemoryStream msCompressed = new MemoryStream(pbCompressed, false))
+				{
+					using(GZipStream gz = new GZipStream(msCompressed,
+						CompressionMode.Decompress))
+					{
+						MemUtil.CopyStream(gz, msData);
+					}
+				}
 
-			byte[] pbData = msData.ToArray();
-			msData.Dispose();
+				pbData = msData.ToArray();
+			}
+
 			return pbData;
 		}
 

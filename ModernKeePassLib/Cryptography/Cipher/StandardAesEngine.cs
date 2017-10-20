@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,12 +39,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
-#if !ModernKeePassLib && !KeePassRT
-		private const CipherMode m_rCipherMode = CipherMode.CBC;
-		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
-#endif
-
-		private static PwUuid m_uuidAes = null;
+		private static PwUuid g_uuidAes = null;
 
 		/// <summary>
 		/// UUID of the cipher engine. This ID uniquely identifies the
@@ -54,26 +49,38 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		{
 			get
 			{
-				if(m_uuidAes == null)
+				PwUuid pu = g_uuidAes;
+				if(pu == null)
 				{
-					m_uuidAes = new PwUuid(new byte[]{
+					pu = new PwUuid(new byte[] {
 						0x31, 0xC1, 0xF2, 0xE6, 0xBF, 0x71, 0x43, 0x50,
 						0xBE, 0x58, 0x05, 0x21, 0x6A, 0xFC, 0x5A, 0xFF });
+					g_uuidAes = pu;
 				}
 
-				return m_uuidAes;
+				return pu;
 			}
 		}
 
 		/// <summary>
 		/// Get the UUID of this cipher engine as <c>PwUuid</c> object.
 		/// </summary>
-		public PwUuid CipherUuid => StandardAesEngine.AesUuid;
+		public PwUuid CipherUuid
+		{
+			get { return StandardAesEngine.AesUuid; }
+		}
 
-	    /// <summary>
+		/// <summary>
 		/// Get a displayable name describing this cipher engine.
 		/// </summary>
-		public string DisplayName { get { return KLRes.EncAlgorithmAes; } }
+		public string DisplayName
+		{
+			get
+			{
+				return ("AES/Rijndael (" + KLRes.KeyBits.Replace(@"{PARAM}",
+					"256") + ", FIPS 197)");
+			}
+		}
 
 		private static void ValidateArguments(Stream stream, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
@@ -90,90 +97,24 @@ namespace ModernKeePassLib.Cryptography.Cipher
 			if(bEncrypt)
 			{
 				Debug.Assert(stream.CanWrite);
-				if(stream.CanWrite == false) throw new ArgumentException("Stream must be writable!");
+				if(!stream.CanWrite) throw new ArgumentException("Stream must be writable!");
 			}
 			else // Decrypt
 			{
 				Debug.Assert(stream.CanRead);
-				if(stream.CanRead == false) throw new ArgumentException("Encrypted stream must be readable!");
+				if(!stream.CanRead) throw new ArgumentException("Encrypted stream must be readable!");
 			}
 		}
 
 		private static Stream CreateStream(Stream s, bool bEncrypt, byte[] pbKey, byte[] pbIV)
 		{
-			ValidateArguments(s, bEncrypt, pbKey, pbIV);
+			StandardAesEngine.ValidateArguments(s, bEncrypt, pbKey, pbIV);
 
 			byte[] pbLocalIV = new byte[16];
 			Array.Copy(pbIV, pbLocalIV, 16);
 
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
-#if !ModernKeePassLib
-//#if ModernKeePassLib
-            /*var provider = WinRTCrypto.SymmetricKeyAlgorithmProvider.
-                OpenAlgorithm(SymmetricAlgorithm.AesCbcPkcs7);
-			var key = provider.CreateSymmetricKey(pbLocalKey);
-			if (bEncrypt)
-            {
-				var encryptor = WinRTCrypto.CryptographicEngine.CreateEncryptor(
-                    key, pbLocalIV);
-				return new CryptoStream(s, encryptor, CryptoStreamMode.Write);
-			} else
-            {
-				var decryptor = WinRTCrypto.CryptographicEngine.CreateDecryptor(
-                    key, pbLocalIV);
-				return new CryptoStream(s, decryptor, CryptoStreamMode.Read);
-			}
-            */
-
-            var provider = SymmetricKeyAlgorithmProvider.
-                OpenAlgorithm(SymmetricAlgorithmNames.AesCbcPkcs7);
-            var key = provider.CreateSymmetricKey(CryptographicBuffer.CreateFromByteArray(pbLocalKey));
-
-            using (var ms = new MemoryStream())
-            {
-                s.CopyTo(ms);
-                var data = CryptographicBuffer.CreateFromByteArray(ms.ToArray());
-                byte[] resultByteArray;
-                if (bEncrypt)
-                {
-                    var encrypted = CryptographicEngine.Encrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
-                    CryptographicBuffer.CopyToByteArray(encrypted, out resultByteArray);
-                    return new MemoryStream(resultByteArray);
-                }
-                else
-                {
-                    var decrypted = CryptographicEngine.Decrypt(key, data, CryptographicBuffer.CreateFromByteArray(pbLocalIV));
-                    CryptographicBuffer.CopyToByteArray(decrypted, out resultByteArray);
-                    return new MemoryStream(resultByteArray, true);
-                }
-            }
-            
-//#else
-
-//#if !KeePassRT
-//#if !ModernKeePassLib
-            RijndaelManaged r = new RijndaelManaged();
-			if(r.BlockSize != 128) // AES block size
-			{
-				Debug.Assert(false);
-				r.BlockSize = 128;
-			}
-
-			r.IV = pbLocalIV;
-			r.KeySize = 256;
-			r.Key = pbLocalKey;
-			r.Mode = m_rCipherMode;
-			r.Padding = m_rCipherPadding;
-
-			ICryptoTransform iTransform = (bEncrypt ? r.CreateEncryptor() : r.CreateDecryptor());
-			Debug.Assert(iTransform != null);
-			if(iTransform == null) throw new SecurityException("Unable to create Rijndael transform!");
-
-			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
-				CryptoStreamMode.Read);
-#else
-
 			AesEngine aes = new AesEngine();
 			CbcBlockCipher cbc = new CbcBlockCipher(aes);
 			PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
@@ -185,19 +126,16 @@ namespace ModernKeePassLib.Cryptography.Cipher
 			IBufferedCipher cpRead = (bEncrypt ? null : bc);
 			IBufferedCipher cpWrite = (bEncrypt ? bc : null);
 			return new CipherStream(s, cpRead, cpWrite);
-#endif
-
-//#endif
         }
 
 		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
 		{
-			return CreateStream(sPlainText, true, pbKey, pbIV);
+			return StandardAesEngine.CreateStream(sPlainText, true, pbKey, pbIV);
 		}
 
 		public Stream DecryptStream(Stream sEncrypted, byte[] pbKey, byte[] pbIV)
 		{
-			return CreateStream(sEncrypted, false, pbKey, pbIV);
+			return StandardAesEngine.CreateStream(sEncrypted, false, pbKey, pbIV);
 		}
 	}
 }

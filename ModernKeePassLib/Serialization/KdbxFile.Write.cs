@@ -49,6 +49,7 @@ using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -57,7 +58,7 @@ namespace ModernKeePassLib.Serialization
 	/// </summary>
 	public sealed partial class KdbxFile
 	{
-		// public void Save(string strFile, PwGroup pgDataSource, KdbxFormat format,
+		// public void Save(string strFile, PwGroup pgDataSource, KdbxFormat fmt,
 		//	IStatusLogger slLogger)
 		// {
 		//	bool bMadeUnhidden = UrlUtil.UnhideFile(strFile);
@@ -75,211 +76,323 @@ namespace ModernKeePassLib.Serialization
 		/// <param name="pgDataSource">Group containing all groups and
 		/// entries to write. If <c>null</c>, the complete database will
 		/// be written.</param>
-		/// <param name="format">Format of the file to create.</param>
+		/// <param name="fmt">Format of the file to create.</param>
 		/// <param name="slLogger">Logger that recieves status information.</param>
-		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat format,
+		public void Save(Stream sSaveTo, PwGroup pgDataSource, KdbxFormat fmt,
 			IStatusLogger slLogger)
 		{
 			Debug.Assert(sSaveTo != null);
 			if(sSaveTo == null) throw new ArgumentNullException("sSaveTo");
 
-			m_format = format;
+			if(m_bUsedOnce)
+				throw new InvalidOperationException("Do not reuse KdbxFile objects!");
+			m_bUsedOnce = true;
+
+			m_format = fmt;
 			m_slLogger = slLogger;
 
-			HashingStreamEx hashedStream = new HashingStreamEx(sSaveTo, true, null);
-
+			PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
 			UTF8Encoding encNoBom = StrUtil.Utf8;
 			CryptoRandom cr = CryptoRandom.Instance;
+			byte[] pbCipherKey = null;
+			byte[] pbHmacKey64 = null;
+
+			m_pbsBinaries.Clear();
+			m_pbsBinaries.AddFrom(pgRoot);
+
+			List<Stream> lStreams = new List<Stream>();
+			lStreams.Add(sSaveTo);
+
+			HashingStreamEx sHashing = new HashingStreamEx(sSaveTo, true, null);
+			lStreams.Add(sHashing);
 
 			try
 			{
+				m_uFileVersion = GetMinKdbxVersion();
+
+				int cbEncKey, cbEncIV;
+				ICipherEngine iCipher = GetCipher(out cbEncKey, out cbEncIV);
+
 				m_pbMasterSeed = cr.GetRandomBytes(32);
-				m_pbTransformSeed = cr.GetRandomBytes(32);
-				m_pbEncryptionIV = cr.GetRandomBytes(16);
+				m_pbEncryptionIV = cr.GetRandomBytes((uint)cbEncIV);
 
-				m_pbProtectedStreamKey = cr.GetRandomBytes(32);
-				m_craInnerRandomStream = CrsAlgorithm.Salsa20;
-				m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
-					m_pbProtectedStreamKey);
+				// m_pbTransformSeed = cr.GetRandomBytes(32);
+				PwUuid puKdf = m_pwDatabase.KdfParameters.KdfUuid;
+				KdfEngine kdf = KdfPool.Get(puKdf);
+				if(kdf == null)
+					throw new Exception(KLRes.UnknownKdf + Environment.NewLine +
+						// KLRes.FileNewVerOrPlgReq + Environment.NewLine +
+						"UUID: " + puKdf.ToHexString() + ".");
+				kdf.Randomize(m_pwDatabase.KdfParameters);
 
-				m_pbStreamStartBytes = cr.GetRandomBytes(32);
-
-				Stream writerStream;
 				if(m_format == KdbxFormat.Default)
 				{
-					WriteHeader(hashedStream); // Also flushes the stream
+					if(m_uFileVersion < FileVersion32_4)
+					{
+						m_craInnerRandomStream = CrsAlgorithm.Salsa20;
+						m_pbInnerRandomStreamKey = cr.GetRandomBytes(32);
+					}
+					else // KDBX >= 4
+					{
+						m_craInnerRandomStream = CrsAlgorithm.ChaCha20;
+						m_pbInnerRandomStreamKey = cr.GetRandomBytes(64);
+					}
 
-					Stream sEncrypted = AttachStreamEncryptor(hashedStream);
-					if((sEncrypted == null) || (sEncrypted == hashedStream))
-						throw new SecurityException(KLRes.CryptoStreamFailed);
+					m_randomStream = new CryptoRandomStream(m_craInnerRandomStream,
+						m_pbInnerRandomStreamKey);
+				}
 
-					sEncrypted.Write(m_pbStreamStartBytes, 0, m_pbStreamStartBytes.Length);
+				if(m_uFileVersion < FileVersion32_4)
+					m_pbStreamStartBytes = cr.GetRandomBytes(32);
 
-					Stream sHashed = new HashedBlockStream(sEncrypted, true);
+				Stream sXml;
+				if(m_format == KdbxFormat.Default)
+				{
+					byte[] pbHeader = GenerateHeader();
+					m_pbHashOfHeader = CryptoUtil.HashSha256(pbHeader);
+
+					MemUtil.Write(sHashing, pbHeader);
+					sHashing.Flush();
+
+					ComputeKeys(out pbCipherKey, cbEncKey, out pbHmacKey64);
+
+					Stream sPlain;
+					if(m_uFileVersion < FileVersion32_4)
+					{
+						Stream sEncrypted = EncryptStream(sHashing, iCipher,
+							pbCipherKey, cbEncIV, true);
+						if((sEncrypted == null) || (sEncrypted == sHashing))
+							throw new SecurityException(KLRes.CryptoStreamFailed);
+						lStreams.Add(sEncrypted);
+
+						MemUtil.Write(sEncrypted, m_pbStreamStartBytes);
+
+						sPlain = new HashedBlockStream(sEncrypted, true);
+					}
+					else // KDBX >= 4
+					{
+						// For integrity checking (without knowing the master key)
+						MemUtil.Write(sHashing, m_pbHashOfHeader);
+
+						byte[] pbHeaderHmac = ComputeHeaderHmac(pbHeader, pbHmacKey64);
+						MemUtil.Write(sHashing, pbHeaderHmac);
+
+						Stream sBlocks = new HmacBlockStream(sHashing, true,
+							true, pbHmacKey64);
+						lStreams.Add(sBlocks);
+
+						sPlain = EncryptStream(sBlocks, iCipher, pbCipherKey,
+							cbEncIV, true);
+						if((sPlain == null) || (sPlain == sBlocks))
+							throw new SecurityException(KLRes.CryptoStreamFailed);
+					}
+					lStreams.Add(sPlain);
 
 					if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
-						writerStream = new GZipStream(sHashed, CompressionMode.Compress);
-					else
-						writerStream = sHashed;
+					{
+						sXml = new GZipStream(sPlain, CompressionMode.Compress);
+						lStreams.Add(sXml);
+					}
+					else sXml = sPlain;
+
+					if(m_uFileVersion >= FileVersion32_4)
+						WriteInnerHeader(sXml); // Binary header before XML
 				}
 				else if(m_format == KdbxFormat.PlainXml)
-					writerStream = hashedStream;
-				else { Debug.Assert(false); throw new FormatException("KdbFormat"); }
+					sXml = sHashing;
+				else
+				{
+					Debug.Assert(false);
+					throw new ArgumentOutOfRangeException("fmt");
+				}
 
-#if ModernKeePassLib
-				var settings = new XmlWriterSettings() {
-					Encoding = encNoBom,
-					Indent = true,
-					IndentChars = "\t",
-					NewLineChars = "\r\n",
-				};
-				m_xmlWriter = XmlWriter.Create(writerStream, settings);
+#if ModernKeePassLib || KeePassUAP
+				XmlWriterSettings xws = new XmlWriterSettings();
+				xws.Encoding = encNoBom;
+				xws.Indent = true;
+				xws.IndentChars = "\t";
+				xws.NewLineOnAttributes = false;
+
+				XmlWriter xw = XmlWriter.Create(sXml, xws);
 #else
-				m_xmlWriter = new XmlTextWriter(writerStream, encNoBom);
+				XmlTextWriter xw = new XmlTextWriter(sXml, encNoBom);
+
+				xw.Formatting = Formatting.Indented;
+				xw.IndentChar = '\t';
+				xw.Indentation = 1;
 #endif
-				WriteDocument(pgDataSource);
+				m_xmlWriter = xw;
+
+				WriteDocument(pgRoot);
 
 				m_xmlWriter.Flush();
 				m_xmlWriter.Dispose();
-				writerStream.Dispose();
 			}
-			finally { CommonCleanUpWrite(sSaveTo, hashedStream); }
+			finally
+			{
+				if(pbCipherKey != null) MemUtil.ZeroByteArray(pbCipherKey);
+				if(pbHmacKey64 != null) MemUtil.ZeroByteArray(pbHmacKey64);
+
+				CommonCleanUpWrite(lStreams, sHashing);
+			}
 		}
 
-		private void CommonCleanUpWrite(Stream sSaveTo, HashingStreamEx hashedStream)
+		private void CommonCleanUpWrite(List<Stream> lStreams, HashingStreamEx sHashing)
 		{
-			hashedStream.Dispose();
-			m_pbHashOfFileOnDisk = hashedStream.Hash;
+			CloseStreams(lStreams);
 
-			sSaveTo.Dispose();
+			Debug.Assert(lStreams.Contains(sHashing)); // sHashing must be closed
+			m_pbHashOfFileOnDisk = sHashing.Hash;
+			Debug.Assert(m_pbHashOfFileOnDisk != null);
+
+			CleanUpInnerRandomStream();
 
 			m_xmlWriter = null;
 			m_pbHashOfHeader = null;
 		}
 
-		private void WriteHeader(Stream s)
+		private byte[] GenerateHeader()
 		{
-		    using (var ms = new MemoryStream())
-		    {
+			byte[] pbHeader;
+			using(MemoryStream ms = new MemoryStream())
+			{
+				MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature1));
+				MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature2));
+				MemUtil.Write(ms, MemUtil.UInt32ToBytes(m_uFileVersion));
 
-		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature1));
-		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileSignature2));
-		        MemUtil.Write(ms, MemUtil.UInt32ToBytes(FileVersion32));
+				WriteHeaderField(ms, KdbxHeaderFieldID.CipherID,
+					m_pwDatabase.DataCipherUuid.UuidBytes);
 
-		        WriteHeaderField(ms, KdbxHeaderFieldID.CipherID,
-		            m_pwDatabase.DataCipherUuid.UuidBytes);
+				int nCprID = (int)m_pwDatabase.Compression;
+				WriteHeaderField(ms, KdbxHeaderFieldID.CompressionFlags,
+					MemUtil.UInt32ToBytes((uint)nCprID));
 
-		        int nCprID = (int) m_pwDatabase.Compression;
-		        WriteHeaderField(ms, KdbxHeaderFieldID.CompressionFlags,
-		            MemUtil.UInt32ToBytes((uint) nCprID));
+				WriteHeaderField(ms, KdbxHeaderFieldID.MasterSeed, m_pbMasterSeed);
 
-		        WriteHeaderField(ms, KdbxHeaderFieldID.MasterSeed, m_pbMasterSeed);
-		        WriteHeaderField(ms, KdbxHeaderFieldID.TransformSeed, m_pbTransformSeed);
-		        WriteHeaderField(ms, KdbxHeaderFieldID.TransformRounds,
-		            MemUtil.UInt64ToBytes(m_pwDatabase.KeyEncryptionRounds));
-		        WriteHeaderField(ms, KdbxHeaderFieldID.EncryptionIV, m_pbEncryptionIV);
-		        WriteHeaderField(ms, KdbxHeaderFieldID.ProtectedStreamKey, m_pbProtectedStreamKey);
-		        WriteHeaderField(ms, KdbxHeaderFieldID.StreamStartBytes, m_pbStreamStartBytes);
+				if(m_uFileVersion < FileVersion32_4)
+				{
+					Debug.Assert(m_pwDatabase.KdfParameters.KdfUuid.Equals(
+						(new AesKdf()).Uuid));
+					WriteHeaderField(ms, KdbxHeaderFieldID.TransformSeed,
+						m_pwDatabase.KdfParameters.GetByteArray(AesKdf.ParamSeed));
+					WriteHeaderField(ms, KdbxHeaderFieldID.TransformRounds,
+						MemUtil.UInt64ToBytes(m_pwDatabase.KdfParameters.GetUInt64(
+						AesKdf.ParamRounds, PwDefs.DefaultKeyEncryptionRounds)));
+				}
+				else
+					WriteHeaderField(ms, KdbxHeaderFieldID.KdfParameters,
+						KdfParameters.SerializeExt(m_pwDatabase.KdfParameters));
 
-		        int nIrsID = (int) m_craInnerRandomStream;
-		        WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamID,
-		            MemUtil.UInt32ToBytes((uint) nIrsID));
+				if(m_pbEncryptionIV.Length > 0)
+					WriteHeaderField(ms, KdbxHeaderFieldID.EncryptionIV, m_pbEncryptionIV);
 
-		        WriteHeaderField(ms, KdbxHeaderFieldID.EndOfHeader, new byte[]
-		        {
-		            (byte) '\r', (byte) '\n', (byte) '\r', (byte) '\n'
-		        });
+				if(m_uFileVersion < FileVersion32_4)
+				{
+					WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamKey,
+						m_pbInnerRandomStreamKey);
 
-		        byte[] pbHeader = ms.ToArray();
+					WriteHeaderField(ms, KdbxHeaderFieldID.StreamStartBytes,
+						m_pbStreamStartBytes);
 
-#if ModernKeePassLib
-		        /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-                m_pbHashOfHeader = sha256.HashData(pbHeader);*/
-		        var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-		        var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbHeader));
-		        CryptographicBuffer.CopyToByteArray(buffer, out m_pbHashOfHeader);
-#else
-			SHA256Managed sha256 = new SHA256Managed();
-			m_pbHashOfHeader = sha256.ComputeHash(pbHeader);
-#endif
+					int nIrsID = (int)m_craInnerRandomStream;
+					WriteHeaderField(ms, KdbxHeaderFieldID.InnerRandomStreamID,
+						MemUtil.Int32ToBytes(nIrsID));
+				}
 
-		        s.Write(pbHeader, 0, pbHeader.Length);
-		        s.Flush();
-		    }
+				// Write public custom data only when there is at least one item,
+				// because KDBX 3.1 didn't support this field yet
+				if(m_pwDatabase.PublicCustomData.Count > 0)
+					WriteHeaderField(ms, KdbxHeaderFieldID.PublicCustomData,
+						VariantDictionary.Serialize(m_pwDatabase.PublicCustomData));
+
+				WriteHeaderField(ms, KdbxHeaderFieldID.EndOfHeader, new byte[] {
+					(byte)'\r', (byte)'\n', (byte)'\r', (byte)'\n' });
+
+				pbHeader = ms.ToArray();
+			}
+
+			return pbHeader;
 		}
 
-		private static void WriteHeaderField(Stream s, KdbxHeaderFieldID kdbID,
+		private void WriteHeaderField(Stream s, KdbxHeaderFieldID kdbID,
 			byte[] pbData)
 		{
 			s.WriteByte((byte)kdbID);
 
-			if(pbData != null)
+			byte[] pb = (pbData ?? MemUtil.EmptyByteArray);
+			int cb = pb.Length;
+			if(cb < 0) { Debug.Assert(false); throw new OutOfMemoryException(); }
+
+			Debug.Assert(m_uFileVersion > 0);
+			if(m_uFileVersion < FileVersion32_4)
 			{
-				ushort uLength = (ushort)pbData.Length;
-				MemUtil.Write(s, MemUtil.UInt16ToBytes(uLength));
+				if(cb > (int)ushort.MaxValue)
+				{
+					Debug.Assert(false);
+					throw new ArgumentOutOfRangeException("pbData");
+				}
 
-				if(uLength > 0) s.Write(pbData, 0, pbData.Length);
+				MemUtil.Write(s, MemUtil.UInt16ToBytes((ushort)cb));
 			}
-			else MemUtil.Write(s, MemUtil.UInt16ToBytes((ushort)0));
+			else MemUtil.Write(s, MemUtil.Int32ToBytes(cb));
+
+			MemUtil.Write(s, pb);
 		}
 
-		private Stream AttachStreamEncryptor(Stream s)
+		private void WriteInnerHeader(Stream s)
 		{
-		    using (var ms = new MemoryStream())
-		    {
-		        Debug.Assert(m_pbMasterSeed != null);
-		        Debug.Assert(m_pbMasterSeed.Length == 32);
-		        ms.Write(m_pbMasterSeed, 0, 32);
+			int nIrsID = (int)m_craInnerRandomStream;
+			WriteInnerHeaderField(s, KdbxInnerHeaderFieldID.InnerRandomStreamID,
+				MemUtil.Int32ToBytes(nIrsID), null);
 
-		        Debug.Assert(m_pwDatabase != null);
-		        Debug.Assert(m_pwDatabase.MasterKey != null);
-		        ProtectedBinary pbinKey = m_pwDatabase.MasterKey.GenerateKey32(
-		            m_pbTransformSeed, m_pwDatabase.KeyEncryptionRounds);
-		        Debug.Assert(pbinKey != null);
-		        if (pbinKey == null)
-		            throw new SecurityException(KLRes.InvalidCompositeKey);
-		        byte[] pKey32 = pbinKey.ReadData();
-		        if ((pKey32 == null) || (pKey32.Length != 32))
-		            throw new SecurityException(KLRes.InvalidCompositeKey);
-		        ms.Write(pKey32, 0, 32);
+			WriteInnerHeaderField(s, KdbxInnerHeaderFieldID.InnerRandomStreamKey,
+				m_pbInnerRandomStreamKey, null);
 
-#if ModernKeePassLib
-		        /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-                var aesKey = sha256.HashData(ms.ToArray());*/
-		        var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-		        var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(ms.ToArray()));
-		        byte[] aesKey;
-		        CryptographicBuffer.CopyToByteArray(buffer, out aesKey);
-#else
-			SHA256Managed sha256 = new SHA256Managed();
-			byte[] aesKey = sha256.ComputeHash(ms.ToArray());
-#endif
-		        Array.Clear(pKey32, 0, 32);
+			ProtectedBinary[] vBin = m_pbsBinaries.ToArray();
+			for(int i = 0; i < vBin.Length; ++i)
+			{
+				ProtectedBinary pb = vBin[i];
+				if(pb == null) throw new InvalidOperationException();
 
-		        Debug.Assert(CipherPool.GlobalPool != null);
-		        ICipherEngine iEngine = CipherPool.GlobalPool.GetCipher(m_pwDatabase.DataCipherUuid);
-		        if (iEngine == null) throw new SecurityException(KLRes.FileUnknownCipher);
-		        return iEngine.EncryptStream(s, aesKey, m_pbEncryptionIV);
-		    }
+				KdbxBinaryFlags f = KdbxBinaryFlags.None;
+				if(pb.IsProtected) f |= KdbxBinaryFlags.Protected;
+
+				byte[] pbFlags = new byte[1] { (byte)f };
+				byte[] pbData = pb.ReadData();
+
+				WriteInnerHeaderField(s, KdbxInnerHeaderFieldID.Binary,
+					pbFlags, pbData);
+
+				if(pb.IsProtected) MemUtil.ZeroByteArray(pbData);
+			}
+
+			WriteInnerHeaderField(s, KdbxInnerHeaderFieldID.EndOfHeader,
+				null, null);
 		}
 
-		private void WriteDocument(PwGroup pgDataSource)
+		private void WriteInnerHeaderField(Stream s, KdbxInnerHeaderFieldID kdbID,
+			byte[] pbData1, byte[] pbData2)
+		{
+			s.WriteByte((byte)kdbID);
+
+			byte[] pb1 = (pbData1 ?? MemUtil.EmptyByteArray);
+			byte[] pb2 = (pbData2 ?? MemUtil.EmptyByteArray);
+
+			int cb = pb1.Length + pb2.Length;
+			if(cb < 0) { Debug.Assert(false); throw new OutOfMemoryException(); }
+
+			MemUtil.Write(s, MemUtil.Int32ToBytes(cb));
+			MemUtil.Write(s, pb1);
+			MemUtil.Write(s, pb2);
+		}
+
+		private void WriteDocument(PwGroup pgRoot)
 		{
 			Debug.Assert(m_xmlWriter != null);
 			if(m_xmlWriter == null) throw new InvalidOperationException();
 
-			PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
-
 			uint uNumGroups, uNumEntries, uCurEntry = 0;
 			pgRoot.GetCounts(true, out uNumGroups, out uNumEntries);
-
-			BinPoolBuild(pgRoot);
-
-#if !ModernKeePassLib
-			m_xmlWriter.Formatting = Formatting.Indented;
-			m_xmlWriter.IndentChar = '\t';
-			m_xmlWriter.Indentation = 1;
-#endif
 
 			m_xmlWriter.WriteStartDocument(true);
 			m_xmlWriter.WriteStartElement(ElemDocNode);
@@ -352,11 +465,14 @@ namespace ModernKeePassLib.Serialization
 		{
 			m_xmlWriter.WriteStartElement(ElemMeta);
 
-			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName, false); // Generator name
+			WriteObject(ElemGenerator, PwDatabase.LocalizedAppName, false);
 
-			if(m_pbHashOfHeader != null)
+			if((m_pbHashOfHeader != null) && (m_uFileVersion < FileVersion32_4))
 				WriteObject(ElemHeaderHash, Convert.ToBase64String(
 					m_pbHashOfHeader), false);
+
+			if(m_uFileVersion >= FileVersion32_4)
+				WriteObject(ElemSettingsChanged, m_pwDatabase.SettingsChanged);
 
 			WriteObject(ElemDbName, m_pwDatabase.Name, true);
 			WriteObject(ElemDbNameChanged, m_pwDatabase.NameChanged);
@@ -369,6 +485,8 @@ namespace ModernKeePassLib.Serialization
 			WriteObject(ElemDbKeyChanged, m_pwDatabase.MasterKeyChanged);
 			WriteObject(ElemDbKeyChangeRec, m_pwDatabase.MasterKeyChangeRec);
 			WriteObject(ElemDbKeyChangeForce, m_pwDatabase.MasterKeyChangeForce);
+			if(m_pwDatabase.MasterKeyChangeForceOnce)
+				WriteObject(ElemDbKeyChangeForceOnce, true);
 
 			WriteList(ElemMemoryProt, m_pwDatabase.MemoryProtection);
 
@@ -385,7 +503,9 @@ namespace ModernKeePassLib.Serialization
 			WriteObject(ElemLastSelectedGroup, m_pwDatabase.LastSelectedGroup);
 			WriteObject(ElemLastTopVisibleGroup, m_pwDatabase.LastTopVisibleGroup);
 
-			WriteBinPool();
+			if((m_format != KdbxFormat.Default) || (m_uFileVersion < FileVersion32_4))
+				WriteBinPool();
+
 			WriteList(ElemCustomData, m_pwDatabase.CustomData);
 
 			m_xmlWriter.WriteEndElement();
@@ -408,6 +528,9 @@ namespace ModernKeePassLib.Serialization
 			WriteObject(ElemEnableAutoType, StrUtil.BoolToStringEx(pg.EnableAutoType), false);
 			WriteObject(ElemEnableSearching, StrUtil.BoolToStringEx(pg.EnableSearching), false);
 			WriteObject(ElemLastTopVisibleEntry, pg.LastTopVisibleEntry);
+
+			if(pg.CustomData.Count > 0)
+				WriteList(ElemCustomData, pg.CustomData);
 		}
 
 		private void EndGroup()
@@ -423,7 +546,7 @@ namespace ModernKeePassLib.Serialization
 
 			WriteObject(ElemUuid, pe.Uuid);
 			WriteObject(ElemIcon, (int)pe.IconId);
-			
+
 			if(!pe.CustomIconUuid.Equals(PwUuid.Zero))
 				WriteObject(ElemCustomIconID, pe.CustomIconUuid);
 
@@ -437,6 +560,9 @@ namespace ModernKeePassLib.Serialization
 			WriteList(pe.Strings, true);
 			WriteList(pe.Binaries);
 			WriteList(ElemAutoType, pe.AutoType);
+
+			if(pe.CustomData.Count > 0)
+				WriteList(ElemCustomData, pe.CustomData);
 
 			if(!bIsHistory) WriteList(ElemHistory, pe.History, true);
 			else { Debug.Assert(pe.History.UCount == 0); }
@@ -647,8 +773,28 @@ namespace ModernKeePassLib.Serialization
 		private void WriteObject(string name, DateTime value)
 		{
 			Debug.Assert(name != null);
+			Debug.Assert(value.Kind == DateTimeKind.Utc);
 
-			WriteObject(name, TimeUtil.SerializeUtc(value), false);
+			// Cf. ReadTime
+			if((m_format == KdbxFormat.Default) && (m_uFileVersion >= FileVersion32_4))
+			{
+				DateTime dt = TimeUtil.ToUtc(value, false);
+
+				// DateTime dtBase = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+				// dt -= new TimeSpan(dtBase.Ticks);
+
+				// WriteObject(name, dt.ToBinary());
+
+				// dt = TimeUtil.RoundToMultOf2PowLess1s(dt);
+				// long lBin = dt.ToBinary();
+
+				long lSec = dt.Ticks / TimeSpan.TicksPerSecond;
+				// WriteObject(name, lSec);
+
+				byte[] pb = MemUtil.Int64ToBytes(lSec);
+				WriteObject(name, Convert.ToBase64String(pb), false);
+			}
+			else WriteObject(name, TimeUtil.SerializeUtc(value), false);
 		}
 
 		private void WriteObject(string name, string strKeyName,
@@ -695,7 +841,7 @@ namespace ModernKeePassLib.Serialization
 					bProtected = m_pwDatabase.MemoryProtection.ProtectNotes;
 			}
 
-			if(bProtected && (m_format != KdbxFormat.PlainXml))
+			if(bProtected && (m_format == KdbxFormat.Default))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -770,11 +916,15 @@ namespace ModernKeePassLib.Serialization
 			m_xmlWriter.WriteEndElement();
 			m_xmlWriter.WriteStartElement(ElemValue);
 
-			string strRef = (bAllowRef ? BinPoolFind(value) : null);
-			if(strRef != null)
+			string strRef = null;
+			if(bAllowRef)
 			{
-				m_xmlWriter.WriteAttributeString(AttrRef, strRef);
+				int iRef = m_pbsBinaries.Find(value);
+				if(iRef >= 0) strRef = iRef.ToString(NumberFormatInfo.InvariantInfo);
+				else { Debug.Assert(false); }
 			}
+			if(strRef != null)
+				m_xmlWriter.WriteAttributeString(AttrRef, strRef);
 			else SubWriteValue(value);
 
 			m_xmlWriter.WriteEndElement(); // ElemValue
@@ -783,7 +933,7 @@ namespace ModernKeePassLib.Serialization
 
 		private void SubWriteValue(ProtectedBinary value)
 		{
-			if(value.IsProtected && (m_format != KdbxFormat.PlainXml))
+			if(value.IsProtected && (m_format == KdbxFormat.Default))
 			{
 				m_xmlWriter.WriteAttributeString(AttrProtected, ValTrue);
 
@@ -793,18 +943,26 @@ namespace ModernKeePassLib.Serialization
 			}
 			else
 			{
-				if(m_pwDatabase.Compression == PwCompressionAlgorithm.GZip)
+				if(m_pwDatabase.Compression != PwCompressionAlgorithm.None)
 				{
 					m_xmlWriter.WriteAttributeString(AttrCompressed, ValTrue);
 
 					byte[] pbRaw = value.ReadData();
 					byte[] pbCmp = MemUtil.Compress(pbRaw);
 					m_xmlWriter.WriteBase64(pbCmp, 0, pbCmp.Length);
+
+					if(value.IsProtected)
+					{
+						MemUtil.ZeroByteArray(pbRaw);
+						MemUtil.ZeroByteArray(pbCmp);
+					}
 				}
 				else
 				{
 					byte[] pbRaw = value.ReadData();
 					m_xmlWriter.WriteBase64(pbRaw, 0, pbRaw.Length);
+
+					if(value.IsProtected) MemUtil.ZeroByteArray(pbRaw);
 				}
 			}
 		}
@@ -824,11 +982,13 @@ namespace ModernKeePassLib.Serialization
 		{
 			m_xmlWriter.WriteStartElement(ElemBinaries);
 
-			foreach(KeyValuePair<string, ProtectedBinary> kvp in m_dictBinPool)
+			ProtectedBinary[] v = m_pbsBinaries.ToArray();
+			for(int i = 0; i < v.Length; ++i)
 			{
 				m_xmlWriter.WriteStartElement(ElemBinary);
-				m_xmlWriter.WriteAttributeString(AttrId, kvp.Key);
-				SubWriteValue(kvp.Value);
+				m_xmlWriter.WriteAttributeString(AttrId,
+					i.ToString(NumberFormatInfo.InvariantInfo));
+				SubWriteValue(v[i]);
 				m_xmlWriter.WriteEndElement();
 			}
 
@@ -836,21 +996,18 @@ namespace ModernKeePassLib.Serialization
 		}
 
 		[Obsolete]
-		public static bool WriteEntries(Stream msOutput, PwDatabase pwDatabase,
-			PwEntry[] vEntries)
-		{
-			return WriteEntries(msOutput, vEntries);
-		}
-
-		/// <summary>
-		/// Write entries to a stream.
-		/// </summary>
-		/// <param name="msOutput">Output stream to which the entries will be written.</param>
-		/// <param name="vEntries">Entries to serialize.</param>
-		/// <returns>Returns <c>true</c>, if the entries were written successfully
-		/// to the stream.</returns>
 		public static bool WriteEntries(Stream msOutput, PwEntry[] vEntries)
 		{
+			return WriteEntries(msOutput, null, vEntries);
+		}
+
+		public static bool WriteEntries(Stream msOutput, PwDatabase pdContext,
+			PwEntry[] vEntries)
+		{
+			if(msOutput == null) { Debug.Assert(false); return false; }
+			// pdContext may be null
+			if(vEntries == null) { Debug.Assert(false); return false; }
+
 			/* KdbxFile f = new KdbxFile(pwDatabase);
 			f.m_format = KdbxFormat.PlainXml;
 
@@ -881,8 +1038,27 @@ namespace ModernKeePassLib.Serialization
 			PwDatabase pd = new PwDatabase();
 			pd.New(new IOConnectionInfo(), new CompositeKey());
 
-			foreach(PwEntry peCopy in vEntries)
-				pd.RootGroup.AddEntry(peCopy.CloneDeep(), true);
+			PwGroup pg = pd.RootGroup;
+			if(pg == null) { Debug.Assert(false); return false; }
+
+			foreach(PwEntry pe in vEntries)
+			{
+				PwUuid pu = pe.CustomIconUuid;
+				if(!pu.Equals(PwUuid.Zero) && (pd.GetCustomIconIndex(pu) < 0))
+				{
+					int i = -1;
+					if(pdContext != null) i = pdContext.GetCustomIconIndex(pu);
+					if(i >= 0)
+					{
+						PwCustomIcon ci = pdContext.CustomIcons[i];
+						pd.CustomIcons.Add(ci);
+					}
+					else { Debug.Assert(pdContext == null); }
+				}
+
+				PwEntry peCopy = pe.CloneDeep();
+				pg.AddEntry(peCopy, true);
+			}
 
 			KdbxFile f = new KdbxFile(pd);
 			f.Save(msOutput, null, KdbxFormat.PlainXml, null);

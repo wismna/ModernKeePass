@@ -9,10 +9,9 @@ namespace ModernKeePass.ViewModels
             get
             {
                 var package = Package.Current;
-                var packageId = package.Id;
-                var version = packageId.Version;
+                var version = package.Id.Version;
 
-                return $"ModernKeePass version {version.Major}.{version.Minor}";
+                return $"{package.DisplayName} version {version.Major}.{version.Minor}";
             }
         }
     }

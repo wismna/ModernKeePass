@@ -33,6 +33,7 @@ namespace ModernKeePass.Common
             }
         }
         
+
         public string Open(string password, bool createNew = false)
         {
             var key = new CompositeKey();

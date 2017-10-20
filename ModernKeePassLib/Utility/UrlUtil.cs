@@ -23,7 +23,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
-
+using System.Globalization;
 #if ModernKeePassLib
 //using PCLStorage;
 using Windows.Storage;
@@ -686,10 +686,8 @@ namespace ModernKeePassLib.Utility
 					if(strPath.Length == 0) { Debug.Assert(false); continue; }
 					Debug.Assert(strPath == strPathRaw);
 
-					if(!strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
-						continue;
-
-					l.Add(strPathRaw);
+					if(strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+						l.Add(strPathRaw);
 				}
 			}
 			else l.AddRange(v);
@@ -725,10 +723,8 @@ namespace ModernKeePassLib.Utility
 					if(strPath.Length == 0) { Debug.Assert(false); continue; }
 					Debug.Assert(strPath == strPathRaw);
 
-					if(!strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
-						continue;
-
-					l.Add(fi);
+					if(strPath.EndsWith(strExt, StrUtil.CaseIgnoreCmp))
+						l.Add(fi);
 				}
 			}
 			else l.AddRange(v);
@@ -736,5 +732,54 @@ namespace ModernKeePassLib.Utility
 			return l;
 		}
 #endif
+
+		/// <summary>
+		/// Expand shell variables in a string.
+		/// <paramref name="vParams" />[0] is the value of <c>%1</c>, etc.
+		/// </summary>
+		public static string ExpandShellVariables(string strText, string[] vParams)
+		{
+			if(strText == null) { Debug.Assert(false); return string.Empty; }
+			if(vParams == null) { Debug.Assert(false); vParams = new string[0]; }
+
+			string str = strText;
+			NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
+
+			for(int i = 0; i <= 9; ++i)
+			{
+				string strPlh = "%" + i.ToString(nfi);
+
+				string strValue = string.Empty;
+				if((i > 0) && ((i - 1) < vParams.Length))
+					strValue = (vParams[i - 1] ?? string.Empty);
+
+				str = str.Replace(strPlh, strValue);
+
+				if(i == 1)
+				{
+					// %L is replaced by the long version of %1; e.g.
+					// HKEY_CLASSES_ROOT\\IE.AssocFile.URL\\Shell\\Open\\Command
+					str = str.Replace("%L", strValue);
+					str = str.Replace("%l", strValue);
+				}
+			}
+
+			if(str.IndexOf("%*") >= 0)
+			{
+				StringBuilder sb = new StringBuilder();
+				foreach(string strValue in vParams)
+				{
+					if(!string.IsNullOrEmpty(strValue))
+					{
+						if(sb.Length > 0) sb.Append(' ');
+						sb.Append(strValue);
+					}
+				}
+
+				str = str.Replace("%*", sb.ToString());
+			}
+
+			return str;
+		}
 	}
 }

@@ -139,9 +139,40 @@ namespace ModernKeePassLib.Serialization
 			set { m_ioHint = value; }
 		} */
 
+		private IocProperties m_props = new IocProperties();
+		[XmlIgnore]
+		public IocProperties Properties
+		{
+			get { return m_props; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_props = value;
+			}
+		}
+
+		/// <summary>
+		/// For serialization only; use <c>Properties</c> in code.
+		/// </summary>
+		[DefaultValue("")]
+		public string PropertiesEx
+		{
+			get { return m_props.Serialize(); }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+
+				IocProperties p = IocProperties.Deserialize(value);
+				Debug.Assert(p != null);
+				m_props = (p ?? new IocProperties());
+			}
+		}
+
 		public IOConnectionInfo CloneDeep()
 		{
-			return (IOConnectionInfo)this.MemberwiseClone();
+			IOConnectionInfo ioc = (IOConnectionInfo)this.MemberwiseClone();
+			ioc.m_props = m_props.CloneDeep();
+			return ioc;
 		}
 
 #if DEBUG // For debugger display only
@@ -274,14 +305,14 @@ namespace ModernKeePassLib.Serialization
 			string str = m_strUrl;
 
 			if(m_strUser.Length > 0)
-				str += " (" + m_strUser + ")";
+				str += (" (" + m_strUser + ")");
 
 			return str;
 		}
 
 		public bool IsEmpty()
 		{
-			return (m_strUrl.Length > 0);
+			return (m_strUrl.Length == 0);
 		}
 
 		public static IOConnectionInfo FromPath(string strPath)
@@ -320,13 +351,13 @@ namespace ModernKeePassLib.Serialization
 			if(IsLocalFile()) return File.Exists(m_strUrl);
 #endif
 
-            return true;
+			return true;
 		}
 
 		public bool IsLocalFile()
 		{
 			// Not just ":/", see e.g. AppConfigEx.ChangePathRelAbs
-			return (m_strUrl.IndexOf(@"://") < 0);
+			return (m_strUrl.IndexOf("://") < 0);
 		}
 
 		public void ClearCredentials(bool bDependingOnRememberMode)

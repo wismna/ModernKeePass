@@ -30,6 +30,7 @@ using Image = Splat.IBitmap;
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
@@ -57,7 +58,8 @@ namespace ModernKeePassLib
 
 		private PwUuid m_uuidDataCipher = StandardAesEngine.AesUuid;
 		private PwCompressionAlgorithm m_caCompression = PwCompressionAlgorithm.GZip;
-		private ulong m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
+		// private ulong m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
+		private KdfParameters m_kdfParams = KdfPool.GetDefaultParameters();
 
 		private CompositeKey m_pwUserKey = null;
 		private MemoryProtectionConfig m_memProtConfig = new MemoryProtectionConfig();
@@ -65,6 +67,7 @@ namespace ModernKeePassLib
 		private List<PwCustomIcon> m_vCustomIcons = new List<PwCustomIcon>();
 		private bool m_bUINeedsIconUpdate = true;
 
+		private DateTime m_dtSettingsChanged = PwDefs.DtDefaultNow;
 		private string m_strName = string.Empty;
 		private DateTime m_dtNameChanged = PwDefs.DtDefaultNow;
 		private string m_strDesc = string.Empty;
@@ -77,6 +80,7 @@ namespace ModernKeePassLib
 		private DateTime m_dtKeyLastChanged = PwDefs.DtDefaultNow;
 		private long m_lKeyChangeRecDays = -1;
 		private long m_lKeyChangeForceDays = -1;
+		private bool m_bKeyChangeForceOnce = false;
 
 		private IOConnectionInfo m_ioSource = new IOConnectionInfo();
 		private bool m_bDatabaseOpened = false;
@@ -94,7 +98,8 @@ namespace ModernKeePassLib
 		private int m_nHistoryMaxItems = DefaultHistoryMaxItems;
 		private long m_lHistoryMaxSize = DefaultHistoryMaxSize; // In bytes
 
-		private StringDictionaryEx m_vCustomData = new StringDictionaryEx();
+		private StringDictionaryEx m_dCustomData = new StringDictionaryEx();
+		private VariantDictionary m_dPublicCustomData = new VariantDictionary();
 
 		private byte[] m_pbHashOfFileOnDisk = null;
 		private byte[] m_pbHashOfLastIO = null;
@@ -167,6 +172,12 @@ namespace ModernKeePassLib
 
 				m_pwUserKey = value;
 			}
+		}
+
+		public DateTime SettingsChanged
+		{
+			get { return m_dtSettingsChanged; }
+			set { m_dtSettingsChanged = value; }
 		}
 
 		/// <summary>
@@ -260,6 +271,12 @@ namespace ModernKeePassLib
 			set { m_lKeyChangeForceDays = value; }
 		}
 
+		public bool MasterKeyChangeForceOnce
+		{
+			get { return m_bKeyChangeForceOnce; }
+			set { m_bKeyChangeForceOnce = value; }
+		}
+
 		/// <summary>
 		/// The encryption algorithm used to encrypt the data part of the database.
 		/// </summary>
@@ -282,14 +299,23 @@ namespace ModernKeePassLib
 			set { m_caCompression = value; }
 		}
 
-		/// <summary>
-		/// Number of key transformation rounds (in order to make dictionary
-		/// attacks harder).
-		/// </summary>
-		public ulong KeyEncryptionRounds
+		// /// <summary>
+		// /// Number of key transformation rounds (KDF parameter).
+		// /// </summary>
+		// public ulong KeyEncryptionRounds
+		// {
+		//	get { return m_uKeyEncryptionRounds; }
+		//	set { m_uKeyEncryptionRounds = value; }
+		// }
+
+		public KdfParameters KdfParameters
 		{
-			get { return m_uKeyEncryptionRounds; }
-			set { m_uKeyEncryptionRounds = value; }
+			get { return m_kdfParams; }
+			set
+			{
+				if(value == null) throw new ArgumentNullException("value");
+				m_kdfParams = value;
+			}
 		}
 
 		/// <summary>
@@ -409,14 +435,37 @@ namespace ModernKeePassLib
 		/// <summary>
 		/// Custom data container that can be used by plugins to store
 		/// own data in KeePass databases.
+		/// The data is stored in the encrypted part of encrypted
+		/// database files.
+		/// Use unique names for your items, e.g. "PluginName_ItemName".
 		/// </summary>
 		public StringDictionaryEx CustomData
 		{
-			get { return m_vCustomData; }
-			set
+			get { return m_dCustomData; }
+			internal set
 			{
-				Debug.Assert(value != null); if(value == null) throw new ArgumentNullException("value");
-				m_vCustomData = value;
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_dCustomData = value;
+			}
+		}
+
+		/// <summary>
+		/// Custom data container that can be used by plugins to store
+		/// own data in KeePass databases.
+		/// The data is stored in the *unencrypted* part of database files,
+		/// and it is not supported by all file formats (e.g. supported by KDBX,
+		/// unsupported by XML).
+		/// It is highly recommended to use <c>CustomData</c> instead,
+		/// if possible.
+		/// Use unique names for your items, e.g. "PluginName_ItemName".
+		/// </summary>
+		public VariantDictionary PublicCustomData
+		{
+			get { return m_dPublicCustomData; }
+			internal set
+			{
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_dPublicCustomData = value;
 			}
 		}
 
@@ -485,7 +534,8 @@ namespace ModernKeePassLib
 
 			m_uuidDataCipher = StandardAesEngine.AesUuid;
 			m_caCompression = PwCompressionAlgorithm.GZip;
-			m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
+			// m_uKeyEncryptionRounds = PwDefs.DefaultKeyEncryptionRounds;
+			m_kdfParams = KdfPool.GetDefaultParameters();
 
 			m_pwUserKey = null;
 			m_memProtConfig = new MemoryProtectionConfig();
@@ -493,8 +543,9 @@ namespace ModernKeePassLib
 			m_vCustomIcons = new List<PwCustomIcon>();
 			m_bUINeedsIconUpdate = true;
 
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 
+			m_dtSettingsChanged = dtNow;
 			m_strName = string.Empty;
 			m_dtNameChanged = dtNow;
 			m_strDesc = string.Empty;
@@ -507,6 +558,7 @@ namespace ModernKeePassLib
 			m_dtKeyLastChanged = dtNow;
 			m_lKeyChangeRecDays = -1;
 			m_lKeyChangeForceDays = -1;
+			m_bKeyChangeForceOnce = false;
 
 			m_ioSource = new IOConnectionInfo();
 			m_bDatabaseOpened = false;
@@ -524,7 +576,8 @@ namespace ModernKeePassLib
 			m_nHistoryMaxItems = DefaultHistoryMaxItems;
 			m_lHistoryMaxSize = DefaultHistoryMaxSize;
 
-			m_vCustomData = new StringDictionaryEx();
+			m_dCustomData = new StringDictionaryEx();
+			m_dPublicCustomData = new VariantDictionary();
 
 			m_pbHashOfFileOnDisk = null;
 			m_pbHashOfLastIO = null;
@@ -589,7 +642,7 @@ namespace ModernKeePassLib
 				KdbxFile kdbx = new KdbxFile(this);
 				kdbx.DetachBinaries = m_strDetachBins;
 
-				var s = IOConnection.OpenRead(ioSource);
+				Stream s = IOConnection.OpenRead(ioSource);
 				kdbx.Load(s, KdbxFormat.Default, slLogger);
 				s.Dispose();
 
@@ -614,7 +667,7 @@ namespace ModernKeePassLib
 		/// <param name="slLogger">Logger that recieves status information.</param>
 		public void Save(IStatusLogger slLogger)
 		{
-			Debug.Assert(ValidateUuidUniqueness());
+			Debug.Assert(!HasDuplicateUuids());
 
 			FileLock fl = null;
 			if(m_bUseFileLocks) fl = new FileLock(m_ioSource);
@@ -622,7 +675,7 @@ namespace ModernKeePassLib
 			{
 				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
 					m_bUseFileTransactions);
-				var s = ft.OpenWrite();
+				Stream s = ft.OpenWrite();
 
 				KdbxFile kdb = new KdbxFile(this);
 				kdb.Save(s, null, KdbxFormat.Default, slLogger);
@@ -693,36 +746,35 @@ namespace ModernKeePassLib
 			MergeIn(pdSource, mm, null);
 		}
 
-		/// <summary>
-		/// Synchronize the current database with another one.
-		/// </summary>
-		/// <param name="pdSource">Input database to synchronize with. This input
-		/// database is used to update the current one, but is not modified! You
-		/// must copy the current object if you want a second instance of the
-		/// synchronized database. The input database must not be seen as valid
-		/// database any more after calling <c>Synchronize</c>.</param>
-		/// <param name="mm">Merge method.</param>
-		/// <param name="slStatus">Logger to report status messages to.
-		/// May be <c>null</c>.</param>
 		public void MergeIn(PwDatabase pdSource, PwMergeMethod mm,
 			IStatusLogger slStatus)
 		{
 			if(pdSource == null) throw new ArgumentNullException("pdSource");
 
-			PwGroup pgOrgStructure = m_pgRootGroup.CloneStructure();
-			PwGroup pgSrcStructure = pdSource.m_pgRootGroup.CloneStructure();
-
 			if(mm == PwMergeMethod.CreateNewUuids)
 			{
-				pdSource.RootGroup.CreateNewItemUuids(true, true, true);
 				pdSource.RootGroup.Uuid = new PwUuid(true);
+				pdSource.RootGroup.CreateNewItemUuids(true, true, true);
 			}
 
-			GroupHandler gh = delegate(PwGroup pg)
+			// PwGroup pgOrgStructure = m_pgRootGroup.CloneStructure();
+			// PwGroup pgSrcStructure = pdSource.RootGroup.CloneStructure();
+			// Later in case 'if(mm == PwMergeMethod.Synchronize)':
+			// PwObjectPoolEx ppOrg = PwObjectPoolEx.FromGroup(pgOrgStructure);
+			// PwObjectPoolEx ppSrc = PwObjectPoolEx.FromGroup(pgSrcStructure);
+
+			PwObjectPoolEx ppOrg = PwObjectPoolEx.FromGroup(m_pgRootGroup);
+			PwObjectPoolEx ppSrc = PwObjectPoolEx.FromGroup(pdSource.RootGroup);
+
+			GroupHandler ghSrc = delegate(PwGroup pg)
 			{
 				// if(pg == pdSource.m_pgRootGroup) return true;
 
+				// Do not use ppOrg for finding the group, because new groups
+				// might have been added (which are not in the pool, and the
+				// pool should not be modified)
 				PwGroup pgLocal = m_pgRootGroup.FindGroup(pg.Uuid, true);
+
 				if(pgLocal == null)
 				{
 					PwGroup pgSourceParent = pg.ParentGroup;
@@ -745,7 +797,10 @@ namespace ModernKeePassLib
 					PwGroup pgNew = new PwGroup(false, false);
 					pgNew.Uuid = pg.Uuid;
 					pgNew.AssignProperties(pg, false, true);
-					pgLocalContainer.AddGroup(pgNew, true);
+
+					// pgLocalContainer.AddGroup(pgNew, true);
+					InsertObjectAtBestPos<PwGroup>(pgLocalContainer.Groups, pgNew, ppSrc);
+					pgNew.ParentGroup = pgLocalContainer;
 				}
 				else // pgLocal != null
 				{
@@ -764,9 +819,13 @@ namespace ModernKeePassLib
 				return ((slStatus != null) ? slStatus.ContinueWork() : true);
 			};
 
-			EntryHandler eh = delegate(PwEntry pe)
+			EntryHandler ehSrc = delegate(PwEntry pe)
 			{
-				PwEntry peLocal = m_pgRootGroup.FindEntry(pe.Uuid, true);
+				// PwEntry peLocal = m_pgRootGroup.FindEntry(pe.Uuid, true);
+				PwEntry peLocal = (ppOrg.GetItemByUuid(pe.Uuid) as PwEntry);
+				Debug.Assert(object.ReferenceEquals(peLocal,
+					m_pgRootGroup.FindEntry(pe.Uuid, true)));
+
 				if(peLocal == null)
 				{
 					PwGroup pgSourceParent = pe.ParentGroup;
@@ -781,7 +840,10 @@ namespace ModernKeePassLib
 					PwEntry peNew = new PwEntry(false, false);
 					peNew.Uuid = pe.Uuid;
 					peNew.AssignProperties(pe, false, true, true);
-					pgLocalContainer.AddEntry(peNew, true);
+
+					// pgLocalContainer.AddEntry(peNew, true);
+					InsertObjectAtBestPos<PwEntry>(pgLocalContainer.Entries, peNew, ppSrc);
+					peNew.ParentGroup = pgLocalContainer;
 				}
 				else // peLocal != null
 				{
@@ -818,8 +880,8 @@ namespace ModernKeePassLib
 				return ((slStatus != null) ? slStatus.ContinueWork() : true);
 			};
 
-			gh(pdSource.RootGroup);
-			if(!pdSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh))
+			ghSrc(pdSource.RootGroup);
+			if(!pdSource.RootGroup.TraverseTree(TraversalMethod.PreOrder, ghSrc, ehSrc))
 				throw new InvalidOperationException();
 
 			IStatusLogger slPrevStatus = m_slStatus;
@@ -827,23 +889,25 @@ namespace ModernKeePassLib
 
 			if(mm == PwMergeMethod.Synchronize)
 			{
-				ApplyDeletions(pdSource.m_vDeletedObjects, true);
-				ApplyDeletions(m_vDeletedObjects, false);
+				RelocateGroups(ppOrg, ppSrc);
+				RelocateEntries(ppOrg, ppSrc);
+				ReorderObjects(m_pgRootGroup, ppOrg, ppSrc);
 
-				PwObjectPool ppOrgGroups = PwObjectPool.FromGroupRecursive(
-					pgOrgStructure, false);
-				PwObjectPool ppSrcGroups = PwObjectPool.FromGroupRecursive(
-					pgSrcStructure, false);
-				PwObjectPool ppOrgEntries = PwObjectPool.FromGroupRecursive(
-					pgOrgStructure, true);
-				PwObjectPool ppSrcEntries = PwObjectPool.FromGroupRecursive(
-					pgSrcStructure, true);
+				// After all relocations and reorderings
+				MergeInLocationChanged(m_pgRootGroup, ppOrg, ppSrc);
+				ppOrg = null; // Pools are now invalid, because the location
+				ppSrc = null; // changed times have been merged in
 
-				RelocateGroups(ppOrgGroups, ppSrcGroups);
-				ReorderGroups(ppOrgGroups, ppSrcGroups);
-				RelocateEntries(ppOrgEntries, ppSrcEntries);
-				ReorderEntries(ppOrgEntries, ppSrcEntries);
-				Debug.Assert(ValidateUuidUniqueness());
+				// Delete *after* relocating, because relocating might
+				// empty some groups that are marked for deletion (and
+				// objects that weren't relocated yet might prevent the
+				// deletion)
+				Dictionary<PwUuid, PwDeletedObject> dOrgDel = CreateDeletedObjectsPool();
+				MergeInDeletionInfo(pdSource.m_vDeletedObjects, dOrgDel);
+				ApplyDeletions(m_pgRootGroup, dOrgDel);
+
+				// The list and the dictionary should be kept in sync
+				Debug.Assert(m_vDeletedObjects.UCount == (uint)dOrgDel.Count);
 			}
 
 			// Must be called *after* merging groups, because group UUIDs
@@ -854,6 +918,7 @@ namespace ModernKeePassLib
 
 			MaintainBackups();
 
+			Debug.Assert(!HasDuplicateUuids());
 			m_slStatus = slPrevStatus;
 		}
 
@@ -868,79 +933,120 @@ namespace ModernKeePassLib
 			}
 		}
 
-		private void ApplyDeletions(PwObjectList<PwDeletedObject> listDelObjects,
-			bool bCopyDeletionInfoToLocal)
+		private Dictionary<PwUuid, PwDeletedObject> CreateDeletedObjectsPool()
 		{
-			Debug.Assert(listDelObjects != null); if(listDelObjects == null) throw new ArgumentNullException("listDelObjects");
+			Dictionary<PwUuid, PwDeletedObject> d =
+				new Dictionary<PwUuid, PwDeletedObject>();
 
-			LinkedList<PwGroup> listGroupsToDelete = new LinkedList<PwGroup>();
-			LinkedList<PwEntry> listEntriesToDelete = new LinkedList<PwEntry>();
-
-			GroupHandler gh = delegate(PwGroup pg)
+			int n = (int)m_vDeletedObjects.UCount;
+			for(int i = n - 1; i >= 0; --i)
 			{
-				if(pg == m_pgRootGroup) return true;
+				PwDeletedObject pdo = m_vDeletedObjects.GetAt((uint)i);
 
-				foreach(PwDeletedObject pdo in listDelObjects)
+				PwDeletedObject pdoEx;
+				if(d.TryGetValue(pdo.Uuid, out pdoEx))
 				{
-					if(pg.Uuid.Equals(pdo.Uuid))
-					{
-						if(TimeUtil.Compare(pg.LastModificationTime,
-							pdo.DeletionTime, true) < 0)
-							listGroupsToDelete.AddLast(pg);
-					}
+					Debug.Assert(false); // Found duplicate, which should not happen
+
+					if(pdo.DeletionTime > pdoEx.DeletionTime)
+						pdoEx.DeletionTime = pdo.DeletionTime;
+
+					m_vDeletedObjects.RemoveAt((uint)i);
 				}
+				else d[pdo.Uuid] = pdo;
+			}
 
-				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
-			};
+			return d;
+		}
 
-			EntryHandler eh = delegate(PwEntry pe)
+		private void MergeInDeletionInfo(PwObjectList<PwDeletedObject> lSrc,
+			Dictionary<PwUuid, PwDeletedObject> dOrgDel)
+		{
+			foreach(PwDeletedObject pdoSrc in lSrc)
 			{
-				foreach(PwDeletedObject pdo in listDelObjects)
+				PwDeletedObject pdoOrg;
+				if(dOrgDel.TryGetValue(pdoSrc.Uuid, out pdoOrg)) // Update
 				{
-					if(pe.Uuid.Equals(pdo.Uuid))
-					{
-						if(TimeUtil.Compare(pe.LastModificationTime,
-							pdo.DeletionTime, true) < 0)
-							listEntriesToDelete.AddLast(pe);
-					}
+					Debug.Assert(pdoOrg.Uuid.Equals(pdoSrc.Uuid));
+
+					if(pdoSrc.DeletionTime > pdoOrg.DeletionTime)
+						pdoOrg.DeletionTime = pdoSrc.DeletionTime;
 				}
-
-				return ((m_slStatus != null) ? m_slStatus.ContinueWork() : true);
-			};
-
-			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
-
-			foreach(PwGroup pg in listGroupsToDelete)
-				pg.ParentGroup.Groups.Remove(pg);
-			foreach(PwEntry pe in listEntriesToDelete)
-				pe.ParentGroup.Entries.Remove(pe);
-
-			if(bCopyDeletionInfoToLocal)
-			{
-				foreach(PwDeletedObject pdoNew in listDelObjects)
+				else // Add
 				{
-					bool bCopy = true;
-
-					foreach(PwDeletedObject pdoLocal in m_vDeletedObjects)
-					{
-						if(pdoNew.Uuid.Equals(pdoLocal.Uuid))
-						{
-							bCopy = false;
-
-							if(pdoNew.DeletionTime > pdoLocal.DeletionTime)
-								pdoLocal.DeletionTime = pdoNew.DeletionTime;
-
-							break;
-						}
-					}
-
-					if(bCopy) m_vDeletedObjects.Add(pdoNew);
+					m_vDeletedObjects.Add(pdoSrc);
+					dOrgDel[pdoSrc.Uuid] = pdoSrc;
 				}
 			}
 		}
 
-		private void RelocateGroups(PwObjectPool ppOrgStructure,
-			PwObjectPool ppSrcStructure)
+		private void ApplyDeletions<T>(PwObjectList<T> l, Predicate<T> fCanDelete,
+			Dictionary<PwUuid, PwDeletedObject> dOrgDel)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
+		{
+			int n = (int)l.UCount;
+			for(int i = n - 1; i >= 0; --i)
+			{
+				if((m_slStatus != null) && !m_slStatus.ContinueWork()) break;
+
+				T t = l.GetAt((uint)i);
+
+				PwDeletedObject pdo;
+				if(dOrgDel.TryGetValue(t.Uuid, out pdo))
+				{
+					Debug.Assert(t.Uuid.Equals(pdo.Uuid));
+
+					bool bDel = (TimeUtil.Compare(t.LastModificationTime,
+						pdo.DeletionTime, true) < 0);
+					bDel &= fCanDelete(t);
+
+					if(bDel) l.RemoveAt((uint)i);
+					else
+					{
+						// Prevent future deletion attempts; this also prevents
+						// delayed deletions (emptying a group could cause a
+						// group to be deleted, if the deletion was prevented
+						// before due to the group not being empty)
+						if(!m_vDeletedObjects.Remove(pdo)) { Debug.Assert(false); }
+						if(!dOrgDel.Remove(pdo.Uuid)) { Debug.Assert(false); }
+					}
+				}
+			}
+		}
+
+		private static bool SafeCanDeleteGroup(PwGroup pg)
+		{
+			if(pg == null) { Debug.Assert(false); return false; }
+
+			if(pg.Groups.UCount > 0) return false;
+			if(pg.Entries.UCount > 0) return false;
+			return true;
+		}
+
+		private static bool SafeCanDeleteEntry(PwEntry pe)
+		{
+			if(pe == null) { Debug.Assert(false); return false; }
+
+			return true;
+		}
+
+		// Apply deletions on all objects in the specified container
+		// (but not the container itself), using post-order traversal
+		// to avoid implicit deletions;
+		// https://sourceforge.net/p/keepass/bugs/1499/
+		private void ApplyDeletions(PwGroup pgContainer,
+			Dictionary<PwUuid, PwDeletedObject> dOrgDel)
+		{
+			foreach(PwGroup pg in pgContainer.Groups) // Post-order traversal
+			{
+				ApplyDeletions(pg, dOrgDel);
+			}
+
+			ApplyDeletions<PwGroup>(pgContainer.Groups, PwDatabase.SafeCanDeleteGroup, dOrgDel);
+			ApplyDeletions<PwEntry>(pgContainer.Entries, PwDatabase.SafeCanDeleteEntry, dOrgDel);
+		}
+
+		private void RelocateGroups(PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
 		{
 			PwObjectList<PwGroup> vGroups = m_pgRootGroup.GetGroups(true);
 
@@ -949,10 +1055,10 @@ namespace ModernKeePassLib
 				if((m_slStatus != null) && !m_slStatus.ContinueWork()) break;
 
 				// PwGroup pgOrg = pgOrgStructure.FindGroup(pg.Uuid, true);
-				IStructureItem ptOrg = ppOrgStructure.Get(pg.Uuid);
+				IStructureItem ptOrg = ppOrg.GetItemByUuid(pg.Uuid);
 				if(ptOrg == null) continue;
 				// PwGroup pgSrc = pgSrcStructure.FindGroup(pg.Uuid, true);
-				IStructureItem ptSrc = ppSrcStructure.Get(pg.Uuid);
+				IStructureItem ptSrc = ppSrc.GetItemByUuid(pg.Uuid);
 				if(ptSrc == null) continue;
 
 				PwGroup pgOrgParent = ptOrg.ParentGroup;
@@ -966,8 +1072,8 @@ namespace ModernKeePassLib
 
 				if(pgOrgParent.Uuid.Equals(pgSrcParent.Uuid))
 				{
-					pg.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
-						ptSrc.LocationChanged : ptOrg.LocationChanged);
+					// pg.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
+					//	ptSrc.LocationChanged : ptOrg.LocationChanged);
 					continue;
 				}
 
@@ -979,8 +1085,12 @@ namespace ModernKeePassLib
 					if(pgLocal.IsContainedIn(pg)) continue;
 
 					pg.ParentGroup.Groups.Remove(pg);
-					pgLocal.AddGroup(pg, true);
-					pg.LocationChanged = ptSrc.LocationChanged;
+
+					// pgLocal.AddGroup(pg, true);
+					InsertObjectAtBestPos<PwGroup>(pgLocal.Groups, pg, ppSrc);
+					pg.ParentGroup = pgLocal;
+
+					// pg.LocationChanged = ptSrc.LocationChanged;
 				}
 				else
 				{
@@ -992,8 +1102,7 @@ namespace ModernKeePassLib
 			Debug.Assert(m_pgRootGroup.GetGroups(true).UCount == vGroups.UCount);
 		}
 
-		private void RelocateEntries(PwObjectPool ppOrgStructure,
-			PwObjectPool ppSrcStructure)
+		private void RelocateEntries(PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
 		{
 			PwObjectList<PwEntry> vEntries = m_pgRootGroup.GetEntries(true);
 
@@ -1002,18 +1111,18 @@ namespace ModernKeePassLib
 				if((m_slStatus != null) && !m_slStatus.ContinueWork()) break;
 
 				// PwEntry peOrg = pgOrgStructure.FindEntry(pe.Uuid, true);
-				IStructureItem ptOrg = ppOrgStructure.Get(pe.Uuid);
+				IStructureItem ptOrg = ppOrg.GetItemByUuid(pe.Uuid);
 				if(ptOrg == null) continue;
 				// PwEntry peSrc = pgSrcStructure.FindEntry(pe.Uuid, true);
-				IStructureItem ptSrc = ppSrcStructure.Get(pe.Uuid);
+				IStructureItem ptSrc = ppSrc.GetItemByUuid(pe.Uuid);
 				if(ptSrc == null) continue;
 
 				PwGroup pgOrg = ptOrg.ParentGroup;
 				PwGroup pgSrc = ptSrc.ParentGroup;
 				if(pgOrg.Uuid.Equals(pgSrc.Uuid))
 				{
-					pe.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
-						ptSrc.LocationChanged : ptOrg.LocationChanged);
+					// pe.LocationChanged = ((ptSrc.LocationChanged > ptOrg.LocationChanged) ?
+					//	ptSrc.LocationChanged : ptOrg.LocationChanged);
 					continue;
 				}
 
@@ -1023,8 +1132,12 @@ namespace ModernKeePassLib
 					if(pgLocal == null) { Debug.Assert(false); continue; }
 
 					pe.ParentGroup.Entries.Remove(pe);
-					pgLocal.AddEntry(pe, true);
-					pe.LocationChanged = ptSrc.LocationChanged;
+
+					// pgLocal.AddEntry(pe, true);
+					InsertObjectAtBestPos<PwEntry>(pgLocal.Entries, pe, ppSrc);
+					pe.ParentGroup = pgLocal;
+
+					// pe.LocationChanged = ptSrc.LocationChanged;
 				}
 				else
 				{
@@ -1036,255 +1149,295 @@ namespace ModernKeePassLib
 			Debug.Assert(m_pgRootGroup.GetEntries(true).UCount == vEntries.UCount);
 		}
 
-		private void ReorderGroups(PwObjectPool ppOrgStructure,
-			PwObjectPool ppSrcStructure)
+		private void ReorderObjects(PwGroup pg, PwObjectPoolEx ppOrg,
+			PwObjectPoolEx ppSrc)
 		{
-			GroupHandler gh = delegate(PwGroup pg)
-			{
-				ReorderObjectList<PwGroup>(pg.Groups, ppOrgStructure,
-					ppSrcStructure, false);
-				return true;
-			};
+			ReorderObjectList<PwGroup>(pg.Groups, ppOrg, ppSrc);
+			ReorderObjectList<PwEntry>(pg.Entries, ppOrg, ppSrc);
 
-			ReorderObjectList<PwGroup>(m_pgRootGroup.Groups, ppOrgStructure,
-				ppSrcStructure, false);
-			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, null);
+			foreach(PwGroup pgSub in pg.Groups)
+			{
+				ReorderObjects(pgSub, ppOrg, ppSrc);
+			}
 		}
 
-		private void ReorderEntries(PwObjectPool ppOrgStructure,
-			PwObjectPool ppSrcStructure)
+		private void ReorderObjectList<T>(PwObjectList<T> lItems,
+			PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
 		{
-			GroupHandler gh = delegate(PwGroup pg)
-			{
-				ReorderObjectList<PwEntry>(pg.Entries, ppOrgStructure,
-					ppSrcStructure, true);
-				return true;
-			};
-
-			ReorderObjectList<PwEntry>(m_pgRootGroup.Entries, ppOrgStructure,
-				ppSrcStructure, true);
-			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, null);
-		}
-
-		private void ReorderObjectList<T>(PwObjectList<T> vItems,
-			PwObjectPool ppOrgStructure, PwObjectPool ppSrcStructure, bool bEntries)
-			where T : class, IStructureItem, IDeepCloneable<T>
-		{
-			if(!ObjectListRequiresReorder<T>(vItems, ppOrgStructure, ppSrcStructure,
-				bEntries)) return;
+			List<PwObjectBlock<T>> lBlocks = PartitionConsec(lItems, ppOrg, ppSrc);
+			if(lBlocks.Count <= 1) return;
 
 #if DEBUG
-			PwObjectList<T> vOrgListItems = vItems.CloneShallow();
+			PwObjectList<T> lOrgItems = lItems.CloneShallow();
 #endif
 
-			Queue<KeyValuePair<uint, uint>> qToDo = new Queue<KeyValuePair<uint, uint>>();
-			qToDo.Enqueue(new KeyValuePair<uint, uint>(0, vItems.UCount - 1));
+			Queue<KeyValuePair<int, int>> qToDo = new Queue<KeyValuePair<int, int>>();
+			qToDo.Enqueue(new KeyValuePair<int, int>(0, lBlocks.Count - 1));
 
 			while(qToDo.Count > 0)
 			{
 				if((m_slStatus != null) && !m_slStatus.ContinueWork()) break;
 
-				KeyValuePair<uint, uint> kvp = qToDo.Dequeue();
-				if(kvp.Value <= kvp.Key) { Debug.Assert(false); continue; }
+				KeyValuePair<int, int> kvp = qToDo.Dequeue();
+				if(kvp.Key >= kvp.Value) { Debug.Assert(false); continue; }
 
-				Queue<PwUuid> qRelBefore = new Queue<PwUuid>();
-				Queue<PwUuid> qRelAfter = new Queue<PwUuid>();
-				uint uPivot = FindLocationChangedPivot<T>(vItems, kvp, ppOrgStructure,
-					ppSrcStructure, qRelBefore, qRelAfter, bEntries);
-				T ptPivot = vItems.GetAt(uPivot);
+				PwObjectPoolEx pPool;
+				int iPivot = FindLocationChangedPivot(lBlocks, kvp, out pPool);
+				PwObjectBlock<T> bPivot = lBlocks[iPivot];
 
-				List<T> vToSort = vItems.GetRange(kvp.Key, kvp.Value);
-				Queue<T> qBefore = new Queue<T>();
-				Queue<T> qAfter = new Queue<T>();
+				T tPivotPrimary = bPivot.PrimaryItem;
+				if(tPivotPrimary == null) { Debug.Assert(false); continue; }
+				ulong idPivot = pPool.GetIdByUuid(tPivotPrimary.Uuid);
+				if(idPivot == 0) { Debug.Assert(false); continue; }
+
+				Queue<PwObjectBlock<T>> qBefore = new Queue<PwObjectBlock<T>>();
+				Queue<PwObjectBlock<T>> qAfter = new Queue<PwObjectBlock<T>>();
 				bool bBefore = true;
 
-				foreach(T pt in vToSort)
+				for(int i = kvp.Key; i <= kvp.Value; ++i)
 				{
-					if(pt == ptPivot) { bBefore = false; continue; }
+					if(i == iPivot) { bBefore = false; continue; }
 
-					bool bAdded = false;
-					foreach(PwUuid puBefore in qRelBefore)
+					PwObjectBlock<T> b = lBlocks[i];
+					Debug.Assert(b.LocationChanged <= bPivot.LocationChanged);
+
+					T t = b.PrimaryItem;
+					if(t != null)
 					{
-						if(puBefore.Equals(pt.Uuid))
+						ulong idBPri = pPool.GetIdByUuid(t.Uuid);
+						if(idBPri > 0)
 						{
-							qBefore.Enqueue(pt);
-							bAdded = true;
-							break;
+							if(idBPri < idPivot) qBefore.Enqueue(b);
+							else qAfter.Enqueue(b);
+
+							continue;
 						}
 					}
-					if(bAdded) continue;
+					else { Debug.Assert(false); }
 
-					foreach(PwUuid puAfter in qRelAfter)
-					{
-						if(puAfter.Equals(pt.Uuid))
-						{
-							qAfter.Enqueue(pt);
-							bAdded = true;
-							break;
-						}
-					}
-					if(bAdded) continue;
-
-					if(bBefore) qBefore.Enqueue(pt);
-					else qAfter.Enqueue(pt);
-				}
-				Debug.Assert(bBefore == false);
-
-				uint uPos = kvp.Key;
-				while(qBefore.Count > 0) vItems.SetAt(uPos++, qBefore.Dequeue());
-				vItems.SetAt(uPos++, ptPivot);
-				while(qAfter.Count > 0) vItems.SetAt(uPos++, qAfter.Dequeue());
-				Debug.Assert(uPos == (kvp.Value + 1));
-
-				int iNewPivot = vItems.IndexOf(ptPivot);
-				if((iNewPivot < (int)kvp.Key) || (iNewPivot > (int)kvp.Value))
-				{
-					Debug.Assert(false);
-					continue;
+					if(bBefore) qBefore.Enqueue(b);
+					else qAfter.Enqueue(b);
 				}
 
-				if((iNewPivot - 1) > (int)kvp.Key)
-					qToDo.Enqueue(new KeyValuePair<uint, uint>(kvp.Key,
-						(uint)(iNewPivot - 1)));
+				int j = kvp.Key;
+				while(qBefore.Count > 0) { lBlocks[j] = qBefore.Dequeue(); ++j; }
+				int iNewPivot = j;
+				lBlocks[j] = bPivot;
+				++j;
+				while(qAfter.Count > 0) { lBlocks[j] = qAfter.Dequeue(); ++j; }
+				Debug.Assert(j == (kvp.Value + 1));
 
-				if((iNewPivot + 1) < (int)kvp.Value)
-					qToDo.Enqueue(new KeyValuePair<uint, uint>((uint)(iNewPivot + 1),
-						kvp.Value));
+				if((iNewPivot - 1) > kvp.Key)
+					qToDo.Enqueue(new KeyValuePair<int, int>(kvp.Key, iNewPivot - 1));
+				if((iNewPivot + 1) < kvp.Value)
+					qToDo.Enqueue(new KeyValuePair<int, int>(iNewPivot + 1, kvp.Value));
 			}
 
-#if DEBUG
-			foreach(T ptItem in vOrgListItems)
+			uint u = 0;
+			foreach(PwObjectBlock<T> b in lBlocks)
 			{
-				Debug.Assert(vItems.IndexOf(ptItem) >= 0);
+				foreach(T t in b)
+				{
+					lItems.SetAt(u, t);
+					++u;
+				}
+			}
+			Debug.Assert(u == lItems.UCount);
+
+#if DEBUG
+			Debug.Assert(u == lOrgItems.UCount);
+			foreach(T ptItem in lOrgItems)
+			{
+				Debug.Assert(lItems.IndexOf(ptItem) >= 0);
 			}
 #endif
 		}
 
-		private static uint FindLocationChangedPivot<T>(PwObjectList<T> vItems,
-			KeyValuePair<uint, uint> kvpRange, PwObjectPool ppOrgStructure,
-			PwObjectPool ppSrcStructure, Queue<PwUuid> qBefore, Queue<PwUuid> qAfter,
-			bool bEntries)
-			where T : class, IStructureItem, IDeepCloneable<T>
+		private static List<PwObjectBlock<T>> PartitionConsec<T>(PwObjectList<T> lItems,
+			PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
 		{
-			uint uPosMax = kvpRange.Key;
-			DateTime dtMax = DateTime.MinValue;
-			List<IStructureItem> vNeighborSrc = null;
+			List<PwObjectBlock<T>> lBlocks = new List<PwObjectBlock<T>>();
 
-			for(uint u = kvpRange.Key; u <= kvpRange.Value; ++u)
+			Dictionary<PwUuid, bool> dItemUuids = new Dictionary<PwUuid, bool>();
+			foreach(T t in lItems) { dItemUuids[t.Uuid] = true; }
+
+			uint n = lItems.UCount;
+			for(uint u = 0; u < n; ++u)
 			{
-				T pt = vItems.GetAt(u);
+				T t = lItems.GetAt(u);
 
-				// IStructureItem ptOrg = pgOrgStructure.FindObject(pt.Uuid, true, bEntries);
-				IStructureItem ptOrg = ppOrgStructure.Get(pt.Uuid);
-				if((ptOrg != null) && (ptOrg.LocationChanged > dtMax))
+				PwObjectBlock<T> b = new PwObjectBlock<T>();
+
+				DateTime dtLoc;
+				PwObjectPoolEx pPool = GetBestPool(t, ppOrg, ppSrc, out dtLoc);
+				b.Add(t, dtLoc, pPool);
+
+				lBlocks.Add(b);
+
+				ulong idOrg = ppOrg.GetIdByUuid(t.Uuid);
+				ulong idSrc = ppSrc.GetIdByUuid(t.Uuid);
+				if((idOrg == 0) || (idSrc == 0)) continue;
+
+				for(uint x = u + 1; x < n; ++x)
 				{
-					uPosMax = u;
-					dtMax = ptOrg.LocationChanged; // No 'continue'
+					T tNext = lItems.GetAt(x);
 
-					PwGroup pgParent = ptOrg.ParentGroup;
-					if(pgParent != null)
-						vNeighborSrc = pgParent.GetObjects(false, bEntries);
-					else
+					ulong idOrgNext = idOrg + 1;
+					while(true)
 					{
-						Debug.Assert(false); // Org root should be excluded
-						vNeighborSrc = new List<IStructureItem>();
-						vNeighborSrc.Add(ptOrg);
+						IStructureItem ptOrg = ppOrg.GetItemById(idOrgNext);
+						if(ptOrg == null) { idOrgNext = 0; break; }
+						if(ptOrg.Uuid.Equals(tNext.Uuid)) break; // Found it
+						if(dItemUuids.ContainsKey(ptOrg.Uuid)) { idOrgNext = 0; break; }
+						++idOrgNext;
 					}
-				}
+					if(idOrgNext == 0) break;
 
-				// IStructureItem ptSrc = pgSrcStructure.FindObject(pt.Uuid, true, bEntries);
-				IStructureItem ptSrc = ppSrcStructure.Get(pt.Uuid);
-				if((ptSrc != null) && (ptSrc.LocationChanged > dtMax))
-				{
-					uPosMax = u;
-					dtMax = ptSrc.LocationChanged; // No 'continue'
-
-					PwGroup pgParent = ptSrc.ParentGroup;
-					if(pgParent != null)
-						vNeighborSrc = pgParent.GetObjects(false, bEntries);
-					else
+					ulong idSrcNext = idSrc + 1;
+					while(true)
 					{
-						// pgParent may be null (for the source root group)
-						vNeighborSrc = new List<IStructureItem>();
-						vNeighborSrc.Add(ptSrc);
+						IStructureItem ptSrc = ppSrc.GetItemById(idSrcNext);
+						if(ptSrc == null) { idSrcNext = 0; break; }
+						if(ptSrc.Uuid.Equals(tNext.Uuid)) break; // Found it
+						if(dItemUuids.ContainsKey(ptSrc.Uuid)) { idSrcNext = 0; break; }
+						++idSrcNext;
 					}
+					if(idSrcNext == 0) break;
+
+					pPool = GetBestPool(tNext, ppOrg, ppSrc, out dtLoc);
+					b.Add(tNext, dtLoc, pPool);
+
+					++u;
+					idOrg = idOrgNext;
+					idSrc = idSrcNext;
 				}
 			}
 
-			GetNeighborItems(vNeighborSrc, vItems.GetAt(uPosMax).Uuid, qBefore, qAfter);
-			return uPosMax;
+			return lBlocks;
 		}
 
-		private static void GetNeighborItems(List<IStructureItem> vItems,
-			PwUuid pwPivot, Queue<PwUuid> qBefore, Queue<PwUuid> qAfter)
+		private static PwObjectPoolEx GetBestPool<T>(T t, PwObjectPoolEx ppOrg,
+			PwObjectPoolEx ppSrc, out DateTime dtLoc)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
 		{
-			qBefore.Clear();
-			qAfter.Clear();
+			PwObjectPoolEx p = null;
+			dtLoc = TimeUtil.SafeMinValueUtc;
 
-			// Checks after clearing the queues
-			if(vItems == null) { Debug.Assert(false); return; } // No throw
-
-			bool bBefore = true;
-			for(int i = 0; i < vItems.Count; ++i)
+			IStructureItem ptOrg = ppOrg.GetItemByUuid(t.Uuid);
+			if(ptOrg != null)
 			{
-				PwUuid pw = vItems[i].Uuid;
-
-				if(pw.Equals(pwPivot)) bBefore = false;
-				else if(bBefore) qBefore.Enqueue(pw);
-				else qAfter.Enqueue(pw);
+				dtLoc = ptOrg.LocationChanged;
+				p = ppOrg;
 			}
-			Debug.Assert(bBefore == false);
+
+			IStructureItem ptSrc = ppSrc.GetItemByUuid(t.Uuid);
+			if((ptSrc != null) && (ptSrc.LocationChanged > dtLoc))
+			{
+				dtLoc = ptSrc.LocationChanged;
+				p = ppSrc;
+			}
+
+			Debug.Assert(p != null);
+			return p;
 		}
 
-		/// <summary>
-		/// Method to check whether a reordering is required. This fast test
-		/// allows to skip the reordering routine, resulting in a large
-		/// performance increase.
-		/// </summary>
-		private bool ObjectListRequiresReorder<T>(PwObjectList<T> vItems,
-			PwObjectPool ppOrgStructure, PwObjectPool ppSrcStructure, bool bEntries)
-			where T : class, IStructureItem, IDeepCloneable<T>
+		private static int FindLocationChangedPivot<T>(List<PwObjectBlock<T>> lBlocks,
+			KeyValuePair<int, int> kvpRange, out PwObjectPoolEx pPool)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
 		{
-			Debug.Assert(ppOrgStructure.ContainsOnlyType(bEntries ? typeof(PwEntry) : typeof(PwGroup)));
-			Debug.Assert(ppSrcStructure.ContainsOnlyType(bEntries ? typeof(PwEntry) : typeof(PwGroup)));
-			if(vItems.UCount <= 1) return false;
+			pPool = null;
 
-			if((m_slStatus != null) && !m_slStatus.ContinueWork()) return false;
+			int iPosMax = kvpRange.Key;
+			DateTime dtMax = TimeUtil.SafeMinValueUtc;
 
-			T ptFirst = vItems.GetAt(0);
-			// IStructureItem ptOrg = pgOrgStructure.FindObject(ptFirst.Uuid, true, bEntries);
-			IStructureItem ptOrg = ppOrgStructure.Get(ptFirst.Uuid);
-			if(ptOrg == null) return true;
-			// IStructureItem ptSrc = pgSrcStructure.FindObject(ptFirst.Uuid, true, bEntries);
-			IStructureItem ptSrc = ppSrcStructure.Get(ptFirst.Uuid);
-			if(ptSrc == null) return true;
-
-			if(ptFirst.ParentGroup == null) { Debug.Assert(false); return true; }
-			PwGroup pgOrgParent = ptOrg.ParentGroup;
-			if(pgOrgParent == null) return true; // Root might be in tree
-			PwGroup pgSrcParent = ptSrc.ParentGroup;
-			if(pgSrcParent == null) return true; // Root might be in tree
-
-			if(!ptFirst.ParentGroup.Uuid.Equals(pgOrgParent.Uuid)) return true;
-			if(!pgOrgParent.Uuid.Equals(pgSrcParent.Uuid)) return true;
-
-			List<IStructureItem> lOrg = pgOrgParent.GetObjects(false, bEntries);
-			List<IStructureItem> lSrc = pgSrcParent.GetObjects(false, bEntries);
-			if(vItems.UCount != (uint)lOrg.Count) return true;
-			if(lOrg.Count != lSrc.Count) return true;
-
-			for(uint u = 0; u < vItems.UCount; ++u)
+			for(int i = kvpRange.Key; i <= kvpRange.Value; ++i)
 			{
-				IStructureItem pt = vItems.GetAt(u);
-				Debug.Assert(pt.ParentGroup == ptFirst.ParentGroup);
-
-				if(!pt.Uuid.Equals(lOrg[(int)u].Uuid)) return true;
-				if(!pt.Uuid.Equals(lSrc[(int)u].Uuid)) return true;
-				if(pt.LocationChanged != lOrg[(int)u].LocationChanged) return true;
-				if(pt.LocationChanged != lSrc[(int)u].LocationChanged) return true;
+				PwObjectBlock<T> b = lBlocks[i];
+				if(b.LocationChanged > dtMax)
+				{
+					iPosMax = i;
+					dtMax = b.LocationChanged;
+					pPool = b.PoolAssoc;
+				}
 			}
 
-			return false;
+			return iPosMax;
+		}
+
+		private static void MergeInLocationChanged(PwGroup pg,
+			PwObjectPoolEx ppOrg, PwObjectPoolEx ppSrc)
+		{
+			GroupHandler gh = delegate(PwGroup pgSub)
+			{
+				DateTime dt;
+				if(GetBestPool<PwGroup>(pgSub, ppOrg, ppSrc, out dt) != null)
+					pgSub.LocationChanged = dt;
+				else { Debug.Assert(false); }
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				DateTime dt;
+				if(GetBestPool<PwEntry>(pe, ppOrg, ppSrc, out dt) != null)
+					pe.LocationChanged = dt;
+				else { Debug.Assert(false); }
+				return true;
+			};
+
+			gh(pg);
+			pg.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+		}
+
+		private static void InsertObjectAtBestPos<T>(PwObjectList<T> lItems,
+			T tNew, PwObjectPoolEx ppSrc)
+			where T : class, ITimeLogger, IStructureItem, IDeepCloneable<T>
+		{
+			if(tNew == null) { Debug.Assert(false); return; }
+
+			ulong idSrc = ppSrc.GetIdByUuid(tNew.Uuid);
+			if(idSrc == 0) { Debug.Assert(false); lItems.Add(tNew); return; }
+
+			const uint uIdOffset = 2;
+			Dictionary<PwUuid, uint> dOrg = new Dictionary<PwUuid, uint>();
+			for(uint u = 0; u < lItems.UCount; ++u)
+				dOrg[lItems.GetAt(u).Uuid] = uIdOffset + u;
+
+			ulong idSrcNext = idSrc + 1;
+			uint idOrgNext = 0;
+			while(true)
+			{
+				IStructureItem pNext = ppSrc.GetItemById(idSrcNext);
+				if(pNext == null) break;
+				if(dOrg.TryGetValue(pNext.Uuid, out idOrgNext)) break;
+				++idSrcNext;
+			}
+
+			if(idOrgNext != 0)
+			{
+				lItems.Insert(idOrgNext - uIdOffset, tNew);
+				return;
+			}
+
+			ulong idSrcPrev = idSrc - 1;
+			uint idOrgPrev = 0;
+			while(true)
+			{
+				IStructureItem pPrev = ppSrc.GetItemById(idSrcPrev);
+				if(pPrev == null) break;
+				if(dOrg.TryGetValue(pPrev.Uuid, out idOrgPrev)) break;
+				--idSrcPrev;
+			}
+
+			if(idOrgPrev != 0)
+			{
+				lItems.Insert(idOrgPrev + 1 - uIdOffset, tNew);
+				return;
+			}
+
+			lItems.Add(tNew);
 		}
 
 		private void MergeInDbProperties(PwDatabase pdSource, PwMergeMethod mm)
@@ -1294,6 +1447,14 @@ namespace ModernKeePassLib
 				return;
 
 			bool bForce = (mm == PwMergeMethod.OverwriteExisting);
+			bool bSourceNewer = (pdSource.m_dtSettingsChanged > m_dtSettingsChanged);
+
+			if(bForce || bSourceNewer)
+			{
+				m_dtSettingsChanged = pdSource.m_dtSettingsChanged;
+
+				m_clr = pdSource.m_clr;
+			}
 
 			if(bForce || (pdSource.m_dtNameChanged > m_dtNameChanged))
 			{
@@ -1312,8 +1473,6 @@ namespace ModernKeePassLib
 				m_strDefaultUserName = pdSource.m_strDefaultUserName;
 				m_dtDefaultUserChanged = pdSource.m_dtDefaultUserChanged;
 			}
-
-			if(bForce) m_clr = pdSource.m_clr;
 
 			PwUuid pwPrefBin = m_pwRecycleBin, pwAltBin = pdSource.m_pwRecycleBin;
 			if(bForce || (pdSource.m_dtRecycleBinChanged > m_dtRecycleBinChanged))
@@ -1341,6 +1500,16 @@ namespace ModernKeePassLib
 			else if(m_pgRootGroup.FindGroup(pwAltTmp, true) != null)
 				m_pwEntryTemplatesGroup = pwAltTmp;
 			else m_pwEntryTemplatesGroup = PwUuid.Zero; // Debug.Assert(false);
+
+			foreach(KeyValuePair<string, string> kvp in pdSource.m_dCustomData)
+			{
+				if(bSourceNewer || !m_dCustomData.Exists(kvp.Key))
+					m_dCustomData.Set(kvp.Key, kvp.Value);
+			}
+
+			VariantDictionary vdLocal = m_dPublicCustomData; // Backup
+			m_dPublicCustomData = (VariantDictionary)pdSource.m_dPublicCustomData.Clone();
+			if(!bSourceNewer) vdLocal.CopyTo(m_dPublicCustomData); // Merge
 		}
 
 		private void MergeEntryHistory(PwEntry pe, PwEntry peSource,
@@ -1461,19 +1630,46 @@ namespace ModernKeePassLib
 			return -1;
 		}
 
-		/// <summary>
-		/// Get a custom icon. This function can return <c>null</c>, if
-		/// no cached image of the icon is available.
-		/// </summary>
-		/// <param name="pwIconId">ID of the icon.</param>
-		/// <returns>Image data.</returns>
+#if KeePassUAP
 		public Image GetCustomIcon(PwUuid pwIconId)
 		{
 			int nIndex = GetCustomIconIndex(pwIconId);
+			if(nIndex >= 0)
+				return m_vCustomIcons[nIndex].GetImage();
+			else { Debug.Assert(false); }
 
-			if(nIndex >= 0) return m_vCustomIcons[nIndex].Image;
-			else { Debug.Assert(false); return null; }
+			return null;
 		}
+#elif !KeePassLibSD
+		[Obsolete("Additionally specify the size.")]
+		public Image GetCustomIcon(PwUuid pwIconId)
+		{
+			return GetCustomIcon(pwIconId, 16, 16); // Backward compatibility
+		}
+
+		/// <summary>
+		/// Get a custom icon. This method can return <c>null</c>,
+		/// e.g. if no cached image of the icon is available.
+		/// </summary>
+		/// <param name="pwIconId">ID of the icon.</param>
+		/// <param name="w">Width of the returned image. If this is
+		/// negative, the image is returned in its original size.</param>
+		/// <param name="h">Height of the returned image. If this is
+		/// negative, the image is returned in its original size.</param>
+		public Image GetCustomIcon(PwUuid pwIconId, int w, int h)
+		{
+			int nIndex = GetCustomIconIndex(pwIconId);
+			if(nIndex >= 0)
+			{
+				if((w >= 0) && (h >= 0))
+					return m_vCustomIcons[nIndex].GetImage(w, h);
+				else return m_vCustomIcons[nIndex].GetImage(); // No assert
+			}
+			else { Debug.Assert(false); }
+
+			return null;
+		}
+#endif
 
 		public bool DeleteCustomIcons(List<PwUuid> vUuidsToDelete)
 		{
@@ -1538,33 +1734,97 @@ namespace ModernKeePassLib
 				RemoveCustomIconUuid(peHistory, vToDelete);
 		}
 
-		private bool ValidateUuidUniqueness()
+		private int GetTotalObjectUuidCount()
 		{
-#if DEBUG
-			List<PwUuid> l = new List<PwUuid>();
-			bool bAllUnique = true;
+			uint uGroups, uEntries;
+			m_pgRootGroup.GetCounts(true, out uGroups, out uEntries);
+
+			uint uTotal = uGroups + uEntries + 1; // 1 for root group
+			if(uTotal > 0x7FFFFFFFU) { Debug.Assert(false); return 0x7FFFFFFF; }
+			return (int)uTotal;
+		}
+
+		internal bool HasDuplicateUuids()
+		{
+			int nTotal = GetTotalObjectUuidCount();
+			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+			bool bDupFound = false;
 
 			GroupHandler gh = delegate(PwGroup pg)
 			{
-				foreach(PwUuid u in l)
-					bAllUnique &= !pg.Uuid.Equals(u);
-				l.Add(pg.Uuid);
-				return bAllUnique;
+				PwUuid pu = pg.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					bDupFound = true;
+					return false;
+				}
+
+				d.Add(pu, null);
+				Debug.Assert(d.ContainsKey(pu));
+				return true;
 			};
 
 			EntryHandler eh = delegate(PwEntry pe)
 			{
-				foreach(PwUuid u in l)
-					bAllUnique &= !pe.Uuid.Equals(u);
-				l.Add(pe.Uuid);
-				return bAllUnique;
+				PwUuid pu = pe.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					bDupFound = true;
+					return false;
+				}
+
+				d.Add(pu, null);
+				Debug.Assert(d.ContainsKey(pu));
+				return true;
 			};
 
+			gh(m_pgRootGroup);
 			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
-			return bAllUnique;
-#else
-			return true;
-#endif
+
+			Debug.Assert(bDupFound || (d.Count == nTotal));
+			return bDupFound;
+		}
+
+		internal void FixDuplicateUuids()
+		{
+			int nTotal = GetTotalObjectUuidCount();
+			Dictionary<PwUuid, object> d = new Dictionary<PwUuid, object>(nTotal);
+
+			GroupHandler gh = delegate(PwGroup pg)
+			{
+				PwUuid pu = pg.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					pu = new PwUuid(true);
+					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
+
+					pg.Uuid = pu;
+				}
+
+				d.Add(pu, null);
+				return true;
+			};
+
+			EntryHandler eh = delegate(PwEntry pe)
+			{
+				PwUuid pu = pe.Uuid;
+				if(d.ContainsKey(pu))
+				{
+					pu = new PwUuid(true);
+					while(d.ContainsKey(pu)) { Debug.Assert(false); pu = new PwUuid(true); }
+
+					pe.SetUuid(pu, true);
+				}
+
+				d.Add(pu, null);
+				return true;
+			};
+
+			gh(m_pgRootGroup);
+			m_pgRootGroup.TraverseTree(TraversalMethod.PreOrder, gh, eh);
+
+			Debug.Assert(d.Count == nTotal);
+			Debug.Assert(!HasDuplicateUuids());
 		}
 
 		/* public void CreateBackupFile(IStatusLogger sl)
@@ -1628,7 +1888,7 @@ namespace ModernKeePassLib
 			if(m_bUseRecycleBin)
 				pgRecycleBin = m_pgRootGroup.FindGroup(m_pwRecycleBin, true);
 
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 			PwObjectList<PwEntry> l = m_pgRootGroup.GetEntries(true);
 			int i = 0;
 			while(true)
@@ -1753,7 +2013,7 @@ namespace ModernKeePassLib
 				if((pg.Groups.UCount > 0) || (pg.Entries.UCount > 0)) continue;
 
 				pg.ParentGroup.Groups.Remove(pg);
-				m_vDeletedObjects.Add(new PwDeletedObject(pg.Uuid, DateTime.Now));
+				m_vDeletedObjects.Add(new PwDeletedObject(pg.Uuid, DateTime.UtcNow));
 
 				++uDeleted;
 			}

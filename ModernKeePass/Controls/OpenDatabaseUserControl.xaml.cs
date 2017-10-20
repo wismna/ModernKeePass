@@ -53,7 +53,9 @@ namespace ModernKeePass.Controls
             var app = (App)Application.Current;
             StatusTextBlock.Text = app.Database.Open(PasswordBox.Password, CreateNew);
             if (app.Database.Status == DatabaseHelper.DatabaseStatus.Opened)
+            {
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(app.Database.RootGroup));
+            }
         }
 
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)

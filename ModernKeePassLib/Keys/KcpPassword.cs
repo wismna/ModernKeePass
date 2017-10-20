@@ -29,6 +29,7 @@ using System.Security.Cryptography;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePassLib.Keys
 {
@@ -73,19 +74,13 @@ namespace ModernKeePassLib.Keys
 			Debug.Assert(pbPasswordUtf8 != null);
 			if(pbPasswordUtf8 == null) throw new ArgumentNullException("pbPasswordUtf8");
 
-#if ModernKeePassLib
-            /*var sha256 = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(HashAlgorithm.Sha256);
-			var pbRaw = sha256.HashData(pbPasswordUtf8);*/
-            var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-            var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbPasswordUtf8));
-            byte[] pbRaw;
-            CryptographicBuffer.CopyToByteArray(buffer, out pbRaw);
-#else
-			SHA256Managed sha256 = new SHA256Managed();
-			byte[] pbRaw = sha256.ComputeHash(pbPasswordUtf8);
+#if (DEBUG && !KeePassLibSD)
+			Debug.Assert(ValidatePassword(pbPasswordUtf8));
 #endif
 
-            m_psPassword = new ProtectedString(true, pbPasswordUtf8);
+			byte[] pbRaw = CryptoUtil.HashSha256(pbPasswordUtf8);
+
+			m_psPassword = new ProtectedString(true, pbPasswordUtf8);
 			m_pbKeyData = new ProtectedBinary(true, pbRaw);
 		}
 
@@ -94,5 +89,24 @@ namespace ModernKeePassLib.Keys
 		//	m_psPassword = null;
 		//	m_pbKeyData = null;
 		// }
-	}
+
+#if (DEBUG && !KeePassLibSD)
+		private static bool ValidatePassword(byte[] pb)
+		{
+			try
+			{
+				string str = StrUtil.Utf8.GetString(pb, 0, pb.Length);
+#if ModernKeePassLib
+                // TODO: find a way to implement this
+			    return true;
+#else
+                return str.IsNormalized(NormalizationForm.FormC);
+#endif
+			}
+			catch(Exception) { Debug.Assert(false); }
+
+			return false;
+		}
+#endif
+            }
 }

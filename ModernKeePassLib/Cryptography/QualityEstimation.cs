@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ namespace ModernKeePassLib.Cryptography
 			}
 		}
 
-		private static object m_objSyncInit = new object();
+		private static readonly object m_objSyncInit = new object();
 		private static List<QeCharType> m_lCharTypes = null;
 
 		private static void EnsureInitialized()
@@ -422,7 +422,7 @@ namespace ModernKeePassLib.Cryptography
 
 			char[] vChars = StrUtil.Utf8.GetChars(pbUnprotectedUtf8);
 			uint uResult = EstimatePasswordBits(vChars);
-			Array.Clear(vChars, 0, vChars.Length);
+			MemUtil.ZeroArray<char>(vChars);
 
 			return uResult;
 		}

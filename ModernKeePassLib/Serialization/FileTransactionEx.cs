@@ -30,7 +30,9 @@ using System.Security.AccessControl;
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Streams;
+using ModernKeePassLib.Resources;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -43,6 +45,16 @@ namespace ModernKeePassLib.Serialization
 		private bool m_bMadeUnhidden = false;
 
 		private const string StrTempSuffix = ".tmp";
+
+		private static Dictionary<string, bool> g_dEnabled =
+			new Dictionary<string, bool>(StrUtil.CaseIgnoreComparer);
+
+		private static bool g_bExtraSafe = false;
+		internal static bool ExtraSafe
+		{
+			get { return g_bExtraSafe; }
+			set { g_bExtraSafe = value; }
+		}
 
 		public FileTransactionEx(IOConnectionInfo iocBaseFile)
 		{
@@ -61,15 +73,46 @@ namespace ModernKeePassLib.Serialization
 			m_bTransacted = bTransacted;
 			m_iocBase = iocBaseFile.CloneDeep();
 
-// ModernKeePassLib is currently targeting .NET 4.5
+			string strPath = m_iocBase.Path;
+
 #if !ModernKeePassLib
+			if(m_iocBase.IsLocalFile())
+			{
+				try
+				{
+					if(File.Exists(strPath))
+					{
+						// Symbolic links are realized via reparse points;
+						// https://msdn.microsoft.com/en-us/library/windows/desktop/aa365503.aspx
+						// https://msdn.microsoft.com/en-us/library/windows/desktop/aa365680.aspx
+						// https://msdn.microsoft.com/en-us/library/windows/desktop/aa365006.aspx
+						// Performing a file transaction on a symbolic link
+						// would delete/replace the symbolic link instead of
+						// writing to its target
+						FileAttributes fa = File.GetAttributes(strPath);
+						if((long)(fa & FileAttributes.ReparsePoint) != 0)
+							m_bTransacted = false;
+					}
+				}
+				catch(Exception) { Debug.Assert(false); }
+			}
+
 			// Prevent transactions for FTP URLs under .NET 4.0 in order to
 			// avoid/workaround .NET bug 621450:
 			// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
-			if(m_iocBase.Path.StartsWith("ftp:", StrUtil.CaseIgnoreCmp) &&
+			if(strPath.StartsWith("ftp:", StrUtil.CaseIgnoreCmp) &&
 				(Environment.Version.Major >= 4) && !NativeLib.IsUnix())
 				m_bTransacted = false;
 #endif
+
+			foreach(KeyValuePair<string, bool> kvp in g_dEnabled)
+			{
+				if(strPath.StartsWith(kvp.Key, StrUtil.CaseIgnoreCmp))
+				{
+					m_bTransacted = kvp.Value;
+					break;
+				}
+			}
 
 			if(m_bTransacted)
 			{
@@ -109,6 +152,13 @@ namespace ModernKeePassLib.Serialization
 			bool bEfsEncrypted = false;
 #endif
 
+			if(g_bExtraSafe)
+			{
+				if(!IOConnection.FileExists(m_iocTemp))
+					throw new FileNotFoundException(m_iocTemp.Path +
+						Environment.NewLine + KLRes.FileSaveFailed);
+			}
+
 			if(IOConnection.FileExists(m_iocBase))
 			{
 #if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
@@ -119,10 +169,10 @@ namespace ModernKeePassLib.Serialization
 						FileAttributes faBase = File.GetAttributes(m_iocBase.Path);
 						bEfsEncrypted = ((long)(faBase & FileAttributes.Encrypted) != 0);
 
-						DateTime tCreation = File.GetCreationTime(m_iocBase.Path);
+						DateTime tCreation = File.GetCreationTimeUtc(m_iocBase.Path);
 						bkSecurity = File.GetAccessControl(m_iocBase.Path);
 
-						File.SetCreationTime(m_iocTemp.Path, tCreation);
+						File.SetCreationTimeUtc(m_iocTemp.Path, tCreation);
 					}
 					catch(Exception) { Debug.Assert(false); }
 				}
@@ -152,6 +202,16 @@ namespace ModernKeePassLib.Serialization
 #endif
 
 			if(bMadeUnhidden) UrlUtil.HideFile(m_iocBase.Path, true); // Hide again
+		}
+
+		// For plugins
+		public static void Configure(string strPrefix, bool? obTransacted)
+		{
+			if(string.IsNullOrEmpty(strPrefix)) { Debug.Assert(false); return; }
+
+			if(obTransacted.HasValue)
+				g_dEnabled[strPrefix] = obTransacted.Value;
+			else g_dEnabled.Remove(strPrefix);
 		}
 	}
 }

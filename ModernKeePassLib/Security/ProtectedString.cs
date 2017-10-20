@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Utility;
@@ -150,7 +150,8 @@ namespace ModernKeePassLib.Security
 
 			byte[] pb = xbProtected.ReadPlainText();
 			Init(bEnableProtection, pb);
-			MemUtil.ZeroByteArray(pb);
+
+			if(bEnableProtection) MemUtil.ZeroByteArray(pb);
 		}
 
 		private void Init(bool bEnableProtection, string str)
@@ -242,7 +243,8 @@ namespace ModernKeePassLib.Security
 
 			byte[] pb = ReadUtf8();
 			ProtectedString ps = new ProtectedString(bProtect, pb);
-			MemUtil.ZeroByteArray(pb);
+
+			if(bProtect) MemUtil.ZeroByteArray(pb);
 			return ps;
 		}
 
@@ -280,7 +282,7 @@ namespace ModernKeePassLib.Security
 			}
 			finally
 			{
-				Array.Clear(v, 0, v.Length);
+				MemUtil.ZeroArray<char>(v);
 				MemUtil.ZeroByteArray(pb);
 			}
 
@@ -290,7 +292,7 @@ namespace ModernKeePassLib.Security
 			Debug.Assert(utf8.GetString(pbNew, 0, pbNew.Length) ==
 				ReadString().Insert(iStart, strInsert));
 
-			Array.Clear(vNew, 0, vNew.Length);
+			MemUtil.ZeroArray<char>(vNew);
 			MemUtil.ZeroByteArray(pbNew);
 			return ps;
 		}
@@ -326,7 +328,7 @@ namespace ModernKeePassLib.Security
 			}
 			finally
 			{
-				Array.Clear(v, 0, v.Length);
+				MemUtil.ZeroArray<char>(v);
 				MemUtil.ZeroByteArray(pb);
 			}
 
@@ -336,7 +338,7 @@ namespace ModernKeePassLib.Security
 			Debug.Assert(utf8.GetString(pbNew, 0, pbNew.Length) ==
 				ReadString().Remove(iStart, nCount));
 
-			Array.Clear(vNew, 0, vNew.Length);
+			MemUtil.ZeroArray<char>(vNew);
 			MemUtil.ZeroByteArray(pbNew);
 			return ps;
 		}

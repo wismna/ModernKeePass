@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 */
 
 using System;
-using System.Threading;
 using System.Diagnostics;
+using System.Threading;
 
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
@@ -72,13 +72,13 @@ namespace ModernKeePassLib.Security
 		{
 			None = 0,
 			ProtectedMemory,
-			Salsa20,
+			ChaCha20,
 			ExtCrypt
 		}
 
 		// ProtectedMemory is supported only on Windows 2000 SP3 and higher
 #if !KeePassLibSD
-		private static bool? g_bProtectedMemorySupported = null;
+		private static bool? g_obProtectedMemorySupported = null;
 #endif
 		private static bool ProtectedMemorySupported
 		{
@@ -87,14 +87,14 @@ namespace ModernKeePassLib.Security
 #if KeePassLibSD
 				return false;
 #else
-				bool? ob = g_bProtectedMemorySupported;
+				bool? ob = g_obProtectedMemorySupported;
 				if(ob.HasValue) return ob.Value;
 
 				// Mono does not implement any encryption for ProtectedMemory;
 				// https://sourceforge.net/p/keepass/feature-requests/1907/
 				if(NativeLib.IsUnix())
 				{
-					g_bProtectedMemorySupported = false;
+					g_obProtectedMemorySupported = false;
 					return false;
 				}
 
@@ -115,7 +115,7 @@ namespace ModernKeePassLib.Security
 				}
 				catch(Exception) { } // Windows 98 / ME
 
-				g_bProtectedMemorySupported = ob;
+				g_obProtectedMemorySupported = ob;
 				return ob.Value;
 #endif
 			}
@@ -135,7 +135,7 @@ namespace ModernKeePassLib.Security
 
 		private PbMemProt m_mp = PbMemProt.None; // Actual protection
 
-		private object m_objSync = new object();
+		private readonly object m_objSync = new object();
 
 		private static byte[] g_pbKey32 = null;
 
@@ -162,7 +162,7 @@ namespace ModernKeePassLib.Security
 		/// </summary>
 		public ProtectedBinary()
 		{
-			Init(false, new byte[0]);
+			Init(false, MemUtil.EmptyByteArray, 0, 0);
 		}
 
 		/// <summary>
@@ -177,7 +177,27 @@ namespace ModernKeePassLib.Security
 		/// i.e. the caller is responsible for clearing it.</param>
 		public ProtectedBinary(bool bEnableProtection, byte[] pbData)
 		{
-			Init(bEnableProtection, pbData);
+			if(pbData == null) throw new ArgumentNullException("pbData");
+
+			Init(bEnableProtection, pbData, 0, pbData.Length);
+		}
+
+		/// <summary>
+		/// Construct a new protected binary data object.
+		/// </summary>
+		/// <param name="bEnableProtection">If this paremeter is <c>true</c>,
+		/// the data will be encrypted in memory. If it is <c>false</c>, the
+		/// data is stored in plain-text in the process memory.</param>
+		/// <param name="pbData">Value of the protected object.
+		/// The input parameter is not modified and
+		/// <c>ProtectedBinary</c> doesn't take ownership of the data,
+		/// i.e. the caller is responsible for clearing it.</param>
+		/// <param name="iOffset">Offset for <paramref name="pbData" />.</param>
+		/// <param name="cbSize">Size for <paramref name="pbData" />.</param>
+		public ProtectedBinary(bool bEnableProtection, byte[] pbData,
+			int iOffset, int cbSize)
+		{
+			Init(bEnableProtection, pbData, iOffset, cbSize);
 		}
 
 		/// <summary>
@@ -193,13 +213,19 @@ namespace ModernKeePassLib.Security
 			if(xbProtected == null) throw new ArgumentNullException("xbProtected");
 
 			byte[] pb = xbProtected.ReadPlainText();
-			Init(bEnableProtection, pb);
-			MemUtil.ZeroByteArray(pb);
+			Init(bEnableProtection, pb, 0, pb.Length);
+
+			if(bEnableProtection) MemUtil.ZeroByteArray(pb);
 		}
 
-		private void Init(bool bEnableProtection, byte[] pbData)
+		private void Init(bool bEnableProtection, byte[] pbData, int iOffset,
+			int cbSize)
 		{
 			if(pbData == null) throw new ArgumentNullException("pbData");
+			if(iOffset < 0) throw new ArgumentOutOfRangeException("iOffset");
+			if(cbSize < 0) throw new ArgumentOutOfRangeException("cbSize");
+			if(iOffset > (pbData.Length - cbSize))
+				throw new ArgumentOutOfRangeException("cbSize");
 
 #if KeePassLibSD
 			m_lID = ++g_lCurID;
@@ -208,15 +234,15 @@ namespace ModernKeePassLib.Security
 #endif
 
 			m_bProtected = bEnableProtection;
-			m_uDataLen = (uint)pbData.Length;
+			m_uDataLen = (uint)cbSize;
 
 			const int bs = ProtectedBinary.BlockSize;
-			int nBlocks = (int)m_uDataLen / bs;
-			if((nBlocks * bs) < (int)m_uDataLen) ++nBlocks;
-			Debug.Assert((nBlocks * bs) >= (int)m_uDataLen);
+			int nBlocks = cbSize / bs;
+			if((nBlocks * bs) < cbSize) ++nBlocks;
+			Debug.Assert((nBlocks * bs) >= cbSize);
 
 			m_pbData = new byte[nBlocks * bs];
-			Array.Copy(pbData, m_pbData, (int)m_uDataLen);
+			Array.Copy(pbData, iOffset, m_pbData, 0, cbSize);
 
 			Encrypt();
 		}
@@ -258,11 +284,13 @@ namespace ModernKeePassLib.Security
 				if(pbUpd != null) pbKey32 = pbUpd;
 			}
 
-			Salsa20Cipher s = new Salsa20Cipher(pbKey32,
-				BitConverter.GetBytes(m_lID));
-			s.Encrypt(m_pbData, m_pbData.Length, true);
-			s.Dispose();
-			m_mp = PbMemProt.Salsa20;
+			byte[] pbIV = new byte[12];
+			MemUtil.UInt64ToBytesEx((ulong)m_lID, pbIV, 4);
+			using(ChaCha20Cipher c = new ChaCha20Cipher(pbKey32, pbIV, true))
+			{
+				c.Encrypt(m_pbData, 0, m_pbData.Length);
+			}
+			m_mp = PbMemProt.ChaCha20;
 		}
 
 		private void Decrypt()
@@ -271,12 +299,14 @@ namespace ModernKeePassLib.Security
 
 			if(m_mp == PbMemProt.ProtectedMemory)
 				ProtectedMemory.Unprotect(m_pbData, MemoryProtectionScope.SameProcess);
-			else if(m_mp == PbMemProt.Salsa20)
+			else if(m_mp == PbMemProt.ChaCha20)
 			{
-				Salsa20Cipher s = new Salsa20Cipher(g_pbKey32,
-					BitConverter.GetBytes(m_lID));
-				s.Encrypt(m_pbData, m_pbData.Length, true);
-				s.Dispose();
+				byte[] pbIV = new byte[12];
+				MemUtil.UInt64ToBytesEx((ulong)m_lID, pbIV, 4);
+				using(ChaCha20Cipher c = new ChaCha20Cipher(g_pbKey32, pbIV, true))
+				{
+					c.Decrypt(m_pbData, 0, m_pbData.Length);
+				}
 			}
 			else if(m_mp == PbMemProt.ExtCrypt)
 				m_fExtCrypt(m_pbData, PbCryptFlags.Decrypt, m_lID);
@@ -295,7 +325,7 @@ namespace ModernKeePassLib.Security
 		/// protected data and can therefore be cleared safely.</returns>
 		public byte[] ReadData()
 		{
-			if(m_uDataLen == 0) return new byte[0];
+			if(m_uDataLen == 0) return MemUtil.EmptyByteArray;
 
 			byte[] pbReturn = new byte[m_uDataLen];
 

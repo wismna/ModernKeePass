@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,9 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Text;
-using System.Windows.Forms;
 using System.Diagnostics;
+using System.Text;
+
+#if !KeePassUAP
+using System.Windows.Forms;
+#endif
 
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Serialization;
@@ -94,7 +97,9 @@ namespace ModernKeePassLib.Utility
 			get { return m_uCurrentMessageCount; }
 		}
 
+#if !KeePassUAP
 		public static event EventHandler<MessageServiceEventArgs> MessageShowing;
+#endif
 
 		private static string ObjectsToMessage(object[] vLines)
 		{
@@ -105,7 +110,7 @@ namespace ModernKeePassLib.Utility
 		{
 			if(vLines == null) return string.Empty;
 
-			string strNewPara = MessageService.NewParagraph;
+			string strNewPara = Environment.NewLine;
 
 			StringBuilder sbText = new StringBuilder();
 			bool bSeparator = false;
@@ -168,6 +173,7 @@ namespace ModernKeePassLib.Utility
 		}
 #endif
 
+#if !KeePassUAP
 		internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
@@ -275,19 +281,21 @@ namespace ModernKeePassLib.Utility
 			++m_uCurrentMessageCount;
 
 			string strTitle = PwDefs.ShortProductName + @" - " + KLRes.FatalError;
-			string strText = KLRes.FatalErrorText + MessageService.NewParagraph +
-				KLRes.ErrorInClipboard + MessageService.NewParagraph +
+			string strText = KLRes.FatalErrorText + Environment.NewLine +
+				KLRes.ErrorInClipboard + Environment.NewLine +
 				// Please send it to the KeePass developers.
-				// KLRes.ErrorFeedbackRequest + MessageService.NewParagraph +
+				// KLRes.ErrorFeedbackRequest + Environment.NewLine +
 				ObjectsToMessage(vLines);
 
 			try
 			{
-#if !KeePassLibSD
-				Clipboard.Clear();
-				Clipboard.SetText(ObjectsToMessage(vLines, true));
+				string strDetails = ObjectsToMessage(vLines, true);
+
+#if KeePassLibSD
+				Clipboard.SetDataObject(strDetails);
 #else
-				Clipboard.SetDataObject(ObjectsToMessage(vLines, true));
+				Clipboard.Clear();
+				Clipboard.SetText(strDetails);
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -364,21 +372,7 @@ namespace ModernKeePassLib.Utility
 		public static void ShowLoadWarning(string strFilePath, Exception ex,
 			bool bFullException)
 		{
-			string str = string.Empty;
-
-			if((strFilePath != null) && (strFilePath.Length > 0))
-				str += strFilePath + MessageService.NewParagraph;
-
-			str += KLRes.FileLoadFailed;
-
-			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
-			{
-				str += MessageService.NewParagraph;
-				if(!bFullException) str += ex.Message;
-				else str += ObjectsToMessage(new object[] { ex }, true);
-			}
-
-			ShowWarning(str);
+			ShowWarning(GetLoadWarningMessage(strFilePath, ex, bFullException));
 		}
 
 		public static void ShowLoadWarning(IOConnectionInfo ioConnection, Exception ex)
@@ -398,18 +392,7 @@ namespace ModernKeePassLib.Utility
 				return;
 			}
 
-			string str = string.Empty;
-			if((strFilePath != null) && (strFilePath.Length > 0))
-				str += strFilePath + MessageService.NewParagraph;
-
-			str += KLRes.FileSaveFailed;
-
-			if((ex != null) && (ex.Message != null) && (ex.Message.Length > 0))
-				str += MessageService.NewParagraph + ex.Message;
-
-			if(bCorruptionWarning)
-				str += MessageService.NewParagraph + KLRes.FileSaveCorruptionWarning;
-
+			string str = GetSaveWarningMessage(strFilePath, ex, bCorruptionWarning);
 			ShowWarning(str);
 		}
 
@@ -419,6 +402,45 @@ namespace ModernKeePassLib.Utility
 			if(ioConnection != null)
 				ShowSaveWarning(ioConnection.GetDisplayName(), ex, bCorruptionWarning);
 			else ShowWarning(ex);
+		}
+#endif // !KeePassUAP
+
+		internal static string GetLoadWarningMessage(string strFilePath,
+			Exception ex, bool bFullException)
+		{
+			string str = string.Empty;
+
+			if(!string.IsNullOrEmpty(strFilePath))
+				str += strFilePath + Environment.NewLine;
+
+			str += KLRes.FileLoadFailed;
+
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+			{
+				str += Environment.NewLine;
+				if(!bFullException) str += ex.Message;
+				else str += ObjectsToMessage(new object[] { ex }, true);
+			}
+
+			return str;
+		}
+
+		internal static string GetSaveWarningMessage(string strFilePath,
+			Exception ex, bool bCorruptionWarning)
+		{
+			string str = string.Empty;
+			if(!string.IsNullOrEmpty(strFilePath))
+				str += strFilePath + Environment.NewLine;
+
+			str += KLRes.FileSaveFailed;
+
+			if((ex != null) && !string.IsNullOrEmpty(ex.Message))
+				str += Environment.NewLine + ex.Message;
+
+			if(bCorruptionWarning)
+				str += Environment.NewLine + KLRes.FileSaveCorruptionWarning;
+
+			return str;
 		}
 
 		public static void ExternalIncrementMessageCount()

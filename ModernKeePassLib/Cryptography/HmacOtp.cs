@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -45,22 +45,14 @@ namespace ModernKeePassLib.Cryptography
 			uint uCodeDigits, bool bAddChecksum, int iTruncationOffset)
 		{
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
-			Array.Reverse(pbText); // Big-Endian
-
-#if ModernKeePassLib
-            /*var hsha1 = WinRTCrypto.MacAlgorithmProvider.OpenAlgorithm(MacAlgorithm.HmacSha1).CreateHash(pbSecret);
-			hsha1.Append(pbText);
-			var pbHash = hsha1.GetValueAndReset();*/
+			Array.Reverse(pbText); // To big-endian
+            
             var hsha1 = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1).CreateHash(CryptographicBuffer.CreateFromByteArray(pbSecret));
             hsha1.Append(CryptographicBuffer.CreateFromByteArray(pbText));
             byte[] pbHash;
             CryptographicBuffer.CopyToByteArray(hsha1.GetValueAndReset(), out pbHash);
-#else
-			HMACSHA1 hsha1 = new HMACSHA1(pbSecret);
-			byte[] pbHash = hsha1.ComputeHash(pbText);
-#endif
 
-            uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
+			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
 			if((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
 				uOffset = (uint)iTruncationOffset;
 

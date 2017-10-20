@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@ namespace ModernKeePassLib
 		private bool? m_bEnableSearching = null;
 
 		private PwUuid m_pwLastTopVisibleEntry = PwUuid.Zero;
+
+		private StringDictionaryEx m_dCustomData = new StringDictionaryEx();
 
 		/// <summary>
 		/// UUID of this group.
@@ -281,6 +283,23 @@ namespace ModernKeePassLib
 			}
 		}
 
+		/// <summary>
+		/// Custom data container that can be used by plugins to store
+		/// own data in KeePass groups.
+		/// The data is stored in the encrypted part of encrypted
+		/// database files.
+		/// Use unique names for your items, e.g. "PluginName_ItemName".
+		/// </summary>
+		public StringDictionaryEx CustomData
+		{
+			get { return m_dCustomData; }
+			internal set
+			{
+				if(value == null) { Debug.Assert(false); throw new ArgumentNullException("value"); }
+				m_dCustomData = value;
+			}
+		}
+
 		public static EventHandler<ObjectTouchedEventArgs> GroupTouched;
 		public EventHandler<ObjectTouchedEventArgs> Touched;
 
@@ -302,8 +321,11 @@ namespace ModernKeePassLib
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess =
-					m_tParentGroupLastMod = DateTime.Now;
+				DateTime dtNow = DateTime.UtcNow;
+				m_tCreation = dtNow;
+				m_tLastMod = dtNow;
+				m_tLastAccess = dtNow;
+				m_tParentGroupLastMod = dtNow;
 			}
 		}
 
@@ -320,14 +342,25 @@ namespace ModernKeePassLib
 
 			if(bSetTimes)
 			{
-				m_tCreation = m_tLastMod = m_tLastAccess =
-					m_tParentGroupLastMod = DateTime.Now;
+				DateTime dtNow = DateTime.UtcNow;
+				m_tCreation = dtNow;
+				m_tLastMod = dtNow;
+				m_tLastAccess = dtNow;
+				m_tParentGroupLastMod = dtNow;
 			}
 
 			if(strName != null) m_strName = strName;
 
 			m_pwIcon = pwIcon;
 		}
+
+#if DEBUG
+		// For display in debugger
+		public override string ToString()
+		{
+			return (@"PwGroup '" + m_strName + @"'");
+		}
+#endif
 
 		/// <summary>
 		/// Deeply clone the current group. The returned group will be an exact
@@ -367,6 +400,8 @@ namespace ModernKeePassLib
 			pg.m_bEnableSearching = m_bEnableSearching;
 
 			pg.m_pwLastTopVisibleEntry = m_pwLastTopVisibleEntry;
+
+			pg.m_dCustomData = m_dCustomData.CloneDeep();
 
 			return pg;
 		}
@@ -436,6 +471,8 @@ namespace ModernKeePassLib
 
 			if(!m_pwLastTopVisibleEntry.Equals(pg.m_pwLastTopVisibleEntry)) return false;
 
+			if(!m_dCustomData.Equals(pg.m_dCustomData)) return false;
+
 			if((pwOpt & PwCompareOptions.PropertiesOnly) == PwCompareOptions.None)
 			{
 				if(m_listEntries.UCount != pg.m_listEntries.UCount) return false;
@@ -501,6 +538,8 @@ namespace ModernKeePassLib
 			m_bEnableSearching = pgTemplate.m_bEnableSearching;
 
 			m_pwLastTopVisibleEntry = pgTemplate.m_pwLastTopVisibleEntry;
+
+			m_dCustomData = pgTemplate.m_dCustomData.CloneDeep();
 		}
 
 		/// <summary>
@@ -524,7 +563,7 @@ namespace ModernKeePassLib
 		/// get touched, too.</param>
 		public void Touch(bool bModified, bool bTouchParents)
 		{
-			m_tLastAccess = DateTime.Now;
+			m_tLastAccess = DateTime.UtcNow;
 			++m_uUsageCount;
 
 			if(bModified) m_tLastMod = m_tLastAccess;
@@ -629,21 +668,15 @@ namespace ModernKeePassLib
 				}
 			}
 
-			if(groupHandler != null)
+			foreach(PwGroup pg in m_listGroups)
 			{
-				foreach(PwGroup pg in m_listGroups)
+				if(groupHandler != null)
 				{
 					if(!groupHandler(pg)) return false;
+				}
 
-					pg.PreOrderTraverseTree(groupHandler, entryHandler);
-				}
-			}
-			else // groupHandler == null
-			{
-				foreach(PwGroup pg in m_listGroups)
-				{
-					pg.PreOrderTraverseTree(null, entryHandler);
-				}
+				if(!pg.PreOrderTraverseTree(groupHandler, entryHandler))
+					return false;
 			}
 
 			return true;
@@ -733,96 +766,112 @@ namespace ModernKeePassLib
 		/// <summary>
 		/// Search this group and all subgroups for entries.
 		/// </summary>
-		/// <param name="sp">Specifies the search method.</param>
-		/// <param name="listStorage">Entry list in which the search results will
-		/// be stored.</param>
-		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> listStorage)
+		/// <param name="sp">Specifies the search parameters.</param>
+		/// <param name="lResults">Entry list in which the search results
+		/// will be stored.</param>
+		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> lResults)
 		{
-			SearchEntries(sp, listStorage, null);
+			SearchEntries(sp, lResults, null);
 		}
 
 		/// <summary>
 		/// Search this group and all subgroups for entries.
 		/// </summary>
-		/// <param name="sp">Specifies the search method.</param>
-		/// <param name="listStorage">Entry list in which the search results will
-		/// be stored.</param>
+		/// <param name="sp">Specifies the search parameters.</param>
+		/// <param name="lResults">Entry list in which the search results
+		/// will be stored.</param>
 		/// <param name="slStatus">Optional status reporting object.</param>
-		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> listStorage,
+		public void SearchEntries(SearchParameters sp, PwObjectList<PwEntry> lResults,
 			IStatusLogger slStatus)
 		{
 			if(sp == null) { Debug.Assert(false); return; }
-			if(listStorage == null) { Debug.Assert(false); return; }
+			if(lResults == null) { Debug.Assert(false); return; }
 
-			ulong uCurEntries = 0, uTotalEntries = 0;
+			PwObjectList<PwEntry> lCand = GetEntries(true);
+			DateTime dtNow = DateTime.UtcNow;
 
-			List<string> lTerms = StrUtil.SplitSearchTerms(sp.SearchString);
-			if((lTerms.Count <= 1) || sp.RegularExpression)
+			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
+			foreach(PwEntry pe in lCand)
 			{
-				if(slStatus != null) uTotalEntries = GetEntriesCount(true);
-				SearchEntriesSingle(sp, listStorage, slStatus, ref uCurEntries,
-					uTotalEntries);
-				return;
+				if(sp.RespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
+					continue;
+				if(sp.ExcludeExpired && pe.Expires && (pe.ExpiryTime <= dtNow))
+					continue;
+
+				l.Add(pe);
 			}
+			lCand = l;
+
+			List<string> lTerms;
+			if(sp.RegularExpression)
+			{
+				lTerms = new List<string>();
+				lTerms.Add((sp.SearchString ?? string.Empty).Trim());
+			}
+			else lTerms = StrUtil.SplitSearchTerms(sp.SearchString);
 
 			// Search longer strings first (for improved performance)
 			lTerms.Sort(StrUtil.CompareLengthGt);
 
-			string strFullSearch = sp.SearchString; // Backup
+			ulong uPrcEntries = 0, uTotalEntries = lCand.UCount;
+			SearchParameters spSub = sp.Clone();
 
-			PwGroup pg = this;
 			for(int iTerm = 0; iTerm < lTerms.Count; ++iTerm)
 			{
 				// Update counters for a better state guess
 				if(slStatus != null)
 				{
 					ulong uRemRounds = (ulong)(lTerms.Count - iTerm);
-					uTotalEntries = uCurEntries + (uRemRounds *
-						pg.GetEntriesCount(true));
+					uTotalEntries = uPrcEntries + (uRemRounds *
+						lCand.UCount);
 				}
 
-				PwGroup pgNew = new PwGroup();
-
-				sp.SearchString = lTerms[iTerm];
+				spSub.SearchString = lTerms[iTerm]; // No trim
+				// spSub.RespectEntrySearchingDisabled = false; // Ignored by sub
+				// spSub.ExcludeExpired = false; // Ignored by sub
 
 				bool bNegate = false;
-				if(sp.SearchString.StartsWith("-"))
+				if(spSub.SearchString.StartsWith(@"-") &&
+					(spSub.SearchString.Length >= 2))
 				{
-					sp.SearchString = sp.SearchString.Substring(1);
-					bNegate = (sp.SearchString.Length > 0);
+					spSub.SearchString = spSub.SearchString.Substring(1);
+					bNegate = true;
 				}
 
-				if(!pg.SearchEntriesSingle(sp, pgNew.Entries, slStatus,
-					ref uCurEntries, uTotalEntries))
+				l = new PwObjectList<PwEntry>();
+				if(!SearchEntriesSingle(lCand, spSub, l, slStatus,
+					ref uPrcEntries, uTotalEntries))
 				{
-					pg = null;
+					lCand.Clear();
 					break;
 				}
 
 				if(bNegate)
 				{
-					PwObjectList<PwEntry> lCand = pg.GetEntries(true);
-
-					pg = new PwGroup();
-					foreach(PwEntry peCand in lCand)
+					PwObjectList<PwEntry> lRem = new PwObjectList<PwEntry>();
+					foreach(PwEntry pe in lCand)
 					{
-						if(pgNew.Entries.IndexOf(peCand) < 0) pg.Entries.Add(peCand);
+						if(l.IndexOf(pe) < 0) lRem.Add(pe);
 					}
+
+					lCand = lRem;
 				}
-				else pg = pgNew;
+				else lCand = l;
 			}
 
-			if(pg != null) listStorage.Add(pg.Entries);
-			sp.SearchString = strFullSearch; // Restore
+			Debug.Assert(lResults.UCount == 0);
+			lResults.Clear();
+			lResults.Add(lCand);
 		}
 
-		private bool SearchEntriesSingle(SearchParameters spIn,
-			PwObjectList<PwEntry> listStorage, IStatusLogger slStatus,
-			ref ulong uCurEntries, ulong uTotalEntries)
+		private static bool SearchEntriesSingle(PwObjectList<PwEntry> lSource,
+			SearchParameters sp, PwObjectList<PwEntry> lResults,
+			IStatusLogger slStatus, ref ulong uPrcEntries, ulong uTotalEntries)
 		{
-			SearchParameters sp = spIn.Clone();
-			if(sp.SearchString == null) { Debug.Assert(false); return true; }
-			sp.SearchString = sp.SearchString.Trim();
+			if(lSource == null) { Debug.Assert(false); return true; }
+			if(sp == null) { Debug.Assert(false); return true; }
+			if(lResults == null) { Debug.Assert(false); return true; }
+			Debug.Assert(lResults.UCount == 0);
 
 			bool bTitle = sp.SearchInTitles;
 			bool bUserName = sp.SearchInUserNames;
@@ -830,22 +879,17 @@ namespace ModernKeePassLib
 			bool bUrl = sp.SearchInUrls;
 			bool bNotes = sp.SearchInNotes;
 			bool bOther = sp.SearchInOther;
+			bool bStringName = sp.SearchInStringNames;
+			bool bTags = sp.SearchInTags;
 			bool bUuids = sp.SearchInUuids;
 			bool bGroupName = sp.SearchInGroupNames;
-			bool bTags = sp.SearchInTags;
-			bool bExcludeExpired = sp.ExcludeExpired;
-			bool bRespectEntrySearchingDisabled = sp.RespectEntrySearchingDisabled;
-
-			DateTime dtNow = DateTime.Now;
+			// bool bExcludeExpired = sp.ExcludeExpired;
+			// bool bRespectEntrySearchingDisabled = sp.RespectEntrySearchingDisabled;
 
 			Regex rx = null;
 			if(sp.RegularExpression)
 			{
-#if ModernKeePassLib || KeePassRT
-				RegexOptions ro = RegexOptions.None;
-#else
-				RegexOptions ro = RegexOptions.Compiled;
-#endif
+				RegexOptions ro = RegexOptions.None; // RegexOptions.Compiled
 				if((sp.ComparisonMode == StringComparison.CurrentCultureIgnoreCase) ||
 #if !ModernKeePassLib && !KeePassRT
 					(sp.ComparisonMode == StringComparison.InvariantCultureIgnoreCase) ||
@@ -858,46 +902,26 @@ namespace ModernKeePassLib
 				rx = new Regex(sp.SearchString, ro);
 			}
 
-			ulong uLocalCurEntries = uCurEntries;
+			ulong uLocalPrcEntries = uPrcEntries;
 
-			EntryHandler eh = null;
-			if(sp.SearchString.Length <= 0) // Report all
-			{
-				eh = delegate(PwEntry pe)
-				{
-					if(slStatus != null)
-					{
-						if(!slStatus.SetProgress((uint)((uLocalCurEntries *
-							100UL) / uTotalEntries))) return false;
-						++uLocalCurEntries;
-					}
-
-					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
-						return true; // Skip
-					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
-						return true; // Skip
-
-					listStorage.Add(pe);
-					return true;
-				};
-			}
+			if(sp.SearchString.Length == 0) lResults.Add(lSource);
 			else
 			{
-				eh = delegate(PwEntry pe)
+				foreach(PwEntry pe in lSource)
 				{
 					if(slStatus != null)
 					{
-						if(!slStatus.SetProgress((uint)((uLocalCurEntries *
+						if(!slStatus.SetProgress((uint)((uLocalPrcEntries *
 							100UL) / uTotalEntries))) return false;
-						++uLocalCurEntries;
+						++uLocalPrcEntries;
 					}
 
-					if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
-						return true; // Skip
-					if(bExcludeExpired && pe.Expires && (dtNow > pe.ExpiryTime))
-						return true; // Skip
+					// if(bRespectEntrySearchingDisabled && !pe.GetSearchingEnabled())
+					//	continue;
+					// if(bExcludeExpired && pe.Expires && (pe.ExpiryTime <= dtNow))
+					//	continue;
 
-					uint uInitialResults = listStorage.UCount;
+					uint uInitialResults = lResults.UCount;
 
 					foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
 					{
@@ -906,76 +930,87 @@ namespace ModernKeePassLib
 						if(strKey == PwDefs.TitleField)
 						{
 							if(bTitle) SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 						}
 						else if(strKey == PwDefs.UserNameField)
 						{
 							if(bUserName) SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 						}
 						else if(strKey == PwDefs.PasswordField)
 						{
 							if(bPassword) SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 						}
 						else if(strKey == PwDefs.UrlField)
 						{
 							if(bUrl) SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 						}
 						else if(strKey == PwDefs.NotesField)
 						{
 							if(bNotes) SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 						}
 						else if(bOther)
 							SearchEvalAdd(sp, kvp.Value.ReadString(),
-								rx, pe, listStorage);
+								rx, pe, lResults);
 
 						// An entry can match only once => break if we have added it
-						if(listStorage.UCount > uInitialResults) break;
+						if(lResults.UCount != uInitialResults) break;
 					}
 
-					if(bUuids && (listStorage.UCount == uInitialResults))
-						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, listStorage);
+					if(bStringName)
+					{
+						foreach(KeyValuePair<string, ProtectedString> kvp in pe.Strings)
+						{
+							if(lResults.UCount != uInitialResults) break;
 
-					if(bGroupName && (listStorage.UCount == uInitialResults) &&
-						(pe.ParentGroup != null))
-						SearchEvalAdd(sp, pe.ParentGroup.Name, rx, pe, listStorage);
+							SearchEvalAdd(sp, kvp.Key, rx, pe, lResults);
+						}
+					}
 
 					if(bTags)
 					{
 						foreach(string strTag in pe.Tags)
 						{
-							if(listStorage.UCount != uInitialResults) break; // Match
+							if(lResults.UCount != uInitialResults) break;
 
-							SearchEvalAdd(sp, strTag, rx, pe, listStorage);
+							SearchEvalAdd(sp, strTag, rx, pe, lResults);
 						}
 					}
 
-					return true;
-				};
+					if(bUuids && (lResults.UCount == uInitialResults))
+						SearchEvalAdd(sp, pe.Uuid.ToHexString(), rx, pe, lResults);
+
+					if(bGroupName && (lResults.UCount == uInitialResults) &&
+						(pe.ParentGroup != null))
+						SearchEvalAdd(sp, pe.ParentGroup.Name, rx, pe, lResults);
+				}
 			}
 
-			if(!PreOrderTraverseTree(null, eh)) return false;
-			uCurEntries = uLocalCurEntries;
+			uPrcEntries = uLocalPrcEntries;
 			return true;
 		}
 
-		private static void SearchEvalAdd(SearchParameters sp, string strDataField,
+		private static void SearchEvalAdd(SearchParameters sp, string strData,
 			Regex rx, PwEntry pe, PwObjectList<PwEntry> lResults)
 		{
-			bool bMatch = false;
+			if(sp == null) { Debug.Assert(false); return; }
+			if(strData == null) { Debug.Assert(false); return; }
+			if(pe == null) { Debug.Assert(false); return; }
+			if(lResults == null) { Debug.Assert(false); return; }
 
+			bool bMatch;
 			if(rx == null)
-				bMatch = (strDataField.IndexOf(sp.SearchString,
+				bMatch = (strData.IndexOf(sp.SearchString,
 					sp.ComparisonMode) >= 0);
-			else bMatch = rx.IsMatch(strDataField);
+			else bMatch = rx.IsMatch(strData);
 
 			if(!bMatch && (sp.DataTransformationFn != null))
 			{
-				string strCmp = sp.DataTransformationFn(strDataField, pe);
-				if(!object.ReferenceEquals(strCmp, strDataField))
+				string strCmp = sp.DataTransformationFn(strData, pe);
+				if(!object.ReferenceEquals(strCmp, strData))
 				{
 					if(rx == null)
 						bMatch = (strCmp.IndexOf(sp.SearchString,
@@ -1395,15 +1430,20 @@ namespace ModernKeePassLib
 
 		public PwObjectList<PwEntry> GetEntries(bool bIncludeSubGroupEntries)
 		{
-			if(bIncludeSubGroupEntries == false) return m_listEntries;
+			PwObjectList<PwEntry> l = new PwObjectList<PwEntry>();
 
-			PwObjectList<PwEntry> list = m_listEntries.CloneShallow();
-			foreach(PwGroup pgSub in m_listGroups)
+			GroupHandler gh = delegate(PwGroup pg)
 			{
-				list.Add(pgSub.GetEntries(true));
-			}
+				l.Add(pg.Entries);
+				return true;
+			};
 
-			return list;
+			gh(this);
+			if(bIncludeSubGroupEntries)
+				PreOrderTraverseTree(gh, null);
+
+			Debug.Assert(l.UCount == GetEntriesCount(bIncludeSubGroupEntries));
+			return l;
 		}
 
 		/// <summary>
@@ -1476,7 +1516,7 @@ namespace ModernKeePassLib
 
 			if(bTakeOwnership) subGroup.m_pParentGroup = this;
 
-			if(bUpdateLocationChangedOfSub) subGroup.LocationChanged = DateTime.Now;
+			if(bUpdateLocationChangedOfSub) subGroup.LocationChanged = DateTime.UtcNow;
 		}
 
 		/// <summary>
@@ -1511,7 +1551,7 @@ namespace ModernKeePassLib
 			// only assign it to the new one
 			if(bTakeOwnership) pe.ParentGroup = this;
 
-			if(bUpdateLocationChangedOfEntry) pe.LocationChanged = DateTime.Now;
+			if(bUpdateLocationChangedOfEntry) pe.LocationChanged = DateTime.UtcNow;
 		}
 
 		public void SortSubGroups(bool bRecursive)
@@ -1527,7 +1567,7 @@ namespace ModernKeePassLib
 
 		public void DeleteAllObjects(PwDatabase pdContext)
 		{
-			DateTime dtNow = DateTime.Now;
+			DateTime dtNow = DateTime.UtcNow;
 
 			foreach(PwEntry pe in m_listEntries)
 			{
@@ -1571,7 +1611,7 @@ namespace ModernKeePassLib
 
 		public void SetCreatedNow(bool bRecursive)
 		{
-			DateTime dt = DateTime.Now;
+			DateTime dt = DateTime.UtcNow;
 
 			m_tCreation = dt;
 			m_tLastAccess = dt;

@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,10 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Diagnostics;
-
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Cryptography.PasswordGenerator
 {
@@ -46,32 +49,56 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 			Debug.Assert(pwProfile != null);
 			if(pwProfile == null) throw new ArgumentNullException("pwProfile");
 
-			CryptoRandomStream crs = CreateCryptoStream(pbUserEntropy);
 			PwgError e = PwgError.Unknown;
+			CryptoRandomStream crs = null;
+			byte[] pbKey = null;
+			try
+			{
+				crs = CreateRandomStream(pbUserEntropy, out pbKey);
 
-			if(pwProfile.GeneratorType == PasswordGeneratorType.CharSet)
-				e = CharSetBasedGenerator.Generate(out psOut, pwProfile, crs);
-			else if(pwProfile.GeneratorType == PasswordGeneratorType.Pattern)
-				e = PatternBasedGenerator.Generate(out psOut, pwProfile, crs);
-			else if(pwProfile.GeneratorType == PasswordGeneratorType.Custom)
-				e = GenerateCustom(out psOut, pwProfile, crs, pwAlgorithmPool);
-			else { Debug.Assert(false); psOut = ProtectedString.Empty; }
+				if(pwProfile.GeneratorType == PasswordGeneratorType.CharSet)
+					e = CharSetBasedGenerator.Generate(out psOut, pwProfile, crs);
+				else if(pwProfile.GeneratorType == PasswordGeneratorType.Pattern)
+					e = PatternBasedGenerator.Generate(out psOut, pwProfile, crs);
+				else if(pwProfile.GeneratorType == PasswordGeneratorType.Custom)
+					e = GenerateCustom(out psOut, pwProfile, crs, pwAlgorithmPool);
+				else { Debug.Assert(false); psOut = ProtectedString.Empty; }
+			}
+			finally
+			{
+				if(crs != null) crs.Dispose();
+				if(pbKey != null) MemUtil.ZeroByteArray(pbKey);
+			}
 
 			return e;
 		}
 
-		private static CryptoRandomStream CreateCryptoStream(byte[] pbAdditionalEntropy)
+		private static CryptoRandomStream CreateRandomStream(byte[] pbAdditionalEntropy,
+			out byte[] pbKey)
 		{
-			byte[] pbKey = CryptoRandom.Instance.GetRandomBytes(256);
+			pbKey = CryptoRandom.Instance.GetRandomBytes(128);
 
 			// Mix in additional entropy
+			Debug.Assert(pbKey.Length >= 64);
 			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
 			{
-				for(int nKeyPos = 0; nKeyPos < pbKey.Length; ++nKeyPos)
-					pbKey[nKeyPos] ^= pbAdditionalEntropy[nKeyPos % pbAdditionalEntropy.Length];
+#if ModernKeePassLib
+                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
+			    var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbAdditionalEntropy));
+			    byte[] pbHash;
+                CryptographicBuffer.CopyToByteArray(buffer, out pbHash);
+			    MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
+
+#else
+				using(SHA512Managed h = new SHA512Managed())
+				{
+					byte[] pbHash = h.ComputeHash(pbAdditionalEntropy);
+					MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
+				}
+#endif
 			}
 
-			return new CryptoRandomStream(CrsAlgorithm.Salsa20, pbKey);
+			return new CryptoRandomStream(CrsAlgorithm.ChaCha20, pbKey);
 		}
 
 		internal static char GenerateCharacter(PwProfile pwProfile,
