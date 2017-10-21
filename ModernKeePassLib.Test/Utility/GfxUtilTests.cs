@@ -21,10 +21,10 @@ namespace ModernKeePassLib.Test.Shared.Utility
             "QMdny4VogAAAABJRU5ErkJggg==";
 
         [Test ()]
-        public void TestLoadImage ()
+        public async void TestLoadImage ()
         {
             var testData = Convert.FromBase64String (testImageData);
-            var image = GfxUtil.LoadImage (testData);
+            var image = await GfxUtil.LoadImage (testData);
             Assert.That (image.Width, Is.EqualTo (16));
             Assert.That (image.Height, Is.EqualTo (16));
         }

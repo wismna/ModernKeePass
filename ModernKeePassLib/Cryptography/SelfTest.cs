@@ -105,7 +105,7 @@ namespace ModernKeePassLib.Cryptography
 		        HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
 		    }
 #else
-            try { using(SHA256Managed h = new SHA256Managed()) { } }
+			try { using(SHA256Managed h = new SHA256Managed()) { } }
 #endif
 			catch(Exception exSha256)
 			{
@@ -715,7 +715,7 @@ namespace ModernKeePassLib.Cryptography
 		        throw new SecurityException("HMAC-SHA-256-" + strID + "-R");*/
 #else
             // Original
-            using(HMACSHA256 h = new HMACSHA256(pbKey))
+			using(HMACSHA256 h = new HMACSHA256(pbKey))
 			{
 				h.TransformBlock(pbMsg, 0, pbMsg.Length, pbMsg, 0);
 				h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
@@ -734,10 +734,10 @@ namespace ModernKeePassLib.Cryptography
 					throw new SecurityException("HMAC-SHA-256-" + strID + "-R");
 			}
 #endif
-        }
+		}
 #endif
 
-        private static void TestKeyTransform(Random r)
+		private static void TestKeyTransform(Random r)
 		{
 #if DEBUG
 			// Up to KeePass 2.34, the OtpKeyProv plugin used the public

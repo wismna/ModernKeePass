@@ -31,6 +31,7 @@
     <DefineConstants>DEBUG;ModernKeePassLib</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
@@ -126,6 +127,7 @@
     <Compile Include="Utility\GfxUtil.cs" />
     <Compile Include="Utility\MemUtil.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwGenerator.cs" />
+    <Compile Include="Utility\MonoWorkaround.PCL.cs" />
     <Compile Include="Utility\StrUtil.cs" />
     <Compile Include="Utility\UrlUtil.cs" />
     <Compile Include="Utility\TimeUtil.cs" />

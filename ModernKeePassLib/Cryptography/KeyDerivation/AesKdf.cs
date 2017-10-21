@@ -117,9 +117,11 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 
 			try
 			{
+#if !ModernKeePassLib
 				// Try to use the native library first
-				/*if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
-					return CryptoUtil.HashSha256(pbNewKey);*/
+				if(NativeLib.TransformKey256(pbNewKey, pbKeySeed32, uNumRounds))
+					return CryptoUtil.HashSha256(pbNewKey);
+#endif
 
 				if(TransformKeyGCrypt(pbNewKey, pbKeySeed32, uNumRounds))
 					return CryptoUtil.HashSha256(pbNewKey);
@@ -135,6 +137,7 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
 		{
+#if ModernKeePassLib || KeePassUAP
 			KeyParameter kp = new KeyParameter(pbKeySeed32);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
@@ -144,6 +147,39 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 				aes.ProcessBlock(pbNewKey32, 0, pbNewKey32, 0);
 				aes.ProcessBlock(pbNewKey32, 16, pbNewKey32, 16);
 			}
+#else
+			byte[] pbIV = new byte[16];
+			Array.Clear(pbIV, 0, pbIV.Length);
+
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				a.BlockSize = 128;
+			}
+
+			a.IV = pbIV;
+			a.Mode = CipherMode.ECB;
+			a.KeySize = 256;
+			a.Key = pbKeySeed32;
+			ICryptoTransform iCrypt = a.CreateEncryptor();
+
+			// !iCrypt.CanReuseTransform -- doesn't work with Mono
+			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+				(iCrypt.OutputBlockSize != 16))
+			{
+				Debug.Assert(false, "Invalid ICryptoTransform.");
+				Debug.Assert((iCrypt.InputBlockSize == 16), "Invalid input block size!");
+				Debug.Assert((iCrypt.OutputBlockSize == 16), "Invalid output block size!");
+				return false;
+			}
+
+			for(ulong i = 0; i < uNumRounds; ++i)
+			{
+				iCrypt.TransformBlock(pbNewKey32, 0, 16, pbNewKey32, 0);
+				iCrypt.TransformBlock(pbNewKey32, 16, 16, pbNewKey32, 16);
+			}
+#endif
 
 			return true;
 		}
@@ -152,14 +188,14 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 		{
 			KdfParameters p = GetDefaultParameters();
 			ulong uRounds;
-
+#if !ModernKeePassLib
 			// Try native method
-			/*if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
+			if(NativeLib.TransformKeyBenchmark256(uMilliseconds, out uRounds))
 			{
 				p.SetUInt64(ParamRounds, uRounds);
 				return p;
-			}*/
-
+			}
+#endif
 			if(TransformKeyBenchmarkGCrypt(uMilliseconds, out uRounds))
 			{
 				p.SetUInt64(ParamRounds, uRounds);
@@ -173,10 +209,40 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 				pbKey[i] = (byte)i;
 				pbNewKey[i] = (byte)i;
 			}
-            
+
+#if ModernKeePassLib || KeePassUAP
 			KeyParameter kp = new KeyParameter(pbKey);
 			AesEngine aes = new AesEngine();
 			aes.Init(true, kp);
+#else
+			byte[] pbIV = new byte[16];
+			Array.Clear(pbIV, 0, pbIV.Length);
+
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				a.BlockSize = 128;
+			}
+
+			a.IV = pbIV;
+			a.Mode = CipherMode.ECB;
+			a.KeySize = 256;
+			a.Key = pbKey;
+			ICryptoTransform iCrypt = a.CreateEncryptor();
+
+			// !iCrypt.CanReuseTransform -- doesn't work with Mono
+			if((iCrypt == null) || (iCrypt.InputBlockSize != 16) ||
+				(iCrypt.OutputBlockSize != 16))
+			{
+				Debug.Assert(false, "Invalid ICryptoTransform.");
+				Debug.Assert(iCrypt.InputBlockSize == 16, "Invalid input block size!");
+				Debug.Assert(iCrypt.OutputBlockSize == 16, "Invalid output block size!");
+
+				p.SetUInt64(ParamRounds, PwDefs.DefaultKeyEncryptionRounds);
+				return p;
+			}
+#endif
 
 			uRounds = 0;
 			int tStart = Environment.TickCount;
@@ -184,8 +250,13 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			{
 				for(ulong j = 0; j < BenchStep; ++j)
 				{
+#if ModernKeePassLib || KeePassUAP
 					aes.ProcessBlock(pbNewKey, 0, pbNewKey, 0);
 					aes.ProcessBlock(pbNewKey, 16, pbNewKey, 16);
+#else
+					iCrypt.TransformBlock(pbNewKey, 0, 16, pbNewKey, 0);
+					iCrypt.TransformBlock(pbNewKey, 16, 16, pbNewKey, 16);
+#endif
 				}
 
 				uRounds += BenchStep;

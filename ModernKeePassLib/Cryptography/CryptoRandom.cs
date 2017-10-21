@@ -43,6 +43,9 @@ namespace ModernKeePassLib.Cryptography
 	{
 		private byte[] m_pbEntropyPool = new byte[64];
 		private ulong m_uCounter;
+#if !ModernKeePassLib
+        private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+#endif
 		private ulong m_uGeneratedBytesCount = 0;
 
 		private static readonly object g_oSyncRoot = new object();
@@ -192,7 +195,7 @@ namespace ModernKeePassLib.Cryptography
 		    pb = MemUtil.UInt32ToBytes((uint)Environment.CurrentManagedThreadId);
 		    ms.Write(pb, 0, pb.Length);
 #else
-            pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
+			pb = MemUtil.UInt32ToBytes((uint)NativeLib.GetPlatformID());
 			MemUtil.Write(ms, pb);
 
 			try
@@ -308,8 +311,11 @@ namespace ModernKeePassLib.Cryptography
 		private byte[] GetCspData()
 		{
 			byte[] pbCspRandom = new byte[32];
-			//m_rng.GetBytes(pbCspRandom);
-      CryptographicBuffer.CopyToByteArray(CryptographicBuffer.GenerateRandom(32), out pbCspRandom);
+#if ModernKeePassLib
+            CryptographicBuffer.CopyToByteArray(CryptographicBuffer.GenerateRandom(32), out pbCspRandom);
+#else
+			m_rng.GetBytes(pbCspRandom);
+#endif
 			return pbCspRandom;
 		}
 

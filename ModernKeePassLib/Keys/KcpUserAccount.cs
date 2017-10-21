@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security;
-
+using Windows.Storage;
 #if !KeePassUAP
 using Windows.Security.Cryptography;
 #endif
@@ -98,10 +98,11 @@ namespace ModernKeePassLib.Keys
 
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
 			strUserDir += PwDefs.ShortProductName;
+#if !ModernKeePassLib
 
-			if(bCreate && !Directory.Exists(strUserDir))
+            if (bCreate && !Directory.Exists(strUserDir))
 				Directory.CreateDirectory(strUserDir);
-
+#endif
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
 			return (strUserDir + UserKeyFileName);
 		}
@@ -114,9 +115,15 @@ namespace ModernKeePassLib.Keys
 			try
 			{
 				string strFilePath = GetUserKeyFilePath(false);
-				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
-
-				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+#if ModernKeePassLib
+                var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForReadAsync().GetAwaiter().GetResult();
+			    var pbProtectedKey = new byte[(int)fileStream.Length];
+			    fileStream.Read(pbProtectedKey, 0, (int)fileStream.Length);
+                fileStream.Dispose();
+#else
+                byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
+#endif
+                pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
 			}
 			catch(Exception)
@@ -126,7 +133,7 @@ namespace ModernKeePassLib.Keys
 			}
 #endif
 
-			return pbKey;
+                return pbKey;
 		}
 
 		private static byte[] CreateUserKey()
@@ -139,10 +146,15 @@ namespace ModernKeePassLib.Keys
 			byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
 			byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
 				m_pbEntropy, DataProtectionScope.CurrentUser);
+#if ModernKeePassLib
+		    var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForWriteAsync().GetAwaiter().GetResult();
+		    fileStream.Write(pbProtectedKey, 0, (int)fileStream.Length);
+		    fileStream.Dispose();
+#else
+            File.WriteAllBytes(strFilePath, pbProtectedKey);
+#endif
 
-			File.WriteAllBytes(strFilePath, pbProtectedKey);
-
-			byte[] pbKey = LoadUserKey(true);
+            byte[] pbKey = LoadUserKey(true);
 			Debug.Assert(MemUtil.ArraysEqual(pbKey, pbRandomKey));
 
 			MemUtil.ZeroByteArray(pbRandomKey);
