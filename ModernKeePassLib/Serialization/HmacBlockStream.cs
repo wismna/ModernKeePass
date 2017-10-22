@@ -24,6 +24,7 @@ using System.IO;
 using System.Text;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Utility;
 using Org.BouncyCastle.Crypto.Digests;
@@ -114,7 +115,7 @@ namespace ModernKeePassLib.Serialization
 					Flush();
 				}
 
-				//m_sBase.Close();
+				m_sBase.Dispose();
 				m_sBase = null;
 			}
 
@@ -144,10 +145,10 @@ namespace ModernKeePassLib.Serialization
 			if(pbKey == null) throw new ArgumentNullException("pbKey");
 			Debug.Assert(pbKey.Length == 64);
 
-            // We are computing the HMAC using SHA-256, whose internal
-            // block size is 512 bits; thus create a key that is 512
-            // bits long (using SHA-512)
-
+			// We are computing the HMAC using SHA-256, whose internal
+			// block size is 512 bits; thus create a key that is 512
+			// bits long (using SHA-512)
+#if ModernKeePassLib
 		    byte[] pbBlockKey = MemUtil.EmptyByteArray;
 		    byte[] pbIndex = MemUtil.UInt64ToBytes(uBlockIndex);
             var h = new Sha512Digest();
@@ -155,8 +156,8 @@ namespace ModernKeePassLib.Serialization
             h.BlockUpdate(pbKey, 0, pbKey.Length);
 		    h.DoFinal(pbBlockKey, 0);
             h.Reset();
-
-			/*byte[] pbBlockKey;
+#else
+			byte[] pbBlockKey;
 			using(SHA512Managed h = new SHA512Managed())
 			{
 				byte[] pbIndex = MemUtil.UInt64ToBytes(uBlockIndex);
@@ -167,7 +168,7 @@ namespace ModernKeePassLib.Serialization
 
 				pbBlockKey = h.Hash;
 			}
-            */
+#endif
 
 #if DEBUG
 			byte[] pbZero = new byte[64];
@@ -240,10 +241,10 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_bVerify)
 			{
-				byte[] pbCmpHmac = MemUtil.EmptyByteArray;
+				byte[] pbCmpHmac;
 				byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
 
-#if ModernKeePassLib
+/*#if ModernKeePassLib
                 var h = new HMac(new Sha256Digest());
 			    h.BlockUpdate(pbBlockIndex, 0, pbBlockIndex.Length);
 			    h.BlockUpdate(pbBlockSize, 0, pbBlockSize.Length);
@@ -252,7 +253,7 @@ namespace ModernKeePassLib.Serialization
 
                 h.DoFinal(pbCmpHmac, 0);
                 h.Reset();
-#else
+#else*/
                 using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
 				{
 					h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
@@ -268,8 +269,8 @@ namespace ModernKeePassLib.Serialization
 
 					pbCmpHmac = h.Hash;
 				}
-#endif
-                MemUtil.ZeroByteArray(pbBlockKey);
+//#endif
+				MemUtil.ZeroByteArray(pbBlockKey);
 
 				if(!MemUtil.ArraysEqual(pbCmpHmac, pbStoredHmac))
 					throw new InvalidDataException(KLRes.FileCorrupted);
@@ -313,10 +314,10 @@ namespace ModernKeePassLib.Serialization
 			int cbBlockSize = m_iBufferPos;
 			byte[] pbBlockSize = MemUtil.Int32ToBytes(cbBlockSize);
 
-			byte[] pbBlockHmac = MemUtil.EmptyByteArray;
+			byte[] pbBlockHmac;
 			byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
 
-#if ModernKeePassLib
+/*#if ModernKeePassLib
             var h = new HMac(new Sha256Digest());
 		    h.BlockUpdate(pbBlockIndex, 0, pbBlockIndex.Length);
 		    h.BlockUpdate(pbBlockSize, 0, pbBlockSize.Length);
@@ -325,8 +326,8 @@ namespace ModernKeePassLib.Serialization
 
 		    h.DoFinal(pbBlockHmac, 0);
             h.Reset();
-#else
-            using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
+#else*/
+			using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
 			{
 				h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
 					pbBlockIndex, 0);
@@ -340,8 +341,8 @@ namespace ModernKeePassLib.Serialization
 
 				pbBlockHmac = h.Hash;
 			}
-#endif
-            MemUtil.ZeroByteArray(pbBlockKey);
+//#endif
+			MemUtil.ZeroByteArray(pbBlockKey);
 
 			MemUtil.Write(m_sBase, pbBlockHmac);
 			// MemUtil.Write(m_sBase, pbBlockIndex); // Implicit
