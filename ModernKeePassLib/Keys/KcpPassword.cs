@@ -95,12 +95,12 @@ namespace ModernKeePassLib.Keys
 		{
 			try
 			{
-				string str = StrUtil.Utf8.GetString(pb, 0, pb.Length);
 #if ModernKeePassLib
                 // TODO: find a way to implement this
 			    return true;
 #else
-                return str.IsNormalized(NormalizationForm.FormC);
+				string str = StrUtil.Utf8.GetString(pb);
+				return str.IsNormalized(NormalizationForm.FormC);
 #endif
 			}
 			catch(Exception) { Debug.Assert(false); }
@@ -108,5 +108,5 @@ namespace ModernKeePassLib.Keys
 			return false;
 		}
 #endif
-            }
+	}
 }

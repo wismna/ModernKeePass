@@ -687,8 +687,8 @@ namespace ModernKeePassLib.Cryptography
 		private static void HmacEval(byte[] pbKey, byte[] pbMsg,
 			byte[] pbExpc, string strID)
 		{
-            // WinRT
 #if ModernKeePassLib
+            // WinRT
             var h = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(CryptographicBuffer.CreateFromByteArray(pbKey));
             h.Append(CryptographicBuffer.CreateFromByteArray(pbMsg));
 		    var pbHash = h.GetValueAndReset().ToArray();

@@ -25,8 +25,10 @@ using System.Text;
 
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
+using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace ModernKeePassLib.Cryptography
 {
@@ -54,15 +56,15 @@ namespace ModernKeePassLib.Cryptography
             var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256).CreateHash();
             CryptographicBuffer.CopyToByteArray(h.GetValueAndReset(), out pbHash);
 #else
-            using(SHA256Managed h = new SHA256Managed())
+			using(SHA256Managed h = new SHA256Managed())
 			{
 				pbHash = h.ComputeHash(pbData, iOffset, cbCount);
 			}
 #endif
 
 #if DEBUG
-            // Ensure the data has not been modified
-            Debug.Assert(MemUtil.ArraysEqual(pbData, pbCopy));
+			// Ensure the data has not been modified
+			Debug.Assert(MemUtil.ArraysEqual(pbData, pbCopy));
 
 			Debug.Assert((pbHash != null) && (pbHash.Length == 32));
 			byte[] pbZero = new byte[32];
@@ -92,12 +94,12 @@ namespace ModernKeePassLib.Cryptography
                 var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512).CreateHash();
 			    CryptographicBuffer.CopyToByteArray(h.GetValueAndReset(), out pbHash);
 #else
-                using(SHA512Managed h = new SHA512Managed())
+				using(SHA512Managed h = new SHA512Managed())
 				{
 					pbHash = h.ComputeHash(pbIn, iInOffset, cbIn);
 				}
 #endif
-            }
+			}
 
 			if(cbOut == pbHash.Length) return pbHash;
 
@@ -111,20 +113,7 @@ namespace ModernKeePassLib.Cryptography
 				while(iPos < cbOut)
 				{
 					Debug.Assert(pbHash.Length == 64);
-				    byte[] pbR = MemUtil.UInt64ToBytes(r);
-#if ModernKeePassLib
-                    var h = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(CryptographicBuffer.CreateFromByteArray(pbR));
-                    byte[] pbPart;
-                    CryptographicBuffer.CopyToByteArray(h.GetValueAndReset(), out pbPart);
-				    int cbCopy = Math.Min(cbOut - iPos, pbPart.Length);
-				    Debug.Assert(cbCopy > 0);
-                    Array.Copy(pbPart, 0, pbRet, iPos, cbCopy);
-				    iPos += cbCopy;
-				    ++r;
-
-				    MemUtil.ZeroByteArray(pbPart);
-#else
-                    using (HMACSHA256 h = new HMACSHA256(pbHash))
+					using(HMACSHA256 h = new HMACSHA256(pbHash))
 					{
 						byte[] pbR = MemUtil.UInt64ToBytes(r);
 						byte[] pbPart = h.ComputeHash(pbR);
@@ -138,7 +127,6 @@ namespace ModernKeePassLib.Cryptography
 
 						MemUtil.ZeroByteArray(pbPart);
 					}
-#endif
 				}
 				Debug.Assert(iPos == cbOut);
 			}
@@ -152,7 +140,7 @@ namespace ModernKeePassLib.Cryptography
 		}
 
 #if !ModernKeePassLib
-        private static bool? g_obAesCsp = null;
+		private static bool? g_obAesCsp = null;
 		internal static SymmetricAlgorithm CreateAes()
 		{
 			if(g_obAesCsp.HasValue)
@@ -187,5 +175,5 @@ namespace ModernKeePassLib.Cryptography
 			return null;
 		}
 #endif
-    }
+	}
 }

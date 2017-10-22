@@ -61,6 +61,7 @@
     <Compile Include="Cryptography\Cipher\ICipherEngine.cs" />
     <Compile Include="Cryptography\CryptoUtil.cs" />
     <Compile Include="Cryptography\Hash\Blake2b.cs" />
+    <Compile Include="Cryptography\Hash\HMACSHA256.cs" />
     <Compile Include="Cryptography\HmacOtp.cs" />
     <Compile Include="Cryptography\KeyDerivation\AesKdf.cs" />
     <Compile Include="Cryptography\KeyDerivation\AesKdf.GCrypt.cs" />

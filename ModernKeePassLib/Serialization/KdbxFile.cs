@@ -32,13 +32,13 @@ using System.IO.Compression;
 #endif
 
 #if ModernKeePassLib
-//using PCLStorage;
 using Windows.Storage;
 #endif
 
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
@@ -459,15 +459,10 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbHeaderHmac;
 			byte[] pbBlockKey = HmacBlockStream.GetHmacKey64(
 				pbKey, ulong.MaxValue);
-#if ModernKeePassLib
-            var h = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(CryptographicBuffer.CreateFromByteArray(pbHeader));
-		    CryptographicBuffer.CopyToByteArray(h.GetValueAndReset(), out pbHeaderHmac);
-#else
             using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
 			{
 				pbHeaderHmac = h.ComputeHash(pbHeader);
 			}
-#endif
             MemUtil.ZeroByteArray(pbBlockKey);
 
 			return pbHeaderHmac;
