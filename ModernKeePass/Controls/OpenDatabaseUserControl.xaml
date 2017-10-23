@@ -326,6 +326,6 @@
     </UserControl.Resources>
     <StackPanel>
         <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Width="300" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}"/>
-        <TextBlock x:Name="StatusTextBlock" Height="32" Width="auto" Foreground="#FFBF6969" FontSize="16" FontWeight="Bold" />
+        <TextBlock x:Name="StatusTextBlock" Margin="20,0" Height="28" Foreground="#FFBF6969" FontSize="14" FontWeight="SemiBold" TextWrapping="WrapWholeWords" />
     </StackPanel>
 </UserControl>

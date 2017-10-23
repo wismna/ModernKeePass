@@ -25,6 +25,7 @@ namespace ModernKeePassLib.Test.Shared.Utility
         {
             var testData = Convert.FromBase64String (testImageData);
             var image = GfxUtil.ScaleImage(testData, 16, 16).GetAwaiter().GetResult();
+            //var image = GfxUtil.LoadImage(testData);
             Assert.That (image.Width, Is.EqualTo (16));
             Assert.That (image.Height, Is.EqualTo (16));
         }

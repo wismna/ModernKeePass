@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 #if ModernKeePassLib
 using ModernKeePassLib.Native;
@@ -282,7 +283,7 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_nBufferPos > 0)
 			{
-				byte[] pbHash = CryptoUtil.HashSha256(m_pbBuffer, 0, m_nBufferPos);
+				byte[] pbHash = CryptoUtil.HashSha256(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray(), 0, m_nBufferPos);
 
 				// For KeePassLibSD:
 				// SHA256Managed sha256 = new SHA256Managed();
