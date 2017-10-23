@@ -21,8 +21,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Security;
+
+#if ModernKeePassLib
 using Windows.Storage;
-#if !KeePassUAP
 using Windows.Security.Cryptography;
 #endif
 
@@ -100,7 +101,7 @@ namespace ModernKeePassLib.Keys
 			strUserDir += PwDefs.ShortProductName;
 #if !ModernKeePassLib
 
-            if (bCreate && !Directory.Exists(strUserDir))
+			if(bCreate && !Directory.Exists(strUserDir))
 				Directory.CreateDirectory(strUserDir);
 #endif
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
@@ -121,9 +122,9 @@ namespace ModernKeePassLib.Keys
 			    fileStream.Read(pbProtectedKey, 0, (int)fileStream.Length);
                 fileStream.Dispose();
 #else
-                byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
+				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
 #endif
-                pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
 			}
 			catch(Exception)
@@ -133,7 +134,7 @@ namespace ModernKeePassLib.Keys
 			}
 #endif
 
-                return pbKey;
+			return pbKey;
 		}
 
 		private static byte[] CreateUserKey()
@@ -151,10 +152,10 @@ namespace ModernKeePassLib.Keys
 		    fileStream.Write(pbProtectedKey, 0, (int)fileStream.Length);
 		    fileStream.Dispose();
 #else
-            File.WriteAllBytes(strFilePath, pbProtectedKey);
+			File.WriteAllBytes(strFilePath, pbProtectedKey);
 #endif
 
-            byte[] pbKey = LoadUserKey(true);
+			byte[] pbKey = LoadUserKey(true);
 			Debug.Assert(MemUtil.ArraysEqual(pbKey, pbRandomKey));
 
 			MemUtil.ZeroByteArray(pbRandomKey);

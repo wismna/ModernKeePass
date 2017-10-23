@@ -19,18 +19,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
-#else
+using Windows.Security.Cryptography.Core;
+#elif !KeePassUAP
 using System.Security.Cryptography;
 #endif
-using System.Globalization;
 
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 
-#if (!KeePassLibSD && !KeePassRT)
+#if !KeePassLibSD
 namespace ModernKeePassLib.Cryptography
 {
 	/// <summary>
@@ -47,11 +47,15 @@ namespace ModernKeePassLib.Cryptography
 			byte[] pbText = MemUtil.UInt64ToBytes(uFactor);
 			Array.Reverse(pbText); // To big-endian
             
+#if ModernKeePassLib
             var hsha1 = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha1).CreateHash(CryptographicBuffer.CreateFromByteArray(pbSecret));
             hsha1.Append(CryptographicBuffer.CreateFromByteArray(pbText));
             byte[] pbHash;
             CryptographicBuffer.CopyToByteArray(hsha1.GetValueAndReset(), out pbHash);
-
+#else
+			HMACSHA1 hsha1 = new HMACSHA1(pbSecret);
+			byte[] pbHash = hsha1.ComputeHash(pbText);
+#endif
 			uint uOffset = (uint)(pbHash[pbHash.Length - 1] & 0xF);
 			if((iTruncationOffset >= 0) && (iTruncationOffset < (pbHash.Length - 4)))
 				uOffset = (uint)iTruncationOffset;

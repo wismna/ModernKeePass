@@ -20,8 +20,13 @@
 using System;
 using System.Diagnostics;
 
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+#elif !KeePassUAP
+using System.Security.Cryptography;
+#endif
+
 using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Utility;
 

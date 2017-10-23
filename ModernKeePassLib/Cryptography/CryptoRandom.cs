@@ -19,18 +19,20 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
-using ModernKeePassLib.Utility;
 using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
 #endif
-using System.IO;
-using System.Diagnostics;
-using System.Globalization;
-using ModernKeePassLib.Native;
 
+using ModernKeePassLib.Native;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Cryptography
 {
@@ -44,7 +46,7 @@ namespace ModernKeePassLib.Cryptography
 		private byte[] m_pbEntropyPool = new byte[64];
 		private ulong m_uCounter;
 #if !ModernKeePassLib
-        private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
+		private RNGCryptoServiceProvider m_rng = new RNGCryptoServiceProvider();
 #endif
 		private ulong m_uGeneratedBytesCount = 0;
 

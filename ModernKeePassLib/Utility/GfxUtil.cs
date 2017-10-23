@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,16 +19,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
-#if ModernKeePassLib
-using Splat;
-#else
+using System.Text;
+
+#if !KeePassUAP
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 #endif
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace ModernKeePassLib.Utility
 {
@@ -68,19 +67,6 @@ namespace ModernKeePassLib.Utility
 			try { return Image.FromStream(ms); }
 			finally { ms.Close(); }
 		}
-#elif ModernKeePassLib
-		public static async Task<IBitmap> LoadImage(byte[] pb)
-		{
-		    return await ScaleImage(pb, null, null);
-		}
-
-	    public static async Task<IBitmap> ScaleImage(byte[] pb, int? w, int? h)
-	    {
-	        using (var ms = new MemoryStream(pb, false))
-	        {
-	            return await BitmapLoader.Current.Load(ms, w, h);
-	        }
-	    }
 #else
 		public static Image LoadImage(byte[] pb)
 		{
@@ -437,9 +423,8 @@ namespace ModernKeePassLib.Utility
 #endif // DEBUG
 #endif // !KeePassLibSD
 #endif // KeePassUAP
-#if ModernKeePassLib
-#else
-        internal static string ImageToDataUri(Image img)
+
+		internal static string ImageToDataUri(Image img)
 		{
 			if(img == null) { Debug.Assert(false); return string.Empty; }
 
@@ -452,6 +437,5 @@ namespace ModernKeePassLib.Utility
 
 			return StrUtil.DataToDataUri(pb, "image/png");
 		}
-#endif
-    }
+	}
 }

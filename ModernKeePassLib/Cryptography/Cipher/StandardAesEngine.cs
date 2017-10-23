@@ -122,17 +122,16 @@ namespace ModernKeePassLib.Cryptography.Cipher
 			Array.Copy(pbKey, pbLocalKey, 32);
 
 #if ModernKeePassLib
-		    AesEngine aes = new AesEngine();
-		    CbcBlockCipher cbc = new CbcBlockCipher(aes);
-		    PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
+		    var cbc = new CbcBlockCipher(new AesEngine());
+		    var bc = new PaddedBufferedBlockCipher(cbc,
 		        new Pkcs7Padding());
-		    KeyParameter kp = new KeyParameter(pbLocalKey);
-		    ParametersWithIV prmIV = new ParametersWithIV(kp, pbLocalIV);
+		    var kp = new KeyParameter(pbLocalKey);
+		    var prmIV = new ParametersWithIV(kp, pbLocalIV);
 		    bc.Init(bEncrypt, prmIV);
 
-		    IBufferedCipher cpRead = (bEncrypt ? null : bc);
-		    IBufferedCipher cpWrite = (bEncrypt ? bc : null);
-		    return new CipherStream(s, cpRead, cpWrite);
+		    var cpRead = (bEncrypt ? null : bc);
+		    var cpWrite = (bEncrypt ? bc : null);
+            return new CipherStream(s, cpRead, cpWrite);
 #elif KeePassUAP
 			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbLocalKey, pbLocalIV);
 #else

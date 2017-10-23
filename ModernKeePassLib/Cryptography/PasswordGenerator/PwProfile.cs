@@ -265,7 +265,7 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 				else pcs.Add(ch);
 			}
 
-			Array.Clear(vChars, 0, vChars.Length);
+			MemUtil.ZeroArray<char>(vChars);
 			MemUtil.ZeroByteArray(pbUtf8);
 			return pp;
 		}

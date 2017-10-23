@@ -19,18 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
-#else
-using System.Security.Cryptography;
-#endif
+using System.Text;
 
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Security;
 
 namespace ModernKeePassLib.Keys
 {

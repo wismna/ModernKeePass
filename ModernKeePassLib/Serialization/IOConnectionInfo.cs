@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-using System.Net;
 using System.ComponentModel;
-using System.Xml.Serialization;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Xml.Serialization;
 #if ModernKeePassLib
 using Windows.Storage;
 //using PCLStorage;
@@ -338,13 +337,13 @@ namespace ModernKeePassLib.Serialization
 
 	    public StorageFile StorageFile { get; set; }
 
-	    public async Task<bool> CanProbablyAccess()
+		public bool CanProbablyAccess()
 		{
 #if ModernKeePassLib
             if (IsLocalFile())
             {
                 //return (FileSystem.Current.GetFileFromPathAsync(m_strUrl).Result != null);
-                var file = await StorageFile.GetFileFromPathAsync(m_strUrl);
+                var file = StorageFile.GetFileFromPathAsync(m_strUrl).GetAwaiter().GetResult();
                 return file != null;
             }
 #else

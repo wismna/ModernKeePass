@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,20 +19,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Xml;
-using System.Text;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Diagnostics;
 using System.Security;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-#if !KeePassLibSD
-using System.IO.Compression;
-#endif
+using System.Text;
+using System.Xml;
 
 #if ModernKeePassLib
 using Windows.Storage;
+using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 #endif
 
 using ModernKeePassLib.Collections;
@@ -207,11 +204,7 @@ namespace ModernKeePassLib.Serialization
 		private PwDatabase m_pwDatabase; // Not null, see constructor
 		private bool m_bUsedOnce = false;
 
-#if ModernKeePassLib
 		private XmlWriter m_xmlWriter = null;
-#else
-		private XmlTextWriter m_xmlWriter = null;
-#endif
 		private CryptoRandomStream m_randomStream = null;
 		private KdbxFormat m_format = KdbxFormat.Default;
 		private IStatusLogger m_slLogger = null;
@@ -403,12 +396,12 @@ namespace ModernKeePassLib.Serialization
                     .HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
 			    CryptographicBuffer.CopyToByteArray(h, out pbHmacKey64);
 #else
-                using(SHA512Managed h = new SHA512Managed())
+				using(SHA512Managed h = new SHA512Managed())
 				{
 					pbHmacKey64 = h.ComputeHash(pbCmp);
 				}
 #endif
-            }
+			}
 			finally { MemUtil.ZeroByteArray(pbCmp); }
 		}
 
@@ -459,11 +452,11 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbHeaderHmac;
 			byte[] pbBlockKey = HmacBlockStream.GetHmacKey64(
 				pbKey, ulong.MaxValue);
-            using (HMACSHA256 h = new HMACSHA256(pbBlockKey))
+			using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
 			{
 				pbHeaderHmac = h.ComputeHash(pbHeader);
 			}
-            MemUtil.ZeroByteArray(pbBlockKey);
+			MemUtil.ZeroByteArray(pbBlockKey);
 
 			return pbHeaderHmac;
 		}
@@ -522,10 +515,9 @@ namespace ModernKeePassLib.Serialization
 
 				if(!string.IsNullOrEmpty(strExt)) strPath += "." + strExt;
 
-              ++iTry;
-          }
+				++iTry;
+			}
 #if ModernKeePassLib
-            //while(FileSystem.Current.GetFileFromPathAsync(strPath).Result != null);
             while (StorageFile.GetFileFromPathAsync(strPath).GetResults() != null);
 #else
 			while(File.Exists(strPath));

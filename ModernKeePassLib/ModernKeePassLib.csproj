@@ -125,7 +125,8 @@
     <Compile Include="Serialization\IOConnectionInfo.cs" />
     <Compile Include="Serialization\OldFormatException.cs" />
     <Compile Include="Utility\AppLogEx.cs" />
-    <Compile Include="Utility\GfxUtil.cs" />
+    <None Include="Utility\GfxUtil.cs" />
+    <Compile Include="Utility\GfxUtil.PCL.cs" />
     <Compile Include="Utility\MemUtil.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwGenerator.cs" />
     <Compile Include="Utility\MonoWorkaround.PCL.cs" />
@@ -173,6 +174,7 @@
     <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\Windows.winmd</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup />

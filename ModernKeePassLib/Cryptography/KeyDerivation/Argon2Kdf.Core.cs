@@ -114,7 +114,7 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			ctx.LaneLength = ctx.SegmentLength * NbSyncPoints;
 
 			Debug.Assert(NbBlockSize == (NbBlockSizeInQW *
-#if KeePassUAP
+#if ModernKeePassLib || KeePassUAP
 				(ulong)Marshal.SizeOf<ulong>()
 #else
 				(ulong)Marshal.SizeOf(typeof(ulong))

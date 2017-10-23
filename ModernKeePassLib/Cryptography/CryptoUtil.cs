@@ -22,13 +22,17 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-
+using ModernKeePassLib.Cryptography.Hash;
+#if ModernKeePassLib
+using Org.BouncyCastle.Asn1.Pkcs;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
-using ModernKeePassLib.Cryptography.Hash;
+#elif !KeePassUAP
+using System.Security.Cryptography;
+#endif
+
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace ModernKeePassLib.Cryptography
 {

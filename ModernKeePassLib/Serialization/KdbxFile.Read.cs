@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,18 +17,22 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// #define KDBX_BENCHMARK
+
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Security;
+using System.Text;
+using System.Xml;
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
+using Windows.Storage.Streams;
 #else
 using System.Security.Cryptography;
 #endif
-using System.Xml;
 
 #if !KeePassLibSD
 using System.IO.Compression;
@@ -42,8 +46,6 @@ using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Security;

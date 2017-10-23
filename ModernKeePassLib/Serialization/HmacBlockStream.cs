@@ -29,6 +29,7 @@ using ModernKeePassLib.Resources;
 using ModernKeePassLib.Utility;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -244,17 +245,18 @@ namespace ModernKeePassLib.Serialization
 				byte[] pbCmpHmac;
 				byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
 
-/*#if ModernKeePassLib
+#if ModernKeePassLib
                 var h = new HMac(new Sha256Digest());
+			    h.Init(new KeyParameter(pbBlockKey));
 			    h.BlockUpdate(pbBlockIndex, 0, pbBlockIndex.Length);
 			    h.BlockUpdate(pbBlockSize, 0, pbBlockSize.Length);
 			    if (m_pbBuffer.Length > 0)
                     h.BlockUpdate(m_pbBuffer, 0, m_pbBuffer.Length);
-
+			    pbCmpHmac = MemUtil.EmptyByteArray;
                 h.DoFinal(pbCmpHmac, 0);
                 h.Reset();
-#else*/
-                using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
+#else
+				using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
 				{
 					h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
 						pbBlockIndex, 0);
@@ -269,7 +271,7 @@ namespace ModernKeePassLib.Serialization
 
 					pbCmpHmac = h.Hash;
 				}
-//#endif
+#endif
 				MemUtil.ZeroByteArray(pbBlockKey);
 
 				if(!MemUtil.ArraysEqual(pbCmpHmac, pbStoredHmac))
@@ -317,16 +319,18 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbBlockHmac;
 			byte[] pbBlockKey = GetHmacKey64(m_pbKey, m_uBlockIndex);
 
-/*#if ModernKeePassLib
+#if ModernKeePassLib
             var h = new HMac(new Sha256Digest());
-		    h.BlockUpdate(pbBlockIndex, 0, pbBlockIndex.Length);
+		    h.Init(new KeyParameter(pbBlockKey));
+            h.BlockUpdate(pbBlockIndex, 0, pbBlockIndex.Length);
 		    h.BlockUpdate(pbBlockSize, 0, pbBlockSize.Length);
-		    if (m_pbBuffer.Length > 0)
-		        h.BlockUpdate(m_pbBuffer, 0, m_pbBuffer.Length);
+		    if (cbBlockSize > 0)
+		        h.BlockUpdate(m_pbBuffer, 0, cbBlockSize);
 
-		    h.DoFinal(pbBlockHmac, 0);
+		    pbBlockHmac = MemUtil.EmptyByteArray;
+            h.DoFinal(pbBlockHmac, 0);
             h.Reset();
-#else*/
+#else
 			using(HMACSHA256 h = new HMACSHA256(pbBlockKey))
 			{
 				h.TransformBlock(pbBlockIndex, 0, pbBlockIndex.Length,
@@ -341,7 +345,7 @@ namespace ModernKeePassLib.Serialization
 
 				pbBlockHmac = h.Hash;
 			}
-//#endif
+#endif
 			MemUtil.ZeroByteArray(pbBlockKey);
 
 			MemUtil.Write(m_sBase, pbBlockHmac);

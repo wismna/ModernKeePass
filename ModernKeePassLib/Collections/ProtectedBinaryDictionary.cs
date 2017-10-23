@@ -25,7 +25,6 @@ using System.Diagnostics;
 
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Security;
-using ModernKeePassLib.Utility;
 
 #if KeePassLibSD
 using KeePassLibSD;

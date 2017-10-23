@@ -21,9 +21,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Diagnostics;
+
+#if ModernKeePassLib
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+#elif !KeePassUAP
+using System.Security.Cryptography;
+#endif
+
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
 
@@ -88,7 +93,6 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 			    byte[] pbHash;
                 CryptographicBuffer.CopyToByteArray(h, out pbHash);
 			    MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
-
 #else
 				using(SHA512Managed h = new SHA512Managed())
 				{

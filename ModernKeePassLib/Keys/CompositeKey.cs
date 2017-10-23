@@ -18,32 +18,15 @@
 */
 
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
-#else
-using System.Security.Cryptography;
-#endif
+using System.Text;
 
-#if KeePassRT
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Parameters;
-#endif
-
-using ModernKeePassLib.Native;
+using ModernKeePassLib.Cryptography;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Cryptography.KeyDerivation;
-using Org.BouncyCastle.Crypto.Engines;
-using KdfParameters = Org.BouncyCastle.Crypto.Parameters.KdfParameters;
 
 namespace ModernKeePassLib.Keys
 {
@@ -119,7 +102,6 @@ namespace ModernKeePassLib.Keys
 			return m_vUserKeys.Remove(pKey);
 		}
 
-#if !ModernKeePassLib && !KeePassRT
 		/// <summary>
 		/// Test whether the composite key contains a specific type of
 		/// user keys (password, key file, ...). If at least one user
@@ -137,7 +119,7 @@ namespace ModernKeePassLib.Keys
 			{
 				if(pKey == null) { Debug.Assert(false); continue; }
 
-#if KeePassUAP
+#if ModernKeePassLib || KeePassUAP
 				if(pKey.GetType() == tUserKeyType)
 					return true;
 #else
@@ -164,7 +146,7 @@ namespace ModernKeePassLib.Keys
 			{
 				if(pKey == null) { Debug.Assert(false); continue; }
 
-#if KeePassUAP
+#if ModernKeePassLib || KeePassUAP
 				if(pKey.GetType() == tUserKeyType)
 					return pKey;
 #else
@@ -175,7 +157,6 @@ namespace ModernKeePassLib.Keys
 
 			return null;
 		}
-#endif
 
 		/// <summary>
 		/// Creates the composite key from the supplied user key sources (password,
@@ -236,7 +217,7 @@ namespace ModernKeePassLib.Keys
 			if(pbKeySeed32.Length != 32) throw new ArgumentException("pbKeySeed32");
 
 			AesKdf kdf = new AesKdf();
-			var p = kdf.GetDefaultParameters();
+			KdfParameters p = kdf.GetDefaultParameters();
 			p.SetUInt64(AesKdf.ParamRounds, uNumRounds);
 			p.SetByteArray(AesKdf.ParamSeed, pbKeySeed32);
 
@@ -246,7 +227,7 @@ namespace ModernKeePassLib.Keys
 		/// <summary>
 		/// Generate a 32-byte (256-bit) key from the composite key.
 		/// </summary>
-		public ProtectedBinary GenerateKey32(Cryptography.KeyDerivation.KdfParameters p)
+		public ProtectedBinary GenerateKey32(KdfParameters p)
 		{
 			if(p == null) { Debug.Assert(false); throw new ArgumentNullException("p"); }
 

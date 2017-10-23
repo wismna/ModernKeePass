@@ -18,26 +18,27 @@
 */
 
 using System;
-using System.Text;
+using System.Diagnostics;
 using System.IO;
-using System.Xml;
 using System.Security;
+using System.Text;
+using System.Xml;
+
 #if ModernKeePassLib
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Windows.Security.Cryptography;
+using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
 #endif
-using System.Diagnostics;
 
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLib.Keys
 {

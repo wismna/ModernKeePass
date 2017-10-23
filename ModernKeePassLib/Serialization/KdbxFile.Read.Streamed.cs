@@ -25,8 +25,6 @@ using System.Text;
 using System.Security;
 using System.Drawing;
 using System.Xml;
-using System.IO;
-using System.Diagnostics;
 
 using ModernKeePassLib;
 using ModernKeePassLib.Collections;

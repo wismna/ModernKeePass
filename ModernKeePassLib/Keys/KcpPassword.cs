@@ -18,17 +18,11 @@
 */
 
 using System;
-using System.Text;
 using System.Diagnostics;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
-#else
-using System.Security.Cryptography;
-#endif
+using System.Text;
 
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePassLib.Keys
