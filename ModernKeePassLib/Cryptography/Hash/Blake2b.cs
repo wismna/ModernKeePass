@@ -270,11 +270,15 @@ namespace ModernKeePassLib.Cryptography.Hash
 	        Reset();
 	    }
 
-        internal byte[] ComputeHash(byte[] pbOutBuffer)
+        internal byte[] ComputeHash(byte[] value)
         {
-            byte[] result = new byte[pbOutBuffer.Length];
-            DoFinal(result, 0);
-            return result;
+            if (value == null) throw new ArgumentNullException(nameof(value));
+
+            byte[] resBuf = new byte[m_cbHashLength];
+            BlockUpdate(value, 0, value.Length);
+            DoFinal(resBuf, 0);
+
+            return resBuf;
         }
     }
 }

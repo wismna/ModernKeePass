@@ -120,9 +120,9 @@ namespace ModernKeePassLib.Cryptography
 			{
 #if ModernKeePassLib
 
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbEntropy));
-                CryptographicBuffer.CopyToByteArray(buffer, out pbNewData);
+			    var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256)
+			        .HashData(CryptographicBuffer.CreateFromByteArray(pbEntropy));
+                CryptographicBuffer.CopyToByteArray(h, out pbNewData);
 #else
 #if KeePassLibSD
 				using(SHA256Managed shaNew = new SHA256Managed())
@@ -147,9 +147,9 @@ namespace ModernKeePassLib.Cryptography
 				MemUtil.ZeroByteArray(m_pbEntropyPool);
 
 #if ModernKeePassLib
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-                var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
-                CryptographicBuffer.CopyToByteArray(buffer, out m_pbEntropyPool);
+                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256)
+                    .HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
+                CryptographicBuffer.CopyToByteArray(h, out m_pbEntropyPool);
 #else
 #if KeePassLibSD
 				using(SHA256Managed shaPool = new SHA256Managed())

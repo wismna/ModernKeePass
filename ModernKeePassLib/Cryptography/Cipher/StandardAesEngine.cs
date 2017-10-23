@@ -39,6 +39,11 @@ namespace ModernKeePassLib.Cryptography.Cipher
 	/// </summary>
 	public sealed class StandardAesEngine : ICipherEngine
 	{
+#if !ModernKeePassLib && !KeePassUAP
+		private const CipherMode m_rCipherMode = CipherMode.CBC;
+		private const PaddingMode m_rCipherPadding = PaddingMode.PKCS7;
+#endif
+
 		private static PwUuid g_uuidAes = null;
 
 		/// <summary>
@@ -115,18 +120,43 @@ namespace ModernKeePassLib.Cryptography.Cipher
 
 			byte[] pbLocalKey = new byte[32];
 			Array.Copy(pbKey, pbLocalKey, 32);
-			AesEngine aes = new AesEngine();
-			CbcBlockCipher cbc = new CbcBlockCipher(aes);
-			PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
-				new Pkcs7Padding());
-			KeyParameter kp = new KeyParameter(pbLocalKey);
-			ParametersWithIV prmIV = new ParametersWithIV(kp, pbLocalIV);
-			bc.Init(bEncrypt, prmIV);
 
-			IBufferedCipher cpRead = (bEncrypt ? null : bc);
-			IBufferedCipher cpWrite = (bEncrypt ? bc : null);
-			return new CipherStream(s, cpRead, cpWrite);
-        }
+#if ModernKeePassLib
+		    AesEngine aes = new AesEngine();
+		    CbcBlockCipher cbc = new CbcBlockCipher(aes);
+		    PaddedBufferedBlockCipher bc = new PaddedBufferedBlockCipher(cbc,
+		        new Pkcs7Padding());
+		    KeyParameter kp = new KeyParameter(pbLocalKey);
+		    ParametersWithIV prmIV = new ParametersWithIV(kp, pbLocalIV);
+		    bc.Init(bEncrypt, prmIV);
+
+		    IBufferedCipher cpRead = (bEncrypt ? null : bc);
+		    IBufferedCipher cpWrite = (bEncrypt ? bc : null);
+		    return new CipherStream(s, cpRead, cpWrite);
+#elif KeePassUAP
+			return StandardAesEngineExt.CreateStream(s, bEncrypt, pbLocalKey, pbLocalIV);
+#else
+			SymmetricAlgorithm a = CryptoUtil.CreateAes();
+			if(a.BlockSize != 128) // AES block size
+			{
+				Debug.Assert(false);
+				a.BlockSize = 128;
+			}
+
+			a.IV = pbLocalIV;
+			a.KeySize = 256;
+			a.Key = pbLocalKey;
+			a.Mode = m_rCipherMode;
+			a.Padding = m_rCipherPadding;
+
+			ICryptoTransform iTransform = (bEncrypt ? a.CreateEncryptor() : a.CreateDecryptor());
+			Debug.Assert(iTransform != null);
+			if(iTransform == null) throw new SecurityException("Unable to create AES transform!");
+
+			return new CryptoStream(s, iTransform, bEncrypt ? CryptoStreamMode.Write :
+				CryptoStreamMode.Read);
+#endif
+		}
 
 		public Stream EncryptStream(Stream sPlainText, byte[] pbKey, byte[] pbIV)
 		{

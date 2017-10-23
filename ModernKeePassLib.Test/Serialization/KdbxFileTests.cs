@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -40,15 +41,15 @@ namespace ModernKeePassLib.Test.Shared.Serialization
           "\t<Meta>\r\n" +
           "\t\t<Generator>" + testLocalizedAppName + "</Generator>\r\n" +
           "\t\t<DatabaseName>" + testDatabaseName + "</DatabaseName>\r\n" +
-          "\t\t<DatabaseNameChanged>2015-03-14T03:15:26Z</DatabaseNameChanged>\r\n" +
+          "\t\t<DatabaseNameChanged>2017-10-23T08:03:55Z</DatabaseNameChanged>\r\n" +
           "\t\t<DatabaseDescription>" + testDatabaseDescription + "</DatabaseDescription>\r\n" +
-          "\t\t<DatabaseDescriptionChanged>2015-03-14T03:15:26Z</DatabaseDescriptionChanged>\r\n" +
+          "\t\t<DatabaseDescriptionChanged>2017-10-23T08:03:55Z</DatabaseDescriptionChanged>\r\n" +
           "\t\t<DefaultUserName>" + testDefaultUserName + "</DefaultUserName>\r\n" +
-          "\t\t<DefaultUserNameChanged>2015-03-14T03:15:26Z</DefaultUserNameChanged>\r\n" +
+          "\t\t<DefaultUserNameChanged>2017-10-23T08:03:55Z</DefaultUserNameChanged>\r\n" +
           "\t\t<MaintenanceHistoryDays>365</MaintenanceHistoryDays>\r\n" +
           //"\t\t<Color>" + testColor + "</Color>\r\n" +
           "\t\t<Color></Color>\r\n" +
-          "\t\t<MasterKeyChanged>2015-03-14T03:15:26Z</MasterKeyChanged>\r\n" +
+          "\t\t<MasterKeyChanged>2017-10-23T08:03:55Z</MasterKeyChanged>\r\n" +
           "\t\t<MasterKeyChangeRec>-1</MasterKeyChangeRec>\r\n" +
           "\t\t<MasterKeyChangeForce>-1</MasterKeyChangeForce>\r\n" +
           "\t\t<MemoryProtection>\r\n" +
@@ -60,9 +61,9 @@ namespace ModernKeePassLib.Test.Shared.Serialization
           "\t\t</MemoryProtection>\r\n" +
           "\t\t<RecycleBinEnabled>True</RecycleBinEnabled>\r\n" +
           "\t\t<RecycleBinUUID>AAAAAAAAAAAAAAAAAAAAAA==</RecycleBinUUID>\r\n" +
-          "\t\t<RecycleBinChanged>2015-03-14T03:15:26Z</RecycleBinChanged>\r\n" +
+          "\t\t<RecycleBinChanged>2017-10-23T08:03:55Z</RecycleBinChanged>\r\n" +
           "\t\t<EntryTemplatesGroup>AAAAAAAAAAAAAAAAAAAAAA==</EntryTemplatesGroup>\r\n" +
-          "\t\t<EntryTemplatesGroupChanged>2015-03-14T03:15:26Z</EntryTemplatesGroupChanged>\r\n" +
+          "\t\t<EntryTemplatesGroupChanged>2017-10-23T08:03:55Z</EntryTemplatesGroupChanged>\r\n" +
           "\t\t<HistoryMaxItems>10</HistoryMaxItems>\r\n" +
           "\t\t<HistoryMaxSize>6291456</HistoryMaxSize>\r\n" +
           "\t\t<LastSelectedGroup>AAAAAAAAAAAAAAAAAAAAAA==</LastSelectedGroup>\r\n" +
@@ -77,13 +78,13 @@ namespace ModernKeePassLib.Test.Shared.Serialization
           "\t\t\t<Notes>" + testRootGroupNotes + "</Notes>\r\n" +
           "\t\t\t<IconID>49</IconID>\r\n" +
           "\t\t\t<Times>\r\n" +
-          "\t\t\t\t<CreationTime>2015-03-14T03:15:26Z</CreationTime>\r\n" +
-          "\t\t\t\t<LastModificationTime>2015-03-14T03:15:26Z</LastModificationTime>\r\n" +
-          "\t\t\t\t<LastAccessTime>2015-03-14T03:15:26Z</LastAccessTime>\r\n" +
-          "\t\t\t\t<ExpiryTime>2015-03-14T03:15:26Z</ExpiryTime>\r\n" +
+          "\t\t\t\t<CreationTime>2017-10-23T08:03:55Z</CreationTime>\r\n" +
+          "\t\t\t\t<LastModificationTime>2017-10-23T08:03:55Z</LastModificationTime>\r\n" +
+          "\t\t\t\t<LastAccessTime>2017-10-23T08:03:55Z</LastAccessTime>\r\n" +
+          "\t\t\t\t<ExpiryTime>2017-10-23T08:03:55Z</ExpiryTime>\r\n" +
           "\t\t\t\t<Expires>False</Expires>\r\n" +
           "\t\t\t\t<UsageCount>0</UsageCount>\r\n" +
-          "\t\t\t\t<LocationChanged>2015-03-14T03:15:26Z</LocationChanged>\r\n" +
+          "\t\t\t\t<LocationChanged>2017-10-23T08:03:55Z</LocationChanged>\r\n" +
           "\t\t\t</Times>\r\n" +
           "\t\t\t<IsExpanded>True</IsExpanded>\r\n" +
           "\t\t\t<DefaultAutoTypeSequence>" + testRootGroupDefaultAutoTypeSequence + "</DefaultAutoTypeSequence>\r\n" +
@@ -95,7 +96,7 @@ namespace ModernKeePassLib.Test.Shared.Serialization
           "\t</Root>\r\n" +
           "</KeePassFile>";
 
-        const string testDate = "2015-03-14T03:15:26Z";
+        const string testDate = "2017-10-23T08:03:55Z";
 
         [Test()]
         public void TestLoad()
@@ -120,7 +121,8 @@ namespace ModernKeePassLib.Test.Shared.Serialization
             {
                 var database = new PwDatabase();
                 database.New(new IOConnectionInfo(), new CompositeKey());
-                var date = DateTime.Parse(testDate);
+                var date = DateTime.Parse(testDate, CultureInfo.CurrentCulture, DateTimeStyles.AdjustToUniversal);
+                //var date = DateTime.UtcNow;
                 PwDatabase.LocalizedAppName = testLocalizedAppName;
                 database.Name = testDatabaseName;
                 database.NameChanged = date;

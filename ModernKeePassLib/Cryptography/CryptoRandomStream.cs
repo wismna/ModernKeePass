@@ -98,10 +98,10 @@ namespace ModernKeePassLib.Cryptography
 				byte[] pbKey32 = new byte[32];
 				byte[] pbIV12 = new byte[12];
 #if ModernKeePassLib
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			    var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbKey));
+                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
+                    .HashData(CryptographicBuffer.CreateFromByteArray(pbKey));
 			    byte[] pbHash;
-			    CryptographicBuffer.CopyToByteArray(buffer, out pbHash);
+			    CryptographicBuffer.CopyToByteArray(h, out pbHash);
                 
 				Array.Copy(pbHash, pbKey32, 32);
 				Array.Copy(pbHash, 32, pbIV12, 0, 12);

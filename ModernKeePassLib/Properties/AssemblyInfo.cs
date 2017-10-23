@@ -40,5 +40,5 @@ using System.Runtime.InteropServices;
 #endif
 
 // Assembly version information
-[assembly: AssemblyVersion("2.37.0.1000")]
-[assembly: AssemblyFileVersion("2.37.0.1000")]
+[assembly: AssemblyVersion("2.37.0.2000")]
+[assembly: AssemblyFileVersion("2.37.0.2000")]

@@ -83,10 +83,10 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
 			{
 #if ModernKeePassLib
-                var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			    var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbAdditionalEntropy));
+                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
+                    .HashData(CryptographicBuffer.CreateFromByteArray(pbAdditionalEntropy));
 			    byte[] pbHash;
-                CryptographicBuffer.CopyToByteArray(buffer, out pbHash);
+                CryptographicBuffer.CopyToByteArray(h, out pbHash);
 			    MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
 
 #else

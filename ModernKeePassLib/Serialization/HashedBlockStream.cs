@@ -18,20 +18,18 @@
 */
 
 using System;
-using System.IO;
-#if ModernKeePassLib
-using System.Linq;
-using Windows.Security.Cryptography;
-#else
-using System.Security.Cryptography;
-#endif
 using System.Diagnostics;
+using System.IO;
 using System.Text;
-
+#if ModernKeePassLib
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
 using ModernKeePassLib.Cryptography;
+#else
+using KeePassLib.Cryptography;
+using KeePassLib.Native;
+using KeePassLib.Utility;
+#endif
 
 #if KeePassLibSD
 using KeePassLibSD;

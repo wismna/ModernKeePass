@@ -399,9 +399,9 @@ namespace ModernKeePassLib.Serialization
 
 				pbCmp[64] = 1;
 #if ModernKeePassLib
-			    var sha256 = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-			    var buffer = sha256.HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
-			    CryptographicBuffer.CopyToByteArray(buffer, out pbHmacKey64);
+			    var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
+                    .HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
+			    CryptographicBuffer.CopyToByteArray(h, out pbHmacKey64);
 #else
                 using(SHA512Managed h = new SHA512Managed())
 				{
