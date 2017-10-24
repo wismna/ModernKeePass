@@ -22,9 +22,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Security;
-using System.Drawing;
 using System.Xml;
+
+#if !ModernKeePassLib && !KeePassUAP
+using System.Drawing;
+#endif
 
 using ModernKeePassLib;
 using ModernKeePassLib.Collections;
@@ -107,15 +109,15 @@ namespace ModernKeePassLib.Serialization
 			xrs.IgnoreProcessingInstructions = true;
 			xrs.IgnoreWhitespace = true;
 
-#if !ModernKeePassLib
-			// these are default values, so no need to set them
-#if !KeePassRT
+#if ModernKeePassLib || KeePassUAP
+			xrs.DtdProcessing = DtdProcessing.Prohibit;
+#else
 #if !KeePassLibSD
-			xrs.ProhibitDtd = true;
+			// Also see PrepMonoDev.sh script
+			xrs.ProhibitDtd = true; // Obsolete in .NET 4, but still there
+			// xrs.DtdProcessing = DtdProcessing.Prohibit; // .NET 4 only
 #endif
 			xrs.ValidationType = ValidationType.None;
-#endif
-
 #endif
 
 			return xrs;

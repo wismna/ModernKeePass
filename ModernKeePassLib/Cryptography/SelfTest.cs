@@ -19,31 +19,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Security;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
+using System.Text;
+
+#if ModernKeePassLib || KeePassUAP
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Parameters;
 #else
 using System.Security.Cryptography;
 #endif
-using System.Text;
-using System.Globalization;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Security.Cryptography.Core;
+
 using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Native;
-using ModernKeePassLib.Utility;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
-using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Macs;
-using Org.BouncyCastle.Crypto.Parameters;
-using KdfParameters = Org.BouncyCastle.Crypto.Parameters.KdfParameters;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Cryptography
 {
@@ -70,9 +67,8 @@ namespace ModernKeePassLib.Cryptography
 			TestHmac();
 
 			TestKeyTransform(r);
-#if !ModernKeePassLib
 			TestNativeKeyTransform(r);
-#endif
+			
 			TestHmacOtp();
 
 			TestProtectedObjects(r);
@@ -99,14 +95,7 @@ namespace ModernKeePassLib.Cryptography
 			}
 #endif
 
-#if ModernKeePassLib
-		    try
-		    {
-		        HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256);
-		    }
-#else
 			try { using(SHA256Managed h = new SHA256Managed()) { } }
-#endif
 			catch(Exception exSha256)
 			{
 				throw new SecurityException("SHA-256: " + exSha256.Message);
@@ -771,10 +760,9 @@ namespace ModernKeePassLib.Cryptography
 #endif
 		}
 
-#if !ModernKeePassLib
-		private static void TestNativeKeyTransform()
+		private static void TestNativeKeyTransform(Random r)
 		{
-#if DEBUG
+#if !ModernKeePassLib && DEBUG
 			byte[] pbOrgKey = CryptoRandom.Instance.GetRandomBytes(32);
 			byte[] pbSeed = CryptoRandom.Instance.GetRandomBytes(32);
 			ulong uRounds = (ulong)r.Next(1, 0x3FFF);
@@ -793,7 +781,6 @@ namespace ModernKeePassLib.Cryptography
 				throw new SecurityException("AES-KDF-2");
 #endif
 		}
-#endif
 
 		private static void TestMemUtil(Random r)
 		{

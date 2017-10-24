@@ -185,7 +185,7 @@ namespace ModernKeePassLib.Cryptography
 
 			if((m_hash != null) && (nRead > 0))
 #if ModernKeePassLib
-        m_hash.BlockUpdate(pbBuffer, nOffset, nRead);
+                m_hash.BlockUpdate(pbBuffer, nOffset, nRead);
 #else
 				m_hash.TransformBlock(pbBuffer, nOffset, nRead, pbBuffer, nOffset);
 #endif
@@ -208,7 +208,7 @@ namespace ModernKeePassLib.Cryptography
 
 			if((m_hash != null) && (nCount > 0))
 #if ModernKeePassLib
-        m_hash.BlockUpdate(pbBuffer, nOffset, nCount);
+                m_hash.BlockUpdate(pbBuffer, nOffset, nCount);
 #else
 				m_hash.TransformBlock(pbBuffer, nOffset, nCount, pbBuffer, nOffset);
 #endif
