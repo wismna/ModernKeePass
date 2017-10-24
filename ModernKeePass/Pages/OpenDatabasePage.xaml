@@ -21,7 +21,7 @@
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Open an existing password database from your PC.</TextBlock>
         <HyperlinkButton Content="From Url..." IsEnabled="False" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Open an existing password database from an Internet location (not yet implemented).</TextBlock>
-        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="350" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
                 <TextBlock Margin="25,10,0,10" Text="{Binding Name}" />
                 <local:OpenDatabaseUserControl ValidationChecked="PasswordUserControl_PasswordChecked" />

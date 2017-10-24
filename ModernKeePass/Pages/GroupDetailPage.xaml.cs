@@ -165,5 +165,21 @@ namespace ModernKeePass.Pages
 
         #endregion
 
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            BottomAppBar.IsOpen = false;
+            if (Model.IsEditMode)
+            {
+                Task.Factory.StartNew(
+                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        () => TitleTextBox.Focus(FocusState.Programmatic)));
+            }
+            else
+            {
+                Task.Factory.StartNew(
+                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                        () => PageRoot.Focus(FocusState.Programmatic)));
+            }
+        }
     }
 }

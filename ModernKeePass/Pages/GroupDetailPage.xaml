@@ -15,13 +15,20 @@
         <SolidColorBrush x:Key="Transparent" Color="Transparent"/>
         <SolidColorBrush x:Key="SystemColor" Color="{StaticResource SystemColorButtonFaceColor}" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
-        <converters:PluralizationConverter x:Key="PluralizationConverter"/>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:TextToWidthConverter x:Key="TextToWidthConverter"/>
+        <converters:TextToFontStyleConverter x:Key="TextToFontStyleConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
     </Page.DataContext>
+    <Page.BottomAppBar>
+        <CommandBar VerticalAlignment="Center" >
+            <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" Click="EditButton_Click" />
+            <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Setting" Label="Settings" />
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
             <CollectionViewSource
@@ -140,7 +147,7 @@
                                 <DataTemplate x:Name="Expanded">
                                     <StackPanel Orientation="Horizontal">
                                         <SymbolIcon Symbol="{Binding IconSymbol}" />
-                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
+                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding Name, Converter={StaticResource TextToFontStyleConverter}, ConverterParameter=Recycle\ Bin}" />
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
                                 </DataTemplate>
@@ -212,7 +219,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
             <Button Margin="39,0,39,0" 
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
@@ -232,17 +239,7 @@
                 VerticalAlignment="Center" 
                 Margin="0,0,30,0"
                 PlaceholderText="New group name..."/>
-            <CommandBar Grid.Column="2" Background="Transparent" IsOpen="True" VerticalAlignment="Center" Margin="0,20,0,0">
-                <AppBarButton Icon="Find" Label="Search">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <SearchBox PlaceholderText="Search..." Width="350" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False"  ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-                <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" />
-                <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
-            </CommandBar>
+            <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Height="40" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
         </Grid>
     </Grid>
 </Page>

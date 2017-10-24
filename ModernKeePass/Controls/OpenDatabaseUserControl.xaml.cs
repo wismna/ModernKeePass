@@ -56,11 +56,20 @@ namespace ModernKeePass.Controls
             {
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(app.Database.RootGroup));
             }
+            else
+            {
+                VisualStateManager.GoToState(PasswordBox, "Error", true);
+            }
         }
 
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Enter) OpenButton_OnClick(null, null);
+            else
+            {
+                VisualStateManager.GoToState(PasswordBox, "Normal", true);
+                StatusTextBlock.Text = string.Empty;
+            }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
