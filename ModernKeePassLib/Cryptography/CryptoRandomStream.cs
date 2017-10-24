@@ -21,8 +21,7 @@ using System;
 using System.Diagnostics;
 
 #if ModernKeePassLib
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 #elif !KeePassUAP
 using System.Security.Cryptography;
 #endif
@@ -102,16 +101,7 @@ namespace ModernKeePassLib.Cryptography
 			{
 				byte[] pbKey32 = new byte[32];
 				byte[] pbIV12 = new byte[12];
-#if ModernKeePassLib
-                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
-                    .HashData(CryptographicBuffer.CreateFromByteArray(pbKey));
-			    byte[] pbHash;
-			    CryptographicBuffer.CopyToByteArray(h, out pbHash);
-                
-				Array.Copy(pbHash, pbKey32, 32);
-				Array.Copy(pbHash, 32, pbIV12, 0, 12);
-				MemUtil.ZeroByteArray(pbHash);
-#else
+
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					byte[] pbHash = h.ComputeHash(pbKey);
@@ -119,7 +109,6 @@ namespace ModernKeePassLib.Cryptography
 					Array.Copy(pbHash, 32, pbIV12, 0, 12);
 					MemUtil.ZeroByteArray(pbHash);
 				}
-#endif
 
 				m_chacha20 = new ChaCha20Cipher(pbKey32, pbIV12, true);
 			}

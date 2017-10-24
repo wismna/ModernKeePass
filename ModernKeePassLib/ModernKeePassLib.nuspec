@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ModernKeePassLib</id>
-    <version>2.37.3000</version>
+    <version>2.37.4000</version>
     <title>ModernKeePassLib</title>
     <authors>Geoffroy Bonneville</authors>
     <owners>Geoffroy Bonneville</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/wismna/ModernKeePass</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Portable KeePass Password Management Library that targets .Net Standard and WinRT</description>
-    <releaseNotes>Hashblockstream write works - now tests results on par with 2.28</releaseNotes>
+    <releaseNotes>Opening and writing back to working order! There is still some untested stuff, mainly related to KDBX file format 4</releaseNotes>
     <copyright>Copyright © 2017 Geoffroy Bonneville</copyright>
     <tags>KeePass KeePassLib Portable PCL NetStandard</tags>
     <dependencies>

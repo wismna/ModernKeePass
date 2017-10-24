@@ -22,18 +22,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using ModernKeePassLib.Cryptography.Hash;
 #if ModernKeePassLib
-using Org.BouncyCastle.Asn1.Pkcs;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 #elif !KeePassUAP
 using System.Security.Cryptography;
 #endif
 
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
-using Org.BouncyCastle.Crypto.Digests;
 
 namespace ModernKeePassLib.Cryptography
 {
@@ -56,21 +52,10 @@ namespace ModernKeePassLib.Cryptography
 #endif
 
 			byte[] pbHash;
-
-#if ModernKeePassLib
-            /*var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256)
-		        .HashData(CryptographicBuffer.CreateFromByteArray(pbData));
-            CryptographicBuffer.CopyToByteArray(h, out pbHash);*/
-		    pbHash = new byte[32];
-            var h = new Sha256Digest();
-            h.BlockUpdate(pbData, iOffset, cbCount);
-		    h.DoFinal(pbHash, iOffset);
-#else
 			using(SHA256Managed h = new SHA256Managed())
 			{
 				pbHash = h.ComputeHash(pbData, iOffset, cbCount);
 			}
-#endif
 
 #if DEBUG
 			// Ensure the data has not been modified
@@ -100,21 +85,11 @@ namespace ModernKeePassLib.Cryptography
 			if(cbOut <= 32) pbHash = HashSha256(pbIn, iInOffset, cbIn);
 			else
 			{
-#if ModernKeePassLib
-			    /*var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
-			        .HashData(CryptographicBuffer.CreateFromByteArray(pbIn));
-			    CryptographicBuffer.CopyToByteArray(h, out pbHash);*/
-			    pbHash = new byte[64];
-			    var h = new Sha512Digest();
-			    h.BlockUpdate(pbIn, iInOffset, cbIn);
-			    h.DoFinal(pbHash, iInOffset);
-#else
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					pbHash = h.ComputeHash(pbIn, iInOffset, cbIn);
 				}
-#endif
-            }
+			}
 
 			if(cbOut == pbHash.Length) return pbHash;
 

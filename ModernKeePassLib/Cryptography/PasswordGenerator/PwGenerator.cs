@@ -21,10 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-
 #if ModernKeePassLib
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 #elif !KeePassUAP
 using System.Security.Cryptography;
 #endif
@@ -87,19 +85,11 @@ namespace ModernKeePassLib.Cryptography.PasswordGenerator
 			Debug.Assert(pbKey.Length >= 64);
 			if((pbAdditionalEntropy != null) && (pbAdditionalEntropy.Length > 0))
 			{
-#if ModernKeePassLib
-                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
-                    .HashData(CryptographicBuffer.CreateFromByteArray(pbAdditionalEntropy));
-			    byte[] pbHash;
-                CryptographicBuffer.CopyToByteArray(h, out pbHash);
-			    MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
-#else
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					byte[] pbHash = h.ComputeHash(pbAdditionalEntropy);
 					MemUtil.XorArray(pbHash, 0, pbKey, 0, pbHash.Length);
 				}
-#endif
 			}
 
 			return new CryptoRandomStream(CrsAlgorithm.ChaCha20, pbKey);

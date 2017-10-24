@@ -28,14 +28,12 @@ using System.Xml;
 
 #if ModernKeePassLib
 using Windows.Storage;
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
+using ModernKeePassLib.Cryptography.Hash;
 #endif
 
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
@@ -391,16 +389,10 @@ namespace ModernKeePassLib.Serialization
 				pbCipherKey = CryptoUtil.ResizeKey(pbCmp, 0, 64, cbCipherKey);
 
 				pbCmp[64] = 1;
-#if ModernKeePassLib
-			    var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha512)
-                    .HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
-			    CryptographicBuffer.CopyToByteArray(h, out pbHmacKey64);
-#else
 				using(SHA512Managed h = new SHA512Managed())
 				{
 					pbHmacKey64 = h.ComputeHash(pbCmp);
 				}
-#endif
 			}
 			finally { MemUtil.ZeroByteArray(pbCmp); }
 		}

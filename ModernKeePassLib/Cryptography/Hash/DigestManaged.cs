@@ -16,7 +16,7 @@ namespace ModernKeePassLib.Cryptography.Hash
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
 
-            byte[] resBuf = new byte[Hash.GetByteLength()];
+            byte[] resBuf = new byte[Hash.GetDigestSize()];
             Hash.BlockUpdate(value, 0, length);
             Hash.DoFinal(resBuf, 0);
 
