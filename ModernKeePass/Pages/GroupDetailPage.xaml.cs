@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
+using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -62,12 +63,10 @@ namespace ModernKeePass.Pages
         {
             NavigationHelper.OnNavigatedTo(e);
 
-            if (!(e.Parameter is GroupVm)) return;
-            DataContext = (GroupVm) e.Parameter;
-            if (Model.IsEditMode)
-                Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => TitleTextBox.Focus(FocusState.Programmatic)));
+            if (e.Parameter is PasswordEventArgs)
+                DataContext = ((PasswordEventArgs) e.Parameter).RootGroup;
+            else if (e.Parameter is GroupVm)
+                DataContext = (GroupVm) e.Parameter;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -114,28 +113,9 @@ namespace ModernKeePass.Pages
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 
-        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            // Create the message dialog and set its content
-            var messageDialog = new MessageDialog("Are you sure you want to delete the whole group and all its entries?");
-
-            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
-            messageDialog.Commands.Add(new UICommand("Delete", delete =>
-            {
-                ToastNotificationHelper.ShowUndoToast("Group", Model);
-                Model.MarkForDelete();
-                if (Frame.CanGoBack) Frame.GoBack();
-            }));
-            messageDialog.Commands.Add(new UICommand("Cancel"));
-
-            // Set the command that will be invoked by default
-            messageDialog.DefaultCommandIndex = 1;
-
-            // Set the command to be invoked when escape is pressed
-            messageDialog.CancelCommandIndex = 1;
-
-            // Show the message dialog
-            await messageDialog.ShowAsync();
+            MessageDialogHelper.ShowDeleteConfirmationDialog("Are you sure you want to delete the whole group and all its entries?", Model, Frame);
         }
         
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
@@ -164,22 +144,5 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
-
-        private void EditButton_Click(object sender, RoutedEventArgs e)
-        {
-            BottomAppBar.IsOpen = false;
-            if (Model.IsEditMode)
-            {
-                Task.Factory.StartNew(
-                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => TitleTextBox.Focus(FocusState.Programmatic)));
-            }
-            else
-            {
-                Task.Factory.StartNew(
-                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => PageRoot.Focus(FocusState.Programmatic)));
-            }
-        }
     }
 }

@@ -8,6 +8,7 @@
     xmlns:local="using:ModernKeePass.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:ModernKeePass.Actions"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
@@ -21,15 +22,29 @@
         <viewModels:GroupVm />
     </Page.DataContext>
     <Page.BottomAppBar>
-        <CommandBar VerticalAlignment="Center" >
-            <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}" Click="EditButton_Click" />
-            <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
+        <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Save" Label="Save">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+                            <core:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
+                            <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </AppBarButton>
                 <AppBarButton Icon="Setting" Label="Settings" />
             </CommandBar.SecondaryCommands>
+            <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarToggleButton>
+            <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
         <Grid.Resources>
             <CollectionViewSource
                 x:Name="GroupsViewSource"
@@ -41,6 +56,9 @@
                 x:Name="EntriesZoomedOutViewSource"
                 Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True"/>
         </Grid.Resources>
+        <Grid.Background>
+            <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+        </Grid.Background>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>
@@ -61,6 +79,11 @@
                     IsSwipeEnabled="false" 
                     SelectionChanged="entries_SelectionChanged"
                     IsSynchronizedWithCurrentItem="False">
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
+                            <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                     <GridView.Resources>
                         <DataTemplate x:Name="GroupFirstItem">
                             <Border 
@@ -147,7 +170,7 @@
                                 <DataTemplate x:Name="Expanded">
                                     <StackPanel Orientation="Horizontal">
                                         <SymbolIcon Symbol="{Binding IconSymbol}" />
-                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding Name, Converter={StaticResource TextToFontStyleConverter}, ConverterParameter=Recycle\ Bin}" />
+                                        <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding Name, ConverterParameter=Recycle Bin, Converter={StaticResource TextToFontStyleConverter}}" />
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
                                 </DataTemplate>
@@ -164,17 +187,21 @@
                             </ListView.ItemContainerStyle>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <ToggleButton IsChecked="{Binding IsLeftPaneOpen, Mode=TwoWay}" Style="{StaticResource HamburgerToggleButton}" Margin="0" />
+                                    <ToggleButton Style="{StaticResource HamburgerToggleButton}" Margin="0" >
+                                        <interactivity:Interaction.Behaviors>
+                                            <core:EventTriggerBehavior EventName="Loaded">
+                                                <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}" TargetObject="{Binding ElementName=LeftListView}"/>
+                                            </core:EventTriggerBehavior>
+                                            <core:EventTriggerBehavior EventName="Checked">
+                                                <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}" TargetObject="{Binding ElementName=LeftListView}"/>
+                                            </core:EventTriggerBehavior>
+                                            <core:EventTriggerBehavior EventName="Unchecked">
+                                                <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}" TargetObject="{Binding ElementName=LeftListView}"/>
+                                            </core:EventTriggerBehavior>
+                                        </interactivity:Interaction.Behaviors>
+                                    </ToggleButton>
                                 </DataTemplate>
                             </ListView.HeaderTemplate>
-                            <interactivity:Interaction.Behaviors>
-                                <core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="True">
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}"/>
-                                </core:DataTriggerBehavior>
-                                <core:DataTriggerBehavior Binding="{Binding IsLeftPaneOpen}" Value="False">
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}"/>
-                                </core:DataTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
                         </ListView>
                     </GridView.Header>
                 </GridView>
@@ -237,9 +264,15 @@
                 IsHitTestVisible="{Binding IsEditMode}" 
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
-                Margin="0,0,30,0"
-                PlaceholderText="New group name..."/>
-            <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Height="40" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
+                Margin="0,0,30,5"
+                PlaceholderText="New group name...">
+                <interactivity:Interaction.Behaviors>
+                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
+                    </core:DataTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+            <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Height="40" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
         </Grid>
     </Grid>
 </Page>

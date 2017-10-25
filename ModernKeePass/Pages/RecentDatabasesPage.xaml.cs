@@ -2,7 +2,6 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page vierge, consultez la page http://go.microsoft.com/fwlink/?LinkId=234238
@@ -29,11 +28,6 @@ namespace ModernKeePass.Pages
             _mainFrame = e.Parameter as Frame;
         }
         
-        private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)
-        {
-            _mainFrame.Navigate(typeof(GroupDetailPage), e.RootGroup);
-        }
-
         private void OpenDatabaseUserControl_OnValidationChecking(object sender, EventArgs e)
         {
             var app = (App)Application.Current;

@@ -4,6 +4,8 @@ namespace ModernKeePass.ViewModels
 {
     public class AboutVm
     {
+        public string Name { get; } = Package.Current.DisplayName;
+
         public string Version
         {
             get
@@ -11,7 +13,7 @@ namespace ModernKeePass.ViewModels
                 var package = Package.Current;
                 var version = package.Id.Version;
 
-                return $"{package.DisplayName} version {version.Major}.{version.Minor}";
+                return $"{version.Major}.{version.Minor}";
             }
         }
     }

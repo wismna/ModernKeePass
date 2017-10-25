@@ -7,6 +7,7 @@
     xmlns:local="using:ModernKeePass.Controls"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -21,12 +22,18 @@
         <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">New</TextBlock>
         <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Create a new password database to the location of your chosing.</TextBlock>
-        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="350" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel>
                 <TextBlock Margin="25,10,0,10" Text="{Binding Name}" />
-                <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True"  ValidationChecked="PasswordUserControl_PasswordChecked" />
+                <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True" >
+                    <interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="ValidationChecked">
+                            <Core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />
+                        </Core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </local:OpenDatabaseUserControl>
                 <TextBlock Margin="25,0,0,10">Password complexity</TextBlock>
-                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="300" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
+                <ProgressBar Margin="25,0,0,10" Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="500" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             </StackPanel>
         </Border>
     </StackPanel>

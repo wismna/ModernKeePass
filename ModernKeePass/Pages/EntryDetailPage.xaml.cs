@@ -64,10 +64,6 @@ namespace ModernKeePass.Pages
             navigationHelper.OnNavigatedTo(e);
             if (!(e.Parameter is EntryVm)) return;
             DataContext = (EntryVm)e.Parameter;
-            if (Model.IsEditMode)
-                Task.Factory.StartNew(
-                    () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => TitleTextBox.Focus(FocusState.Programmatic)));
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -77,28 +73,9 @@ namespace ModernKeePass.Pages
 
         #endregion
         
-        private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            // Create the message dialog and set its content
-            var messageDialog = new MessageDialog("Are you sure you want to delete this entry?");
-
-            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
-            messageDialog.Commands.Add(new UICommand("Delete", delete =>
-            {
-                ToastNotificationHelper.ShowUndoToast("Entry", Model);
-                Model.MarkForDelete();
-                if (Frame.CanGoBack) Frame.GoBack();
-            }));
-            messageDialog.Commands.Add(new UICommand("Cancel"));
-
-            // Set the command that will be invoked by default
-            messageDialog.DefaultCommandIndex = 1;
-
-            // Set the command to be invoked when escape is pressed
-            messageDialog.CancelCommandIndex = 1;
-
-            // Show the message dialog
-            await messageDialog.ShowAsync();
+            MessageDialogHelper.ShowDeleteConfirmationDialog("Are you sure you want to delete this entry?", Model, Frame);
         }
 
         private async void UrlButton_Click(object sender, RoutedEventArgs e)
@@ -112,11 +89,6 @@ namespace ModernKeePass.Pages
             {
                 // TODO: Show some error
             }
-        }
-
-        private void PasswordGenerationButton_Click(object sender, RoutedEventArgs e)
-        {
-            Model.GeneratePassword();
         }
     }
 }

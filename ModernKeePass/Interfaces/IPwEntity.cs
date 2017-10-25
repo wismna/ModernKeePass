@@ -13,5 +13,7 @@ namespace ModernKeePass.Interfaces
 
         void CommitDelete();
         void UndoDelete();
+        void Save();
+        void MarkForDelete();
     }
 }

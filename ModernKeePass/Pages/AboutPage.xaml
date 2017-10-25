@@ -15,7 +15,11 @@
         <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">
             <Run Text="About"/>
         </TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Text="{Binding Version}" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+            <Run Text="{Binding Name}"/>
+            <Run Text="version"/>
+            <Run Text="{Binding Version}" />
+        </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">
             <Run Text="A modern password manager for the Windows Store"/>
         </TextBlock>

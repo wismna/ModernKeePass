@@ -33,7 +33,7 @@
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
             IsSynchronizedWithCurrentItem="False">
             <ListView.Header>
-                <TextBlock Text="ModernKeePass" FontWeight="Bold" FontSize="36" Margin="20" />
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="36" Margin="20" />
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate >

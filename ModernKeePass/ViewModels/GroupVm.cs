@@ -51,13 +51,7 @@ namespace ModernKeePass.ViewModels
                 return result == Symbol.More ? Symbol.Folder : result;
             }
         }
-
-        public bool IsLeftPaneOpen
-        {
-            get { return _isLeftPaneOpen; }
-            set { SetProperty(ref _isLeftPaneOpen, value); }
-        }
-
+        
         public bool IsEditMode
         {
             get { return _isEditMode; }
@@ -112,6 +106,12 @@ namespace ModernKeePass.ViewModels
         public void UndoDelete()
         {
             ParentGroup.Groups.Add(this);
+        }
+
+        public void Save()
+        {
+            var app = (App)Application.Current;
+            app.Database.Save();
         }
     }
 }

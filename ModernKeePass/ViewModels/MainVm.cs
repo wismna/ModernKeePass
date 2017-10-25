@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.ApplicationModel;
 using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -12,6 +13,8 @@ namespace ModernKeePass.ViewModels
     {
         private IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> _mainMenuItems;
         private MainMenuItemVm _selectedItem;
+
+        public string Name { get; } = Package.Current.DisplayName;
 
         public IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> MainMenuItems
         {

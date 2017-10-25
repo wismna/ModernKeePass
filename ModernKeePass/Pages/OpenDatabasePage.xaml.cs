@@ -45,10 +45,5 @@ namespace ModernKeePass.Pages
             if (file == null) return;
             Model.OpenFile(file);
         }
-
-        private void PasswordUserControl_PasswordChecked(object sender, PasswordEventArgs e)
-        {
-            _mainFrame.Navigate(typeof(GroupDetailPage), e.RootGroup);
-        }
     }
 }

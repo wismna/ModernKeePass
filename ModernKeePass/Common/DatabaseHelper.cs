@@ -33,7 +33,12 @@ namespace ModernKeePass.Common
             }
         }
         
-
+        /// <summary>
+        /// Open a KeePass database
+        /// </summary>
+        /// <param name="password">The database password</param>
+        /// <param name="createNew">True to create a new database before opening it</param>
+        /// <returns>An error message, if any</returns>
         public string Open(string password, bool createNew = false)
         {
             var key = new CompositeKey();
@@ -65,6 +70,10 @@ namespace ModernKeePass.Common
             return string.Empty;
         }
 
+        /// <summary>
+        /// Save the current database to another file and open it
+        /// </summary>
+        /// <param name="file">The new database file</param>
         internal void Save(StorageFile file)
         {
             DatabaseFile = file;
@@ -72,12 +81,18 @@ namespace ModernKeePass.Common
             Status = DatabaseStatus.Opened;
         }
 
+        /// <summary>
+        /// Commit the changes to the currently opened database to file
+        /// </summary>
         public void Save()
         {
             if (_pwDatabase != null && _pwDatabase.IsOpen)
                 _pwDatabase.Save(new NullStatusLogger());
         }
 
+        /// <summary>
+        /// Close the currently opened database
+        /// </summary>
         public void Close()
         {
             _pwDatabase?.Close();

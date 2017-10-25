@@ -195,5 +195,10 @@ namespace ModernKeePass.ViewModels
             ParentGroup.Entries.Add(this);
         }
 
+        public void Save()
+        {
+            var app = (App)Application.Current;
+            app.Database.Save();
+        }
     }
 }

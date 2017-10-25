@@ -10,18 +10,19 @@ namespace ModernKeePass.Mappings
             switch (icon)
             {
                 case PwIcon.Key: return Symbol.Permissions;
+                case PwIcon.WorldSocket:
                 case PwIcon.World: return Symbol.World;
                 case PwIcon.Warning: return Symbol.Important;
                 case PwIcon.WorldComputer:
+                case PwIcon.Drive:
                 case PwIcon.DriveWindows:
                 case PwIcon.NetworkServer: return Symbol.MapDrive;
-                //case PwIcon.MarkedDirectory: return Symbol.;
+                case PwIcon.MarkedDirectory: return Symbol.Map;
                 case PwIcon.UserCommunication: return Symbol.ContactInfo;
-                //case PwIcon.Parts: return Symbol.;
+                case PwIcon.Parts: return Symbol.ViewAll;
                 case PwIcon.Notepad: return Symbol.Document;
-                //case PwIcon.WorldScoket: return Symbol.;
                 case PwIcon.Identity: return Symbol.Contact2;
-                //case PwIcon.PaperReady: return Symbol.;
+                case PwIcon.PaperReady: return Symbol.SyncFolder;
                 case PwIcon.Digicam: return Symbol.Camera;
                 case PwIcon.IRCommunication: return Symbol.View;
                 case PwIcon.Energy: return Symbol.ZeroBars;
@@ -36,17 +37,16 @@ namespace ModernKeePass.Mappings
                 case PwIcon.Screen: return Symbol.GoToStart;
                 case PwIcon.EnergyCareful: return Symbol.FourBars;
                 case PwIcon.Disk: return Symbol.Save;
-                //case PwIcon.Drive: return Symbol.;
                 //case PwIcon.PaperQ: return Symbol.;
                 //case PwIcon.TerminalEncrypted: return Symbol.;
-                //case PwIcon.Console: return Symbol.;
-                //case PwIcon.Printer: return Symbol.;
+                case PwIcon.Console: return Symbol.SlideShow;
+                case PwIcon.Printer: return Symbol.Scan;
                 case PwIcon.ProgramIcons: return Symbol.GoToStart;
                 //case PwIcon.Run: return Symbol.;
                 case PwIcon.Settings:
                 case PwIcon.Tool: return Symbol.Repair;
-                //case PwIcon.Archive: return Symbol.;
-                case PwIcon.Count: return Symbol.MapDrive;
+                case PwIcon.Archive: return Symbol.Crop;
+                case PwIcon.Count: return Symbol.Calculator;
                 case PwIcon.Clock: return Symbol.Clock;
                 case PwIcon.EMailSearch: return Symbol.Find;
                 case PwIcon.PaperFlag: return Symbol.Flag;
@@ -72,10 +72,10 @@ namespace ModernKeePass.Mappings
                 //case PwIcon.Feather: return Symbol.;
                 //case PwIcon.Apple: return Symbol.;
                 //case PwIcon.Wiki: return Symbol.;
-                //case PwIcon.Money: return Symbol.;
+                case PwIcon.Money: return Symbol.Shop;
                 case PwIcon.Certificate: return Symbol.PreviewLink;
                 case PwIcon.BlackBerry: return Symbol.CellPhone;
-                default: return Symbol.More;
+                default: return Symbol.Stop;
             }
         }
     }
