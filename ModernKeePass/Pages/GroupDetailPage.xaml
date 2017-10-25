@@ -76,7 +76,6 @@
                     AutomationProperties.AutomationId="ItemGridView"
                     AutomationProperties.Name="Entries"
                     TabIndex="1"
-                    IsSwipeEnabled="false" 
                     SelectionChanged="entries_SelectionChanged"
                     IsSynchronizedWithCurrentItem="False">
                     <interactivity:Interaction.Behaviors>
@@ -231,7 +230,7 @@
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
                                     <Grid Background="LightGray" Margin="0,0,10,0" HorizontalAlignment="Left">
-                                        <TextBlock Text="{Binding Key}" Foreground="Black" Margin="30" Style="{StaticResource HeaderTextBlockStyle}"/>
+                                        <TextBlock Text="{Binding Key}" Width="40" Foreground="Black" Margin="30" Style="{StaticResource HeaderTextBlockStyle}"/>
                                     </Grid>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
