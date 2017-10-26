@@ -28,29 +28,11 @@ namespace ModernKeePass.Pages
             selectedItem?.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
         }
         
-        #region NavigationHelper registration
-
-        /// The methods provided in this section are simply used to allow
-        /// NavigationHelper to respond to the page's navigation methods.
-        /// 
-        /// Page specific logic should be placed in event handlers for the  
-        /// <see cref="Common.NavigationHelper.LoadState"/>
-        /// and <see cref="Common.NavigationHelper.SaveState"/>.
-        /// The navigation parameter is available in the LoadState method 
-        /// in addition to page state preserved during an earlier session.
-        
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            NavigationHelper.OnNavigatedTo(e);
+           base.OnNavigatedTo(e);
             DataContext = new MainVm(Frame, MenuFrame);
             if (Model.SelectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
         }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedFrom(e);
-        }
-
-        #endregion
     }
 }

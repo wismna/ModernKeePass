@@ -2,8 +2,10 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Pages.BasePages
 {
@@ -177,6 +179,29 @@ namespace ModernKeePass.Pages.BasePages
             var logicalPageBack = UsingLogicalPageNavigation() && ListView?.SelectedItem != null;
 
             return logicalPageBack ? "SinglePane_Detail" : "SinglePane";
+        }
+
+        #endregion
+
+        #region NavigationHelper registration
+
+        /// The methods provided in this section are simply used to allow
+        /// NavigationHelper to respond to the page's navigation methods.
+        /// 
+        /// Page specific logic should be placed in event handlers for the  
+        /// <see cref="Common.NavigationHelper.LoadState"/>
+        /// and <see cref="Common.NavigationHelper.SaveState"/>.
+        /// The navigation parameter is available in the LoadState method 
+        /// in addition to page state preserved during an earlier session.
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            NavigationHelper.OnNavigatedTo(e);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            NavigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
