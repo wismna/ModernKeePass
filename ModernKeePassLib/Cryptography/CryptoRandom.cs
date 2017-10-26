@@ -23,12 +23,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-
 #if ModernKeePassLib
+using ModernKeePassLib.Cryptography.Hash;
 using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
 #else
 using System.Security.Cryptography;
+using System.Windows.Forms;
 #endif
 
 using ModernKeePassLib.Native;
@@ -120,12 +120,6 @@ namespace ModernKeePassLib.Cryptography
 			byte[] pbNewData = pbEntropy;
 			if(pbEntropy.Length > 64)
 			{
-#if ModernKeePassLib
-
-			    var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256)
-			        .HashData(CryptographicBuffer.CreateFromByteArray(pbEntropy));
-                CryptographicBuffer.CopyToByteArray(h, out pbNewData);
-#else
 #if KeePassLibSD
 				using(SHA256Managed shaNew = new SHA256Managed())
 #else
@@ -134,7 +128,6 @@ namespace ModernKeePassLib.Cryptography
 				{
 					pbNewData = shaNew.ComputeHash(pbEntropy);
 				}
-#endif
 			}
 
 			lock(m_oSyncRoot)
@@ -148,11 +141,6 @@ namespace ModernKeePassLib.Cryptography
 
 				MemUtil.ZeroByteArray(m_pbEntropyPool);
 
-#if ModernKeePassLib
-                var h = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha256)
-                    .HashData(CryptographicBuffer.CreateFromByteArray(pbCmp));
-                CryptographicBuffer.CopyToByteArray(h, out m_pbEntropyPool);
-#else
 #if KeePassLibSD
 				using(SHA256Managed shaPool = new SHA256Managed())
 #else
@@ -161,7 +149,7 @@ namespace ModernKeePassLib.Cryptography
 				{
 					m_pbEntropyPool = shaPool.ComputeHash(pbCmp);
 				}
-#endif
+
 				MemUtil.ZeroByteArray(pbCmp);
 			}
 		}

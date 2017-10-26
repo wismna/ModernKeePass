@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Windows.System;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Common;
@@ -70,13 +68,6 @@ namespace ModernKeePass.Controls
                 VisualStateManager.GoToState(PasswordBox, "Normal", true);
                 StatusTextBlock.Text = string.Empty;
             }
-        }
-
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                        () => PasswordBox.Focus(FocusState.Programmatic)));
         }
     }
 }

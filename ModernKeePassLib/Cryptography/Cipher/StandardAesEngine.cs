@@ -18,7 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.IO;
+using System.Security;
 using System.Diagnostics;
 #if ModernKeePassLib
 using ModernKeePassLib.Resources;

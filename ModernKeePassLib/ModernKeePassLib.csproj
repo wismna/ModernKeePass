@@ -62,6 +62,8 @@
     <Compile Include="Cryptography\CryptoUtil.cs" />
     <Compile Include="Cryptography\Hash\Blake2b.cs" />
     <Compile Include="Cryptography\Hash\DigestManaged.cs" />
+    <Compile Include="Cryptography\Hash\HMAC.cs" />
+    <Compile Include="Cryptography\Hash\HMACSHA1.cs" />
     <Compile Include="Cryptography\Hash\HMACSHA256.cs" />
     <Compile Include="Cryptography\Hash\SHA256Managed.cs" />
     <Compile Include="Cryptography\Hash\SHA512Managed.cs" />

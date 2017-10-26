@@ -4,10 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:ModernKeePass.Actions"
     mc:Ignorable="d"
     d:DesignHeight="60"
-    d:DesignWidth="550" 
-    Loaded="UserControl_Loaded">
+    d:DesignWidth="550" >
     <UserControl.Resources>
         <SolidColorBrush x:Key="ErrorColorBrush" Color="Red"/>
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
@@ -335,7 +337,13 @@
         </Style>
     </UserControl.Resources>
     <StackPanel>
-        <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Width="500" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}"/>
+        <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Width="500" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}">
+            <interactivity:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding Visibility, ElementName=UserControl}" Value="Visible">
+                    <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </PasswordBox>
         <TextBlock x:Name="StatusTextBlock" Height="28" Foreground="{ThemeResource ErrorColorBrush}" FontSize="14" FontWeight="SemiBold" TextWrapping="WrapWholeWords" />
     </StackPanel>
 </UserControl>

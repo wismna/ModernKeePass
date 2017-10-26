@@ -122,7 +122,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 					m_c.Dispose();
 					m_c = null;
 
-					//m_sBase.Close();
+					m_sBase.Dispose();
 					m_sBase = null;
 				}
 

@@ -42,8 +42,6 @@ namespace ModernKeePassLib.Cryptography
 		private readonly Stream m_sBaseStream;
 		private readonly bool m_bWriting;
 #if ModernKeePassLib
-        //private ICryptoTransform m_hash;
-        //private CryptographicHash m_hash;
         private IDigest m_hash;
 #else
 		private HashAlgorithm m_hash;
@@ -93,8 +91,6 @@ namespace ModernKeePassLib.Cryptography
 			m_sBaseStream = sBaseStream;
 			m_bWriting = bWriting;
 #if ModernKeePassLib
-            //m_hash = WinRTCrypto.HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithm.Sha256).CreateHash();
-            //m_hash = HashAlgorithmProvider.OpenAlgorithm(hashAlgorithm ?? HashAlgorithmNames.Sha256).CreateHash();
             m_hash = hashAlgorithm ?? new Sha256Digest();
 #elif !KeePassLibSD
 			m_hash = (hashAlgorithm ?? new SHA256Managed());
@@ -128,8 +124,6 @@ namespace ModernKeePassLib.Cryptography
 					try
 					{
 #if ModernKeePassLib
-					    //m_pbFinalHash = (m_hash as CryptographicHash).GetValueAndReset ();
-					    //CryptographicBuffer.CopyToByteArray(m_hash.GetValueAndReset(), out m_pbFinalHash);
 					    m_pbFinalHash = new byte[32];
 					    m_hash.DoFinal(m_pbFinalHash, 0);
 					    m_hash.Reset();

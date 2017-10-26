@@ -151,10 +151,8 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			MemUtil.UInt32ToBytesEx((uint)pbAssocData.Length, pbBuf, 0);
 			h.TransformBlock(pbBuf, 0, pbBuf.Length, pbBuf, 0);
 			h.TransformBlock(pbAssocData, 0, pbAssocData.Length, pbAssocData, 0);
-		    byte[] pbH0 = MemUtil.EmptyByteArray;
-            h.TransformFinalBlock(pbH0, 0, 0);
-			/*h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
-			byte[] pbH0 = h.Hash;*/
+			h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+			byte[] pbH0 = h.Hash;
 			Debug.Assert(pbH0.Length == 64);
 
 			byte[] pbBlockHash = new byte[NbPreHashSeedLength];
@@ -202,9 +200,14 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			// int iSrcOffset = (int)uSrcOffset;
 			// for(int i = 0; i < (int)NbBlockSizeInQW; ++i)
 			//	vDst[iDstOffset + i] = vSrc[iSrcOffset + i];
-            
+
+#if ModernKeePassLib || KeePassUAP
 			Array.Copy(vSrc, (int)uSrcOffset, vDst, (int)uDstOffset,
 				(int)NbBlockSizeInQW);
+#else
+			Array.Copy(vSrc, (long)uSrcOffset, vDst, (long)uDstOffset,
+				(long)NbBlockSizeInQW);
+#endif
 		}
 
 		private static void XorBlock(ulong[] vDst, ulong uDstOffset, ulong[] vSrc,
@@ -236,26 +239,23 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 
 				hOut.TransformBlock(pbOutLen, 0, pbOutLen.Length, pbOutLen, 0);
 				hOut.TransformBlock(pbIn, 0, cbIn, pbIn, 0);
-                hOut.TransformFinalBlock(pbOut, 0, 0);
-				/*hOut.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+				hOut.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
 
-				Array.Copy(hOut.Hash, pbOut, cbOut);*/
+				Array.Copy(hOut.Hash, pbOut, cbOut);
 
 				if(cbOut < 64) hOut.Clear();
 				return;
 			}
 
-			byte[] pbOutBuffer = new byte[64];
 			h.Initialize();
 			h.TransformBlock(pbOutLen, 0, pbOutLen.Length, pbOutLen, 0);
 			h.TransformBlock(pbIn, 0, cbIn, pbIn, 0);
-		    h.TransformFinalBlock(pbOutBuffer, 0, 0);
+			h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
 
-            /*h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+			byte[] pbOutBuffer = new byte[64];
+			Array.Copy(h.Hash, pbOutBuffer, pbOutBuffer.Length);
 
-			Array.Copy(h.Hash, pbOutBuffer, pbOutBuffer.Length);*/
-
-            int ibOut = 64 / 2;
+			int ibOut = 64 / 2;
 			Array.Copy(pbOutBuffer, pbOut, ibOut);
 			int cbToProduce = cbOut - ibOut;
 
@@ -272,18 +272,15 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 				MemUtil.ZeroByteArray(pbHash);
 			}
 
-            /*using(*/
-		    {
-		        Blake2b hOut = new Blake2b(cbToProduce); /*)
-			{*/
-		        byte[] pbHash = hOut.ComputeHash(pbOutBuffer);
-		        Array.Copy(pbHash, 0, pbOut, ibOut, cbToProduce);
+			using(Blake2b hOut = new Blake2b(cbToProduce))
+			{
+				byte[] pbHash = hOut.ComputeHash(pbOutBuffer);
+				Array.Copy(pbHash, 0, pbOut, ibOut, cbToProduce);
 
-		        MemUtil.ZeroByteArray(pbHash);
-		        //}
-		    }
+				MemUtil.ZeroByteArray(pbHash);
+			}
 
-		    MemUtil.ZeroByteArray(pbOutBuffer);
+			MemUtil.ZeroByteArray(pbOutBuffer);
 		}
 
 #if !ARGON2_G_INLINED
@@ -468,13 +465,13 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 						ti.Pass = r;
 						ti.Lane = (ulong)l;
 						ti.Slice = s;
-
-						/*if(!ThreadPool.QueueUserWorkItem(FillSegmentThr, ti))
+#if !ModernKeePassLib
+						if(!ThreadPool.QueueUserWorkItem(FillSegmentThr, ti))
 						{
 							Debug.Assert(false);
 							throw new OutOfMemoryException();
-						}*/
-
+						}
+#endif
 						v[l] = ti;
 					}
 
