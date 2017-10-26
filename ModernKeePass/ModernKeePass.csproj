@@ -119,7 +119,10 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\ToastNotificationHelper.cs" />
-    <Compile Include="Controls\FirstItemDataTemplateSelector.cs" />
+    <Compile Include="Interfaces\IHasSelectableObject.cs" />
+    <Compile Include="Interfaces\ISelectableModel.cs" />
+    <Compile Include="Pages\BasePages\LayoutAwarePageBase.cs" />
+    <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">
       <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
@@ -140,13 +143,16 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
-    <Compile Include="Pages\AboutPage.xaml.cs">
+    <Compile Include="Pages\MainPageFrames\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\NewDatabasePage.xaml.cs">
+    <Compile Include="Pages\MainPageFrames\NewDatabasePage.xaml.cs">
       <DependentUpon>NewDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WelcomePage.xaml.cs">
+    <Compile Include="Pages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\MainPageFrames\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
@@ -158,13 +164,13 @@
     <Compile Include="Pages\GroupDetailPage.xaml.cs">
       <DependentUpon>GroupDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\OpenDatabasePage.xaml.cs">
+    <Compile Include="Pages\MainPageFrames\OpenDatabasePage.xaml.cs">
       <DependentUpon>OpenDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\RecentDatabasesPage.xaml.cs">
+    <Compile Include="Pages\MainPageFrames\RecentDatabasesPage.xaml.cs">
       <DependentUpon>RecentDatabasesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SaveDatabasePage.xaml.cs">
+    <Compile Include="Pages\MainPageFrames\SaveDatabasePage.xaml.cs">
       <DependentUpon>SaveDatabasePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -202,7 +208,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\AboutPage.xaml">
+    <Page Include="Pages\MainPageFrames\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,23 +220,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\NewDatabasePage.xaml">
+    <Page Include="Pages\MainPageFrames\NewDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\OpenDatabasePage.xaml">
+    <Page Include="Pages\MainPageFrames\OpenDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\RecentDatabasesPage.xaml">
+    <Page Include="Pages\MainPageFrames\RecentDatabasesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SaveDatabasePage.xaml">
+    <Page Include="Pages\MainPageFrames\SaveDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\WelcomePage.xaml">
+    <Page Include="Pages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MainPageFrames\WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -319,6 +329,9 @@
       <Project>{2e710089-9559-4967-846c-e763dd1f3acb}</Project>
       <Name>ModernKeePassLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\SettingsPageFrames\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

@@ -17,7 +17,7 @@ namespace ModernKeePass
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    sealed partial class App
     {
         public DatabaseHelper Database { get; set; } = new DatabaseHelper();
         public Dictionary<string, IPwEntity> PendingDeleteEntities = new Dictionary<string, IPwEntity>();
@@ -87,7 +87,7 @@ namespace ModernKeePass
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
+                    rootFrame.Navigate(typeof(Pages.MainPage), lauchActivatedEventArgs.Arguments);
                 }
                 else
                 {
@@ -140,7 +140,7 @@ namespace ModernKeePass
             base.OnFileActivated(args);
             var rootFrame = new Frame();
             Database.DatabaseFile = args.Files[0] as StorageFile;
-            rootFrame.Navigate(typeof(MainPage), args);
+            rootFrame.Navigate(typeof(Pages.MainPage), args);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }

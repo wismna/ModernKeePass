@@ -379,7 +379,9 @@
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Setting" Label="Settings" />
+                <AppBarButton Icon="Setting" Label="Settings">
+                    <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>

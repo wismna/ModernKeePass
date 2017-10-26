@@ -5,7 +5,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class MainMenuItemVm: NotifyPropertyChangedBase, IIsEnabled
+    public class MainMenuItemVm: NotifyPropertyChangedBase, IIsEnabled, ISelectableModel
     {
         private bool _isSelected;
 

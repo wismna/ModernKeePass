@@ -5,10 +5,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
-    xmlns:local="using:ModernKeePass.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:actions="using:ModernKeePass.Actions" 
+    xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
@@ -32,7 +32,9 @@
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Setting" Label="Settings" />
+                <AppBarButton Icon="Setting" Label="Settings">
+                    <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
@@ -139,7 +141,7 @@
                         <viewModels:EntryVm/>
                     </GridView.DataContext>
                     <GridView.ItemTemplateSelector>
-                        <local:FirstItemDataTemplateSelector 
+                        <templateSelectors:FirstItemDataTemplateSelector 
                             FirstItem="{StaticResource GroupFirstItem}" 
                             OtherItem="{StaticResource GroupOtherItem}" />
                     </GridView.ItemTemplateSelector>

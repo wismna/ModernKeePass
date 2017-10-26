@@ -1,7 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace ModernKeePass.Controls
+namespace ModernKeePass.TemplateSelectors
 {
     public class FirstItemDataTemplateSelector: DataTemplateSelector
     {

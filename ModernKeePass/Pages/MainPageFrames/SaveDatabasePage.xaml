@@ -11,7 +11,9 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">Save</TextBlock>
+        <TextBlock Style="{StaticResource HeaderTextBlockStyle}"  Margin="80,-60,0,20" FontSize="36">
+            <Run Text="Save"></Run>
+        </TextBlock>
         <HyperlinkButton Content="Save and close" Click="SaveButton_OnClick" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">This will save and close the currently opened database.</TextBlock>
         <HyperlinkButton Content="Save as..." Click="SaveAsButton_OnClick" />

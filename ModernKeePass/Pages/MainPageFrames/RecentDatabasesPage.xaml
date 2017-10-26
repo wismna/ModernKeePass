@@ -17,7 +17,7 @@
         <viewModels:RecentVm/>
     </Page.DataContext>
     <StackPanel Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,20">
+        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="80,-60,0,20" FontSize="36">
             <Run Text="Recent"/>
         </TextBlock>
         <ListView 

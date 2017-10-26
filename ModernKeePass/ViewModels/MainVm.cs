@@ -5,11 +5,13 @@ using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 using ModernKeePass.Pages;
+using ModernKeePass.Pages.BasePages;
 
 namespace ModernKeePass.ViewModels
 {
-    public class MainVm : NotifyPropertyChangedBase
+    public class MainVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
         private IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> _mainMenuItems;
         private MainMenuItemVm _selectedItem;
@@ -22,7 +24,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _mainMenuItems, value); }
         }
 
-        public MainMenuItemVm SelectedItem
+        public ISelectableModel SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -33,7 +35,7 @@ namespace ModernKeePass.ViewModels
                     _selectedItem.IsSelected = false;
                 }
 
-                SetProperty(ref _selectedItem, value);
+                SetProperty(ref _selectedItem, (MainMenuItemVm)value);
 
                 if (_selectedItem != null)
                 {
