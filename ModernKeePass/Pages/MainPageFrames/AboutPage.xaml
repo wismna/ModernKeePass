@@ -12,9 +12,6 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="60,-50,0,20" FontSize="24">
-            <Run Text="About"/>
-        </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
             <Run Text="{Binding Name}"/>
             <Run Text="version"/>

@@ -17,9 +17,6 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="60,-50,0,20" FontSize="24">
-            <Run Text="Open"></Run>
-        </TextBlock>
         <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Open an existing password database from your PC.</TextBlock>
         <HyperlinkButton Content="From Url..." IsEnabled="False" />

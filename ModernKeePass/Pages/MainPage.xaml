@@ -87,7 +87,10 @@
                 </GroupStyle>
             </controls:ListViewWithDisable.GroupStyle>
         </controls:ListViewWithDisable>
-        <Frame x:Name="MenuFrame" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Width="auto" Margin="30,60,0,0" />
+        <TextBlock x:Name="PageTitleTextBlock" Grid.Column="1" Grid.Row="0" FontSize="24" VerticalAlignment="Center" Margin="10,0,0,0" >
+            <Run Text="{Binding SelectedItem}" />
+        </TextBlock>
+        <Frame x:Name="MenuFrame" Grid.Column="1" Grid.Row="1" Margin="0,10,0,0" />
 
         <VisualStateManager.VisualStateGroups>
             <!-- Visual states reflect the application's view state -->
@@ -102,6 +105,9 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PageTitleTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuListView" Storyboard.TargetProperty="Padding">
@@ -124,12 +130,12 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuListView" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="(Grid.Row)">
+                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="(Grid.Row)">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="(Grid.RowSpan)">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
-                        </ObjectAnimationUsingKeyFrames>
+                        </ObjectAnimationUsingKeyFrames>-->
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TitlePanel" Storyboard.TargetProperty="(Grid.Column)">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -139,9 +145,12 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TitleTextBox" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="Margin">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="10,0,0,0"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PageTitleTextBlock" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="60,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="10,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>-->
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
