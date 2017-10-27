@@ -380,7 +380,11 @@
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
                 <AppBarButton Icon="Setting" Label="Settings">
-                    <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
@@ -400,7 +404,7 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -437,29 +441,37 @@
         </StackPanel>
 
         <!-- Bouton Précédent et titre de la page -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="39,0,39,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
-                        Style="{StaticResource NavigationBackButtonNormalStyle}"
-                        VerticalAlignment="Center"
-                        AutomationProperties.Name="Back"
-                        AutomationProperties.AutomationId="BackButton"
-                        AutomationProperties.ItemType="Navigation Button"/>
-            <TextBox 
-                Grid.Column="1"
+            <Button Grid.Column="0" 
+                    x:Name="BackButton"
+                    Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
+                    Height="40"
+                    Width="50"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="Back"
+                    AutomationProperties.AutomationId="BackButton"
+                    AutomationProperties.ItemType="Navigation Button"
+                    Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Back" />
+            </Button>
+            <TextBox  
+                Grid.Column="1" 
                 x:Name="TitleTextBox"
                 Text="{Binding Name, Mode=TwoWay}" 
-                Style="{StaticResource HeaderTextBoxStyle}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                Background="Transparent"
                 IsHitTestVisible="{Binding IsEditMode}" 
+                BorderThickness="0" 
+                FontSize="24"
+                FontWeight="SemiBold"
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
-                Margin="0,0,30,0"
-                PlaceholderText="New entry name...">
+                PlaceholderText="New group name...">
                 <interactivity:Interaction.Behaviors>
                     <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />

@@ -55,7 +55,7 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <TextBlock x:Name="TitleTextBox" Text="{Binding Name}" Grid.Column="1" FontSize="24" HorizontalAlignment="Center" />
+            <TextBlock x:Name="TitleTextBox" Text="{Binding Name}" Grid.Column="1" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
         <controls:ListViewWithDisable 
             Grid.Column="0"

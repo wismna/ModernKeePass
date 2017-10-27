@@ -33,7 +33,11 @@
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
                 <AppBarButton Icon="Setting" Label="Settings">
-                    <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
@@ -67,13 +71,13 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Horizontal scrolling grid -->
         <SemanticZoom Grid.Row="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" >
             <SemanticZoom.ZoomedInView>
-                <GridView
+                <GridView Margin="-3"
                     x:Name="GridView"
                     AutomationProperties.AutomationId="ItemGridView"
                     AutomationProperties.Name="Entries"
@@ -96,7 +100,7 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5" >
+                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5" Foreground="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}" >
                                         <SymbolIcon.RenderTransform>
                                             <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
                                         </SymbolIcon.RenderTransform>
@@ -153,6 +157,7 @@
                     <GridView.Header>
                         <ListView 
                             x:Name="LeftListView"
+                            Margin="0,0,0,-10"
                             SelectionChanged="groups_SelectionChanged"
                             IsSwipeEnabled="false"
                             IsSynchronizedWithCurrentItem="False"
@@ -162,7 +167,7 @@
                             Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
                             <ListView.Resources>
                                 <DataTemplate x:Name="Collapsed">
-                                    <SymbolIcon Symbol="{Binding IconSymbol}">
+                                    <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
                                         <ToolTipService.ToolTip>
                                             <ToolTip Content="{Binding Name}" />
                                         </ToolTipService.ToolTip>
@@ -170,7 +175,7 @@
                                 </DataTemplate>
                                 <DataTemplate x:Name="Expanded">
                                     <StackPanel Orientation="Horizontal">
-                                        <SymbolIcon Symbol="{Binding IconSymbol}" />
+                                        <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0" />
                                         <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding Name, ConverterParameter=Recycle Bin, Converter={StaticResource TextToFontStyleConverter}}" />
                                         <!--<TextBlock Text="{Binding EntryCount}" HorizontalAlignment="Right" VerticalAlignment="Center" />-->
                                     </StackPanel>
@@ -182,13 +187,14 @@
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListViewItem">
                                     <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                    <Setter Property="Padding" Value="20,0,0,0"/>
+                                    <!--<Setter Property="HorizontalContentAlignment" Value="Center" />-->
+                                    <Setter Property="Padding" Value="0"/>
                                     <Setter Property="Margin" Value="0"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.HeaderTemplate>
                                 <DataTemplate>
-                                    <ToggleButton Style="{StaticResource HamburgerToggleButton}" Margin="0" >
+                                    <ToggleButton Style="{StaticResource HamburgerToggleButton}">
                                         <interactivity:Interaction.Behaviors>
                                             <core:EventTriggerBehavior EventName="Loaded">
                                                 <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}" TargetObject="{Binding ElementName=LeftListView}"/>
@@ -243,29 +249,36 @@
         </SemanticZoom>
 
         <!-- Back button and page title -->
-        <Grid Grid.Row="0">
+        <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
-            <Button Margin="39,0,39,0" 
+            <Button Grid.Column="0" 
+                    x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
-                    Style="{StaticResource NavigationBackButtonNormalStyle}"
+                    Height="40"
+                    Width="50"
                     VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
-                    AutomationProperties.ItemType="Navigation Button"/>
+                    AutomationProperties.ItemType="Navigation Button"
+                    Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Back" />
+            </Button>
             <TextBox  
                 Grid.Column="1" 
                 x:Name="TitleTextBox"
                 Text="{Binding Name, Mode=TwoWay}" 
-                Style="{StaticResource HeaderTextBoxStyle}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                Background="Transparent"
                 IsHitTestVisible="{Binding IsEditMode}" 
+                BorderThickness="0" 
+                FontSize="24"
+                FontWeight="SemiBold"
                 TextWrapping="NoWrap" 
                 VerticalAlignment="Center" 
-                Margin="0,0,30,5"
                 PlaceholderText="New group name...">
                 <interactivity:Interaction.Behaviors>
                     <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
@@ -273,7 +286,7 @@
                     </core:DataTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </TextBox>
-            <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Height="40" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
+            <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
         </Grid>
     </Grid>
 </Page>

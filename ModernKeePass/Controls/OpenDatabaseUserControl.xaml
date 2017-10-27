@@ -337,13 +337,13 @@
         </Style>
     </UserControl.Resources>
     <StackPanel>
-        <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Width="500" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}">
+        <PasswordBox x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" Style="{StaticResource PasswordBoxWithButtonStyle}">
             <interactivity:Interaction.Behaviors>
                 <core:DataTriggerBehavior Binding="{Binding Visibility, ElementName=UserControl}" Value="Visible">
                     <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
                 </core:DataTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
-        <TextBlock x:Name="StatusTextBlock" Height="28" Foreground="{ThemeResource ErrorColorBrush}" FontSize="14" FontWeight="SemiBold" TextWrapping="WrapWholeWords" />
+        <TextBlock x:Name="StatusTextBlock" Height="28" Foreground="{ThemeResource ErrorColorBrush}" FontSize="14" FontWeight="Light" TextWrapping="WrapWholeWords" />
     </StackPanel>
 </UserControl>
