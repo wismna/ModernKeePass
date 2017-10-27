@@ -17,13 +17,14 @@
         <viewModels:RecentVm/>
     </Page.DataContext>
     <StackPanel Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="80,-60,0,20" FontSize="36">
+        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="60,-50,0,20" FontSize="36">
             <Run Text="Recent"/>
         </TextBlock>
         <ListView 
             ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-            Width="600" >
+            Width="600" 
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Margin="10,0,10,0">
@@ -39,12 +40,6 @@
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalContentAlignment" Value="Left" />
-                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                </Style>
-            </ListView.ItemContainerStyle>
         </ListView>
     </StackPanel>
 </Page>

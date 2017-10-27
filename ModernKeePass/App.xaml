@@ -8,6 +8,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/TextBoxWithButtonStyle.xaml" />
                 <ResourceDictionary Source="Styles/HamburgerButtonStyle.xaml" />
+                <ResourceDictionary Source="Styles/ListViewLeftIndicatorStyle.xaml" />
+                <ResourceDictionary Source="Styles/NoBorderButtonStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.ViewModels;
 
@@ -30,7 +29,7 @@ namespace ModernKeePass.Pages
         
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-           base.OnNavigatedTo(e);
+            base.OnNavigatedTo(e);
             DataContext = new MainVm(Frame, MenuFrame);
             if (Model.SelectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
         }

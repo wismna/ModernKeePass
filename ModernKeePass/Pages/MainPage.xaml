@@ -30,11 +30,11 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="PrimaryColumn" Width="350" />
+            <ColumnDefinition x:Name="PrimaryColumn" Width="250" />
             <ColumnDefinition x:Name="SecondaryColumn" Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -44,14 +44,18 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="BackButton" Margin="39,20,0,0" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
-                    Style="{StaticResource NavigationBackButtonNormalStyle}"
+            <Button x:Name="BackButton"
+                    Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Visibility="Collapsed"
-                    VerticalAlignment="Top"
+                    Height="40"
+                    VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
-                    AutomationProperties.ItemType="Navigation Button"/>
-            <TextBlock x:Name="TitleTextBox" Text="{Binding Name}" Grid.Column="1" FontSize="24" Margin="20" />
+                    AutomationProperties.ItemType="Navigation Button"
+                    Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Back" />
+            </Button>
+            <TextBlock x:Name="TitleTextBox" Text="{Binding Name}" Grid.Column="1" FontSize="24" HorizontalAlignment="Center" />
         </Grid>
         <controls:ListViewWithDisable 
             Grid.Column="0"
@@ -61,21 +65,16 @@
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-            IsSynchronizedWithCurrentItem="False">
+            IsSynchronizedWithCurrentItem="False"
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
             <controls:ListViewWithDisable.ItemTemplate>
-                <DataTemplate >
+                <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="{Binding SymbolIcon}" />
                         <TextBlock Text="{Binding Title}" Margin="10,5,0,0" />
                     </StackPanel>
                 </DataTemplate>
             </controls:ListViewWithDisable.ItemTemplate>
-            <controls:ListViewWithDisable.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding" Value="20,5,0,0" />
-                    <Setter Property="Margin" Value="0" />
-                </Style>
-            </controls:ListViewWithDisable.ItemContainerStyle>
             <controls:ListViewWithDisable.GroupStyle>
                 <GroupStyle HidesIfEmpty="True">
                     <GroupStyle.HeaderTemplate>
