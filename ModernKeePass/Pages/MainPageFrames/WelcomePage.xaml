@@ -7,13 +7,12 @@
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource HeaderTextBlockStyle}" Margin="0,-20,0,0">Welcome</TextBlock>
-        <StackPanel Orientation="Horizontal" Margin="0,20,0,10">
-            <SymbolIcon Symbol="Back" Margin="-30,7,40,0" />
+        <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
+            <SymbolIcon Symbol="Back" Margin="0,7,40,0" />
             <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">Have an existing password database? Open it here.</TextBlock>
         </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <SymbolIcon Symbol="Back" Margin="-30,7,40,0" />
+        <StackPanel Orientation="Horizontal" Margin="0,6,0,10">
+            <SymbolIcon Symbol="Back" Margin="0,7,40,0" />
             <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">Want to create a new password database? Do it here.</TextBlock>
         </StackPanel>
     </StackPanel>

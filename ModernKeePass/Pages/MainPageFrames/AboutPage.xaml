@@ -12,26 +12,26 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}"  Margin="10,0,0,0">
             <Run Text="{Binding Name}"/>
             <Run Text="version"/>
             <Run Text="{Binding Version}" />
         </TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run Text="A modern password manager for the Windows Store"/>
         </TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run Text="Homepage: "/>
             <Hyperlink NavigateUri="https://github.com/wismna/ModernKeePass">
                 <Run Text="https://github.com/wismna/ModernKeePass"/>
             </Hyperlink></TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}"  Margin="10,0,0,0">
             <Run Text="Credits:"/>
         </TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run Text="Dominik Reichl for the KeePass application and file format"/>
         </TextBlock>
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="20,0,0,0">
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run Text="ArtjomP for his PCL adapatation of the KeePass Library"/>
         </TextBlock>
     </StackPanel>
