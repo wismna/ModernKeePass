@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Windows.Storage.Streams;
-using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -115,7 +112,11 @@ namespace ModernKeePass.Pages
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageDialogHelper.ShowDeleteConfirmationDialog("Are you sure you want to delete the whole group and all its entries?", Model, Frame);
+            var app = (App) Application.Current;
+            var message = app.Database.RecycleBinEnabled
+                ? "Are you sure you want to send the whole group and all its entries to the recycle bin?"
+                : "Are you sure you want to delete the whole group and all its entries?";
+            MessageDialogHelper.ShowDeleteConfirmationDialog(message, Model, Frame);
         }
         
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)

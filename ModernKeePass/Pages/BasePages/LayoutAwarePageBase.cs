@@ -5,7 +5,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Pages.BasePages
 {

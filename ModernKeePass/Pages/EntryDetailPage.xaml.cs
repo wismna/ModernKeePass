@@ -75,7 +75,11 @@ namespace ModernKeePass.Pages
         
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageDialogHelper.ShowDeleteConfirmationDialog("Are you sure you want to delete this entry?", Model, Frame);
+            var app = (App)Application.Current;
+            var message = app.Database.RecycleBinEnabled
+                ? "Are you sure you want to send this entry to the recycle bin?"
+                : "Are you sure you want to delete this entry?";
+            MessageDialogHelper.ShowDeleteConfirmationDialog(message, Model, Frame);
         }
 
         private async void UrlButton_Click(object sender, RoutedEventArgs e)

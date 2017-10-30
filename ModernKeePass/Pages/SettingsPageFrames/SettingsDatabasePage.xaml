@@ -1,0 +1,22 @@
+﻿<Page
+    x:Class="ModernKeePass.Pages.SettingsDatabasePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ModernKeePass.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:ModernKeePass.ViewModels" 
+    mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
+    </Page.Resources>
+    <Page.DataContext>
+        <viewModels:SettingsDatabaseVm />
+    </Page.DataContext>
+    
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ToggleSwitch Header="Recycle bin" OffContent="Disabled" OnContent="Enabled" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding HasRecycleBin}" />
+    </StackPanel>
+</Page>

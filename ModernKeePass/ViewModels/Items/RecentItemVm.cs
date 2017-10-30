@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.Storage;
+﻿using Windows.Storage;
 using ModernKeePass.Common;
 using Windows.Storage.AccessCache;
 

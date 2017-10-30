@@ -16,13 +16,31 @@ namespace ModernKeePass.Common
             Opening = 1,
             Opened = 2
         }
-        private PwDatabase _pwDatabase = new PwDatabase();
+        private readonly PwDatabase _pwDatabase = new PwDatabase();
         private StorageFile _databaseFile;
+        private GroupVm _recycleBin;
 
         public GroupVm RootGroup { get; set; }
+
+        public GroupVm RecycleBin
+        {
+            get { return _recycleBin; }
+            set
+            {
+                _recycleBin = value;
+                _pwDatabase.RecycleBinUuid = _recycleBin.IdUuid;
+            }
+        }
+
         public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
         public string Name => DatabaseFile?.Name;
-
+        
+        public bool RecycleBinEnabled
+        {
+            get { return _pwDatabase.RecycleBinEnabled; }
+            set { _pwDatabase.RecycleBinEnabled = value; }
+        }
+        
         public StorageFile DatabaseFile
         {
             get { return _databaseFile; }
@@ -52,7 +70,7 @@ namespace ModernKeePass.Common
                 if (_pwDatabase.IsOpen)
                 {
                     Status = DatabaseStatus.Opened;
-                    RootGroup = new GroupVm(_pwDatabase.RootGroup, null);
+                    RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
                 }
             }
             catch (ArgumentNullException)

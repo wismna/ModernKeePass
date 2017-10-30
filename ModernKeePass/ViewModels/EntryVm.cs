@@ -14,13 +14,13 @@ namespace ModernKeePass.ViewModels
     public class EntryVm : INotifyPropertyChanged, IPwEntity
     {
         public GroupVm ParentGroup { get; }
-        public PwEntry Entry { get; }
 
-        public System.Drawing.Color? BackgroundColor => Entry?.BackgroundColor;
-        public System.Drawing.Color? ForegroundColor => Entry?.ForegroundColor;
+        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
+        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
-        public bool HasExpired => HasExpirationDate && Entry.ExpiryTime < DateTime.Now;
+        public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
+        public bool IsFirstItem => _pwEntry == null;
 
         public double PasswordLength { get; set; } = 25;
         public bool UpperCasePatternSelected { get; set; } = true;
@@ -38,12 +38,12 @@ namespace ModernKeePass.ViewModels
             get
             {
                 var title = GetEntryValue(PwDefs.TitleField);
-                return title == null ? "New entry" : title;
+                return title == null ? "< New entry >" : title;
             }
             set { SetEntryValue(PwDefs.TitleField, value); }
         }
 
-        public string Id => Entry.Uuid.ToHexString();
+        public string Id => _pwEntry?.Uuid.ToHexString();
 
         public string UserName
         {
@@ -75,22 +75,22 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                if (Entry == null) return Symbol.Add;
+                if (_pwEntry == null) return Symbol.Add;
                 if (HasExpired) return Symbol.Priority;
-                var result = PwIconToSegoeMapping.GetSymbolFromIcon(Entry.IconId);
+                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwEntry.IconId);
                 return result == Symbol.More ? Symbol.Permissions : result;
             }
         }
 
         public DateTimeOffset ExpiryDate
         {
-            get { return new DateTimeOffset(Entry.ExpiryTime.Date); }
-            set { if (HasExpirationDate) Entry.ExpiryTime = value.DateTime; }
+            get { return new DateTimeOffset(_pwEntry.ExpiryTime.Date); }
+            set { if (HasExpirationDate) _pwEntry.ExpiryTime = value.DateTime; }
         }
         public TimeSpan ExpiryTime
         {
-            get { return Entry.ExpiryTime.TimeOfDay; }
-            set { if (HasExpirationDate) Entry.ExpiryTime = Entry.ExpiryTime.Date.Add(value); }
+            get { return _pwEntry.ExpiryTime.TimeOfDay; }
+            set { if (HasExpirationDate) _pwEntry.ExpiryTime = _pwEntry.ExpiryTime.Date.Add(value); }
         }
 
         public bool IsEditMode
@@ -114,16 +114,17 @@ namespace ModernKeePass.ViewModels
         }
         public bool HasExpirationDate
         {
-            get { return Entry.Expires; }
+            get { return _pwEntry.Expires; }
             set
             {
-                Entry.Expires = value;
+                _pwEntry.Expires = value;
                 NotifyPropertyChanged("HasExpirationDate");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private readonly PwEntry _pwEntry;
         private bool _isEditMode;
         private bool _isRevealPassword;
 
@@ -135,7 +136,7 @@ namespace ModernKeePass.ViewModels
         public EntryVm() { }
         public EntryVm(PwEntry entry, GroupVm parent)
         {
-            Entry = entry;
+            _pwEntry = entry;
             ParentGroup = parent;
         }
 
@@ -163,7 +164,7 @@ namespace ModernKeePass.ViewModels
             ProtectedString password;
             PwGenerator.Generate(out password, pwProfile, null, new CustomPwGeneratorPool());
 
-            Entry?.Strings.Set(PwDefs.PasswordField, password);
+            _pwEntry?.Strings.Set(PwDefs.PasswordField, password);
             NotifyPropertyChanged("Password");
             NotifyPropertyChanged("IsRevealPasswordEnabled");
             NotifyPropertyChanged("PasswordComplexityIndicator");
@@ -171,12 +172,12 @@ namespace ModernKeePass.ViewModels
 
         private string GetEntryValue(string key)
         {
-            return Entry?.Strings.GetSafe(key).ReadString();
+            return _pwEntry?.Strings.GetSafe(key).ReadString();
         }
         
         private void SetEntryValue(string key, string newValue)
         {
-            Entry?.Strings.Set(key, new ProtectedString(true, newValue));
+            _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
         }
         
         public void MarkForDelete()
@@ -187,7 +188,7 @@ namespace ModernKeePass.ViewModels
         }
         public void CommitDelete()
         {
-            Entry.ParentGroup.Entries.Remove(Entry);
+            _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
         }
 
         public void UndoDelete()
