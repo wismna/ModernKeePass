@@ -6,12 +6,18 @@ namespace ModernKeePass.Interfaces
     public interface IPwEntity
     {
         GroupVm ParentGroup { get; }
+        GroupVm PreviousGroup { get; }
         Symbol IconSymbol { get; }
         string Id { get; }
         string Name { get; set; }
         string Path { get; }
         bool IsEditMode { get; }
 
+        /// <summary>
+        /// Move a entity to the destination group
+        /// </summary>
+        /// <param name="destination">The destination to move the entity to</param>
+        void Move(GroupVm destination);
         /// <summary>
         /// Delete from Model
         /// </summary>

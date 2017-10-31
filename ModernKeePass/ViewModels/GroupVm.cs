@@ -13,7 +13,8 @@ namespace ModernKeePass.ViewModels
 {
     public class GroupVm : NotifyPropertyChangedBase, IPwEntity, ISelectableModel
     {
-        public GroupVm ParentGroup { get; }
+        public GroupVm ParentGroup { get; private set; }
+        public GroupVm PreviousGroup { get; private set; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
         
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
@@ -24,6 +25,8 @@ namespace ModernKeePass.ViewModels
         public PwUuid IdUuid => _pwGroup?.Uuid;
         public string Id => IdUuid?.ToHexString();
         public bool IsNotRoot => ParentGroup != null;
+
+        public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
         /// <summary>
         /// Is the Group the database Recycle Bin?
         /// </summary>
@@ -122,25 +125,43 @@ namespace ModernKeePass.ViewModels
         {
             _pwGroup.AddEntry(entry, true);
         }
-        
+
+        public void RemovePwEntry(PwEntry entry)
+        {
+            _pwGroup.Entries.Remove(entry);
+        }
+
         public void MarkForDelete()
         {
-            _app.PendingDeleteEntities.Add(Id, this);
-            ParentGroup.Groups.Remove(this);
-            if (_app.Database.RecycleBinEnabled && !IsSelected) _app.Database.RecycleBin.Groups.Add(this);
+            Move(_app.Database.RecycleBinEnabled && !IsSelected ? _app.Database.RecycleBin : null);
+        }
+
+
+        public void UndoDelete()
+        {
+            Move(PreviousGroup);
+        }
+
+        public void Move(GroupVm destination)
+        {
+            PreviousGroup = ParentGroup;
+            PreviousGroup.Groups.Remove(this);
+            PreviousGroup._pwGroup.Groups.Remove(_pwGroup);
+            if (destination == null)
+            {
+                _app.Database.AddDeletedItem(IdUuid);
+                return;
+            }
+            ParentGroup = destination;
+            ParentGroup.Groups.Add(this);
+            ParentGroup._pwGroup.AddGroup(_pwGroup, true);
         }
 
         public void CommitDelete()
         {
             _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
-            if (_app.Database.RecycleBinEnabled && !IsSelected) _app.Database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
+            if (_app.Database.RecycleBinEnabled && !PreviousGroup.IsSelected) _app.Database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
             else _app.Database.AddDeletedItem(IdUuid);
-        }
-
-        public void UndoDelete()
-        {
-            ParentGroup.Groups.Add(this);
-            if (_app.Database.RecycleBinEnabled && !IsSelected) _app.Database.RecycleBin.Groups.Remove(this);
         }
 
         public void Save()

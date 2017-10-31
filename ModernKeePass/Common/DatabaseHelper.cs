@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Interfaces;
@@ -104,8 +105,15 @@ namespace ModernKeePass.Common
         /// </summary>
         public void Save()
         {
-            if (_pwDatabase != null && _pwDatabase.IsOpen)
-                _pwDatabase.Save(new NullStatusLogger());
+            if (_pwDatabase == null || !_pwDatabase.IsOpen) return;
+            // Commit real changes to DB
+            /*var app = (App) Application.Current;
+            foreach (var entity in app.PendingDeleteEntities)
+            {
+                entity.Value.CommitDelete();
+            }
+            app.PendingDeleteEntities.Clear();*/
+            _pwDatabase.Save(new NullStatusLogger());
         }
 
         /// <summary>

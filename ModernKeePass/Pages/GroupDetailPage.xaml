@@ -17,6 +17,8 @@
         <SolidColorBrush x:Key="SystemColor" Color="{StaticResource SystemColorButtonFaceColor}" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:BooleanToFontStyleConverter x:Key="BooleanToFontStyleConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
@@ -47,6 +49,13 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
+            <AppBarButton Icon="Undo" Label="Restore" Visibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:CallMethodAction MethodName="UndoDelete" TargetObject="{Binding}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarButton>
             <AppBarButton Icon="Delete" Label="Delete" IsEnabled="{Binding IsNotRoot}" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>

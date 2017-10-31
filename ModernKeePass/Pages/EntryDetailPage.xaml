@@ -17,6 +17,7 @@
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
         <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -396,6 +397,13 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
+            <AppBarButton Icon="Undo" Label="Restore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:CallMethodAction MethodName="UndoDelete" TargetObject="{Binding}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarButton>
             <AppBarButton Icon="Delete" Label="Delete" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>

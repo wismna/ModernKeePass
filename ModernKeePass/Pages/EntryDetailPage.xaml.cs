@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -18,21 +15,19 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class EntryDetailPage
     {
-        private NavigationHelper navigationHelper;
-
         public EntryVm Model => (EntryVm) DataContext;
 
         /// <summary>
         /// NavigationHelper est utilisé sur chaque page pour faciliter la navigation et 
         /// gestion de la durée de vie des processus
         /// </summary>
-        public NavigationHelper NavigationHelper => navigationHelper;
+        public NavigationHelper NavigationHelper { get; }
 
         public EntryDetailPage()
         {
             InitializeComponent();
-            navigationHelper = new NavigationHelper(this);
-            navigationHelper.LoadState += navigationHelper_LoadState;
+            NavigationHelper = new NavigationHelper(this);
+            NavigationHelper.LoadState += navigationHelper_LoadState;
         }
 
         /// <summary>
@@ -61,25 +56,37 @@ namespace ModernKeePass.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedTo(e);
+            NavigationHelper.OnNavigatedTo(e);
             if (!(e.Parameter is EntryVm)) return;
             DataContext = (EntryVm)e.Parameter;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            navigationHelper.OnNavigatedFrom(e);
+            NavigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
         
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var app = (App)Application.Current;
-            var message = app.Database.RecycleBinEnabled
+            var isRecycleBinEnabled = ((App)Application.Current).Database.RecycleBinEnabled && !Model.ParentGroup.IsSelected;
+            var message = isRecycleBinEnabled
                 ? "Are you sure you want to send this entry to the recycle bin?"
                 : "Are you sure you want to delete this entry?";
-            MessageDialogHelper.ShowDeleteConfirmationDialog(message, Model, Frame);
+            var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
+            MessageDialogHelper.ShowDeleteConfirmationDialog("Delete", message, a =>
+            {
+                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
+                Model.MarkForDelete();
+                if (Frame.CanGoBack) Frame.GoBack();
+            });
+        }
+
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            if (Frame.CanGoBack) Frame.GoBack();
         }
 
         private async void UrlButton_Click(object sender, RoutedEventArgs e)
@@ -94,5 +101,6 @@ namespace ModernKeePass.Pages
                 // TODO: Show some error
             }
         }
+
     }
 }

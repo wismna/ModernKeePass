@@ -14,7 +14,9 @@ namespace ModernKeePass.ViewModels
 {
     public class EntryVm : INotifyPropertyChanged, IPwEntity
     {
-        public GroupVm ParentGroup { get; }
+        public GroupVm ParentGroup { get; private set; }
+
+        public GroupVm PreviousGroup { get; private set; }
 
         public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
         public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
@@ -194,22 +196,34 @@ namespace ModernKeePass.ViewModels
         
         public void MarkForDelete()
         {
-            _app.PendingDeleteEntities.Add(Id, this);
-            ParentGroup.Entries.Remove(this);
-            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.Entries.Add(this);
-        }
-
-        public void CommitDelete()
-        {
-            _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
-            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.AddPwEntry(_pwEntry);
-            else _app.Database.AddDeletedItem(IdUuid);
+            Move(_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected ? _app.Database.RecycleBin : null);
         }
 
         public void UndoDelete()
         {
+            Move(PreviousGroup);
+        }
+
+        public void Move(GroupVm destination)
+        {
+            PreviousGroup = ParentGroup;
+            PreviousGroup.Entries.Remove(this);
+            PreviousGroup.RemovePwEntry(_pwEntry);
+            if (destination == null)
+            {
+                _app.Database.AddDeletedItem(IdUuid);
+                return;
+            }
+            ParentGroup = destination;
             ParentGroup.Entries.Add(this);
-            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.Entries.Remove(this);
+            ParentGroup.AddPwEntry(_pwEntry);
+        }
+        
+        public void CommitDelete()
+        {
+            _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
+            if (_app.Database.RecycleBinEnabled && !PreviousGroup.IsSelected) _app.Database.RecycleBin.AddPwEntry(_pwEntry);
+            else _app.Database.AddDeletedItem(IdUuid);
         }
 
         public void Save()

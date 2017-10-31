@@ -72,8 +72,7 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
-
-
+        
         #region Event Handlers
 
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -112,13 +111,25 @@ namespace ModernKeePass.Pages
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var app = (App) Application.Current;
-            var message = app.Database.RecycleBinEnabled
+            var isRecycleBinEnabled = ((App)Application.Current).Database.RecycleBinEnabled && !Model.IsSelected && !Model.ParentGroup.IsSelected;
+            var message = isRecycleBinEnabled
                 ? "Are you sure you want to send the whole group and all its entries to the recycle bin?"
                 : "Are you sure you want to delete the whole group and all its entries?";
-            MessageDialogHelper.ShowDeleteConfirmationDialog(message, Model, Frame);
+            var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
+            MessageDialogHelper.ShowDeleteConfirmationDialog("Delete", message, a =>
+            {
+                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
+                Model.MarkForDelete();
+                if (Frame.CanGoBack) Frame.GoBack();
+            });
         }
-        
+
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            if (Frame.CanGoBack) Frame.GoBack();
+        }
+
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             // We need to synchronize the two lists (zoomed-in and zoomed-out) because the source is different

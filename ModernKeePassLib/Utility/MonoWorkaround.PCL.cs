@@ -4,7 +4,7 @@
     {
         public static bool IsRequired(int i)
         {
-            throw new System.NotImplementedException();
+            return false;
         }
     }
 }

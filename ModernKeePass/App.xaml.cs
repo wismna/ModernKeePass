@@ -20,7 +20,6 @@ namespace ModernKeePass
     sealed partial class App
     {
         public DatabaseHelper Database { get; set; } = new DatabaseHelper();
-        public Dictionary<string, IPwEntity> PendingDeleteEntities = new Dictionary<string, IPwEntity>();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -89,11 +88,11 @@ namespace ModernKeePass
                     // parameter
                     rootFrame.Navigate(typeof(Pages.MainPage), lauchActivatedEventArgs.Arguments);
                 }
-                else
+                /*else
                 {
                     // App is "launched" via the Toast Activation event
                     UndoEntityDelete(lauchActivatedEventArgs.Arguments);
-                }
+                }*/
             }
             // This is only available on Windows 10...
             /*else if (e is ToastNotificationActivatedEventArgs)
@@ -145,14 +144,5 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
         #endregion
-
-        private void UndoEntityDelete(string arguments)
-        {
-            if (arguments == null) return;
-            var args = JsonObject.Parse(arguments);
-            var entity = PendingDeleteEntities[args["entityId"].GetString()];
-            PendingDeleteEntities.Remove(args["entityId"].GetString());
-            entity.UndoDelete();
-        }
     }
 }

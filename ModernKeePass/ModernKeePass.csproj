@@ -120,6 +120,7 @@
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\ToastNotificationHelper.cs" />
+    <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Pages\BasePages\LayoutAwarePageBase.cs" />
