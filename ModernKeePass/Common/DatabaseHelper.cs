@@ -116,5 +116,10 @@ namespace ModernKeePass.Common
             _pwDatabase?.Close();
             Status = DatabaseStatus.Closed;
         }
+
+        public void AddDeletedItem(PwUuid id)
+        {
+            _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
+        }
     }
 }

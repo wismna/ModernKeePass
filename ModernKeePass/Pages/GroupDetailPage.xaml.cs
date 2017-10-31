@@ -84,7 +84,7 @@ namespace ModernKeePass.Pages
                 case -1:
                     return;
                 case 0:
-                    group = Model.CreateNewGroup();
+                    group = Model.AddNewGroup();
                     break;
                 default:
                     group = LeftListView.SelectedItem as GroupVm;
@@ -101,7 +101,7 @@ namespace ModernKeePass.Pages
                 case -1:
                     return;
                 case 0:
-                    entry = Model.CreateNewEntry();
+                    entry = Model.AddNewEntry();
                     break;
                 default:
                     entry = GridView.SelectedItem as EntryVm;

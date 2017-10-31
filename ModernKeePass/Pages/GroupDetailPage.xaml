@@ -71,7 +71,7 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
@@ -259,7 +259,7 @@
             <Button Grid.Column="0" 
                     x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
-                    Height="40"
+                    Height="50"
                     Width="50"
                     VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
@@ -268,25 +268,27 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <TextBox  
-                Grid.Column="1" 
-                x:Name="TitleTextBox"
-                Text="{Binding Name, Mode=TwoWay}" 
-                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
-                Background="Transparent"
-                IsHitTestVisible="{Binding IsEditMode}" 
-                BorderThickness="0" 
-                FontSize="24"
-                FontWeight="SemiBold"
-                TextWrapping="NoWrap" 
-                VerticalAlignment="Center" 
-                PlaceholderText="New group name...">
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
-                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </TextBox>
+            <StackPanel Grid.Column="1" >
+                <TextBox
+                    x:Name="TitleTextBox"
+                    Text="{Binding Name, Mode=TwoWay}" 
+                    Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                    Background="Transparent"
+                    IsHitTestVisible="{Binding IsEditMode}" 
+                    BorderThickness="0" 
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    TextWrapping="NoWrap" 
+                    VerticalAlignment="Center" 
+                    PlaceholderText="New group name...">
+                    <interactivity:Interaction.Behaviors>
+                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
+                            <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
+                        </core:DataTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </TextBox>
+                <TextBlock FontSize="12" Text="{Binding Path}" />
+            </StackPanel>
             <SearchBox Grid.Column="2" PlaceholderText="Search..." Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
         </Grid>
     </Grid>

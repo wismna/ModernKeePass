@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,8 +32,13 @@ namespace ModernKeePass.ViewModels
             get { return _app.Database.RecycleBinEnabled && _app.Database.RecycleBin.Id == Id; }
             set
             {
-                // TODO: if _pwGroup is null, create a new group
                 if (value && _pwGroup != null) _app.Database.RecycleBin = this;
+                else if (value && _pwGroup == null)
+                {
+                    var recycleBin = _app.Database.RootGroup.AddNewGroup("Recycle bin");
+                    recycleBin.IsSelected = true;
+                    recycleBin.IconSymbol = Symbol.Delete;
+                }
             }
         }
 
@@ -56,12 +62,24 @@ namespace ModernKeePass.ViewModels
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
                 return result == Symbol.More ? Symbol.Folder : result;
             }
+            set { _pwGroup.IconId = PwIconToSegoeMapping.GetIconFromSymbol(value); }
         }
         
         public bool IsEditMode
         {
             get { return _isEditMode; }
             set { SetProperty(ref _isEditMode, value); }
+        }
+
+        public string Path
+        {
+            get
+            {
+                if (ParentGroup == null) return string.Empty;
+                var path = new StringBuilder(ParentGroup.Path);
+                path.Append($" > {ParentGroup.Name}");
+                return path.ToString();
+            }
         }
 
         private readonly PwGroup _pwGroup;
@@ -82,22 +100,27 @@ namespace ModernKeePass.ViewModels
             Groups.Insert(0, new GroupVm ());
         }
 
-        public GroupVm CreateNewGroup()
+        public GroupVm AddNewGroup(string name = "")
         {
-            var pwGroup = new PwGroup(true, true, string.Empty, PwIcon.Folder);
+            var pwGroup = new PwGroup(true, true, name, PwIcon.Folder);
             _pwGroup.AddGroup(pwGroup, true);
-            var newGroup = new GroupVm(pwGroup, this) {IsEditMode = true};
+            var newGroup = new GroupVm(pwGroup, this) {Name = name, IsEditMode = string.IsNullOrEmpty(name)};
             Groups.Add(newGroup);
             return newGroup;
         }
         
-        public EntryVm CreateNewEntry()
+        public EntryVm AddNewEntry()
         {
             var pwEntry = new PwEntry(true, true);
             _pwGroup.AddEntry(pwEntry, true);
             var newEntry = new EntryVm(pwEntry, this) {IsEditMode = true};
             Entries.Add(newEntry);
             return newEntry;
+        }
+
+        public void AddPwEntry(PwEntry entry)
+        {
+            _pwGroup.AddEntry(entry, true);
         }
         
         public void MarkForDelete()
@@ -111,6 +134,7 @@ namespace ModernKeePass.ViewModels
         {
             _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
             if (_app.Database.RecycleBinEnabled && !IsSelected) _app.Database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
+            else _app.Database.AddDeletedItem(IdUuid);
         }
 
         public void UndoDelete()

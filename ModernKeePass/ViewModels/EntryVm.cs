@@ -1,12 +1,13 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
-using System;
-using Windows.UI.Xaml;
 using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePass.ViewModels
@@ -32,6 +33,7 @@ namespace ModernKeePass.ViewModels
         public bool SpecialPatternSelected { get; set; }
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
+        public PwUuid IdUuid => _pwEntry?.Uuid;
 
         public string Name
         {
@@ -122,9 +124,20 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public string Path
+        {
+            get
+            {
+                var path = new StringBuilder(ParentGroup.Path);
+                path.Append($" > {ParentGroup.Name}");
+                return path.ToString();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly PwEntry _pwEntry;
+        private readonly App _app = (App)Application.Current;
         private bool _isEditMode;
         private bool _isRevealPassword;
 
@@ -139,8 +152,7 @@ namespace ModernKeePass.ViewModels
             _pwEntry = entry;
             ParentGroup = parent;
         }
-
-
+        
         public void GeneratePassword()
         {
             var pwProfile = new PwProfile()
@@ -182,24 +194,27 @@ namespace ModernKeePass.ViewModels
         
         public void MarkForDelete()
         {
-            var app = (App)Application.Current;
-            app.PendingDeleteEntities.Add(Id, this);
+            _app.PendingDeleteEntities.Add(Id, this);
             ParentGroup.Entries.Remove(this);
+            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.Entries.Add(this);
         }
+
         public void CommitDelete()
         {
             _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
+            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.AddPwEntry(_pwEntry);
+            else _app.Database.AddDeletedItem(IdUuid);
         }
 
         public void UndoDelete()
         {
             ParentGroup.Entries.Add(this);
+            if (_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected) _app.Database.RecycleBin.Entries.Remove(this);
         }
 
         public void Save()
         {
-            var app = (App)Application.Current;
-            app.Database.Save();
+            _app.Database.Save();
         }
     }
 }
