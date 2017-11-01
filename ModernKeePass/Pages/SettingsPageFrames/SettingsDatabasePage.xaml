@@ -14,7 +14,6 @@
         <viewModels:SettingsDatabaseVm />
     </Page.DataContext>
     
-
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ToggleSwitch Header="Recycle bin" OffContent="Disabled" OnContent="Enabled" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
         <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding HasRecycleBin}" />

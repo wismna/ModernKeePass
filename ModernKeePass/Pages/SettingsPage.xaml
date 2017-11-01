@@ -27,7 +27,7 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -43,7 +43,7 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
-                    Height="40"
+                    Height="50"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"

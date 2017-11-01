@@ -196,6 +196,8 @@ namespace ModernKeePass.ViewModels
         
         public void MarkForDelete()
         {
+            if (_app.Database.RecycleBinEnabled && _app.Database.RecycleBin?.IdUuid == null)
+                _app.Database.CreateRecycleBin();
             Move(_app.Database.RecycleBinEnabled && !ParentGroup.IsSelected ? _app.Database.RecycleBin : null);
         }
 

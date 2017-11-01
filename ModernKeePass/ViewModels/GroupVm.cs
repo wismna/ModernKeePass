@@ -32,16 +32,16 @@ namespace ModernKeePass.ViewModels
         /// </summary>
         public bool IsSelected
         {
-            get { return _app.Database.RecycleBinEnabled && _app.Database.RecycleBin.Id == Id; }
+            get { return _app.Database.RecycleBinEnabled && _app.Database.RecycleBin?.Id == Id; }
             set
             {
                 if (value && _pwGroup != null) _app.Database.RecycleBin = this;
-                else if (value && _pwGroup == null)
+                /*else if (value && _pwGroup == null)
                 {
                     var recycleBin = _app.Database.RootGroup.AddNewGroup("Recycle bin");
                     recycleBin.IsSelected = true;
                     recycleBin.IconSymbol = Symbol.Delete;
-                }
+                }*/
             }
         }
 
@@ -133,6 +133,8 @@ namespace ModernKeePass.ViewModels
 
         public void MarkForDelete()
         {
+            if (_app.Database.RecycleBinEnabled && _app.Database.RecycleBin?.IdUuid == null)
+                _app.Database.CreateRecycleBin();
             Move(_app.Database.RecycleBinEnabled && !IsSelected ? _app.Database.RecycleBin : null);
         }
 

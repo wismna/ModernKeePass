@@ -1,6 +1,7 @@
 ﻿using System;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Interfaces;
@@ -128,6 +129,13 @@ namespace ModernKeePass.Common
         public void AddDeletedItem(PwUuid id)
         {
             _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
+        }
+
+        public void CreateRecycleBin()
+        {
+            RecycleBin = RootGroup.AddNewGroup("Recycle bin");
+            RecycleBin.IsSelected = true;
+            RecycleBin.IconSymbol = Symbol.Delete;
         }
     }
 }
