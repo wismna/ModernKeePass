@@ -8,7 +8,7 @@ using KeePassLib.Keys;
 using ModernKeePassLib.Keys;
 #endif
 
-namespace ModernKeePassLib.Test.Shared.Keys
+namespace ModernKeePassLib.Test.Keys
 {
   [TestFixture ()]
   public class KcpKeyFileTests

@@ -69,7 +69,7 @@ namespace ModernKeePassLib.Cryptography.Cipher
 		}
 	}
 
-	internal sealed class ChaCha20Stream : Stream
+	public sealed class ChaCha20Stream : Stream
 	{
 		private Stream m_sBase;
 		private readonly bool m_bWriting;

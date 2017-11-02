@@ -34,7 +34,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-
+using System.Threading.Tasks;
 using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Utility;
 
@@ -465,7 +465,10 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 						ti.Pass = r;
 						ti.Lane = (ulong)l;
 						ti.Slice = s;
-#if !ModernKeePassLib
+
+#if ModernKeePassLib
+					    Task.Factory.StartNew(FillSegmentThr, ti);
+#else
 						if(!ThreadPool.QueueUserWorkItem(FillSegmentThr, ti))
 						{
 							Debug.Assert(false);
@@ -483,8 +486,8 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 				}
 			}
 		}
-
-		private static void FillSegmentThr(object o)
+        
+	    private static void FillSegmentThr(object o)
 		{
 			Argon2ThreadInfo ti = (o as Argon2ThreadInfo);
 			if(ti == null) { Debug.Assert(false); return; }

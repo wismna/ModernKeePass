@@ -8,8 +8,8 @@ namespace ModernKeePassLib.Cryptography.Hash
     {
         public HMACSHA1(byte[] key)
         {
-            _hmac = new HMac(new Sha1Digest());
-            _hmac.Init(new KeyParameter(key));
+            Hmac = new HMac(new Sha1Digest());
+            Hmac.Init(new KeyParameter(key));
         }
     }
 }

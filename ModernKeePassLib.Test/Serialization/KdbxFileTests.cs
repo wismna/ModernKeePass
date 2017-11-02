@@ -20,7 +20,7 @@ using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Collections;
 #endif
 
-namespace ModernKeePassLib.Test.Shared.Serialization
+namespace ModernKeePassLib.Test.Serialization
 {
     [TestFixture()]
     public class KdbxFileTests

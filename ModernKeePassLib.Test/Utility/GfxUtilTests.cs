@@ -8,7 +8,7 @@ using Splat;
 using ModernKeePassLib.Utility;
 #endif
 
-namespace ModernKeePassLib.Test.Shared.Utility
+namespace ModernKeePassLib.Test.Utility
 {
     [TestFixture ()]
     public class GfxUtilTests

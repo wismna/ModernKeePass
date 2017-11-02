@@ -2,7 +2,7 @@
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Keys;
 
-namespace ModernKeePassLib.Test.Shared.Keys
+namespace ModernKeePassLib.Test.Keys
 {
   [TestFixture ()]
   public class CompositeKeyTests

@@ -54,11 +54,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\KeyDerivation\Argon2Tests.cs" />
+    <Compile Include="Cryptography\Hash\Blake2bTests.cs" />
+    <Compile Include="Cryptography\Cipher\Chacha20Tests.cs" />
+    <Compile Include="Cryptography\Hash\HmacTests.cs" />
     <Compile Include="Cryptography\Cipher\StandardAesEngineTests.cs" />
     <Compile Include="Cryptography\CryptoRandomStreamTests.cs" />
     <Compile Include="Cryptography\CryptoRandomTests.cs" />
     <Compile Include="Cryptography\HashingStreamExTests.cs" />
     <Compile Include="Cryptography\HmacOtpTests.cs" />
+    <Compile Include="Cryptography\KeyDerivation\AesKdfTests.cs" />
     <Compile Include="Keys\CompositeKeyTests.cs" />
     <Compile Include="Keys\KcpCustomKeyTests.cs" />
     <Compile Include="Keys\KcpKeyFileTests.cs" />

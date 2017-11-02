@@ -134,7 +134,7 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			return null;
 		}
 
-		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+	    public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
 		{
 #if ModernKeePassLib || KeePassUAP

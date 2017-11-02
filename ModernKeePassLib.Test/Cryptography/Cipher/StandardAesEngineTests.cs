@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
 
-namespace ModernKeePassLib.Test.Shared.Cryptography.Cipher
+namespace ModernKeePassLib.Test.Cryptography.Cipher
 {
     [TestFixture()]
     public class StandardAesEngineTests

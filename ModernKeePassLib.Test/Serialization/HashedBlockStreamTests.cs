@@ -8,7 +8,7 @@ using KeePassLib.Serialization;
 using ModernKeePassLib.Serialization;
 #endif
 
-namespace ModernKeePassLib.Test.Shared.Serialization
+namespace ModernKeePassLib.Test.Serialization
 {
   [TestFixture ()]
   public class HashedBlockStreamTests

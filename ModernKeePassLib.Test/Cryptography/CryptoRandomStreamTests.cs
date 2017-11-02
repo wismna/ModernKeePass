@@ -7,7 +7,7 @@ using KeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography;
 #endif
 
-namespace ModernKeePassLib.Test.Shared.Cryptography
+namespace ModernKeePassLib.Test.Cryptography
 {
   [TestFixture ()]
   public class CryptoRandomStreamTests

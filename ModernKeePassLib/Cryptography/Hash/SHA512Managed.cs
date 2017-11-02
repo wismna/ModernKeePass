@@ -6,7 +6,7 @@ namespace ModernKeePassLib.Cryptography.Hash
     {
         public SHA512Managed()
         {
-            Hash = new Sha512Digest();
+            Digest = new Sha512Digest();
         }
     }
 }

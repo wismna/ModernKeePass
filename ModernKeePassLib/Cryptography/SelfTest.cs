@@ -417,7 +417,7 @@ namespace ModernKeePassLib.Cryptography
 
 		private static void TestBlake2b(Random r)
 		{
-#if !ModernKeePassLib && DEBUG
+#if DEBUG
 			Blake2b h = new Blake2b();
 
 			// ======================================================
@@ -676,35 +676,6 @@ namespace ModernKeePassLib.Cryptography
 		private static void HmacEval(byte[] pbKey, byte[] pbMsg,
 			byte[] pbExpc, string strID)
 		{
-#if ModernKeePassLib
-        /*
-            // WinRT
-            var h = MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(CryptographicBuffer.CreateFromByteArray(pbKey));
-            h.Append(CryptographicBuffer.CreateFromByteArray(pbMsg));
-		    var pbHash = h.GetValueAndReset().ToArray();
-		    if (!MemUtil.ArraysEqual(pbHash, pbExpc))
-		        throw new SecurityException("HMAC-SHA-256-" + strID);
-
-		    h.Append(CryptographicBuffer.CreateFromByteArray(pbMsg));
-		    pbHash = h.GetValueAndReset().ToArray();
-		    if (!MemUtil.ArraysEqual(pbHash, pbExpc))
-		        throw new SecurityException("HMAC-SHA-256-" + strID + "-R");
-
-            // BouncyCastle
-      //      var h = new HMac(new Sha256Digest());
-		    //h.BlockUpdate(pbMsg, 0, pbMsg.Length);
-		    //byte[] pbHash = MemUtil.EmptyByteArray;
-		    //h.DoFinal(pbHash, 0);
-		    //if (!MemUtil.ArraysEqual(pbHash, pbExpc))
-      //          throw new SecurityException("HMAC-SHA-256-" + strID);
-
-      //      h.Reset();
-		    //h.BlockUpdate(pbMsg, 0, pbMsg.Length);
-		    //h.DoFinal(pbHash, 0);
-		    //if (!MemUtil.ArraysEqual(pbHash, pbExpc))
-		    //    throw new SecurityException("HMAC-SHA-256-" + strID + "-R");*/
-#else
-            // Original
 			using(HMACSHA256 h = new HMACSHA256(pbKey))
 			{
 				h.TransformBlock(pbMsg, 0, pbMsg.Length, pbMsg, 0);
@@ -723,7 +694,6 @@ namespace ModernKeePassLib.Cryptography
 				if(!MemUtil.ArraysEqual(pbHash, pbExpc))
 					throw new SecurityException("HMAC-SHA-256-" + strID + "-R");
 			}
-#endif
 		}
 #endif
 
