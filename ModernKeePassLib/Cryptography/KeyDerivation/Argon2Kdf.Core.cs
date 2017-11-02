@@ -486,8 +486,8 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 				}
 			}
 		}
-        
-	    private static void FillSegmentThr(object o)
+
+		private static void FillSegmentThr(object o)
 		{
 			Argon2ThreadInfo ti = (o as Argon2ThreadInfo);
 			if(ti == null) { Debug.Assert(false); return; }
