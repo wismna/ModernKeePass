@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePassLib;
+using ModernKeePassLib.Cryptography.Cipher;
 
 namespace ModernKeePass.ViewModels
 {
@@ -25,6 +28,38 @@ namespace ModernKeePass.ViewModels
         }
 
         public ObservableCollection<GroupVm> Groups { get; set; }
+
+        public IEnumerable<string> Ciphers
+        {
+            get
+            {
+                for (var inx = 0; inx < CipherPool.GlobalPool.EngineCount; inx++)
+                {
+                    yield return CipherPool.GlobalPool[inx].DisplayName;
+                }
+            }
+        }
+
+        public int CipherIndex
+        {
+            get
+            {
+                for (var inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
+                {
+                    if (CipherPool.GlobalPool[inx].CipherUuid.Equals(_app.Database.DataCipher)) return inx;
+                }
+                return -1;
+            }
+            set { _app.Database.DataCipher = CipherPool.GlobalPool[value].CipherUuid; }
+        }
+
+        public IEnumerable<string> Compressions => Enum.GetNames(typeof(PwCompressionAlgorithm)).Take((int)PwCompressionAlgorithm.Count);
+
+        public string CompressionName
+        {
+            get { return Enum.GetName(typeof(PwCompressionAlgorithm), _app.Database.CompressionAlgorithm); }
+            set { _app.Database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
+        }
 
         public ISelectableModel SelectedItem
         {

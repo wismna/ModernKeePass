@@ -1,9 +1,9 @@
 ﻿using System;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
+using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Serialization;
@@ -33,7 +33,7 @@ namespace ModernKeePass.Common
                 _pwDatabase.RecycleBinUuid = _recycleBin.IdUuid;
             }
         }
-
+        
         public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
         public string Name => DatabaseFile?.Name;
         
@@ -52,7 +52,19 @@ namespace ModernKeePass.Common
                 Status = DatabaseStatus.Opening;
             }
         }
-        
+
+        public PwUuid DataCipher
+        {
+            get { return _pwDatabase.DataCipherUuid; }
+            internal set { _pwDatabase.DataCipherUuid = value; }
+        }
+
+        public PwCompressionAlgorithm CompressionAlgorithm
+        {
+            get { return _pwDatabase.Compression; }
+            set { _pwDatabase.Compression = value; }
+        }
+
         /// <summary>
         /// Open a KeePass database
         /// </summary>
@@ -107,13 +119,6 @@ namespace ModernKeePass.Common
         public void Save()
         {
             if (_pwDatabase == null || !_pwDatabase.IsOpen) return;
-            // Commit real changes to DB
-            /*var app = (App) Application.Current;
-            foreach (var entity in app.PendingDeleteEntities)
-            {
-                entity.Value.CommitDelete();
-            }
-            app.PendingDeleteEntities.Clear();*/
             _pwDatabase.Save(new NullStatusLogger());
         }
 
