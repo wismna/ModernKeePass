@@ -20,17 +20,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+
 #if ModernKeePassLib
 using Windows.Security.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
-using System.Globalization;
-using System.Diagnostics;
 
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography.PasswordGenerator;

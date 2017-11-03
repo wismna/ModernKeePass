@@ -72,6 +72,7 @@
     <Compile Include="Serialization\HashedBlockStreamTests.cs" />
     <Compile Include="Serialization\KdbxFileTests.cs" />
     <Compile Include="Utility\GfxUtilTests.cs" />
+    <Compile Include="Utility\MemUtilTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -54,16 +54,24 @@ namespace ModernKeePass.Common
             }
         }
 
+        public StorageFile KeyFile { get; set; }
+
         public PwUuid DataCipher
         {
             get { return _pwDatabase.DataCipherUuid; }
-            internal set { _pwDatabase.DataCipherUuid = value; }
+            set { _pwDatabase.DataCipherUuid = value; }
         }
 
         public PwCompressionAlgorithm CompressionAlgorithm
         {
             get { return _pwDatabase.Compression; }
             set { _pwDatabase.Compression = value; }
+        }
+
+        public KdfParameters KeyDerivation
+        {
+            get { return _pwDatabase.KdfParameters; }
+            set { _pwDatabase.KdfParameters = value; }
         }
 
         /// <summary>
@@ -77,7 +85,8 @@ namespace ModernKeePass.Common
             var key = new CompositeKey();
             try
             {
-                key.AddUserKey(new KcpPassword(password));
+                if (password != null) key.AddUserKey(new KcpPassword(password));
+                if (KeyFile != null) key.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew) _pwDatabase.New(ioConnection, key);
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
@@ -120,7 +129,7 @@ namespace ModernKeePass.Common
         public void Save()
         {
             // TODO: Save is disabled for now for Argon2Kdf because it corrupts DB (read works)
-            if (_pwDatabase == null || !_pwDatabase.IsOpen /*|| KdfPool.Get(_pwDatabase.KdfParameters.KdfUuid) is Argon2Kdf*/) return;
+            if (_pwDatabase == null || !_pwDatabase.IsOpen || KdfPool.Get(_pwDatabase.KdfParameters.KdfUuid) is Argon2Kdf) return;
             _pwDatabase.Save(new NullStatusLogger());
         }
 

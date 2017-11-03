@@ -45,6 +45,41 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
         }
 
         [Test]
+        public void TestHmacSha1ComputeHash()
+        {
+            var expectedHash = "AC2C2E614882CE7158F69B7E3B12114465945D01";
+            var message = StrUtil.Utf8.GetBytes("testing123");
+            var key = StrUtil.Utf8.GetBytes("hello");
+            using (var result = new HMACSHA1(key))
+            {
+                Assert.That(ByteToString(result.ComputeHash(message)), Is.EqualTo(expectedHash));
+            }
+        }
+
+        [Test]
+        public void TestHmacSha256ComputeHash()
+        {
+            var expectedHash = "09C1BD2DE4E5659C0EFAF9E6AE4723E9CF96B69609B4E562F6AFF1745D7BF4E0";
+            var message = StrUtil.Utf8.GetBytes("testing123");
+            var key = StrUtil.Utf8.GetBytes("hello");
+            using (var result = new HMACSHA256(key))
+            {
+                Assert.That(ByteToString(result.ComputeHash(message)), Is.EqualTo(expectedHash));
+            }
+        }
+
+        public static string ByteToString(byte[] buff)
+        {
+            string sbinary = "";
+
+            for (int i = 0; i < buff.Length; i++)
+            {
+                sbinary += buff[i].ToString("X2"); // hex format
+            }
+            return (sbinary);
+        }
+
+        [Test]
         public void TestHmacOtp()
         {
             var pbSecret = StrUtil.Utf8.GetBytes("12345678901234567890");

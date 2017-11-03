@@ -249,8 +249,8 @@ namespace ModernKeePassLib.Utility
 		/// <summary>
 		/// Set all bytes in a byte array to zero.
 		/// </summary>
-		/// <param name="pbArray">Input array. All bytes of this array will be set
-		/// to zero.</param>
+		/// <param name="pbArray">Input array. All bytes of this array
+		/// will be set to zero.</param>
 		public static void ZeroByteArray(byte[] pbArray)
 		{
 			Debug.Assert(pbArray != null);

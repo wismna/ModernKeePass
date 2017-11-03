@@ -8,6 +8,7 @@ using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePass.ViewModels
 {
@@ -59,6 +60,13 @@ namespace ModernKeePass.ViewModels
         {
             get { return Enum.GetName(typeof(PwCompressionAlgorithm), _app.Database.CompressionAlgorithm); }
             set { _app.Database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
+        }
+        public IEnumerable<string> KeyDerivations => KdfPool.Engines.Select(e => e.Name);
+
+        public string KeyDerivationName
+        {
+            get { return KdfPool.Get(_app.Database.KeyDerivation.KdfUuid).Name; }
+            set { _app.Database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
         }
 
         public ISelectableModel SelectedItem
