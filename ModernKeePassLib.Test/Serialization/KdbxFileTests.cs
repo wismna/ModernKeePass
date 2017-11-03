@@ -1,50 +1,38 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using Windows.UI;
-#if KeePassLib
-using KeePassLib;
-using KeePassLib.Keys;
-using KeePassLib.Security;
-using KeePassLib.Serialization;
-using KeePassLib.Collections;
-#else
-using ModernKeePassLib;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Collections;
-#endif
 
 namespace ModernKeePassLib.Test.Serialization
 {
     [TestFixture()]
     public class KdbxFileTests
     {
-        const string testLocalizedAppName = "My Localized App Name";
+        const string TestLocalizedAppName = "My Localized App Name";
 
-        const string testDatabaseName = "My Database Name";
-        const string testDatabaseDescription = "My Database Description";
-        const string testDefaultUserName = "My Default User Name";
-        const string testColor = "#FF0000"; // Red
+        const string TestDatabaseName = "My Database Name";
+        const string TestDatabaseDescription = "My Database Description";
+        const string TestDefaultUserName = "My Default User Name";
+        const string TestColor = "#FF0000"; // Red
 
-        const string testRootGroupName = "My Root Group Name";
-        const string testRootGroupNotes = "My Root Group Notes";
-        const string testRootGroupDefaultAutoTypeSequence = "My Root Group Default Auto Type Sequence";
+        const string TestRootGroupName = "My Root Group Name";
+        const string TestRootGroupNotes = "My Root Group Notes";
+        const string TestRootGroupDefaultAutoTypeSequence = "My Root Group Default Auto Type Sequence";
 
-        const string testDatabase = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n" +
+        const string TestDatabase = "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>\r\n" +
           "<KeePassFile>\r\n" +
           "\t<Meta>\r\n" +
-          "\t\t<Generator>" + testLocalizedAppName + "</Generator>\r\n" +
-          "\t\t<DatabaseName>" + testDatabaseName + "</DatabaseName>\r\n" +
+          "\t\t<Generator>" + TestLocalizedAppName + "</Generator>\r\n" +
+          "\t\t<DatabaseName>" + TestDatabaseName + "</DatabaseName>\r\n" +
           "\t\t<DatabaseNameChanged>2017-10-23T08:03:55Z</DatabaseNameChanged>\r\n" +
-          "\t\t<DatabaseDescription>" + testDatabaseDescription + "</DatabaseDescription>\r\n" +
+          "\t\t<DatabaseDescription>" + TestDatabaseDescription + "</DatabaseDescription>\r\n" +
           "\t\t<DatabaseDescriptionChanged>2017-10-23T08:03:55Z</DatabaseDescriptionChanged>\r\n" +
-          "\t\t<DefaultUserName>" + testDefaultUserName + "</DefaultUserName>\r\n" +
+          "\t\t<DefaultUserName>" + TestDefaultUserName + "</DefaultUserName>\r\n" +
           "\t\t<DefaultUserNameChanged>2017-10-23T08:03:55Z</DefaultUserNameChanged>\r\n" +
           "\t\t<MaintenanceHistoryDays>365</MaintenanceHistoryDays>\r\n" +
           //"\t\t<Color>" + testColor + "</Color>\r\n" +
@@ -74,8 +62,8 @@ namespace ModernKeePassLib.Test.Serialization
           "\t<Root>\r\n" +
           "\t\t<Group>\r\n" +
           "\t\t\t<UUID>AAAAAAAAAAAAAAAAAAAAAA==</UUID>\r\n" +
-          "\t\t\t<Name>" + testRootGroupName + "</Name>\r\n" +
-          "\t\t\t<Notes>" + testRootGroupNotes + "</Notes>\r\n" +
+          "\t\t\t<Name>" + TestRootGroupName + "</Name>\r\n" +
+          "\t\t\t<Notes>" + TestRootGroupNotes + "</Notes>\r\n" +
           "\t\t\t<IconID>49</IconID>\r\n" +
           "\t\t\t<Times>\r\n" +
           "\t\t\t\t<CreationTime>2017-10-23T08:03:55Z</CreationTime>\r\n" +
@@ -87,7 +75,7 @@ namespace ModernKeePassLib.Test.Serialization
           "\t\t\t\t<LocationChanged>2017-10-23T08:03:55Z</LocationChanged>\r\n" +
           "\t\t\t</Times>\r\n" +
           "\t\t\t<IsExpanded>True</IsExpanded>\r\n" +
-          "\t\t\t<DefaultAutoTypeSequence>" + testRootGroupDefaultAutoTypeSequence + "</DefaultAutoTypeSequence>\r\n" +
+          "\t\t\t<DefaultAutoTypeSequence>" + TestRootGroupDefaultAutoTypeSequence + "</DefaultAutoTypeSequence>\r\n" +
           "\t\t\t<EnableAutoType>null</EnableAutoType>\r\n" +
           "\t\t\t<EnableSearching>null</EnableSearching>\r\n" +
           "\t\t\t<LastTopVisibleEntry>AAAAAAAAAAAAAAAAAAAAAA==</LastTopVisibleEntry>\r\n" +
@@ -96,13 +84,13 @@ namespace ModernKeePassLib.Test.Serialization
           "\t</Root>\r\n" +
           "</KeePassFile>";
 
-        const string testDate = "2017-10-23T08:03:55Z";
+        const string TestDate = "2017-10-23T08:03:55Z";
 
         [Test()]
         public void TestLoad()
         {
             var database = new PwDatabase();
-            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(testDatabase)))
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(TestDatabase)))
             {
                 var file = new KdbxFile(database);
                 file.Load(ms, KdbxFormat.PlainXml, null);
@@ -121,23 +109,23 @@ namespace ModernKeePassLib.Test.Serialization
             {
                 var database = new PwDatabase();
                 database.New(new IOConnectionInfo(), new CompositeKey());
-                var date = DateTime.Parse(testDate, CultureInfo.CurrentCulture, DateTimeStyles.AdjustToUniversal);
+                var date = DateTime.Parse(TestDate, CultureInfo.CurrentCulture, DateTimeStyles.AdjustToUniversal);
                 //var date = DateTime.UtcNow;
-                PwDatabase.LocalizedAppName = testLocalizedAppName;
-                database.Name = testDatabaseName;
+                PwDatabase.LocalizedAppName = TestLocalizedAppName;
+                database.Name = TestDatabaseName;
                 database.NameChanged = date;
-                database.Description = testDatabaseDescription;
+                database.Description = TestDatabaseDescription;
                 database.DescriptionChanged = date;
-                database.DefaultUserName = testDefaultUserName;
+                database.DefaultUserName = TestDefaultUserName;
                 database.DefaultUserNameChanged = date;
                 //database.Color = Color.Red;
                 database.MasterKeyChanged = date;
                 database.RecycleBinChanged = date;
                 database.EntryTemplatesGroupChanged = date;
                 database.RootGroup.Uuid = PwUuid.Zero;
-                database.RootGroup.Name = testRootGroupName;
-                database.RootGroup.Notes = testRootGroupNotes;
-                database.RootGroup.DefaultAutoTypeSequence = testRootGroupDefaultAutoTypeSequence;
+                database.RootGroup.Name = TestRootGroupName;
+                database.RootGroup.Notes = TestRootGroupNotes;
+                database.RootGroup.DefaultAutoTypeSequence = TestRootGroupDefaultAutoTypeSequence;
                 database.RootGroup.CreationTime = date;
                 database.RootGroup.LastModificationTime = date;
                 database.RootGroup.LastAccessTime = date;
@@ -154,14 +142,14 @@ namespace ModernKeePassLib.Test.Serialization
                 // so it uses native line endings.
                 fileContents = fileContents.Replace("\n", "\r\n");
             }
-            Assert.That(fileContents, Is.EqualTo(testDatabase));
+            Assert.That(fileContents, Is.EqualTo(TestDatabase));
         }
 
         [Test]
         public void TestSearch()
         {
             var database = new PwDatabase();
-            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(testDatabase)))
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(TestDatabase)))
             {
                 var file = new KdbxFile(database);
                 file.Load(ms, KdbxFormat.PlainXml, null);

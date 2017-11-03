@@ -24,16 +24,16 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <CheckBox x:Name="PasswordCheckBox" Grid.Row="0" Grid.Column="0" />
-            <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Height="30" IsEnabled="{Binding IsChecked, ElementName=PasswordCheckBox}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" >
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior Binding="{Binding Visibility, ElementName=UserControl}" Value="Visible">
-                        <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </PasswordBox>
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Height="30" IsEnabled="{Binding IsChecked, ElementName=PasswordCheckBox}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" >
+            <interactivity:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding IsChecked, ElementName=PasswordCheckBox}" Value="True">
+                    <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </PasswordBox>
         <CheckBox x:Name="KeyFileCheckBox" Grid.Row="1" Grid.Column="0" />
-        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-10,0,0,0" Content="Select key file from disk..." IsEnabled="{Binding IsChecked, ElementName=KeyFileCheckBox}" Click="KeyFileButton_Click" />
-        <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" />
+        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="Select key file from disk..." IsEnabled="{Binding IsChecked, ElementName=KeyFileCheckBox}" Click="KeyFileButton_Click" />
+        <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" />
         <TextBlock Grid.Column="1" Grid.Row="2" x:Name="StatusTextBlock" Height="28" FontSize="14" FontWeight="Light" TextWrapping="WrapWholeWords" HorizontalAlignment="Right" />
     </Grid>
 </UserControl>

@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ModernKeePassLib.Cryptography.Hash;
 using ModernKeePassLib.Utility;
 
@@ -468,6 +469,7 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 
 #if ModernKeePassLib
 					    Task.Factory.StartNew(FillSegmentThr, ti);
+					    //ThreadPool.RunAsync(a => FillSegmentThr(ti));
 #else
 						if(!ThreadPool.QueueUserWorkItem(FillSegmentThr, ti))
 						{

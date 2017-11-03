@@ -3,7 +3,6 @@ using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
-using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
@@ -129,7 +128,7 @@ namespace ModernKeePass.Common
         public void Save()
         {
             // TODO: Save is disabled for now for Argon2Kdf because it corrupts DB (read works)
-            if (_pwDatabase == null || !_pwDatabase.IsOpen || KdfPool.Get(_pwDatabase.KdfParameters.KdfUuid) is Argon2Kdf) return;
+            if (_pwDatabase == null || !_pwDatabase.IsOpen || KdfPool.Get(KeyDerivation.KdfUuid) is Argon2Kdf) return;
             _pwDatabase.Save(new NullStatusLogger());
         }
 
