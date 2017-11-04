@@ -2,7 +2,7 @@
 
 namespace ModernKeePassLib.Cryptography.Hash
 {
-    public class SHA512Managed: DigestManaged
+    public class SHA512Managed: HashAlgorithm
     {
         public SHA512Managed()
         {

@@ -6,12 +6,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:actions="using:ModernKeePass.Actions" 
+    xmlns:converters="using:ModernKeePass.Converters"
     mc:Ignorable="d"
     d:DesignHeight="120"
     d:DesignWidth="550" >
     <UserControl.Resources>
         <SolidColorBrush x:Key="ErrorColorBrush" Color="Red"/>
+        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
+        <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -19,7 +23,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
+            <RowDefinition Height="45" />
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -31,6 +35,7 @@
                 </core:DataTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
+        <ProgressBar Grid.Row="0" Grid.Column="1" Value="{Binding PasswordComplexityIndicator, ElementName=UserControl, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="500" VerticalAlignment="Bottom" Foreground="{Binding PasswordComplexityIndicator, ElementName=UserControl, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" Visibility="{Binding CreateNew, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <CheckBox x:Name="KeyFileCheckBox" Grid.Row="1" Grid.Column="0" />
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="Select key file from disk..." IsEnabled="{Binding IsChecked, ElementName=KeyFileCheckBox}" Click="KeyFileButton_Click" />
         <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" />

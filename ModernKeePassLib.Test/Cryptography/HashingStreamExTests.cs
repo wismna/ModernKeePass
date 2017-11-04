@@ -1,13 +1,7 @@
-﻿using NUnit.Framework;
-using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
+using NUnit.Framework;
 
-#if KeePassLib
-using KeePassLib.Cryptography;
-#else
 using ModernKeePassLib.Cryptography;
-#endif
 
 namespace ModernKeePassLib.Test.Cryptography
 {

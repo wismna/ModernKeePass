@@ -7,12 +7,11 @@
     xmlns:local="using:ModernKeePass.Controls"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core" 
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
-        <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:NewVm />
@@ -26,14 +25,13 @@
                 <TextBlock Text="{Binding Name}" />
                 <local:OpenDatabaseUserControl Password="{Binding Password, Mode=TwoWay}" CreateNew="True" >
                     <interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="ValidationChecked">
-                            <Core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />
-                        </Core:EventTriggerBehavior>
+                        <core:EventTriggerBehavior EventName="ValidationChecked">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />
+                        </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </local:OpenDatabaseUserControl>
-                <TextBlock >Password complexity</TextBlock>
-                <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="500" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             </StackPanel>
         </Border>
     </StackPanel>
 </Page>
+

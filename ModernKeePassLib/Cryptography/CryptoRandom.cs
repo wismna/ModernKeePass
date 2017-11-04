@@ -165,7 +165,7 @@ namespace ModernKeePassLib.Cryptography
 			pb = MemUtil.Int64ToBytes(DateTime.UtcNow.ToBinary());
 			MemUtil.Write(ms, pb);
 
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD)
 			// In try-catch for systems without GUI;
 			// https://sourceforge.net/p/keepass/discussion/329221/thread/20335b73/
 			try

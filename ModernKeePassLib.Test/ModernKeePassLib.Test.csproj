@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\Hash\SHAManagedTests.cs" />
     <Compile Include="Cryptography\KeyDerivation\Argon2Tests.cs" />
     <Compile Include="Cryptography\Hash\Blake2bTests.cs" />
     <Compile Include="Cryptography\Cipher\Chacha20Tests.cs" />

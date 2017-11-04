@@ -147,7 +147,7 @@ namespace ModernKeePassLib.Serialization
 		{
 			bool bMadeUnhidden = UrlUtil.UnhideFile(m_iocBase.Path);
 
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD)
 			FileSecurity bkSecurity = null;
 			bool bEfsEncrypted = false;
 #endif
@@ -161,7 +161,7 @@ namespace ModernKeePassLib.Serialization
 
 			if(IOConnection.FileExists(m_iocBase))
 			{
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD)
 				if(m_iocBase.IsLocalFile())
 				{
 					try
@@ -183,7 +183,7 @@ namespace ModernKeePassLib.Serialization
 
 			IOConnection.RenameFile(m_iocTemp, m_iocBase);
 
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
+#if (!ModernKeePassLib && !KeePassLibSD)
 			if(m_iocBase.IsLocalFile())
 			{
 				try

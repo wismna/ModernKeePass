@@ -68,7 +68,7 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
             }
         }
 
-        public static string ByteToString(byte[] buff)
+        private static string ByteToString(byte[] buff)
         {
             string sbinary = "";
 

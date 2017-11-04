@@ -3,7 +3,7 @@ using Org.BouncyCastle.Crypto;
 
 namespace ModernKeePassLib.Cryptography.Hash
 {
-    public abstract class DigestManaged: IDisposable
+    public abstract class HashAlgorithm: IDisposable
     {
         protected IDigest Digest;
 
@@ -16,6 +16,9 @@ namespace ModernKeePassLib.Cryptography.Hash
                 return result;
             }
         }
+
+        public bool CanReuseTransform => true;
+        public bool CanTransformMultipleBlocks => true;
 
         public byte[] ComputeHash(byte[] value)
         {
@@ -41,9 +44,13 @@ namespace ModernKeePassLib.Cryptography.Hash
                 Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
         }
 
-        public void TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
             Digest.BlockUpdate(inputBuffer, inputOffset, inputCount);
+            byte[] outputBytes = new byte[inputCount];
+            if (inputCount != 0)
+                Buffer.BlockCopy(inputBuffer, inputOffset, outputBytes, 0, inputCount);
+            return outputBytes;
         }
 
         public void Dispose()

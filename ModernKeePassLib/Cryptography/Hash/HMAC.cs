@@ -40,9 +40,13 @@ namespace ModernKeePassLib.Cryptography.Hash
                 Buffer.BlockCopy(inputBuffer, inputOffset, outputBuffer, outputOffset, inputCount);
         }
 
-        public void TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
+        public byte[] TransformFinalBlock(byte[] inputBuffer, int inputOffset, int inputCount)
         {
             Hmac.BlockUpdate(inputBuffer, inputOffset, inputCount);
+            byte[] outputBytes = new byte[inputCount];
+            if (inputCount != 0)
+                Buffer.BlockCopy(inputBuffer, inputOffset, outputBytes, 0, inputCount);
+            return outputBytes;
         }
 
         public void Initialize()

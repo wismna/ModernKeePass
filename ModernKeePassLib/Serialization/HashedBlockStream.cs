@@ -283,7 +283,7 @@ namespace ModernKeePassLib.Serialization
 
 			if(m_nBufferPos > 0)
 			{
-				byte[] pbHash = CryptoUtil.HashSha256(m_pbBuffer.Where((x, i) => i < m_nBufferPos).ToArray(), 0, m_nBufferPos);
+				byte[] pbHash = CryptoUtil.HashSha256(m_pbBuffer, 0, m_nBufferPos);
 
 				// For KeePassLibSD:
 				// SHA256Managed sha256 = new SHA256Managed();

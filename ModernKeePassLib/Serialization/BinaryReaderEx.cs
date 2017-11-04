@@ -75,7 +75,7 @@ namespace ModernKeePassLib.Serialization
 				if(m_sCopyTo != null) m_sCopyTo.Write(pb, 0, pb.Length);
 				return pb;
 			}
-			catch(Exception ex)
+			catch(Exception)
 			{
 				if(!string.IsNullOrEmpty(m_strReadExcp))
 					throw new IOException(m_strReadExcp);

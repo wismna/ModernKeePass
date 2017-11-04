@@ -161,6 +161,7 @@
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
+    <Compile Include="ViewModels\Controls\OpenDatabaseUserControlVM.cs" />
     <Compile Include="ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />
