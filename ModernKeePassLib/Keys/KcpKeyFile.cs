@@ -268,7 +268,6 @@ namespace ModernKeePassLib.Keys
 				doc.Load(ms);
 
 				XmlElement el = doc.DocumentElement;
-
 				if((el == null) || !el.Name.Equals(RootElementName)) return null;
 				if(el.ChildNodes.Count < 2) return null;
 

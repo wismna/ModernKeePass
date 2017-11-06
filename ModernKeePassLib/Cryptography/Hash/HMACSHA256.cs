@@ -1,15 +1,10 @@
-﻿using Org.BouncyCastle.Crypto.Digests;
-using Org.BouncyCastle.Crypto.Macs;
-using Org.BouncyCastle.Crypto.Parameters;
+﻿using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.Security.Cryptography.Core;
 
 namespace ModernKeePassLib.Cryptography.Hash
 {
-    public class HMACSHA256: HMAC
+    public class HMACSHA256: HashAlgorithm
     {
-        public HMACSHA256(byte[] key)
-        {
-            Hmac = new HMac(new Sha256Digest());
-            Hmac.Init(new KeyParameter(key));
-        }
+        public HMACSHA256(byte[] key) : base (MacAlgorithmProvider.OpenAlgorithm(MacAlgorithmNames.HmacSha256).CreateHash(key.AsBuffer())) {}
     }
 }

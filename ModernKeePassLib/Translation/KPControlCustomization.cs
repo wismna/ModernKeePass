@@ -19,16 +19,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
-using System.Windows.Forms;
 using System.Diagnostics;
-using System.Xml.Serialization;
 using System.Globalization;
-using System.IO;
-using System.Security.Cryptography;
-using System.Drawing;
+using System.Text;
+using System.Xml.Serialization;
 
+#if !KeePassUAP
+using System.Drawing;
+using System.Windows.Forms;
+#endif
+
+using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Translation
@@ -112,7 +114,7 @@ namespace ModernKeePassLib.Translation
 			else { Debug.Assert(false); }
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		internal void ApplyTo(Control c)
 		{
 			Debug.Assert(c != null); if(c == null) return;
@@ -267,7 +269,7 @@ namespace ModernKeePassLib.Translation
 			return m_strMemberName.CompareTo(kpOther.Name);
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		private static readonly Type[] m_vTextControls = new Type[] {
 			typeof(MenuStrip), typeof(PictureBox), typeof(ListView),
 			typeof(TreeView), typeof(ToolStrip), typeof(WebBrowser),

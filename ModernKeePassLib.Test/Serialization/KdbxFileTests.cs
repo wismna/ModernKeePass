@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
@@ -10,7 +10,7 @@ using ModernKeePassLib.Collections;
 
 namespace ModernKeePassLib.Test.Serialization
 {
-    [TestFixture()]
+    [TestClass()]
     public class KdbxFileTests
     {
         const string TestLocalizedAppName = "My Localized App Name";
@@ -86,7 +86,7 @@ namespace ModernKeePassLib.Test.Serialization
 
         const string TestDate = "2017-10-23T08:03:55Z";
 
-        [Test()]
+        [TestMethod]
         public void TestLoad()
         {
             var database = new PwDatabase();
@@ -96,12 +96,12 @@ namespace ModernKeePassLib.Test.Serialization
                 file.Load(ms, KdbxFormat.PlainXml, null);
             }
             //Assert.That(database.Color.ToArgb(), Is.EqualTo(Color.Red.ToArgb()));
-            Assert.That(database.Compression, Is.EqualTo(PwCompressionAlgorithm.GZip));
+            Assert.AreEqual(database.Compression, PwCompressionAlgorithm.GZip);
             //Assert.That (database.CustomData, Is.EqualTo ());
-            Assert.That(database.CustomIcons, Is.Empty);
+            Assert.IsTrue(database.CustomIcons.Count == 0);
         }
 
-        [Test()]
+        [TestMethod]
         public void TestSave()
         {
             var buffer = new byte[4096];
@@ -134,18 +134,17 @@ namespace ModernKeePassLib.Test.Serialization
                 var file = new KdbxFile(database);
                 file.Save(ms, null, KdbxFormat.PlainXml, null);
             }
-            var fileContents = Encoding.UTF8.GetString(buffer).Replace("\0", "");
-            if (typeof(KdbxFile).Namespace.StartsWith("KeePassLib.")
-                && Environment.OSVersion.Platform != PlatformID.Win32NT)
+            var fileContents = Encoding.UTF8.GetString(buffer, 0, buffer.Length).Replace("\0", "");
+            if (typeof(KdbxFile).Namespace.StartsWith("KeePassLib."))
             {
                 // Upstream KeePassLib does not specify line endings for XmlTextWriter,
                 // so it uses native line endings.
                 fileContents = fileContents.Replace("\n", "\r\n");
             }
-            Assert.That(fileContents, Is.EqualTo(TestDatabase));
+            Assert.AreEqual(fileContents, TestDatabase);
         }
 
-        [Test]
+        [TestMethod]
         public void TestSearch()
         {
             var database = new PwDatabase();

@@ -27,8 +27,8 @@ namespace ModernKeePassLib.Cryptography.Hash
             if (value == null) throw new ArgumentNullException(nameof(value));
 
             byte[] resBuf = new byte[Hmac.GetMacSize()];
-            Hmac.BlockUpdate(value, 0, length);
-            Hmac.DoFinal(resBuf, 0);
+            Hmac.BlockUpdate(value, offset, length);
+            Hmac.DoFinal(resBuf, offset);
 
             return resBuf;
         }

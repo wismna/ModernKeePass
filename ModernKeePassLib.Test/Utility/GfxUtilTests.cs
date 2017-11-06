@@ -1,16 +1,10 @@
-﻿using NUnit.Framework;
-using System;
-
-#if KeePassLib
-using KeePassLib.Utility;
-#else
-using Splat;
+﻿using System;
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using ModernKeePassLib.Utility;
-#endif
 
 namespace ModernKeePassLib.Test.Utility
 {
-    [TestFixture ()]
+    [TestClass ()]
     public class GfxUtilTests
     {
         // 16x16 all white PNG file, base64 encoded
@@ -20,14 +14,14 @@ namespace ModernKeePassLib.Test.Utility
             "VkIHdpdGggR0lNUFeBDhcAAAAaSURBVCjPY/z//z8DKYCJgUQwqmFUw9DRAABVb" +
             "QMdny4VogAAAABJRU5ErkJggg==";
 
-        [Test ()]
+        [TestMethod]
         public void TestLoadImage ()
         {
             var testData = Convert.FromBase64String (testImageData);
             var image = GfxUtil.ScaleImage(testData, 16, 16).GetAwaiter().GetResult();
             //var image = GfxUtil.LoadImage(testData);
-            Assert.That (image.Width, Is.EqualTo (16));
-            Assert.That (image.Height, Is.EqualTo (16));
+            Assert.AreEqual(image.Width, 16);
+            Assert.AreEqual(image.Height, 16);
         }
     }
 }

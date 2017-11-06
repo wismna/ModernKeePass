@@ -20,17 +20,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-#if ModernKeePassLib
+
+using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Utility;
-using ModernKeePassLib.Cryptography;
-#else
-using KeePassLib.Cryptography;
-using KeePassLib.Native;
-using KeePassLib.Utility;
-#endif
 
 #if KeePassLibSD
 using KeePassLibSD;

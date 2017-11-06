@@ -1,60 +1,56 @@
-﻿using NUnit.Framework;
-using System;
+﻿using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 
-#if KeePassLib
-using KeePassLib.Cryptography;
-#else
 using ModernKeePassLib.Cryptography;
-#endif
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Test.Cryptography
 {
-  [TestFixture ()]
-  public class CryptoRandomStreamTests
-  {
-    void TestGetRandomBytes(CryptoRandomStream stream)
+    [TestClass]
+    public class CryptoRandomStreamTests
     {
-      const uint length = 16;
-      var bytes1 = stream.GetRandomBytes (length);
-      Assert.That (bytes1.Length, Is.EqualTo (length));
-      var bytes2 = stream.GetRandomBytes (length);
-      Assert.That (bytes2, Is.Not.EqualTo (bytes1));
-    }
+        private void TestGetRandomBytes(CryptoRandomStream stream)
+        {
+            const uint length = 16;
+            var bytes1 = stream.GetRandomBytes(length);
+            Assert.AreEqual(bytes1.Length, (int)length);
+            var bytes2 = stream.GetRandomBytes(length);
+            Assert.IsFalse(MemUtil.ArraysEqual(bytes2, bytes1));
+        }
 
-    [Test ()]
-    public void TestGetRandomBytesCrsAlgorithmSalsa20 ()
-    {
-      var stream = new CryptoRandomStream (CrsAlgorithm.Salsa20, new byte[16]);
-      TestGetRandomBytes (stream);
-    }
+        [TestMethod]
+        public void TestGetRandomBytesCrsAlgorithmSalsa20()
+        {
+            var stream = new CryptoRandomStream(CrsAlgorithm.Salsa20, new byte[16]);
+            TestGetRandomBytes(stream);
+        }
 
-    [Test ()]
-    public void TestGetRandomBytesCrsAlgorithmArcFourVariant ()
-    {
-      var stream = new CryptoRandomStream (CrsAlgorithm.ArcFourVariant, new byte[16]);
-      TestGetRandomBytes (stream);
-    }
+        [TestMethod]
+        public void TestGetRandomBytesCrsAlgorithmArcFourVariant()
+        {
+            var stream = new CryptoRandomStream(CrsAlgorithm.ArcFourVariant, new byte[16]);
+            TestGetRandomBytes(stream);
+        }
 
-    void TestGetRandomInt64 (CryptoRandomStream stream)
-    {
-      var value1 = stream.GetRandomUInt64 ();
-      var value2 = stream.GetRandomUInt64 ();
-      Assert.That (value2, Is.Not.EqualTo (value1));
-    }
+        private void TestGetRandomInt64(CryptoRandomStream stream)
+        {
+            var value1 = stream.GetRandomUInt64();
+            var value2 = stream.GetRandomUInt64();
+            Assert.AreNotEqual(value2, value1);
+        }
 
-    [Test ()]
-    public void TestGetRandomInt64AlgorithmSalsa20 ()
-    {
-      var stream = new CryptoRandomStream (CrsAlgorithm.Salsa20, new byte[16]);
-      TestGetRandomInt64 (stream);
-    }
+        [TestMethod]
+        public void TestGetRandomInt64AlgorithmSalsa20()
+        {
+            var stream = new CryptoRandomStream(CrsAlgorithm.Salsa20, new byte[16]);
+            TestGetRandomInt64(stream);
+        }
 
-    [Test ()]
-    public void TestGetRandomInt64AlgorithmArcFourVariant ()
-    {
-      var stream = new CryptoRandomStream (CrsAlgorithm.ArcFourVariant, new byte[16]);
-      TestGetRandomInt64 (stream);
+        [TestMethod]
+        public void TestGetRandomInt64AlgorithmArcFourVariant()
+        {
+            var stream = new CryptoRandomStream(CrsAlgorithm.ArcFourVariant, new byte[16]);
+            TestGetRandomInt64(stream);
+        }
     }
-  }
 }
 

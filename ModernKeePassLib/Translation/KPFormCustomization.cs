@@ -21,10 +21,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml.Serialization;
-using System.Diagnostics;
-using System.Reflection;
+
+#if !KeePassUAP
+using System.Windows.Forms;
+#endif
 
 namespace ModernKeePassLib.Translation
 {
@@ -67,7 +68,7 @@ namespace ModernKeePassLib.Translation
 			}
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP)
 		private Form m_formEnglish = null;
 		[XmlIgnore]
 		public Form FormEnglish

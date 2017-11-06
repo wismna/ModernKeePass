@@ -25,7 +25,7 @@ namespace ModernKeePass.ViewModels
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
         public bool IsFirstItem => _pwEntry == null;
 
-        public double PasswordLength { get; set; } = 25;
+
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
         public bool DigitsPatternSelected { get; set; } = true;
@@ -37,6 +37,15 @@ namespace ModernKeePass.ViewModels
         public string CustomChars { get; set; } = string.Empty;
         public PwUuid IdUuid => _pwEntry?.Uuid;
 
+        public double PasswordLength
+        {
+            get { return _passwordLength; }
+            set
+            {
+                _passwordLength = value;
+                NotifyPropertyChanged("PasswordLength");
+            }
+        }
         public string Name
         {
             get
@@ -54,6 +63,7 @@ namespace ModernKeePass.ViewModels
             get { return GetEntryValue(PwDefs.UserNameField); }
             set { SetEntryValue(PwDefs.UserNameField, value); }
         }
+
         public string Password
         {
             get { return GetEntryValue(PwDefs.PasswordField); }
@@ -91,6 +101,7 @@ namespace ModernKeePass.ViewModels
             get { return new DateTimeOffset(_pwEntry.ExpiryTime.Date); }
             set { if (HasExpirationDate) _pwEntry.ExpiryTime = value.DateTime; }
         }
+
         public TimeSpan ExpiryTime
         {
             get { return _pwEntry.ExpiryTime.TimeOfDay; }
@@ -142,6 +153,7 @@ namespace ModernKeePass.ViewModels
         private readonly App _app = (App)Application.Current;
         private bool _isEditMode;
         private bool _isRevealPassword;
+        private double _passwordLength = 25;
 
         private void NotifyPropertyChanged(string propertyName)
         {

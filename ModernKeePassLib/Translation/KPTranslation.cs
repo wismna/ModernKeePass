@@ -19,23 +19,26 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using System.Windows.Forms;
-using System.ComponentModel;
+
+#if !KeePassUAP
 using System.Drawing;
-using System.Diagnostics;
+using System.Windows.Forms;
+#endif
+
+#if KeePassLibSD
+using ICSharpCode.SharpZipLib.GZip;
+#else
+using System.IO.Compression;
+#endif
 
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Utility;
-
-#if !KeePassLibSD
-using System.IO.Compression;
-#else
-using ICSharpCode.SharpZipLib.GZip;
-#endif
 
 namespace ModernKeePassLib.Translation
 {

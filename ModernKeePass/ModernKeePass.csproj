@@ -161,7 +161,7 @@
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
-    <Compile Include="ViewModels\Controls\OpenDatabaseUserControlVM.cs" />
+    <Compile Include="ViewModels\Controls\OpenDatabaseUserControlVm.cs" />
     <Compile Include="ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />
@@ -296,7 +296,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Validation, Version=2.4.0.0, Culture=neutral, PublicKeyToken=2fc06f0d701809a7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Validation.2.4.15\lib\portable-net45+win8+wp8+wpa81\Validation.dll</HintPath>
+      <HintPath>..\packages\Validation.2.4.18\lib\portable-net45+win8+wp8+wpa81\Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

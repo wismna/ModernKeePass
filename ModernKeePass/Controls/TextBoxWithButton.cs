@@ -6,15 +6,38 @@ namespace ModernKeePass.Controls
 {
     public class TextBoxWithButton : TextBox
     {
-        public event EventHandler<RoutedEventArgs> GotoClick;
+        /*public Symbol ButtonSymbol
+        {
+            get { return (Symbol)GetValue(ButtonSymbolProperty); }
+            set { SetValue(ButtonSymbolProperty, value); }
+        }
+        public static readonly DependencyProperty ButtonSymbolProperty =
+            DependencyProperty.Register(
+                "ButtonSymbol",
+                typeof(Symbol),
+                typeof(TextBoxWithButton),
+                new PropertyMetadata(Symbol.Delete, (o, args) => { }));*/
+
+        public string ButtonSymbol
+        {
+            get { return (string)GetValue(ButtonSymbolProperty); }
+            set { SetValue(ButtonSymbolProperty, value); }
+        }
+        public static readonly DependencyProperty ButtonSymbolProperty =
+            DependencyProperty.Register(
+                "ButtonSymbol",
+                typeof(string),
+                typeof(TextBoxWithButton),
+                new PropertyMetadata("&#xE107;", (o, args) => { }));
+        public event EventHandler<RoutedEventArgs> ButtonClick;
 
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            var extraButton = GetTemplateChild("GotoButton") as Button;
-            if (extraButton != null)
+            var actionButton = GetTemplateChild("ActionButton") as Button;
+            if (actionButton != null)
             {
-                extraButton.Click += (sender, e) => GotoClick?.Invoke(sender, e);
+                actionButton.Click += (sender, e) => ButtonClick?.Invoke(sender, e);
             }
         }
     }
