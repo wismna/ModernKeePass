@@ -108,6 +108,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Actions\ClipboardAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -161,7 +162,6 @@
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
-    <Compile Include="ViewModels\Controls\OpenDatabaseUserControlVm.cs" />
     <Compile Include="ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />

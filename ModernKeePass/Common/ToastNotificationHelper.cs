@@ -2,7 +2,6 @@
 using Windows.Data.Json;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 
@@ -12,7 +11,6 @@ namespace ModernKeePass.Common
     {
         public static void ShowMovedToast(IPwEntity entity, string action, string text)
         {
-            var app = (App)Application.Current;
             var entityType = entity is GroupVm ? "Group" : "Entry";
             var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");

@@ -1,17 +1,24 @@
 ﻿using System;
+using System.ComponentModel;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
+using ModernKeePassLib.Cryptography;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace ModernKeePass.Controls
 {
-    public sealed partial class OpenDatabaseUserControl
+    public sealed partial class OpenDatabaseUserControl: INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public double PasswordComplexityIndicator { get; private set; }
+
         public bool CreateNew
         {
             get { return (bool)GetValue(CreateNewProperty); }
@@ -26,7 +33,7 @@ namespace ModernKeePass.Controls
 
         public string Password
         {
-            get { return (string)GetValue(PasswordProperty); }
+            get { return (string) GetValue(PasswordProperty); }
             set { SetValue(PasswordProperty, value); }
         }
         public static readonly DependencyProperty PasswordProperty =
@@ -35,7 +42,12 @@ namespace ModernKeePass.Controls
                 typeof(string),
                 typeof(OpenDatabaseUserControl),
                 new PropertyMetadata(string.Empty, (o, args) => { }));
-        
+
+        private void NotifyPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public OpenDatabaseUserControl()
         {
             InitializeComponent();
@@ -87,6 +99,13 @@ namespace ModernKeePass.Controls
             var app = (App)Application.Current;
             app.Database.KeyFile = file;
             StatusTextBlock.Text = $"Key file: {file.Name}";
+        }
+
+        private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            var passwordBox = sender as PasswordBox;
+            PasswordComplexityIndicator = QualityEstimation.EstimatePasswordBits(passwordBox?.Password.ToCharArray());
+            NotifyPropertyChanged("PasswordComplexityIndicator");
         }
     }
 }
