@@ -8,16 +8,22 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions" 
     xmlns:converters="using:ModernKeePass.Converters"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
     mc:Ignorable="d"
     d:DesignHeight="120"
     d:DesignWidth="550" >
     <UserControl.Resources>
         <SolidColorBrush x:Key="ErrorColorBrush" Color="Red"/>
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
-        <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
+        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:DiscreteIntToSolidColorBrushConverter x:Key="DiscreteIntToSolidColorBrushConverter"/>
     </UserControl.Resources>
-    <Grid>
+    <Grid x:Name="Grid">
+        <!-- DataContext is not set at the root of the control because of issues happening when displaying it -->
+        <Grid.DataContext>
+            <viewModels:CompositeKeyVm />
+        </Grid.DataContext>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="*" />
@@ -27,22 +33,22 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <CheckBox x:Name="PasswordCheckBox" Grid.Row="0" Grid.Column="0" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" PasswordChanged="PasswordBox_OnPasswordChanged" Password="{Binding Password, ElementName=UserControl, Mode=TwoWay}" Height="30" IsEnabled="{Binding IsChecked, ElementName=PasswordCheckBox}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" >
+        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" Password="{Binding Password, Mode=TwoWay}" Height="30" IsEnabled="{Binding HasPassword}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
             <interactivity:Interaction.Behaviors>
-                <core:DataTriggerBehavior Binding="{Binding IsChecked, ElementName=PasswordCheckBox}" Value="True">
+                <core:DataTriggerBehavior Binding="{Binding HasPassword}" Value="True">
                     <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
                 </core:DataTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
-        <ProgressBar x:Name="progressBar" Grid.Row="0" Grid.Column="1" 
-                     Maximum="128" Width="500" VerticalAlignment="Bottom" 
-                     Value="{Binding PasswordComplexityIndicator, ElementName=UserControl, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}"
-                     Foreground="{Binding PasswordComplexityIndicator, ElementName=UserControl, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" 
-                     Visibility="{Binding CreateNew, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <CheckBox x:Name="KeyFileCheckBox" Grid.Row="1" Grid.Column="0" />
-        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="Select key file from disk..." IsEnabled="{Binding IsChecked, ElementName=KeyFileCheckBox}" Click="KeyFileButton_Click" />
-        <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" />
-        <TextBlock Grid.Column="1" Grid.Row="2" x:Name="StatusTextBlock" Height="28" FontSize="14" FontWeight="Light" TextWrapping="WrapWholeWords" HorizontalAlignment="Right" />
+        <ProgressBar Grid.Row="0" Grid.Column="1" 
+                     Maximum="128" VerticalAlignment="Bottom" 
+                     Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}"
+                     Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushConverter}}" 
+                     Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
+        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="Select key file from disk..." IsEnabled="{Binding HasKeyFile}" Click="KeyFileButton_Click" />
+        <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" IsEnabled="{Binding IsValid}" />
+        <TextBlock Grid.Column="1" Grid.Row="2" Height="28" FontSize="14" FontWeight="Light" HorizontalAlignment="Right" Text="{Binding Status}" Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" />
     </Grid>
 </UserControl>

@@ -20,9 +20,9 @@ namespace ModernKeePass.ViewModels
 
         public OpenVm()
         {
-            var database = ((App)Application.Current).Database;
-            if (database == null || database.Status != DatabaseHelper.DatabaseStatus.Opening) return;
-            OpenFile(database.DatabaseFile);
+            var app = Application.Current as App;
+            if (app?.Database == null || app.Database.Status != DatabaseHelper.DatabaseStatus.Opening) return;
+            OpenFile(app.Database.DatabaseFile);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -53,8 +53,6 @@ namespace ModernKeePass.Common
             }
         }
 
-        public StorageFile KeyFile { get; set; }
-
         public PwUuid DataCipher
         {
             get { return _pwDatabase.DataCipherUuid; }
@@ -72,20 +70,18 @@ namespace ModernKeePass.Common
             get { return _pwDatabase.KdfParameters; }
             set { _pwDatabase.KdfParameters = value; }
         }
-
+        
         /// <summary>
         /// Open a KeePass database
         /// </summary>
-        /// <param name="password">The database password</param>
+        /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public string Open(string password, bool createNew = false)
+        public string Open(CompositeKey key, bool createNew = false)
         {
-            var key = new CompositeKey();
             try
             {
-                if (password != null) key.AddUserKey(new KcpPassword(password));
-                if (KeyFile != null) key.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
+                if (key == null) return "No composite key";
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew) _pwDatabase.New(ioConnection, key);
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
@@ -151,6 +147,11 @@ namespace ModernKeePass.Common
             RecycleBin = RootGroup.AddNewGroup("Recycle bin");
             RecycleBin.IsSelected = true;
             RecycleBin.IconSymbol = Symbol.Delete;
+        }
+
+        public void UpdateCompositeKey(CompositeKey key)
+        {
+            _pwDatabase.MasterKey = key;
         }
     }
 }

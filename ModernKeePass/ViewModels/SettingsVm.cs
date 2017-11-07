@@ -37,6 +37,7 @@ namespace ModernKeePass.ViewModels
             MenuItems = new ObservableCollection<ListMenuItemVm>
             {
                 new ListMenuItemVm { Title = "Database", SymbolIcon = Symbol.Setting, PageType = typeof(SettingsDatabasePage), IsSelected = true },
+                new ListMenuItemVm { Title = "Security", SymbolIcon = Symbol.Permissions, PageType = typeof(SettingsSecurityPage) },
                 //new ListMenuItemVm { Title = "General", SymbolIcon = Symbol.Edit, PageType = typeof(SettingsGeneralPage) }
             };
             SelectedItem = MenuItems.FirstOrDefault(m => m.IsSelected);

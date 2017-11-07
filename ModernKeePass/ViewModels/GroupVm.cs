@@ -86,7 +86,7 @@ namespace ModernKeePass.ViewModels
         }
 
         private readonly PwGroup _pwGroup;
-        private readonly App _app = (App)Application.Current;
+        private readonly App _app = Application.Current as App;
         private bool _isEditMode;
 
         public GroupVm() {}

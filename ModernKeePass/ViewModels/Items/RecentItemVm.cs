@@ -1,13 +1,15 @@
 ﻿using Windows.Storage;
 using ModernKeePass.Common;
 using Windows.Storage.AccessCache;
+using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentItemVm: NotifyPropertyChangedBase
+    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
     {
         private bool _isSelected;
-        
+
+        public RecentItemVm() {}
         public RecentItemVm(AccessListEntry entry, StorageFile file)
         {
             Token = entry.Token;
@@ -15,15 +17,15 @@ namespace ModernKeePass.ViewModels
             DatabaseFile = file;
         }
 
-        public StorageFile DatabaseFile { get; private set; }
-        public string Token { get; private set; }
-        public string Name { get; private set; } = "Recent file";
-        public string Path => DatabaseFile.Path;
+        public StorageFile DatabaseFile { get; }
+        public string Token { get; }
+        public string Name { get; }
+        public string Path => DatabaseFile?.Path;
 
         public bool IsSelected
         {
             get { return _isSelected; }
-            internal set { SetProperty(ref _isSelected, value); }
+            set { SetProperty(ref _isSelected, value); }
         }
     }
 }

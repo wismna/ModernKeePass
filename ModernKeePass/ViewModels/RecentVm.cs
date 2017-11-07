@@ -2,12 +2,13 @@
 using System.Collections.ObjectModel;
 using Windows.Storage.AccessCache;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentVm : NotifyPropertyChangedBase
+    public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private RecentItemVm _selectedItem;
+        private ISelectableModel _selectedItem;
         private ObservableCollection<RecentItemVm> _recentItems = new ObservableCollection<RecentItemVm>();
 
         public ObservableCollection<RecentItemVm> RecentItems
@@ -16,7 +17,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _recentItems, value); }
         }
 
-        public RecentItemVm SelectedItem
+        public ISelectableModel SelectedItem
         {
             get { return _selectedItem; }
             set

@@ -16,7 +16,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
-        <converters:DoubleToForegroungBrushComplexityConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
+        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />

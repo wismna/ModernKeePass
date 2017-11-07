@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Media;
 
 namespace ModernKeePass.Converters
 {
-    public class DoubleToForegroungBrushComplexityConverter : IValueConverter
+    public class DoubleToSolidColorBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -21,7 +21,6 @@ namespace ModernKeePass.Converters
             {
                 return new SolidColorBrush(Color.FromArgb(255, 0, byte.MaxValue, 0));
             }
-            
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

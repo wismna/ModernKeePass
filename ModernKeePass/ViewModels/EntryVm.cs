@@ -150,7 +150,7 @@ namespace ModernKeePass.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly PwEntry _pwEntry;
-        private readonly App _app = (App)Application.Current;
+        private readonly App _app = Application.Current as App;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;

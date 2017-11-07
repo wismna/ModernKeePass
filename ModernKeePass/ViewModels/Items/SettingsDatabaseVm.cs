@@ -14,7 +14,7 @@ namespace ModernKeePass.ViewModels
 {
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly App _app = (App)Application.Current;
+        private readonly App _app = Application.Current as App;
         private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
         private GroupVm _selectedItem;
 

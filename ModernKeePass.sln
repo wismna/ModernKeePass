@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass", "ModernKeePass\ModernKeePass.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePassApp", "ModernKeePass\ModernKeePassApp.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePassLib", "ModernKeePassLib\ModernKeePassLib.csproj", "{2E710089-9559-4967-846C-E763DD1F3ACB}"
 EndProject
