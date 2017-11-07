@@ -11,7 +11,7 @@ using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Controls
 {
-    public sealed partial class OpenDatabaseUserControl
+    public sealed partial class CompositeKeyUserControl
     {
         public CompositeKeyVm Model => Grid.DataContext as CompositeKeyVm;
 
@@ -24,7 +24,7 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 "CreateNew",
                 typeof(bool),
-                typeof(OpenDatabaseUserControl),
+                typeof(CompositeKeyUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
         public bool UpdateKey
@@ -36,12 +36,12 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 "UpdateKey",
                 typeof(bool),
-                typeof(OpenDatabaseUserControl),
+                typeof(CompositeKeyUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
-        public OpenDatabaseUserControl()
+        public CompositeKeyUserControl()
         {
             InitializeComponent();
         }

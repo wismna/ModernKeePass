@@ -9,6 +9,6 @@
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Text="Change database security options" />
-        <local:OpenDatabaseUserControl UpdateKey="True" />
+        <local:CompositeKeyUserControl UpdateKey="True" />
     </StackPanel>
 </Page>

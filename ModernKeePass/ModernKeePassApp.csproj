@@ -134,8 +134,8 @@
     </Compile>
     <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
-    <Compile Include="Controls\OpenDatabaseUserControl.xaml.cs">
-      <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
+    <Compile Include="Controls\CompositeKeyUserControl.xaml.cs">
+      <DependentUpon>CompositeKeyUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBoxWithButton.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -214,7 +214,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\OpenDatabaseUserControl.xaml">
+    <Page Include="Controls\CompositeKeyUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
