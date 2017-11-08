@@ -24,6 +24,6 @@
         <TextBlock Text="Compression Algorithm" FontSize="14" Margin="5,20,0,10" />
         <ComboBox ItemsSource="{Binding Source={StaticResource Compressions}}" SelectedItem="{Binding CompressionName, Mode=TwoWay}" />
         <TextBlock Text="Key Derivation Algorithm" FontSize="14" Margin="5,20,0,10" />
-        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding KeyDerivationName, Mode=TwoWay}" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding KeyDerivationName, Mode=TwoWay}" IsEnabled="False" />
     </StackPanel>
 </Page>
