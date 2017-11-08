@@ -91,7 +91,7 @@ namespace ModernKeePass.ViewModels
 
         public SettingsDatabaseVm()
         {
-            Groups = _app.Database.RootGroup.Groups;
+            Groups = _app?.Database.RootGroup.Groups;
         }
 
         // TODO: Move to another setting class (or a static class)
