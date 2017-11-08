@@ -20,7 +20,7 @@ namespace ModernKeePass.ViewModels
         private readonly App _app = Application.Current as App;
         private bool _hasPassword;
         private bool _hasKeyFile;
-        private string _password;
+        private string _password = string.Empty;
         private string _status;
         private StatusTypes _statusType;
         private StorageFile _keyFile;
