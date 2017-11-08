@@ -26,11 +26,8 @@ using System.IO;
 using System.Security;
 using System.Text;
 using System.Xml;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
-#else
+
+#if !ModernKeePassLib && !KeePassUAP
 using System.Security.Cryptography;
 #endif
 
@@ -40,15 +37,15 @@ using System.IO.Compression;
 using KeePassLibSD;
 #endif
 
+using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Resources;
-using ModernKeePassLib.Utility;
-using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Security;
+using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Serialization
 {

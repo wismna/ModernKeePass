@@ -25,9 +25,8 @@ using System.IO;
 using System.Security;
 using System.Text;
 using System.Xml;
-#if ModernKeePassLib
-using Windows.Security.Cryptography;
-#else
+
+#if !ModernKeePassLib && !KeePassUAP
 using System.Drawing;
 using System.Security.Cryptography;
 #endif
@@ -41,15 +40,13 @@ using System.IO.Compression;
 using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.Cipher;
+using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Delegates;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Resources;
 using ModernKeePassLib.Security;
 using ModernKeePassLib.Utility;
-using Windows.Security.Cryptography.Core;
-using Windows.Storage.Streams;
-using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePassLib.Serialization
 {
@@ -212,8 +209,13 @@ namespace ModernKeePassLib.Serialization
 				xws.Indent = true;
 				xws.IndentChars = "\t";
 				xws.NewLineOnAttributes = false;
+#if ModernKeePassLib
+                // This is needed for Argon2Kdf write
+                xws.Async = true;
+			    if (m_uFileVersion >= FileVersion32_4) xws.CloseOutput = true;
+#endif
 
-				XmlWriter xw = XmlWriter.Create(sXml, xws);
+                XmlWriter xw = XmlWriter.Create(sXml, xws);
 #else
 				XmlTextWriter xw = new XmlTextWriter(sXml, encNoBom);
 

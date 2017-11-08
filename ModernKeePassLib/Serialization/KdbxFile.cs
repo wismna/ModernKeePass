@@ -519,8 +519,8 @@ namespace ModernKeePassLib.Serialization
 			byte[] pbData = pb.ReadData();
             /*var file = FileSystem.Current.GetFileFromPathAsync(strPath).Result;
 			using (var stream = file.OpenAsync(FileAccess.ReadAndWrite).Result) {*/
-            var file = StorageFile.GetFileFromPathAsync(strPath).GetResults();
-            using (var stream = file.OpenAsync(FileAccessMode.ReadWrite).GetResults().AsStream())
+            var file = StorageFile.GetFileFromPathAsync(strPath).GetAwaiter().GetResult();
+            using (var stream = file.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult().AsStream())
             {
                 stream.Write (pbData, 0, pbData.Length);
 			}
