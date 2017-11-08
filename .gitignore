@@ -37,3 +37,5 @@ Translation/TrlUtil.vshost.exe.manifest
 packages/
 project.lock.json
 AppPackages/
+BundleArtifacts/
+*.DotSettings
