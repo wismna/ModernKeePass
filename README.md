@@ -1,20 +1,18 @@
 # Introduction
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+ModernKeePass is a "port" of the KeePass application to the Windows Store, compatible with Windows RT, 8.1 and Windows 10.
+Also in this project is the ModernKeePass library, a port of KeePassLib for .NetStandard 1.2.
+
+# Features
+
 
 # Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Get the app here.
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+1. Clone repository
+2. Build the project
+3. All dependencies should be automatically be downloaded from Nuget
+ - ModernKeePassLib, version 2.37.5000
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://www.visualstudio.com/en-us/docs/git/create-a-readme). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+I currently need help in determining why there is an error while saving a KDBX4 (Argon2) password database.
