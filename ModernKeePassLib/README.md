@@ -5,7 +5,7 @@ It aims at introducing as little change as possible to the original library: ove
 
 Download the Nuget package [here](https://www.nuget.org/packages/ModernKeePassLib)
 
-#Features
+# Features
 - Custom implementation of the System.Security.Cryptography.HashAlgoritm class by using WinRT equivalents
 - Use of BouncyCastle PCL to implement AES key derivation features
 - Lots of small changes in .NET methods (UTF8 instead of ASCII, string.)
