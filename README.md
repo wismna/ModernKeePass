@@ -1,20 +1,40 @@
 # Introduction
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+**ModernKeePass** is port of the classic Windows application KeePass 2.x for the Windows Store.  
+It does not aim to be feature perfect, but aims at being simple to use and user-friendly.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+You can get it [here](https://www.microsoft.com/fr-fr/store/p/modernkeepass/9mwq48zk8nhv?rtc=1)
+
+# Features
+- Works on Windows 10, 8.1 and RT
+- Read and write support of KDBX files version 2, 3 and 4
+- Open database with password and key file
+- Create new databases
+- Create, edit and delete groups
+- Create, edit and delete entries
+- Generate passwords for entries
+- Use Recycle Bin
+- Search entries
+- Use Semantic Zoom to see your entries in a grouped mode
+- List recently opened databases
+- Open database from Windows Explorer
+- Change database encryption
+- Change database compression
+- Change database key derivation
+- Displays entry colors and icons (set in KeePass)
 
 # Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+1. Clone the repository
+2. Build the main app (the library reference dll is actually a NuGet dependency, built from the [**ModernKeePassLib** project](../ModernKeePassLib/README.md))
 
 # Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+I'm not the best at creating nice assets, so if anyone would like to contribute some nice icons, it would be awesome :)
+Otherwise, there are still many things left to implement:
+- Entry custom fields
+- Multi entry selection (for delete, or move)
+- Move entries from a group to another
+- Create key files
+- Open database from URL (and maybe some clouds?)
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://www.visualstudio.com/en-us/docs/git/create-a-readme). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+# Credits
+*Dominik Reichl* for the [KeePass application](https://keepass.info/), library and file format  
+*David Lechner* for his [PCL adapatation](https://github.com/dlech/KeePass2PCL) of the KeePass Library and the correlated tests which served as an inspiration basis for my own adaptation
