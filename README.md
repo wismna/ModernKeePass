@@ -5,6 +5,7 @@ It does not aim to be feature perfect, but aims at being simple to use and user-
 You can get it [here](https://www.microsoft.com/fr-fr/store/p/modernkeepass/9mwq48zk8nhv?rtc=1)
 
 # Features
+- Works on Windows 10, 8.1 and RT
 - Read and write support of KDBX files version 2, 3 and 4
 - Open database with password and key file
 - Create new databases
@@ -36,4 +37,4 @@ Otherwise, there are still many things left to implement:
 
 # Credits
 *Dominik Reichl* for the [KeePass application](https://keepass.info/), library and file format  
-*David Lechner* for his [PCL adapatation](https://github.com/dlech/KeePass2PCL) of the KeePass Library
+*David Lechner* for his [PCL adapatation](https://github.com/dlech/KeePass2PCL) of the KeePass Library and the correlated tests which served as an inspiration basis for my own adaptation
