@@ -32,7 +32,7 @@
             <Run Text="Dominik Reichl for the KeePass application and file format"/>
         </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
-            <Run Text="ArtjomP for his PCL adapatation of the KeePass Library"/>
+            <Run Text="David Lechner for his PCL adapatation of the KeePass Library and his correlated tests"/>
         </TextBlock>
     </StackPanel>
 </Page>
