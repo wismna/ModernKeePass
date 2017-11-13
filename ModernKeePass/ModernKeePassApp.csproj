@@ -200,7 +200,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="ModernKeePass_StoreKey.pfx" />
     <None Include="ModernKeePass_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
