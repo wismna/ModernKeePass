@@ -8,9 +8,7 @@ namespace ModernKeePass.ViewModels
         public void Save(bool close = true)
         {
             var app = (App)Application.Current;
-            app.Database.Save();
-            if (!close) return;
-            app.Database.Close();
+            if (close && app.Database.Save()) app.Database.Close();
         }
 
         internal void Save(StorageFile file)

@@ -23,5 +23,17 @@ namespace ModernKeePass.Common
             // Show the message dialog
             await messageDialog.ShowAsync();
         }
+
+        public static async void ShowErrorDialog(Exception exception)
+        {
+            // Create the message dialog and set its content
+            var messageDialog = new MessageDialog(exception.Message, "Error occured");
+
+            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
+            messageDialog.Commands.Add(new UICommand("OK"));
+            
+            // Show the message dialog
+            await messageDialog.ShowAsync();
+        }
     }
 }

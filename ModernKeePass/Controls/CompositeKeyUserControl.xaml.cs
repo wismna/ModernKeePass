@@ -3,7 +3,6 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
-using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
 
@@ -56,7 +55,7 @@ namespace ModernKeePass.Controls
             ValidationChecking?.Invoke(this, new EventArgs());
 
             if (UpdateKey) Model.UpdateKey();
-            else if (Model.OpenDatabase(CreateNew) == DatabaseHelper.DatabaseStatus.Opened)
+            else if (Model.OpenDatabase(CreateNew))
             {
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
             }
@@ -78,7 +77,9 @@ namespace ModernKeePass.Controls
             picker.FileTypeFilter.Add(".key");
 
             // Application now has read/write access to the picked file
-            Model.KeyFile = await picker.PickSingleFileAsync();
+            var file = await picker.PickSingleFileAsync();
+            if (file == null) return;
+            Model.KeyFile = file;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Text;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePassLib.Cryptography;
@@ -24,6 +25,7 @@ namespace ModernKeePass.ViewModels
         private string _status;
         private StatusTypes _statusType;
         private StorageFile _keyFile;
+        private string _keyFileText = "Select key file from disk...";
 
         public bool HasPassword
         {
@@ -45,7 +47,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsValid => HasPassword || HasKeyFile;
+        public bool IsValid => HasPassword || HasKeyFile && KeyFile != null;
 
         public string Status
         {
@@ -76,18 +78,37 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _keyFile = value;
-                UpdateStatus($"Key file: {value.Name}", StatusTypes.Normal);
+                KeyFileText = value?.Name;
+                OnPropertyChanged("IsValid");
             }
+        }
+
+        public string KeyFileText
+        {
+            get { return _keyFileText; }
+            set { SetProperty(ref _keyFileText, value); }
         }
 
         public GroupVm RootGroup { get; set; }
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
         
-        public DatabaseHelper.DatabaseStatus OpenDatabase(bool createNew)
+        public bool OpenDatabase(bool createNew)
         {
-            UpdateStatus(_app.Database.Open(CreateCompositeKey(), createNew), StatusTypes.Error);
-            RootGroup = _app.Database.RootGroup;
-            return _app.Database.Status;
+            _app.Database.Open(CreateCompositeKey(), createNew);
+            switch (_app.Database.Status)
+            {
+                case DatabaseHelper.DatabaseStatus.Opened:
+                    RootGroup = _app.Database.RootGroup;
+                    return true;
+                case DatabaseHelper.DatabaseStatus.CompositeKeyError:
+                    var errorMessage = new StringBuilder("Error: wrong ");
+                    if (HasPassword) errorMessage.Append("password");
+                    if (HasPassword && HasKeyFile) errorMessage.Append(" or ");
+                    if (HasKeyFile) errorMessage.Append("key file");
+                    UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
+                    break;
+            }
+            return false;
         }
 
         public void UpdateKey()

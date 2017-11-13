@@ -14,6 +14,9 @@ namespace ModernKeePass.Common
     {
         public enum DatabaseStatus
         {
+            Error = -3,
+            NoCompositeKey = -2,
+            CompositeKeyError = -1,
             Closed = 0,
             Opening = 1,
             Opened = 2
@@ -77,11 +80,11 @@ namespace ModernKeePass.Common
         /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public string Open(CompositeKey key, bool createNew = false)
+        public void Open(CompositeKey key, bool createNew = false)
         {
             try
             {
-                if (key == null) return "No composite key";
+                if (key == null) Status = DatabaseStatus.NoCompositeKey;
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew) _pwDatabase.New(ioConnection, key);
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
@@ -92,19 +95,14 @@ namespace ModernKeePass.Common
                     RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
                 }
             }
-            catch (ArgumentNullException)
-            {
-                return "Password cannot be empty";
-            }
             catch (InvalidCompositeKeyException)
             {
-                return "Wrong password";
+                Status = DatabaseStatus.CompositeKeyError;
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                Status = DatabaseStatus.Error;
             }
-            return string.Empty;
         }
 
         /// <summary>
@@ -121,11 +119,19 @@ namespace ModernKeePass.Common
         /// <summary>
         /// Commit the changes to the currently opened database to file
         /// </summary>
-        public void Save()
+        public bool Save()
         {
-            // TODO: Save is disabled for now for Argon2Kdf because it corrupts DB (read works)
-            if (_pwDatabase == null || !_pwDatabase.IsOpen /*|| KdfPool.Get(KeyDerivation.KdfUuid) is Argon2Kdf*/) return;
-            _pwDatabase.Save(new NullStatusLogger());
+            if (_pwDatabase == null || !_pwDatabase.IsOpen) return false;
+            try
+            {
+                _pwDatabase.Save(new NullStatusLogger());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageDialogHelper.ShowErrorDialog(ex);
+            }
+            return false;
         }
 
         /// <summary>
