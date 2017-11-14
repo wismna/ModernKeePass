@@ -25,6 +25,7 @@ You can get it [here](https://www.microsoft.com/fr-fr/store/p/modernkeepass/9mwq
 # Build and Test
 1. Clone the repository
 2. Build the main app (the library reference dll is actually a NuGet dependency, built from the [**ModernKeePassLib** project](../ModernKeePassLib/README.md))
+3. Edit the `.appxmanifest` file to select another certificate (you can create one using Visual Studio or *certutil.exe*)
 
 # Contribute
 I'm not the best at creating nice assets, so if anyone would like to contribute some nice icons, it would be awesome :)
