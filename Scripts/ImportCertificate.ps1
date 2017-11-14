@@ -4,4 +4,5 @@
 param(
     [Parameter(Mandatory=$true)][string]$CertPath
 )
-Write-Host "Registering certificate: $CertPath" -CertStoreLocation cert:\CurrentUser\Root
+Write-Host "Registering certificate: $CertPath"
+Import-Certificate -Filepath "$CertPath" -CertStoreLocation cert:\CurrentUser\Root
