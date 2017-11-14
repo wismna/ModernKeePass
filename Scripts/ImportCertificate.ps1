@@ -2,7 +2,7 @@
 [CmdletBinding()]
 
 param(
-    [string]$CertPath = "$Env:BUILD_ARTIFACTSTAGINGDIRECTORY",
-    [Parameter(Mandatory=$true)][string]$FileName
+    [Parameter(Mandatory=$true)][string]$CertPath
 )
-Import-Certificate -Filepath "$CertPath\$FileName"
+Write-Host "Registering certificate: $CertPath"
+Import-Certificate -Filepath "$CertPath" -CertStoreLocation cert:\CurrentUser\Root
