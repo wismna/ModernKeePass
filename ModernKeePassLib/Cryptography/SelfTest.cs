@@ -118,7 +118,7 @@ namespace ModernKeePassLib.Cryptography
 			for(i = 0; i < 16; ++i) pbTestData[i] = 0;
 			pbTestData[0] = 0x04;
 
-#if ModernKeePassLib
+#if ModernKeePassLib || KeePassUAP
 			AesEngine r = new AesEngine();
 			r.Init(true, new KeyParameter(pbTestKey));
 			if(r.GetBlockSize() != pbTestData.Length)
@@ -1032,7 +1032,7 @@ namespace ModernKeePassLib.Cryptography
 		private static void TestUrlUtil()
 		{
 #if DEBUG
-#if !ModernKeePassLib
+#if !ModernKeePassLib && !KeePassUAP
 			Debug.Assert(Uri.UriSchemeHttp.Equals("http", StrUtil.CaseIgnoreCmp));
 			Debug.Assert(Uri.UriSchemeHttps.Equals("https", StrUtil.CaseIgnoreCmp));
 #endif

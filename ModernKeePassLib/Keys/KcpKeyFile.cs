@@ -23,13 +23,13 @@ using System.IO;
 using System.Security;
 using System.Text;
 using System.Xml;
-
 #if ModernKeePassLib
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
+using Windows.Storage;
 #else
 using System.Security.Cryptography;
 #endif
@@ -67,6 +67,13 @@ namespace ModernKeePassLib.Keys
 		{
 			get { return m_pbKeyData; }
 		}
+
+#if ModernKeePassLib
+        public KcpKeyFile(StorageFile strKeyFile)
+	    {
+	        Construct(IOConnectionInfo.FromFile(strKeyFile), false);
+	    }
+#endif
 
 		public KcpKeyFile(string strKeyFile)
 		{
@@ -185,7 +192,11 @@ namespace ModernKeePassLib.Keys
 		/// the random key. May be <c>null</c> (in this case only the KeePass-internal
 		/// random number generator is used).</param>
 		/// <returns>Returns a <c>FileSaveResult</c> error code.</returns>
+#if ModernKeePassLib
+        public static void Create(StorageFile strFilePath, byte[] pbAdditionalEntropy)
+#else
 		public static void Create(string strFilePath, byte[] pbAdditionalEntropy)
+#endif
 		{
 			byte[] pbKey32 = CryptoRandom.Instance.GetRandomBytes(32);
 			if(pbKey32 == null) throw new SecurityException();
@@ -293,18 +304,25 @@ namespace ModernKeePassLib.Keys
 
 			return pbKeyData;
 		}
-
+#if ModernKeePassLib
+        private static void CreateXmlKeyFile(StorageFile strFile, byte[] pbKeyData)
+#else
 		private static void CreateXmlKeyFile(string strFile, byte[] pbKeyData)
+#endif
 		{
 			Debug.Assert(strFile != null);
 			if(strFile == null) throw new ArgumentNullException("strFile");
 			Debug.Assert(pbKeyData != null);
 			if(pbKeyData == null) throw new ArgumentNullException("pbKeyData");
 
+#if ModernKeePassLib
+            IOConnectionInfo ioc = IOConnectionInfo.FromFile(strFile);
+#else
 			IOConnectionInfo ioc = IOConnectionInfo.FromPath(strFile);
+#endif
 			Stream sOut = IOConnection.OpenWrite(ioc);
 
-#if ModernKeePassLib
+#if ModernKeePassLib || KeePassUAP
 			XmlWriterSettings xws = new XmlWriterSettings();
 			xws.Encoding = StrUtil.Utf8;
 			xws.Indent = false;

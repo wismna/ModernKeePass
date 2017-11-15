@@ -13,10 +13,12 @@ namespace ModernKeePassLib.Test.Cryptography.Cipher
     public class StandardAesEngineTests
     {
         // Test vector (official ECB test vector #356)
-        private byte[] pbReferenceCT = new byte[16] {
-          0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
-          0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7
-      };
+        private byte[] pbReferenceCT = new byte[16]
+        {
+            0x75, 0xD1, 0x1B, 0x0E, 0x3A, 0x68, 0xC4, 0x22,
+            0x3D, 0x88, 0xDB, 0xF0, 0x17, 0x97, 0x7D, 0xD7
+        };
+
         [TestMethod]
         public void TestEncryptStream()
         {
@@ -29,7 +31,7 @@ namespace ModernKeePassLib.Test.Cryptography.Cipher
             var aes = new StandardAesEngine();
             var inStream = aes.EncryptStream(outStream, pbTestKey, pbIV);
             new BinaryWriter(inStream).Write(pbTestData);
-            Assert.AreEqual(outStream.Position, 16);
+            Assert.AreEqual(16, outStream.Position);
             outStream.Position = 0;
             var outBytes = new BinaryReaderEx(outStream, Encoding.UTF8, string.Empty).ReadBytes(16);
             Assert.IsTrue(MemUtil.ArraysEqual(outBytes, pbReferenceCT));

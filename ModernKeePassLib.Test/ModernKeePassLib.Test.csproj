@@ -152,10 +152,6 @@
       <HintPath>..\packages\Portable.BouncyCastle.1.8.1.3\lib\netstandard1.0\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ModernKeePassLib, Version=2.37.0.2000, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.37.6000\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Splat, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Splat.2.0.0\lib\Portable-Win81+Wpa81\Splat.dll</HintPath>
       <Private>True</Private>
@@ -182,6 +178,12 @@
     <Content Include="Images\UnitTestStoreLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ModernKeePassLib\ModernKeePassLib.csproj">
+      <Project>{2e710089-9559-4967-846c-e763dd1f3acb}</Project>
+      <Name>ModernKeePassLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

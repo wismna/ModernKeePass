@@ -36,7 +36,7 @@ namespace ModernKeePassLib.Test.Keys
                 0x31, 0xAA, 0x14, 0x3D, 0x95, 0xBF, 0x63, 0xFF
             };
 
-            var fullPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, TestCreateFile);
+            //var fullPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, TestCreateFile);
             var file = ApplicationData.Current.TemporaryFolder.CreateFileAsync(TestCreateFile).GetAwaiter().GetResult();
             using (var fs = file.OpenStreamForWriteAsync().GetAwaiter().GetResult())
             {
@@ -50,7 +50,7 @@ namespace ModernKeePassLib.Test.Keys
 
             try
             {
-                var keyFile = new KcpKeyFile(fullPath);
+                var keyFile = new KcpKeyFile(file);
                 var keyData = keyFile.KeyData.ReadData();
                 Assert.IsTrue(MemUtil.ArraysEqual(keyData, expectedKeyData));
             }
@@ -63,9 +63,9 @@ namespace ModernKeePassLib.Test.Keys
         [TestMethod]
         public void TestCreate()
         {
-            var fullPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, TestCreateFile);
+            //var fullPath = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, TestCreateFile);
             var file = ApplicationData.Current.TemporaryFolder.CreateFileAsync(TestCreateFile).GetAwaiter().GetResult();
-            KcpKeyFile.Create(fullPath, null);
+            KcpKeyFile.Create(file, null);
             try
             {
                 var fileContents = FileIO.ReadTextAsync(file).GetAwaiter().GetResult();
