@@ -1,3 +1,5 @@
+[<img src="https://geogeob.visualstudio.com/_apis/public/build/definitions/04291454-0e79-47a4-9502-5bd374804ccf/2/badge"/>](https://geogeob.visualstudio.com/_apis/public/build/index?definitionId=2)
+
 # Introduction
 **ModernKeePass** is port of the classic Windows application KeePass 2.x for the Windows Store.  
 It does not aim to be feature perfect, but aims at being simple to use and user-friendly.
