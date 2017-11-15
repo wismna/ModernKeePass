@@ -295,7 +295,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ModernKeePassLib, Version=2.37.0.2000, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.37.6000\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+      <HintPath>..\packages\ModernKeePassLib.2.37.7000\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Splat, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
