@@ -316,32 +316,26 @@
       <Name>BehaviorsXamlSDKManaged</Name>
     </SDKReference>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
+    <Content Include="Assets\BadgeLogo.scale-100.png" />
+    <Content Include="Assets\BadgeLogo.scale-140.png" />
+    <Content Include="Assets\BadgeLogo.scale-180.png" />
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
     <Content Include="Assets\Logo.scale-180.png" />
     <Content Include="Assets\Logo.scale-80.png" />
-    <Content Include="Assets\ModernKeePass-Logo.scale-100.png" />
-    <Content Include="Assets\ModernKeePass-Logo.scale-140.png" />
-    <Content Include="Assets\ModernKeePass-Logo.scale-180.png" />
-    <Content Include="Assets\ModernKeePass-Logo.scale-80.png" />
     <Content Include="Assets\ModernKeePass-SmallLogo.scale-100.png" />
     <Content Include="Assets\ModernKeePass-SmallLogo.scale-140.png" />
     <Content Include="Assets\ModernKeePass-SmallLogo.scale-180.png" />
     <Content Include="Assets\ModernKeePass-SmallLogo.scale-80.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.targetsize-16.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.targetsize-256.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.targetsize-32.png" />
+    <Content Include="Assets\ModernKeePass-SmallLogo.targetsize-48.png" />
     <Content Include="Assets\ModernKeePass-SplashScreen.scale-100.png" />
     <Content Include="Assets\ModernKeePass-SplashScreen.scale-140.png" />
     <Content Include="Assets\ModernKeePass-SplashScreen.scale-180.png" />
-    <Content Include="Assets\ModernKeePass-StoreLogo.scale-100.png" />
-    <Content Include="Assets\ModernKeePass-StoreLogo.scale-140.png" />
-    <Content Include="Assets\ModernKeePass-StoreLogo.scale-180.png" />
-    <Content Include="Assets\SmallLogo.scale-100.png" />
-    <Content Include="Assets\SmallLogo.scale-140.png" />
-    <Content Include="Assets\SmallLogo.scale-180.png" />
-    <Content Include="Assets\SmallLogo.scale-80.png" />
-    <Content Include="Assets\SplashScreen.scale-100.png" />
-    <Content Include="Assets\SplashScreen.scale-140.png" />
-    <Content Include="Assets\SplashScreen.scale-180.png" />
     <Content Include="Assets\Square310x310Logo.scale-100.png" />
     <Content Include="Assets\Square310x310Logo.scale-140.png" />
     <Content Include="Assets\Square310x310Logo.scale-180.png" />
@@ -350,9 +344,9 @@
     <Content Include="Assets\Square70x70Logo.scale-140.png" />
     <Content Include="Assets\Square70x70Logo.scale-180.png" />
     <Content Include="Assets\Square70x70Logo.scale-80.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-140.png" />
-    <Content Include="Assets\StoreLogo.scale-180.png" />
+    <Content Include="Assets\Store\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Store\StoreLogo.scale-140.png" />
+    <Content Include="Assets\Store\StoreLogo.scale-180.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-140.png" />
     <Content Include="Assets\Wide310x150Logo.scale-180.png" />
