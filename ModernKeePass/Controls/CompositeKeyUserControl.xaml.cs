@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -80,6 +81,21 @@ namespace ModernKeePass.Controls
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
             Model.KeyFile = file;
+        }
+
+        private async void CreateKeyFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                SuggestedFileName = "Key"
+            };
+            savePicker.FileTypeChoices.Add("Key file", new List<string> { ".key" });
+
+            var file = await savePicker.PickSaveFileAsync();
+            if (file == null) return;
+            
+            Model.CreateKeyFile(file);
         }
     }
 }

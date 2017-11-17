@@ -117,6 +117,13 @@ namespace ModernKeePass.ViewModels
             UpdateStatus("Database composite key updated.", StatusTypes.Success);
         }
 
+        public void CreateKeyFile(StorageFile file)
+        {
+            // TODO: implement entropy generator
+            KcpKeyFile.Create(file, null);
+            KeyFile = file;
+        }
+
         private void UpdateStatus(string text, StatusTypes type)
         {
             Status = text;

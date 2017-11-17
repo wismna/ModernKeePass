@@ -48,6 +48,7 @@
                      Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="{Binding KeyFileText}" IsEnabled="{Binding HasKeyFile}" Click="KeyFileButton_Click" />
+        <Button Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Content="Create new key" Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding HasKeyFile}" Click="CreateKeyFileButton_Click" />
         <Button Grid.Column="0" Grid.Row="2" Content="OK" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" IsEnabled="{Binding IsValid}" />
         <TextBlock Grid.Column="1" Grid.Row="2" Height="28" FontSize="14" FontWeight="Light" HorizontalAlignment="Right" Text="{Binding Status}" Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" />
     </Grid>
