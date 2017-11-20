@@ -318,6 +318,27 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="appMetadata\en-us\baselisting\description.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Entry.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Group.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.New.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Open.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Recent.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Search.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Semantic.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Settings.txt" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Entry.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Group.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\New.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Open.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Recent.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Search.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Semantic.png" />
+    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Settings.png" />
+    <Content Include="appMetadata\en-us\baselisting\keywords.txt" />
+    <Content Include="appMetadata\en-us\baselisting\privacyPolicy.txt" />
+    <Content Include="appMetadata\en-us\baselisting\releaseNotes.txt" />
+    <Content Include="appMetadata\en-us\baselisting\websiteUrl.txt" />
     <Content Include="Assets\Logo.scale-100.png" />
     <Content Include="Assets\Logo.scale-140.png" />
     <Content Include="Assets\Logo.scale-180.png" />

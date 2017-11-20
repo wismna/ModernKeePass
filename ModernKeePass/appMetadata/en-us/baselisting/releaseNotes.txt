@@ -1,0 +1,3 @@
+Bug corrections with key files management
+Clearer error messages
+Show an error message if database save issue
