@@ -341,9 +341,9 @@
     <Content Include="Assets\Square70x70Logo.scale-140.png" />
     <Content Include="Assets\Square70x70Logo.scale-180.png" />
     <Content Include="Assets\Square70x70Logo.scale-80.png" />
-    <Content Include="Assets\Store\StoreLogo.scale-100.png" />
-    <Content Include="Assets\Store\StoreLogo.scale-140.png" />
-    <Content Include="Assets\Store\StoreLogo.scale-180.png" />
+    <Content Include="Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\StoreLogo.scale-140.png" />
+    <Content Include="Assets\StoreLogo.scale-180.png" />
     <Content Include="Assets\Wide310x150Logo.scale-100.png" />
     <Content Include="Assets\Wide310x150Logo.scale-140.png" />
     <Content Include="Assets\Wide310x150Logo.scale-180.png" />

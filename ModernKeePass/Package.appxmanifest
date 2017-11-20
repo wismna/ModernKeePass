@@ -4,7 +4,7 @@
   <Properties>
     <DisplayName>ModernKeePass</DisplayName>
     <PublisherDisplayName>wismna</PublisherDisplayName>
-    <Logo>assets\Store\StoreLogo.png</Logo>
+    <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Prerequisites>
     <OSMinVersion>6.3.0</OSMinVersion>
@@ -15,10 +15,10 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ModernKeePass.App">
-      <m2:VisualElements DisplayName="ModernKeePass" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\ModernKeePass-SmallLogo.png" Description="A port of the KeePass application for the Windows store. You can create, open and edit KeePass 2.x password databases in a modern fashion." ForegroundText="light" BackgroundColor="#9400bd" ToastCapable="true">
+      <m2:VisualElements DisplayName="ModernKeePass" Square150x150Logo="Assets\Logo.png" Square30x30Logo="Assets\ModernKeePass-SmallLogo.png" Description="A port of the KeePass application for the Windows store. You can create, open and edit KeePass 2.x password databases in a modern fashion." ForegroundText="light" BackgroundColor="#7755c4" ToastCapable="true">
         <m2:DefaultTile Square310x310Logo="Assets\Square310x310Logo.png" Wide310x150Logo="Assets\Wide310x150Logo.png" Square70x70Logo="Assets\Square70x70Logo.png">
         </m2:DefaultTile>
-        <m2:SplashScreen Image="Assets\ModernKeePass-SplashScreen.png" />
+        <m2:SplashScreen Image="Assets\ModernKeePass-SplashScreen.png" BackgroundColor="#7755c4" />
       </m2:VisualElements>
       <Extensions>
         <Extension Category="windows.fileOpenPicker">

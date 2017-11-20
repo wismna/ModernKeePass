@@ -134,7 +134,7 @@ namespace ModernKeePass.ViewModels
         {
             var compositeKey = new CompositeKey();
             if (HasPassword) compositeKey.AddUserKey(new KcpPassword(Password));
-            if (HasKeyFile) compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
+            if (HasKeyFile && KeyFile != null) compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
             return compositeKey;
         }
     }
