@@ -123,6 +123,7 @@
     <Compile Include="Common\ToastNotificationHelper.cs" />
     <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
+    <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Pages\BasePages\LayoutAwarePageBase.cs" />

@@ -10,7 +10,7 @@ namespace ModernKeePass.ViewModels
     {
         public bool ShowPasswordBox
         {
-            get { return ((App)Application.Current).Database.Status == DatabaseHelper.DatabaseStatus.Opening; }
+            get { return ((App)Application.Current).Database.Status == (int) DatabaseHelper.DatabaseStatus.Opening; }
         }
 
         public string Name
@@ -21,7 +21,7 @@ namespace ModernKeePass.ViewModels
         public OpenVm()
         {
             var app = Application.Current as App;
-            if (app?.Database == null || app.Database.Status != DatabaseHelper.DatabaseStatus.Opening) return;
+            if (app?.Database == null || app.Database.Status != (int) DatabaseHelper.DatabaseStatus.Opening) return;
             OpenFile(app.Database.DatabaseFile);
         }
 

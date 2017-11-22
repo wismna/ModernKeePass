@@ -1,6 +1,7 @@
 ﻿using System;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -10,7 +11,7 @@ using ModernKeePassLib.Serialization;
 
 namespace ModernKeePass.Common
 {
-    public class DatabaseHelper
+    public class DatabaseHelper: IDatabase
     {
         public enum DatabaseStatus
         {
@@ -37,7 +38,7 @@ namespace ModernKeePass.Common
             }
         }
         
-        public DatabaseStatus Status { get; private set; } = DatabaseStatus.Closed;
+        public int Status { get; set; } = (int)DatabaseStatus.Closed;
         public string Name => DatabaseFile?.Name;
         
         public bool RecycleBinEnabled
@@ -52,7 +53,7 @@ namespace ModernKeePass.Common
             set
             {
                 _databaseFile = value;
-                Status = DatabaseStatus.Opening;
+                Status = (int)DatabaseStatus.Opening;
             }
         }
 
@@ -84,24 +85,26 @@ namespace ModernKeePass.Common
         {
             try
             {
-                if (key == null) Status = DatabaseStatus.NoCompositeKey;
+                if (key == null)
+                {
+                    Status = (int)DatabaseStatus.NoCompositeKey;
+                    return;
+                }
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew) _pwDatabase.New(ioConnection, key);
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
-                if (_pwDatabase.IsOpen)
-                {
-                    Status = DatabaseStatus.Opened;
-                    RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
-                }
+                if (!_pwDatabase.IsOpen) return;
+                Status = (int)DatabaseStatus.Opened;
+                RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
             }
             catch (InvalidCompositeKeyException)
             {
-                Status = DatabaseStatus.CompositeKeyError;
+                Status = (int)DatabaseStatus.CompositeKeyError;
             }
             catch (Exception ex)
             {
-                Status = DatabaseStatus.Error;
+                Status = (int)DatabaseStatus.Error;
             }
         }
 
@@ -109,11 +112,19 @@ namespace ModernKeePass.Common
         /// Save the current database to another file and open it
         /// </summary>
         /// <param name="file">The new database file</param>
-        internal void Save(StorageFile file)
+        public bool Save(StorageFile file)
         {
             DatabaseFile = file;
-            _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
-            Status = DatabaseStatus.Opened;
+            try
+            {
+                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
+                Status = (int)DatabaseStatus.Opened;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -129,9 +140,10 @@ namespace ModernKeePass.Common
             }
             catch (Exception ex)
             {
+                return false;
+                // TODO: put this at a better place (e.g. in views)
                 MessageDialogHelper.ShowErrorDialog(ex);
             }
-            return false;
         }
 
         /// <summary>
@@ -140,7 +152,7 @@ namespace ModernKeePass.Common
         public void Close()
         {
             _pwDatabase?.Close();
-            Status = DatabaseStatus.Closed;
+            Status = (int)DatabaseStatus.Closed;
         }
 
         public void AddDeletedItem(PwUuid id)
@@ -150,7 +162,7 @@ namespace ModernKeePass.Common
 
         public void CreateRecycleBin()
         {
-            RecycleBin = RootGroup.AddNewGroup("Recycle bin");
+            RecycleBin = ((GroupVm)RootGroup).AddNewGroup("Recycle bin");
             RecycleBin.IsSelected = true;
             RecycleBin.IconSymbol = Symbol.Delete;
         }

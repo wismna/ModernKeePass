@@ -2,6 +2,7 @@
 using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Serialization;
@@ -18,7 +19,7 @@ namespace ModernKeePass.ViewModels
             Success = 5
         }
 
-        private readonly App _app = Application.Current as App;
+        //private readonly App _app = Application.Current as App;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private string _password = string.Empty;
@@ -26,6 +27,8 @@ namespace ModernKeePass.ViewModels
         private StatusTypes _statusType;
         private StorageFile _keyFile;
         private string _keyFileText = "Select key file from disk...";
+
+        public IDatabase Database { get; set; }
 
         public bool HasPassword
         {
@@ -90,15 +93,23 @@ namespace ModernKeePass.ViewModels
         }
 
         public GroupVm RootGroup { get; set; }
+
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
-        
+
+        public CompositeKeyVm() : this((Application.Current as App)?.Database) { }
+
+        public CompositeKeyVm(IDatabase database)
+        {
+            Database = database;
+        }
+
         public bool OpenDatabase(bool createNew)
         {
-            _app.Database.Open(CreateCompositeKey(), createNew);
-            switch (_app.Database.Status)
+            Database.Open(CreateCompositeKey(), createNew);
+            switch ((DatabaseHelper.DatabaseStatus)Database.Status)
             {
                 case DatabaseHelper.DatabaseStatus.Opened:
-                    RootGroup = _app.Database.RootGroup;
+                    RootGroup = Database.RootGroup;
                     return true;
                 case DatabaseHelper.DatabaseStatus.CompositeKeyError:
                     var errorMessage = new StringBuilder("Error: wrong ");
@@ -113,7 +124,7 @@ namespace ModernKeePass.ViewModels
 
         public void UpdateKey()
         {
-            _app.Database.UpdateCompositeKey(CreateCompositeKey());
+            Database.UpdateCompositeKey(CreateCompositeKey());
             UpdateStatus("Database composite key updated.", StatusTypes.Success);
         }
 
