@@ -24,14 +24,15 @@ namespace ModernKeePass.Pages
         {
             ListView_SelectionChanged(sender, e);
             var selectedItem = Model.SelectedItem as MainMenuItemVm;
-            selectedItem?.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
+            if (selectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
+            else selectedItem.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
         }
         
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             DataContext = new MainVm(Frame, MenuFrame);
-            if (Model.SelectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
+            //if (Model.SelectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
         }
     }
 }

@@ -48,12 +48,12 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
 
-        public bool Save()
+        public void Save()
         {
             throw new NotImplementedException();
         }
 
-        public bool Save(StorageFile file)
+        public void Save(StorageFile file)
         {
             throw new NotImplementedException();
         }

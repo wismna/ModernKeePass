@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Data.Json;
@@ -29,9 +30,23 @@ namespace ModernKeePass
         {
             InitializeComponent();
             Suspending += OnSuspending;
+            UnhandledException += OnUnhandledException;
         }
 
         #region Event Handlers
+
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        {
+            // TODO: catch only save errors for now, rethrow (do not handle) otherwise
+            var exception = unhandledExceptionEventArgs.Exception;
+            MessageDialogHelper.ShowErrorDialog(
+                exception is TargetInvocationException &&
+                exception.InnerException != null
+                    ? exception.InnerException
+                    : exception);
+            unhandledExceptionEventArgs.Handled = true;
+        }
+
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -126,6 +141,7 @@ namespace ModernKeePass
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            UnhandledException -= OnUnhandledException;
             Database.Save();
             deferral.Complete();
         }
@@ -143,6 +159,7 @@ namespace ModernKeePass
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }
+        
         #endregion
     }
 }

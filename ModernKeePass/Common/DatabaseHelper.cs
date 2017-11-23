@@ -105,6 +105,7 @@ namespace ModernKeePass.Common
             catch (Exception ex)
             {
                 Status = (int)DatabaseStatus.Error;
+                throw;
             }
         }
 
@@ -112,38 +113,20 @@ namespace ModernKeePass.Common
         /// Save the current database to another file and open it
         /// </summary>
         /// <param name="file">The new database file</param>
-        public bool Save(StorageFile file)
+        public void Save(StorageFile file)
         {
             DatabaseFile = file;
-            try
-            {
-                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
-                Status = (int)DatabaseStatus.Opened;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
+            Status = (int)DatabaseStatus.Opened;
         }
 
         /// <summary>
         /// Commit the changes to the currently opened database to file
         /// </summary>
-        public bool Save()
+        public void Save()
         {
-            if (_pwDatabase == null || !_pwDatabase.IsOpen) return false;
-            try
-            {
-                _pwDatabase.Save(new NullStatusLogger());
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-                // TODO: put this at a better place (e.g. in views)
-                MessageDialogHelper.ShowErrorDialog(ex);
-            }
+            if (_pwDatabase == null || !_pwDatabase.IsOpen) return;
+            _pwDatabase.Save(new NullStatusLogger());
         }
 
         /// <summary>

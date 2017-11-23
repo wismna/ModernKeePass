@@ -16,10 +16,11 @@ namespace ModernKeePass.ViewModels
 
         public void Save(bool close = true)
         {
-            if (close && _database.Save()) _database.Close();
+            _database.Save();
+            if (close) _database.Close();
         }
 
-        internal void Save(StorageFile file)
+        public void Save(StorageFile file)
         {
             _database.Save(file);
         }

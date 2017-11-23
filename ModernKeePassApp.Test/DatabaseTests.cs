@@ -36,7 +36,8 @@ namespace ModernKeePassApp.Test
         public void TestSave()
         {
             TestOpen();
-            Assert.IsTrue(_database.Save(ApplicationData.Current.TemporaryFolder.CreateFileAsync("SaveDatabase.kdbx").GetAwaiter().GetResult()));
+            _database.Save(ApplicationData.Current.TemporaryFolder.CreateFileAsync("SaveDatabase.kdbx").GetAwaiter().GetResult());
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Opened, _database.Status);
             _database.Close();
             Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Closed, _database.Status);
             TestOpen();

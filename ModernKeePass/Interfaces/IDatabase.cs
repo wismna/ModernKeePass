@@ -20,8 +20,8 @@ namespace ModernKeePass.Interfaces
 
         void Open(CompositeKey key, bool createNew);
         void UpdateCompositeKey(CompositeKey key);
-        bool Save();
-        bool Save(StorageFile file);
+        void Save();
+        void Save(StorageFile file);
         void CreateRecycleBin();
         void AddDeletedItem(PwUuid id);
         void Close();

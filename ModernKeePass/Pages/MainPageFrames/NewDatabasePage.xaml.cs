@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -16,19 +13,11 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class NewDatabasePage
     {
-        private Frame _mainFrame;
-
         public NewVm Model => (NewVm)DataContext;
 
         public NewDatabasePage()
         {
             InitializeComponent();
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            _mainFrame = e.Parameter as Frame;
         }
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)

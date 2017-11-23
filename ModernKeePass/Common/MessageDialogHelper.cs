@@ -26,6 +26,7 @@ namespace ModernKeePass.Common
 
         public static async void ShowErrorDialog(Exception exception)
         {
+            if (exception == null) return;
             // Create the message dialog and set its content
             var messageDialog = new MessageDialog(exception.Message, "Error occured");
 

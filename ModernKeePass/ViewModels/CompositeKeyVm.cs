@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
@@ -105,7 +106,15 @@ namespace ModernKeePass.ViewModels
 
         public bool OpenDatabase(bool createNew)
         {
-            Database.Open(CreateCompositeKey(), createNew);
+            var error = string.Empty;
+            try
+            {
+                Database.Open(CreateCompositeKey(), createNew);
+            }
+            catch (Exception e)
+            {
+                error = $"Error: {e.Message}";
+            }
             switch ((DatabaseHelper.DatabaseStatus)Database.Status)
             {
                 case DatabaseHelper.DatabaseStatus.Opened:
@@ -117,6 +126,9 @@ namespace ModernKeePass.ViewModels
                     if (HasPassword && HasKeyFile) errorMessage.Append(" or ");
                     if (HasKeyFile) errorMessage.Append("key file");
                     UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
+                    break;
+                case DatabaseHelper.DatabaseStatus.Error:
+                    UpdateStatus(error, StatusTypes.Error);
                     break;
             }
             return false;
