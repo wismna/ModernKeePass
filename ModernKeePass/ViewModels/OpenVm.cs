@@ -3,26 +3,25 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
+using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
     public class OpenVm: INotifyPropertyChanged
     {
-        public bool ShowPasswordBox
-        {
-            get { return ((App)Application.Current).Database.Status == (int) DatabaseHelper.DatabaseStatus.Opening; }
-        }
+        public bool ShowPasswordBox => _database?.Status == (int) DatabaseHelper.DatabaseStatus.Opening;
 
-        public string Name
-        {
-            get { return ((App)Application.Current).Database.Name; }
-        }
+        public string Name => _database?.Name;
 
-        public OpenVm()
+        private readonly IDatabase _database;
+
+        public OpenVm() : this((Application.Current as App)?.Database) { }
+
+        public OpenVm(IDatabase database)
         {
-            var app = Application.Current as App;
-            if (app?.Database == null || app.Database.Status != (int) DatabaseHelper.DatabaseStatus.Opening) return;
-            OpenFile(app.Database.DatabaseFile);
+            _database = database;
+            if (database == null || database.Status != (int) DatabaseHelper.DatabaseStatus.Opening) return;
+            OpenFile(database.DatabaseFile);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -34,8 +33,7 @@ namespace ModernKeePass.ViewModels
 
         public void OpenFile(StorageFile file)
         {
-            var database = ((App)Application.Current).Database;
-            database.DatabaseFile = file;
+            _database.DatabaseFile = file;
             NotifyPropertyChanged("Name");
             NotifyPropertyChanged("ShowPasswordBox");
             AddToRecentList(file);

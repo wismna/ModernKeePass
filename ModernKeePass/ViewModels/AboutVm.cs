@@ -4,17 +4,24 @@ namespace ModernKeePass.ViewModels
 {
     public class AboutVm
     {
-        public string Name { get; } = Package.Current.DisplayName;
+        private readonly Package _package;
+
+        public string Name => _package.DisplayName;
 
         public string Version
         {
             get
             {
-                var package = Package.Current;
-                var version = package.Id.Version;
-
+                var version = _package.Id.Version;
                 return $"{version.Major}.{version.Minor}";
             }
+        }
+
+        public AboutVm() : this(Package.Current) { }
+
+        public AboutVm(Package package)
+        {
+            _package = package;
         }
     }
 }

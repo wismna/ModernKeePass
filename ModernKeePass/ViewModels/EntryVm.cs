@@ -14,7 +14,6 @@ namespace ModernKeePass.ViewModels
 {
     public class EntryVm : INotifyPropertyChanged, IPwEntity
     {
-        public IDatabase Database { get; set; }
         public GroupVm ParentGroup { get; private set; }
 
         public GroupVm PreviousGroup { get; private set; }
@@ -151,6 +150,7 @@ namespace ModernKeePass.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly PwEntry _pwEntry;
+        private readonly IDatabase _database;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
@@ -160,13 +160,13 @@ namespace ModernKeePass.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public EntryVm() : this(null, null) { }
+        public EntryVm() { }
         
         internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, (Application.Current as App)?.Database) { }
 
         public EntryVm(PwEntry entry, GroupVm parent, IDatabase database)
         {
-            Database = database;
+            _database = database;
             _pwEntry = entry;
             ParentGroup = parent;
         }
@@ -212,9 +212,9 @@ namespace ModernKeePass.ViewModels
         
         public void MarkForDelete()
         {
-            if (Database.RecycleBinEnabled && Database.RecycleBin?.IdUuid == null)
-                Database.CreateRecycleBin();
-            Move(Database.RecycleBinEnabled && !ParentGroup.IsSelected ? Database.RecycleBin : null);
+            if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
+                _database.CreateRecycleBin();
+            Move(_database.RecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
         }
 
         public void UndoDelete()
@@ -229,7 +229,7 @@ namespace ModernKeePass.ViewModels
             PreviousGroup.RemovePwEntry(_pwEntry);
             if (destination == null)
             {
-                Database.AddDeletedItem(IdUuid);
+                _database.AddDeletedItem(IdUuid);
                 return;
             }
             ParentGroup = destination;
@@ -240,13 +240,13 @@ namespace ModernKeePass.ViewModels
         public void CommitDelete()
         {
             _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
-            if (Database.RecycleBinEnabled && !PreviousGroup.IsSelected) Database.RecycleBin.AddPwEntry(_pwEntry);
-            else Database.AddDeletedItem(IdUuid);
+            if (_database.RecycleBinEnabled && !PreviousGroup.IsSelected) _database.RecycleBin.AddPwEntry(_pwEntry);
+            else _database.AddDeletedItem(IdUuid);
         }
 
         public void Save()
         {
-            Database.Save();
+            _database.Save();
         }
     }
 }

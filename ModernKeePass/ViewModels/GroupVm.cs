@@ -32,16 +32,10 @@ namespace ModernKeePass.ViewModels
         /// </summary>
         public bool IsSelected
         {
-            get { return _app.Database.RecycleBinEnabled && _app.Database.RecycleBin?.Id == Id; }
+            get { return _database.RecycleBinEnabled && _database.RecycleBin?.Id == Id; }
             set
             {
-                if (value && _pwGroup != null) _app.Database.RecycleBin = this;
-                /*else if (value && _pwGroup == null)
-                {
-                    var recycleBin = _app.Database.RootGroup.AddNewGroup("Recycle bin");
-                    recycleBin.IsSelected = true;
-                    recycleBin.IconSymbol = Symbol.Delete;
-                }*/
+                if (value && _pwGroup != null) _database.RecycleBin = this;
             }
         }
 
@@ -86,17 +80,22 @@ namespace ModernKeePass.ViewModels
         }
 
         private readonly PwGroup _pwGroup;
-        private readonly App _app = Application.Current as App;
+        private readonly IDatabase _database;
         private bool _isEditMode;
 
         public GroupVm() {}
 
-        public GroupVm(PwGroup pwGroup, GroupVm parent, PwUuid recycleBinId = null)
+        internal GroupVm(PwGroup pwGroup, GroupVm parent, PwUuid recycleBinId = null) : this(pwGroup, parent,
+            (Application.Current as App)?.Database, recycleBinId)
+        { }
+
+        public GroupVm(PwGroup pwGroup, GroupVm parent, IDatabase database, PwUuid recycleBinId = null)
         {
             _pwGroup = pwGroup;
+            _database = database;
             ParentGroup = parent;
 
-            if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _app.Database.RecycleBin = this;
+            if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _database.RecycleBin = this;
             Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)).OrderBy(e => e.Name));
             Entries.Insert(0, new EntryVm ());
             Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)).OrderBy(g => g.Name));
@@ -133,9 +132,9 @@ namespace ModernKeePass.ViewModels
 
         public void MarkForDelete()
         {
-            if (_app.Database.RecycleBinEnabled && _app.Database.RecycleBin?.IdUuid == null)
-                _app.Database.CreateRecycleBin();
-            Move(_app.Database.RecycleBinEnabled && !IsSelected ? _app.Database.RecycleBin : null);
+            if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
+                _database.CreateRecycleBin();
+            Move(_database.RecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
         }
 
 
@@ -151,7 +150,7 @@ namespace ModernKeePass.ViewModels
             PreviousGroup._pwGroup.Groups.Remove(_pwGroup);
             if (destination == null)
             {
-                _app.Database.AddDeletedItem(IdUuid);
+                _database.AddDeletedItem(IdUuid);
                 return;
             }
             ParentGroup = destination;
@@ -162,13 +161,13 @@ namespace ModernKeePass.ViewModels
         public void CommitDelete()
         {
             _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
-            if (_app.Database.RecycleBinEnabled && !PreviousGroup.IsSelected) _app.Database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
-            else _app.Database.AddDeletedItem(IdUuid);
+            if (_database.RecycleBinEnabled && !PreviousGroup.IsSelected) _database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
+            else _database.AddDeletedItem(IdUuid);
         }
 
         public void Save()
         {
-            _app.Database.Save();
+            _database.Save();
         }
 
         public override string ToString()

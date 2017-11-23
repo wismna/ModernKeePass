@@ -45,18 +45,19 @@ namespace ModernKeePass.ViewModels
 
         public MainVm() {}
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame)
+        internal MainVm(Frame referenceFrame, Frame destinationFrame) : this(referenceFrame, destinationFrame, (Application.Current as App)?.Database) { }
+
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database)
         {
-            var app = (App)Application.Current;
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            var isDatabaseOpen = app.Database != null && app.Database.Status == (int) DatabaseHelper.DatabaseStatus.Opened;
+            var isDatabaseOpen = database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opened;
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
                 new MainMenuItemVm
                 {
                     Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2,
-                    IsSelected = app.Database.Status == (int) DatabaseHelper.DatabaseStatus.Opening
+                    IsSelected = database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opening
                 },
                 new MainMenuItemVm
                 {
@@ -69,7 +70,7 @@ namespace ModernKeePass.ViewModels
                 },
                 new MainMenuItemVm {
                     Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
-                    IsSelected = (app.Database == null || app.Database.Status == (int) DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
+                    IsSelected = (database == null || database.Status == (int) DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
                 },
                 new MainMenuItemVm
                 {
@@ -78,13 +79,13 @@ namespace ModernKeePass.ViewModels
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
-            if (app.Database != null && app.Database.Status == (int) DatabaseHelper.DatabaseStatus.Opened)
+            if (database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opened)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
-                    Title = app.Database.Name,
+                    Title = database.Name,
                     PageType = typeof(GroupDetailPage),
                     Destination = referenceFrame,
-                    Parameter = app.Database.RootGroup,
+                    Parameter = database.RootGroup,
                     Group = 1,
                     SymbolIcon = Symbol.ProtectedDocument
                 });

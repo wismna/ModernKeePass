@@ -4,7 +4,6 @@ using Windows.Storage;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using ModernKeePass.Common;
 using ModernKeePass.ViewModels;
-using ModernKeePassLib.Keys;
 
 namespace ModernKeePassApp.Test
 {
@@ -16,20 +15,20 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestCreate()
         {
-            Assert.AreEqual(_database.Status, (int) DatabaseHelper.DatabaseStatus.Closed);
+            Assert.AreEqual((int) DatabaseHelper.DatabaseStatus.Closed, _database.Status);
             _database.DatabaseFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync("NewDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Opening);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Opening, _database.Status);
             OpenOrCreateDatabase(true);
             _database.Close();
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Closed);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Closed, _database.Status);
         }
 
         [TestMethod]
         public void TestOpen()
         {
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Closed);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Closed, _database.Status);
             _database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Databases\TestDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Opening);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Opening, _database.Status);
             OpenOrCreateDatabase(false);
         }
 
@@ -39,26 +38,21 @@ namespace ModernKeePassApp.Test
             TestOpen();
             Assert.IsTrue(_database.Save(ApplicationData.Current.TemporaryFolder.CreateFileAsync("SaveDatabase.kdbx").GetAwaiter().GetResult()));
             _database.Close();
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Closed);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Closed, _database.Status);
             TestOpen();
         }
 
         private void OpenOrCreateDatabase(bool createNew)
         {
             _database.Open(null, createNew);
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.NoCompositeKey);
-            var compositeKey = new CompositeKey();
-            if (!createNew)
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.NoCompositeKey, _database.Status);
+            var compositeKey = new CompositeKeyVm(_database)
             {
-                _database.Open(compositeKey);
-                Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.CompositeKeyError);
-            }
-            compositeKey.AddUserKey(new KcpPassword("test"));
-
-            _database.Open(compositeKey, createNew);
-            /*var compositeKey = new CompositeKeyVm(_database);
-            compositeKey.OpenDatabase(createNew);*/
-            Assert.AreEqual(_database.Status, (int)DatabaseHelper.DatabaseStatus.Opened);
+                HasPassword = true,
+                Password = "test"
+            };
+            compositeKey.OpenDatabase(createNew);
+            Assert.AreEqual((int)DatabaseHelper.DatabaseStatus.Opened, _database.Status);
         }
     }
 }

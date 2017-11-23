@@ -14,16 +14,16 @@ namespace ModernKeePass.ViewModels
 {
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly App _app = Application.Current as App;
+        private readonly IDatabase _database;
         private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
         private GroupVm _selectedItem;
 
         public bool HasRecycleBin
         {
-            get { return _app.Database.RecycleBinEnabled; }
+            get { return _database.RecycleBinEnabled; }
             set
             {
-                _app.Database.RecycleBinEnabled = value;
+                _database.RecycleBinEnabled = value;
                 OnPropertyChanged();
             }
         }
@@ -47,26 +47,26 @@ namespace ModernKeePass.ViewModels
             {
                 for (var inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
                 {
-                    if (CipherPool.GlobalPool[inx].CipherUuid.Equals(_app.Database.DataCipher)) return inx;
+                    if (CipherPool.GlobalPool[inx].CipherUuid.Equals(_database.DataCipher)) return inx;
                 }
                 return -1;
             }
-            set { _app.Database.DataCipher = CipherPool.GlobalPool[value].CipherUuid; }
+            set { _database.DataCipher = CipherPool.GlobalPool[value].CipherUuid; }
         }
 
         public IEnumerable<string> Compressions => Enum.GetNames(typeof(PwCompressionAlgorithm)).Take((int)PwCompressionAlgorithm.Count);
 
         public string CompressionName
         {
-            get { return Enum.GetName(typeof(PwCompressionAlgorithm), _app.Database.CompressionAlgorithm); }
-            set { _app.Database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
+            get { return Enum.GetName(typeof(PwCompressionAlgorithm), _database.CompressionAlgorithm); }
+            set { _database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
         public IEnumerable<string> KeyDerivations => KdfPool.Engines.Select(e => e.Name);
 
         public string KeyDerivationName
         {
-            get { return KdfPool.Get(_app.Database.KeyDerivation.KdfUuid).Name; }
-            set { _app.Database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
+            get { return KdfPool.Get(_database.KeyDerivation.KdfUuid).Name; }
+            set { _database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
         }
 
         public ISelectableModel SelectedItem
@@ -89,9 +89,12 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsDatabaseVm()
+        public SettingsDatabaseVm() : this((Application.Current as App)?.Database) { }
+
+        public SettingsDatabaseVm(IDatabase database)
         {
-            Groups = _app?.Database.RootGroup.Groups;
+            _database = database;
+            Groups = _database.RootGroup.Groups;
         }
 
         // TODO: Move to another setting class (or a static class)
