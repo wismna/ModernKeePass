@@ -76,7 +76,7 @@ namespace ModernKeePass.Pages
                 ? "Are you sure you want to send this entry to the recycle bin?"
                 : "Are you sure you want to delete this entry?";
             var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
-            MessageDialogHelper.ShowDeleteConfirmationDialog("Delete", message, a =>
+            MessageDialogHelper.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
             {
                 ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
                 Model.MarkForDelete();

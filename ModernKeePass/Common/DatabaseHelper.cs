@@ -1,6 +1,8 @@
 ﻿using System;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
@@ -102,7 +104,7 @@ namespace ModernKeePass.Common
             {
                 Status = (int)DatabaseStatus.CompositeKeyError;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Status = (int)DatabaseStatus.Error;
                 throw;
@@ -115,9 +117,21 @@ namespace ModernKeePass.Common
         /// <param name="file">The new database file</param>
         public void Save(StorageFile file)
         {
+            var oldFile = DatabaseFile;
             DatabaseFile = file;
-            _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
-            Status = (int)DatabaseStatus.Opened;
+            try
+            {
+                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
+            }
+            catch
+            {
+                DatabaseFile = oldFile;
+                throw;
+            }
+            finally
+            {
+                Status = (int)DatabaseStatus.Opened;
+            }
         }
 
         /// <summary>
@@ -126,7 +140,14 @@ namespace ModernKeePass.Common
         public void Save()
         {
             if (_pwDatabase == null || !_pwDatabase.IsOpen) return;
-            _pwDatabase.Save(new NullStatusLogger());
+            try
+            {
+                _pwDatabase.Save(new NullStatusLogger());
+            }
+            catch (Exception e)
+            {
+                throw new SaveException(e);
+            }
         }
 
         /// <summary>
@@ -145,7 +166,7 @@ namespace ModernKeePass.Common
 
         public void CreateRecycleBin()
         {
-            RecycleBin = ((GroupVm)RootGroup).AddNewGroup("Recycle bin");
+            RecycleBin = RootGroup.AddNewGroup("Recycle bin");
             RecycleBin.IsSelected = true;
             RecycleBin.IconSymbol = Symbol.Delete;
         }

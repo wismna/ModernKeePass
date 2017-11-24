@@ -1,6 +1,8 @@
-﻿using Windows.Storage;
+﻿using System;
+using Windows.Storage;
 using ModernKeePass.Common;
 using Windows.Storage.AccessCache;
+using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
@@ -26,6 +28,22 @@ namespace ModernKeePass.ViewModels
         {
             get { return _isSelected; }
             set { SetProperty(ref _isSelected, value); }
+        }
+
+        public void OpenDatabaseFile()
+        {
+            OpenDatabaseFile((Application.Current as App)?.Database);
+        }
+
+        public void OpenDatabaseFile(IDatabase database)
+        {
+            database.DatabaseFile = DatabaseFile;
+        }
+
+        public async void UpdateAccessTime()
+        {
+            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
+            await mru.GetFileAsync(Token);
         }
     }
 }

@@ -9,6 +9,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
+using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -37,14 +38,17 @@ namespace ModernKeePass
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
-            // TODO: catch only save errors for now, rethrow (do not handle) otherwise
+            // Save the argument exception because it's cleared on first access
             var exception = unhandledExceptionEventArgs.Exception;
-            MessageDialogHelper.ShowErrorDialog(
+            var realException =
                 exception is TargetInvocationException &&
                 exception.InnerException != null
                     ? exception.InnerException
-                    : exception);
+                    : exception;
+
+            if (!(realException is SaveException)) return;
             unhandledExceptionEventArgs.Handled = true;
+            MessageDialogHelper.SaveErrorDialog(realException as SaveException, Database);
         }
 
         /// <summary>

@@ -37,13 +37,12 @@ namespace ModernKeePass.ViewModels
 
         public RecentVm()
         {
-            // TODO: opening the files actually changes the MRU order
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             foreach (var entry in mru.Entries)
             {
                 try
                 {
-                    var file = mru.GetFileAsync(entry.Token).GetAwaiter().GetResult();
+                    var file = mru.GetFileAsync(entry.Token, AccessCacheOptions.SuppressAccessTimeUpdate).GetAwaiter().GetResult();
                     RecentItems.Add(new RecentItemVm(entry, file));
                 }
                 catch (Exception)
