@@ -23,7 +23,7 @@
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <local:CompositeKeyUserControl CreateNew="True" >
+                <local:CompositeKeyUserControl CreateNew="True" ButtonLabel="Save" >
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="ValidationChecked">
                             <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />

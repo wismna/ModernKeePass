@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
@@ -73,6 +74,7 @@ namespace ModernKeePass.ViewModels
                 _password = value;
                 OnPropertyChanged("PasswordComplexityIndicator");
                 StatusType = (int)StatusTypes.Normal;
+                Status = string.Empty;
             }
         }
 
@@ -104,7 +106,7 @@ namespace ModernKeePass.ViewModels
             Database = database;
         }
 
-        public bool OpenDatabase(bool createNew)
+        public async Task<bool> OpenDatabase(bool createNew)
         {
             var error = string.Empty;
             try
@@ -118,7 +120,7 @@ namespace ModernKeePass.ViewModels
             switch ((DatabaseHelper.DatabaseStatus)Database.Status)
             {
                 case DatabaseHelper.DatabaseStatus.Opened:
-                    RootGroup = Database.RootGroup;
+                    await Task.Run( () => RootGroup = Database.RootGroup);
                     return true;
                 case DatabaseHelper.DatabaseStatus.CompositeKeyError:
                     var errorMessage = new StringBuilder("Error: wrong ");

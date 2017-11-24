@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Events;
+using ModernKeePass.Extensions;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
@@ -39,6 +42,19 @@ namespace ModernKeePass.Controls
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
+        public string ButtonLabel
+        {
+            get { return (string)GetValue(ButtonLabelProperty); }
+            set { SetValue(ButtonLabelProperty, value); }
+        }
+        public static readonly DependencyProperty ButtonLabelProperty =
+            DependencyProperty.Register(
+                "ButtonLabel",
+                typeof(string),
+                typeof(CompositeKeyUserControl),
+                new PropertyMetadata("OK", (o, args) => { }));
+
+
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
         public CompositeKeyUserControl()
@@ -51,14 +67,20 @@ namespace ModernKeePass.Controls
         public event PasswordCheckedEventHandler ValidationChecked;
         public delegate void PasswordCheckedEventHandler(object sender, PasswordEventArgs e);
 
-        private void OpenButton_OnClick(object sender, RoutedEventArgs e)
+        private async void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
             ValidationChecking?.Invoke(this, new EventArgs());
 
             if (UpdateKey) Model.UpdateKey();
-            else if (Model.OpenDatabase(CreateNew))
+            else
             {
-                ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+                var oldLabel = ButtonLabel;
+                ButtonLabel = "Opening...";
+                if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(CreateNew)))
+                {
+                    ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+                }
+                ButtonLabel = oldLabel;
             }
         }
 

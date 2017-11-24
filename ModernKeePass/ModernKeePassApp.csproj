@@ -122,8 +122,10 @@
     <Compile Include="Common\SuspensionManager.cs" />
     <Compile Include="Common\ToastNotificationHelper.cs" />
     <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
+    <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Exceptions\SaveException.cs" />
+    <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
