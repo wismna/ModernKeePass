@@ -222,7 +222,11 @@
                                 Visibility="Collapsed"
                                 FontSize="{TemplateBinding FontSize}"
                                 Content="{TemplateBinding ButtonSymbol}"
-                                VerticalAlignment="Stretch"/>
+                                VerticalAlignment="Stretch">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="{TemplateBinding ButtonTooltip}" />
+                            </ToolTipService.ToolTip>
+                        </Button>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

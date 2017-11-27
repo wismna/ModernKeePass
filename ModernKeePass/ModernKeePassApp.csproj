@@ -136,6 +136,9 @@
     <Compile Include="Pages\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
       <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
+      <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Controls\CompositeKeyUserControl.xaml.cs">
@@ -265,6 +268,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\SettingsPageFrames\SettingsSecurityPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SettingsPageFrames\SettingsWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

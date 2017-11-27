@@ -69,17 +69,17 @@ namespace ModernKeePass.Pages.BasePages
             {
                 // When this is a new page, select the first item automatically unless logical page
                 // navigation is being used (see the logical page navigation #region below.)
-                if (!UsingLogicalPageNavigation() && ListViewSource.View != null)
+                if (!UsingLogicalPageNavigation())
                 {
-                    ListViewSource.View.MoveCurrentToFirst();
+                    ListViewSource.View?.MoveCurrentToFirst();
                 }
             }
             else
             {
                 // Restore the previously saved state associated with this page
-                if (e.PageState.ContainsKey("SelectedItem") && ListViewSource.View != null)
+                if (e.PageState.ContainsKey("SelectedItem"))
                 {
-                    ListViewSource.View.MoveCurrentTo(e.PageState["SelectedItem"]);
+                    ListViewSource.View?.MoveCurrentTo(e.PageState["SelectedItem"]);
                 }
             }
         }

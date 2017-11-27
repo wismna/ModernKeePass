@@ -8,7 +8,12 @@
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="Change database security options" />
-        <local:CompositeKeyUserControl UpdateKey="True" ButtonLabel="Update master key" />
+        <TextBlock FontSize="14" Text="Change database security options" Margin="5,0,0,0" />
+        <TextBlock TextWrapping="WrapWholeWords" Margin="5,0,0,0">
+            <Run Text="Here, you may change your database password, key file, or both. Just click on on" />
+            <Run Text="Update master key" FontWeight="SemiBold" />
+            <Run Text="when you're done. Please make sure to remember the password you choose here!" />
+        </TextBlock>
+        <local:CompositeKeyUserControl Margin="0,20,0,0" UpdateKey="True" ButtonLabel="Update master key" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
     </StackPanel>
 </Page>

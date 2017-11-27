@@ -1,4 +1,5 @@
 ﻿using Windows.UI.Xaml.Controls;
+using ModernKeePass.Pages.SettingsPageFrames;
 using ModernKeePass.ViewModels;
 
 // The Split Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234234
@@ -11,7 +12,7 @@ namespace ModernKeePass.Pages
     /// </summary>
     public sealed partial class SettingsPage
     {
-        public new SettingsVM Model => (SettingsVM)DataContext;
+        public new SettingsVm Model => (SettingsVm)DataContext;
 
         public SettingsPage()
         {
@@ -24,8 +25,7 @@ namespace ModernKeePass.Pages
         {
             ListView_SelectionChanged(sender, e);
             var selectedItem = Model.SelectedItem as ListMenuItemVm;
-            if (selectedItem == null) return;
-            MenuFrame?.Navigate(selectedItem.PageType);
+            MenuFrame?.Navigate(selectedItem == null ? typeof(SettingsWelcomePage) : selectedItem.PageType);
         }
     }
 }

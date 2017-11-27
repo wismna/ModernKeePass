@@ -11,7 +11,7 @@ namespace ModernKeePass.ViewModels
 
         public string Title { get; set; }
         
-        public int Group { get; set; } = 0;
+        public string Group { get; set; } = "_";
         public Type PageType { get; set; }
         public Symbol SymbolIcon { get; set; }
         public bool IsEnabled { get; set; } = true;

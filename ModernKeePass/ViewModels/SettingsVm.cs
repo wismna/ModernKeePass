@@ -7,11 +7,19 @@ using ModernKeePass.Pages;
 
 namespace ModernKeePass.ViewModels
 {
-    public class SettingsVM : NotifyPropertyChangedBase, IHasSelectableObject
+    public class SettingsVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
         private ListMenuItemVm _selectedItem;
 
-        public ObservableCollection<ListMenuItemVm> MenuItems { get; set; }
+        //public ObservableCollection<ListMenuItemVm> MenuItems { get; set; }
+        private IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> _menuItems;
+
+        public IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> MenuItems
+        {
+            get { return _menuItems; }
+            set { SetProperty(ref _menuItems, value); }
+        }
+
         public ISelectableModel SelectedItem
         {
             get { return _selectedItem; }
@@ -32,15 +40,17 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVM()
+        public SettingsVm()
         {
-            MenuItems = new ObservableCollection<ListMenuItemVm>
+            var menuItems = new ObservableCollection<ListMenuItemVm>
             {
-                new ListMenuItemVm { Title = "Database", SymbolIcon = Symbol.Setting, PageType = typeof(SettingsDatabasePage), IsSelected = true },
-                new ListMenuItemVm { Title = "Security", SymbolIcon = Symbol.Permissions, PageType = typeof(SettingsSecurityPage) },
+                new ListMenuItemVm { Title = "General", Group = "Database", SymbolIcon = Symbol.Setting, PageType = typeof(SettingsDatabasePage), IsSelected = true },
+                new ListMenuItemVm { Title = "Security", Group = "Database", SymbolIcon = Symbol.Permissions, PageType = typeof(SettingsSecurityPage) },
                 //new ListMenuItemVm { Title = "General", SymbolIcon = Symbol.Edit, PageType = typeof(SettingsGeneralPage) }
             };
-            SelectedItem = MenuItems.FirstOrDefault(m => m.IsSelected);
+            SelectedItem = menuItems.FirstOrDefault(m => m.IsSelected);
+
+            MenuItems = from item in menuItems group item by item.Group into grp orderby grp.Key select grp;
         }
     }
 }

@@ -428,7 +428,7 @@
                 </Style>
             </StackPanel.Resources>
             <TextBlock TextWrapping="Wrap" Text="User name or login" FontSize="18"/>
-            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;">
+            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="ButtonClick">
                         <actions:ClipboardAction Text="{Binding UserName}" />
@@ -437,7 +437,7 @@
             </local:TextBoxWithButton>
             <TextBlock TextWrapping="Wrap" Text="Password"  FontSize="18"/>
             <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" />
-            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;">
+            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="ButtonClick">
                         <actions:ClipboardAction Text="{Binding Password}" />
@@ -447,7 +447,7 @@
             <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             <CheckBox HorizontalAlignment="Left" Margin="-3,0,0,0" Content="Show password" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
             <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-            <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonClick="UrlButton_Click" ButtonSymbol="&#xE111;" />
+            <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonClick="UrlButton_Click" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL" />
             <TextBlock TextWrapping="Wrap" Text="Notes" FontSize="18"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
             <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" Content="Expiration date"/>
@@ -467,14 +467,12 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="400"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
                     x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Height="50"
                     Width="50"
-                    VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"

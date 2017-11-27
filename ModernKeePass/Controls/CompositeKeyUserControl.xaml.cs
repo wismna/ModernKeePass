@@ -71,7 +71,11 @@ namespace ModernKeePass.Controls
         {
             ValidationChecking?.Invoke(this, new EventArgs());
 
-            if (UpdateKey) Model.UpdateKey();
+            if (UpdateKey)
+            {
+                Model.UpdateKey();
+                ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+            }
             else
             {
                 var oldLabel = ButtonLabel;

@@ -1,5 +1,8 @@
 ﻿// The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+using ModernKeePass.Common;
+using ModernKeePass.Events;
+
 namespace ModernKeePass.Pages
 {
     /// <summary>
@@ -10,6 +13,11 @@ namespace ModernKeePass.Pages
         public SettingsSecurityPage()
         {
             InitializeComponent();
+        }
+
+        private void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
+        {
+            ToastNotificationHelper.ShowGenericToast("Composite key", "Database successfully updated.");
         }
     }
 }

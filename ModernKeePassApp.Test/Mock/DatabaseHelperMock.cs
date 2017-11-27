@@ -35,7 +35,7 @@ namespace ModernKeePassApp.Test.Mock
 
         public void Close()
         {
-            throw new NotImplementedException();
+            Status = 0;
         }
 
         public void CreateRecycleBin()
@@ -45,7 +45,7 @@ namespace ModernKeePassApp.Test.Mock
 
         public void Open(CompositeKey key, bool createNew)
         {
-            throw new NotImplementedException();
+            Status = 2;
         }
 
         public void Save()

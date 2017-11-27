@@ -6,18 +6,6 @@ namespace ModernKeePass.Controls
 {
     public class TextBoxWithButton : TextBox
     {
-        /*public Symbol ButtonSymbol
-        {
-            get { return (Symbol)GetValue(ButtonSymbolProperty); }
-            set { SetValue(ButtonSymbolProperty, value); }
-        }
-        public static readonly DependencyProperty ButtonSymbolProperty =
-            DependencyProperty.Register(
-                "ButtonSymbol",
-                typeof(Symbol),
-                typeof(TextBoxWithButton),
-                new PropertyMetadata(Symbol.Delete, (o, args) => { }));*/
-
         public string ButtonSymbol
         {
             get { return (string)GetValue(ButtonSymbolProperty); }
@@ -30,6 +18,18 @@ namespace ModernKeePass.Controls
                 typeof(TextBoxWithButton),
                 new PropertyMetadata("&#xE107;", (o, args) => { }));
         public event EventHandler<RoutedEventArgs> ButtonClick;
+
+        public string ButtonTooltip
+        {
+            get { return (string)GetValue(ButtonTooltipProperty); }
+            set { SetValue(ButtonTooltipProperty, value); }
+        }
+        public static readonly DependencyProperty ButtonTooltipProperty =
+            DependencyProperty.Register(
+                "ButtonTooltip",
+                typeof(string),
+                typeof(TextBoxWithButton),
+                new PropertyMetadata(string.Empty, (o, args) => { }));
 
         protected override void OnApplyTemplate()
         {

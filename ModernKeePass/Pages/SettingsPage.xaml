@@ -10,11 +10,10 @@
     x:Class="ModernKeePass.Pages.SettingsPage" 
     mc:Ignorable="d">
     <Page.Resources>
-        <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MenuItems}" >
-        </CollectionViewSource>
+        <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MenuItems}" IsSourceGrouped="True" />
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:SettingsVM />
+        <viewModels:SettingsVm />
     </Page.DataContext>
 
     <Page.Background>
@@ -74,9 +73,12 @@
                 <GroupStyle HidesIfEmpty="True">
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
-                            <Grid Background="DarkGray" Margin="20,0,0,0">
-                                <Border Height="1" Width="300" HorizontalAlignment="Stretch"/>
-                            </Grid>
+                            <StackPanel Margin="20,0,0,0">
+                                <TextBlock Text="{Binding Key}" />
+                                <Grid Background="DarkGray">
+                                    <Border Height="1" Width="300" HorizontalAlignment="Stretch"/>
+                                </Grid>
+                            </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>

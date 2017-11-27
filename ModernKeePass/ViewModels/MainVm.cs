@@ -12,12 +12,12 @@ namespace ModernKeePass.ViewModels
 {
     public class MainVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> _mainMenuItems;
+        private IOrderedEnumerable<IGrouping<string, MainMenuItemVm>> _mainMenuItems;
         private MainMenuItemVm _selectedItem;
 
         public string Name { get; } = Package.Current.DisplayName;
 
-        public IOrderedEnumerable<IGrouping<int, MainMenuItemVm>> MainMenuItems
+        public IOrderedEnumerable<IGrouping<string, MainMenuItemVm>> MainMenuItems
         {
             get { return _mainMenuItems; }
             set { SetProperty(ref _mainMenuItems, value); }
@@ -86,7 +86,7 @@ namespace ModernKeePass.ViewModels
                     PageType = typeof(GroupDetailPage),
                     Destination = referenceFrame,
                     Parameter = database.RootGroup,
-                    Group = 1,
+                    Group = "Databases",
                     SymbolIcon = Symbol.ProtectedDocument
                 });
                 

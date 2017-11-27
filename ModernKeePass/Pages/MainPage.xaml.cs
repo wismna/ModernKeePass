@@ -32,7 +32,6 @@ namespace ModernKeePass.Pages
         {
             base.OnNavigatedTo(e);
             DataContext = new MainVm(Frame, MenuFrame);
-            //if (Model.SelectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
         }
     }
 }

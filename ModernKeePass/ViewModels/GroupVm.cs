@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -117,6 +116,7 @@ namespace ModernKeePass.ViewModels
             var pwEntry = new PwEntry(true, true);
             _pwGroup.AddEntry(pwEntry, true);
             var newEntry = new EntryVm(pwEntry, this) {IsEditMode = true};
+            newEntry.GeneratePassword();
             Entries.Add(newEntry);
             return newEntry;
         }
