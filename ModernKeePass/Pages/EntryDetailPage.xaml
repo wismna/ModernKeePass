@@ -337,21 +337,21 @@
                                         </interactivity:Interaction.Behaviors>
                                         <StackPanel>
                                             <TextBlock>
-                                                <Run Text="Password Length: "/>
+                                                <Run x:Uid="PasswordGeneratorLength" />
                                                 <Run Text="{Binding PasswordLength}" />
                                             </TextBlock>
                                             <Slider Value="{Binding PasswordLength, Mode=TwoWay}" Margin="0,-10,0,-20" />
-                                            <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}" Content="Upper case (A, B, C, ...)"/>
-                                            <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}" Content="Lower case (a, b, c, ...)"/>
-                                            <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}" Content="Digits (0, 1, 2, ...)"/>
-                                            <CheckBox IsChecked="{Binding MinusPatternSelected, Mode=TwoWay}" Content="Minus (-)"/>
-                                            <CheckBox IsChecked="{Binding UnderscorePatternSelected, Mode=TwoWay}" Content="Underscore (_)"/>
-                                            <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}" Content="Space ( )"/>
-                                            <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}" Content="Special (!, $, %, ...)"/>
-                                            <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" Content="Brackets ([], {}, (), ...)"/>
-                                            <TextBlock Text="Also add these characters:" Margin="0,5,0,0"/>
+                                            <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorUpper" />
+                                            <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorLower" />
+                                            <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorDigits" />
+                                            <CheckBox IsChecked="{Binding MinusPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorMinus" />
+                                            <CheckBox IsChecked="{Binding UnderscorePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorUnderscore" />
+                                            <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpace" />
+                                            <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpecial" />
+                                            <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorBrackets" />
+                                            <TextBlock  x:Uid="PasswordGeneratorAlso" Margin="0,5,0,0"/>
                                             <TextBox Text="{Binding CustomChars, Mode=TwoWay}" />
-                                            <Button Content="Generate">
+                                            <Button x:Uid="PasswordGeneratorButton">
                                                 <interactivity:Interaction.Behaviors>
                                                     <core:EventTriggerBehavior EventName="Click">
                                                         <core:CallMethodAction TargetObject="{Binding}" MethodName="GeneratePassword"/>
@@ -361,6 +361,9 @@
                                         </StackPanel>
                                     </Flyout>
                                 </Button.Flyout>
+                                <ToolTipService.ToolTip>
+                                    <ToolTip x:Uid="PasswordGeneratorTooltip" />
+                                </ToolTipService.ToolTip>
                             </Button>
                         </Grid>
                     </ControlTemplate>
@@ -427,7 +430,7 @@
                     <Setter Property="Margin" Value="0,20,0,0"/>
                 </Style>
             </StackPanel.Resources>
-            <TextBlock TextWrapping="Wrap" Text="User name or login" FontSize="18"/>
+            <TextBlock x:Uid="EntryLogin" TextWrapping="Wrap" FontSize="18"/>
             <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="ButtonClick">
@@ -435,7 +438,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </local:TextBoxWithButton>
-            <TextBlock TextWrapping="Wrap" Text="Password"  FontSize="18"/>
+            <TextBlock x:Uid="EntryPassword" TextWrapping="Wrap" FontSize="18"/>
             <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" />
             <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
                 <interactivity:Interaction.Behaviors>
@@ -445,16 +448,16 @@
                 </interactivity:Interaction.Behaviors>
             </local:TextBoxWithButton>
             <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
-            <CheckBox HorizontalAlignment="Left" Margin="-3,0,0,0" Content="Show password" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
+            <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
             <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
             <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonClick="UrlButton_Click" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL" />
-            <TextBlock TextWrapping="Wrap" Text="Notes" FontSize="18"/>
+            <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18"/>
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
-            <CheckBox FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" Content="Expiration date"/>
-            <StackPanel Orientation="Horizontal" IsHitTestVisible="{Binding HasExpirationDate}">
+            <CheckBox  x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" />
+            <StackPanel Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <SymbolIcon Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ToolTipService.ToolTip>
-                        <ToolTip Content="Password has expired" />
+                        <ToolTip x:Uid="EntryExpirationTooltip" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
                 <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />

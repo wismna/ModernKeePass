@@ -7,8 +7,8 @@
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock FontSize="24" VerticalAlignment="Center" Margin="10,-70,0,0" Text="Settings" />
-        <TextBlock VerticalAlignment="Center" FontSize="14" Margin="5,0,0,0" Text="Here, you may change the application or the database settings." />
-        <TextBlock VerticalAlignment="Center" FontSize="14" Margin="5,0,0,0" Text="Select a setting pane on the left to access the options." />
+        <TextBlock FontSize="24" VerticalAlignment="Center" Margin="10,-70,0,0" x:Uid="SettingsWelcomeTitle" />
+        <TextBlock VerticalAlignment="Center" FontSize="14" Margin="5,0,0,0" x:Uid="SettingsWelcomeDesc" />
+        <TextBlock VerticalAlignment="Center" FontSize="14" Margin="5,0,0,0" x:Uid="SettingsWelcomeHowto" />
     </StackPanel>
 </Page>

@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using Windows.UI.Text;
@@ -82,6 +84,7 @@ namespace ModernKeePass.ViewModels
         private readonly PwGroup _pwGroup;
         private readonly IDatabase _database;
         private bool _isEditMode;
+        private PwEntry _reorderedEntry;
 
         public GroupVm() {}
 
@@ -96,10 +99,26 @@ namespace ModernKeePass.ViewModels
             ParentGroup = parent;
 
             if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _database.RecycleBin = this;
-            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)).OrderBy(e => e.Name));
-            Entries.Insert(0, new EntryVm ());
-            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)).OrderBy(g => g.Name));
+            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
+            Entries.CollectionChanged += Entries_CollectionChanged;
+            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)));
             Groups.Insert(0, new GroupVm ());
+        }
+
+        private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                    var oldIndex = (uint) e.OldStartingIndex;
+                     _reorderedEntry = _pwGroup.Entries.GetAt(oldIndex);
+                    _pwGroup.Entries.RemoveAt(oldIndex);
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    if (e.OldStartingIndex == -1) _pwGroup.Entries.Add(((EntryVm)e.NewItems[0]).GetPwEntry());
+                    else _pwGroup.Entries.Insert((uint)e.NewStartingIndex, _reorderedEntry);
+                    break;
+            }
         }
 
         public GroupVm AddNewGroup(string name = "")
@@ -114,21 +133,10 @@ namespace ModernKeePass.ViewModels
         public EntryVm AddNewEntry()
         {
             var pwEntry = new PwEntry(true, true);
-            _pwGroup.AddEntry(pwEntry, true);
             var newEntry = new EntryVm(pwEntry, this) {IsEditMode = true};
             newEntry.GeneratePassword();
             Entries.Add(newEntry);
             return newEntry;
-        }
-
-        public void AddPwEntry(PwEntry entry)
-        {
-            _pwGroup.AddEntry(entry, true);
-        }
-
-        public void RemovePwEntry(PwEntry entry)
-        {
-            _pwGroup.Entries.Remove(entry);
         }
 
         public void MarkForDelete()
@@ -169,6 +177,19 @@ namespace ModernKeePass.ViewModels
         public void Save()
         {
             _database.Save();
+        }
+
+        public void SortEntries()
+        {
+            var comparer = new PwEntryComparer(PwDefs.TitleField, true, true);
+            try
+            {
+                _pwGroup.Entries.Sort(comparer);
+                Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
+            }
+            catch (Exception e)
+            {
+            }
         }
 
         public override string ToString()

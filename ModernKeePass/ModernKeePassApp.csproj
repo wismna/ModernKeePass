@@ -210,6 +210,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />

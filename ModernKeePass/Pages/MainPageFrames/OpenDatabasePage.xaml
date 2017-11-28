@@ -17,10 +17,10 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton Content="Browse files..." Click="ButtonBase_OnClick" />
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Open an existing password database from your PC.</TextBlock>
-        <HyperlinkButton Content="From Url..." IsEnabled="False" />
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Open an existing password database from an Internet location (not yet implemented).</TextBlock>
+        <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenBrowseDesc" />
+        <HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenUrlDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />

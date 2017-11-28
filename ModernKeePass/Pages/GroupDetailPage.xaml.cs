@@ -99,9 +99,6 @@ namespace ModernKeePass.Pages
             {
                 case -1:
                     return;
-                case 0:
-                    entry = Model.AddNewEntry();
-                    break;
                 default:
                     entry = GridView.SelectedItem as EntryVm;
                     break;
@@ -156,5 +153,10 @@ namespace ModernKeePass.Pages
         }
 
         #endregion
+
+        private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(EntryDetailPage), Model.AddNewEntry());
+        }
     }
 }

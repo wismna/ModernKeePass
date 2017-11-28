@@ -97,9 +97,9 @@ namespace ModernKeePass.Pages
                 var uri = new Uri(UrlTextBox.Text);
                 await Windows.System.Launcher.LaunchUriAsync(uri);
             }
-            catch
+            catch (Exception ex)
             {
-                // TODO: Show some error
+                MessageDialogHelper.ShowErrorDialog(ex);
             }
         }
     }

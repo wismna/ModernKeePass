@@ -34,7 +34,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" Password="{Binding Password, Mode=TwoWay}" Height="30" IsEnabled="{Binding HasPassword}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" PlaceholderText="Password" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsEnabled="{Binding HasPassword}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
             <interactivity:Interaction.Behaviors>
                 <core:DataTriggerBehavior Binding="{Binding HasPassword}" Value="True">
                     <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
@@ -51,7 +51,7 @@
         <HyperlinkButton Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding HasKeyFile}" Click="CreateKeyFileButton_Click">
             <SymbolIcon Symbol="Add">
                 <ToolTipService.ToolTip>
-                    <ToolTip Content="Create new key file" />
+                    <ToolTip x:Uid="CompositeKeyNewKeyFileTooltip" />
                 </ToolTipService.ToolTip>
             </SymbolIcon>
         </HyperlinkButton>

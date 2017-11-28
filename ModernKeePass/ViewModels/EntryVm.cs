@@ -226,7 +226,6 @@ namespace ModernKeePass.ViewModels
         {
             PreviousGroup = ParentGroup;
             PreviousGroup.Entries.Remove(this);
-            PreviousGroup.RemovePwEntry(_pwEntry);
             if (destination == null)
             {
                 _database.AddDeletedItem(IdUuid);
@@ -234,19 +233,22 @@ namespace ModernKeePass.ViewModels
             }
             ParentGroup = destination;
             ParentGroup.Entries.Add(this);
-            ParentGroup.AddPwEntry(_pwEntry);
         }
         
         public void CommitDelete()
         {
             _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
-            if (_database.RecycleBinEnabled && !PreviousGroup.IsSelected) _database.RecycleBin.AddPwEntry(_pwEntry);
-            else _database.AddDeletedItem(IdUuid);
+            if (!_database.RecycleBinEnabled || PreviousGroup.IsSelected) _database.AddDeletedItem(IdUuid);
         }
 
         public void Save()
         {
             _database.Save();
+        }
+
+        public PwEntry GetPwEntry()
+        {
+            return _pwEntry;
         }
     }
 }

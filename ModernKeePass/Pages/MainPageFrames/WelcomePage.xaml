@@ -9,11 +9,11 @@
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Orientation="Horizontal" Margin="0,2,0,10">
             <SymbolIcon Symbol="Back" Margin="0,7,40,0" />
-            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">Have an existing password database? Open it here.</TextBlock>
+            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" x:Uid="WelcomeOpen" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,6,0,10">
             <SymbolIcon Symbol="Back" Margin="0,7,40,0" />
-            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">Want to create a new password database? Do it here.</TextBlock>
+            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" x:Uid="WelcomeNew" />
         </StackPanel>
     </StackPanel>
 </Page>

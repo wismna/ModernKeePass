@@ -18,8 +18,8 @@
     </Page.DataContext>
     
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton Content="Create new..." Click="ButtonBase_OnClick" />
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">Create a new password database to the location of your chosing.</TextBlock>
+        <HyperlinkButton x:Uid="NewCreateButton" Click="ButtonBase_OnClick" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="NewCreateDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />

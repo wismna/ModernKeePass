@@ -11,9 +11,9 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton Content="Save and close" Click="SaveButton_OnClick" />
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">This will save and close the currently opened database.</TextBlock>
-        <HyperlinkButton Content="Save as..." Click="SaveAsButton_OnClick" />
-        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30">This will save the currently opened database as a new file and leave it open.</TextBlock>
+        <HyperlinkButton x:Uid="SaveButton" Click="SaveButton_OnClick" />
+        <TextBlock x:Uid="SaveDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
+        <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" />
+        <TextBlock x:Uid="SaveAsDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
     </StackPanel>
 </Page>

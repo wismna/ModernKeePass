@@ -17,13 +17,13 @@
     </Page.DataContext>
     
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ToggleSwitch Header="Recycle bin" OffContent="Disabled" OnContent="Enabled" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
+        <ToggleSwitch x:Uid="SettingsDatabaseRecycleBin" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
         <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding HasRecycleBin}" />
-        <TextBlock Text="Encryption Algorithm" FontSize="14" Margin="5,20,0,10" />
+        <TextBlock x:Uid="SettingsDatabaseEncryption" FontSize="14" Margin="5,20,0,10" />
         <ComboBox ItemsSource="{Binding Source={StaticResource Ciphers}}" SelectedIndex="{Binding CipherIndex, Mode=TwoWay}" />
-        <TextBlock Text="Compression Algorithm" FontSize="14" Margin="5,20,0,10" />
+        <TextBlock x:Uid="SettingsDatabaseCompression" FontSize="14" Margin="5,20,0,10" />
         <ComboBox ItemsSource="{Binding Source={StaticResource Compressions}}" SelectedItem="{Binding CompressionName, Mode=TwoWay}" />
-        <TextBlock Text="Key Derivation Algorithm" FontSize="14" Margin="5,20,0,10" />
+        <TextBlock x:Uid="SettingsDatabaseKdf" FontSize="14" Margin="5,20,0,10" />
         <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding KeyDerivationName, Mode=TwoWay}" />
     </StackPanel>
 </Page>

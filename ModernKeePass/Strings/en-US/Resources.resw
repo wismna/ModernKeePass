@@ -1,0 +1,282 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutCredits1.Text" xml:space="preserve">
+    <value>Dominik Reichl for the KeePass application and file format</value>
+  </data>
+  <data name="AboutCredits2.Text" xml:space="preserve">
+    <value>David Lechner for his PCL adapatation of the KeePass Library and his correlated tests</value>
+  </data>
+  <data name="AboutCreditsLabel.Text" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="AboutDesc.Text" xml:space="preserve">
+    <value>A modern password manager for the Windows Store</value>
+  </data>
+  <data name="AboutHomepage.Text" xml:space="preserve">
+    <value>Homepage:</value>
+  </data>
+  <data name="CompositeKeyNewKeyFileTooltip.Content" xml:space="preserve">
+    <value>Create new key file</value>
+  </data>
+  <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="EntryExpirationDate.Content" xml:space="preserve">
+    <value>Expiration date</value>
+  </data>
+  <data name="EntryExpirationTooltip.Content" xml:space="preserve">
+    <value>Password has expired</value>
+  </data>
+  <data name="EntryLogin.Text" xml:space="preserve">
+    <value>User name or login</value>
+  </data>
+  <data name="EntryNotes.Text" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="EntryPassword.Text" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="EntryShowPassword.Content" xml:space="preserve">
+    <value>Show password</value>
+  </data>
+  <data name="GroupCreateEntry.Text" xml:space="preserve">
+    <value>Create new entry</value>
+  </data>
+  <data name="GroupSearch.PlaceholderText" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="GroupTitle.PlaceholderText" xml:space="preserve">
+    <value>New group name...</value>
+  </data>
+  <data name="NewCreateButton.Content" xml:space="preserve">
+    <value>Create new...</value>
+  </data>
+  <data name="NewCreateDesc.Text" xml:space="preserve">
+    <value>Create a new password database to the location of your chosing.</value>
+  </data>
+  <data name="OpenBrowseButton.Content" xml:space="preserve">
+    <value>Browse files...</value>
+  </data>
+  <data name="OpenBrowseDesc.Text" xml:space="preserve">
+    <value>Open an existing password database from your PC.</value>
+  </data>
+  <data name="OpenUrlButton.Content" xml:space="preserve">
+    <value>From Url...</value>
+  </data>
+  <data name="OpenUrlDesc.Text" xml:space="preserve">
+    <value>Open an existing password database from an Internet location (not yet implemented).</value>
+  </data>
+  <data name="PasswordGeneratorAlso.Text" xml:space="preserve">
+    <value>Also add these characters:</value>
+  </data>
+  <data name="PasswordGeneratorBrackets.Content" xml:space="preserve">
+    <value>Brackets ([], {}, (), ...)</value>
+  </data>
+  <data name="PasswordGeneratorButton.Content" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="PasswordGeneratorDigits.Content" xml:space="preserve">
+    <value>Digits (0, 1, 2, ...)</value>
+  </data>
+  <data name="PasswordGeneratorLength.Text" xml:space="preserve">
+    <value>Password Length:</value>
+  </data>
+  <data name="PasswordGeneratorLower.Content" xml:space="preserve">
+    <value>Lower case (a, b, c, ...)</value>
+  </data>
+  <data name="PasswordGeneratorMinus.Content" xml:space="preserve">
+    <value>Minus (-)</value>
+  </data>
+  <data name="PasswordGeneratorSpace.Content" xml:space="preserve">
+    <value>Space ( )</value>
+  </data>
+  <data name="PasswordGeneratorSpecial.Content" xml:space="preserve">
+    <value>Special (!, $, %, ...)</value>
+  </data>
+  <data name="PasswordGeneratorTooltip.Content" xml:space="preserve">
+    <value>Generate password</value>
+  </data>
+  <data name="PasswordGeneratorUnderscore.Content" xml:space="preserve">
+    <value>Underscore (_)</value>
+  </data>
+  <data name="PasswordGeneratorUpper.Content" xml:space="preserve">
+    <value>Upper case (A, B, C, ...)</value>
+  </data>
+  <data name="SaveAsButton.Content" xml:space="preserve">
+    <value>Save as...</value>
+  </data>
+  <data name="SaveAsDesc.Text" xml:space="preserve">
+    <value>This will save the currently opened database as a new file and leave it open.</value>
+  </data>
+  <data name="SaveButton.Content" xml:space="preserve">
+    <value>Save and close</value>
+  </data>
+  <data name="SaveDesc.Text" xml:space="preserve">
+    <value>This will save and close the currently opened database.</value>
+  </data>
+  <data name="SettingsDatabaseCompression.Text" xml:space="preserve">
+    <value>Compression Algorithm</value>
+  </data>
+  <data name="SettingsDatabaseEncryption.Text" xml:space="preserve">
+    <value>Encryption Algorithm</value>
+  </data>
+  <data name="SettingsDatabaseKdf.Text" xml:space="preserve">
+    <value>Key Derivation Algorithm</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.Header" xml:space="preserve">
+    <value>Recycle bin</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.OffContent" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
+    <value>Here, you may change your database password, key file, or both. Just click on on</value>
+  </data>
+  <data name="SettingsSecurityDesc2.Text" xml:space="preserve">
+    <value>Update master key</value>
+  </data>
+  <data name="SettingsSecurityDesc3.Text" xml:space="preserve">
+    <value>when you're done. Please make sure to remember the password you choose here!</value>
+  </data>
+  <data name="SettingsSecurityTitle.Text" xml:space="preserve">
+    <value>Change database security options</value>
+  </data>
+  <data name="SettingsSecurityUpdateButton.ButtonLabel" xml:space="preserve">
+    <value>Update master key</value>
+  </data>
+  <data name="SettingsWelcomeDesc.Text" xml:space="preserve">
+    <value>Here, you may change the application or the database settings.</value>
+  </data>
+  <data name="SettingsWelcomeHowto.Text" xml:space="preserve">
+    <value>Select a setting pane on the left to access the options.</value>
+  </data>
+  <data name="SettingsWelcomeTitle.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="WelcomeNew.Text" xml:space="preserve">
+    <value>Want to create a new password database? Do it here.</value>
+  </data>
+  <data name="WelcomeOpen.Text" xml:space="preserve">
+    <value>Have an existing password database? Open it here.</value>
+  </data>
+</root>
