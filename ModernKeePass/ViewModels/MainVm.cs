@@ -74,6 +74,10 @@ namespace ModernKeePass.ViewModels
                 },
                 new MainMenuItemVm
                 {
+                    Title = "Settings" , PageType = typeof(SettingsPage), Destination = referenceFrame, SymbolIcon = Symbol.Setting
+                },
+                new MainMenuItemVm
+                {
                     Title = "About" , PageType = typeof(AboutPage), Destination = destinationFrame, SymbolIcon = Symbol.Help
                 }
             };

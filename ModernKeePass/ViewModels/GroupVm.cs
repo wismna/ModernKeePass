@@ -34,7 +34,7 @@ namespace ModernKeePass.ViewModels
         /// </summary>
         public bool IsSelected
         {
-            get { return _database.RecycleBinEnabled && _database.RecycleBin?.Id == Id; }
+            get { return _database != null && _database.RecycleBinEnabled && _database.RecycleBin?.Id == Id; }
             set
             {
                 if (value && _pwGroup != null) _database.RecycleBin = this;

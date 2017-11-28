@@ -1,17 +1,18 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Pages;
+using ModernKeePass.Pages.SettingsPageFrames;
 
 namespace ModernKeePass.ViewModels
 {
     public class SettingsVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
         private ListMenuItemVm _selectedItem;
-
-        //public ObservableCollection<ListMenuItemVm> MenuItems { get; set; }
+        
         private IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> _menuItems;
 
         public IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> MenuItems
@@ -40,14 +41,33 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVm()
+        public SettingsVm() : this((Application.Current as App)?.Database) { }
+
+        public SettingsVm(IDatabase database)
         {
             var menuItems = new ObservableCollection<ListMenuItemVm>
             {
-                new ListMenuItemVm { Title = "General", Group = "Database", SymbolIcon = Symbol.Setting, PageType = typeof(SettingsDatabasePage), IsSelected = true },
-                new ListMenuItemVm { Title = "Security", Group = "Database", SymbolIcon = Symbol.Permissions, PageType = typeof(SettingsSecurityPage) },
-                //new ListMenuItemVm { Title = "General", SymbolIcon = Symbol.Edit, PageType = typeof(SettingsGeneralPage) }
+                new ListMenuItemVm { Title = "New", Group = "Application", SymbolIcon = Symbol.Add, PageType = typeof(SettingsNewDatabasePage) }
             };
+            if (database?.Status == 2)
+            {
+                menuItems.Add(new ListMenuItemVm
+                {
+                    Title = "General",
+                    Group = "Database",
+                    SymbolIcon = Symbol.Setting,
+                    PageType = typeof(SettingsDatabasePage),
+                    IsSelected = true
+                });
+                menuItems.Add(new ListMenuItemVm
+                {
+                    Title = "Security",
+                    Group = "Database",
+                    SymbolIcon = Symbol.Permissions,
+                    PageType = typeof(SettingsSecurityPage)
+                });
+
+            }
             SelectedItem = menuItems.FirstOrDefault(m => m.IsSelected);
 
             MenuItems = from item in menuItems group item by item.Group into grp orderby grp.Key select grp;

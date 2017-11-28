@@ -133,6 +133,9 @@
     <Compile Include="Pages\SettingsPageFrames\SettingsDatabasePage.xaml.cs">
       <DependentUpon>SettingsDatabasePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\SettingsPageFrames\SettingsNewDatabasePage.xaml.cs">
+      <DependentUpon>SettingsNewDatabasePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
       <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
     </Compile>
@@ -195,6 +198,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\EntryVm.cs" />
     <Compile Include="ViewModels\GroupVm.cs" />
+    <Compile Include="ViewModels\Items\SettingsNewVm.cs" />
     <Compile Include="ViewModels\SettingsVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />
     <Compile Include="ViewModels\NewVm.cs" />
@@ -265,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\SettingsPageFrames\SettingsDatabasePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\SettingsPageFrames\SettingsNewDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

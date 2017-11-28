@@ -25,7 +25,7 @@ namespace ModernKeePassApp.Test
             var mainVm = new MainVm(null, null, database);
             Assert.AreEqual(1, mainVm.MainMenuItems.Count());
             var firstGroup = mainVm.MainMenuItems.FirstOrDefault();
-            Assert.AreEqual(5, firstGroup.Count());
+            Assert.AreEqual(6, firstGroup.Count());
 
             database.Status = 1;
             mainVm = new MainVm(null, null, database);
@@ -94,7 +94,7 @@ namespace ModernKeePassApp.Test
             var settingsVm = new SettingsVm();
             Assert.AreEqual(1, settingsVm.MenuItems.Count());
             var firstGroup = settingsVm.MenuItems.FirstOrDefault();
-            Assert.AreEqual(2, firstGroup.Count());
+            Assert.AreEqual(1, firstGroup.Count());
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
             Assert.AreEqual("General", selectedItem.Title);

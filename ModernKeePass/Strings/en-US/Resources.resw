@@ -249,6 +249,21 @@
   <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
     <value>Enabled</value>
   </data>
+  <data name="SettingsNewDatabaseDesc.Text" xml:space="preserve">
+    <value>Here, you can change some default options when creating a database.</value>
+  </data>
+  <data name="SettingsNewDatabaseKdf.Text" xml:space="preserve">
+    <value>Default Key Derivation algorithm</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.Header" xml:space="preserve">
+    <value>Create sample data</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.OffContent" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.OnContent" xml:space="preserve">
+    <value>Yes</value>
+  </data>
   <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
     <value>Here, you may change your database password, key file, or both. Just click on on</value>
   </data>

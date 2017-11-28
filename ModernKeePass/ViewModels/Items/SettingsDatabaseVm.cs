@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -15,7 +14,6 @@ namespace ModernKeePass.ViewModels
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
         private readonly IDatabase _database;
-        private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
         private GroupVm _selectedItem;
 
         public bool HasRecycleBin
@@ -95,19 +93,6 @@ namespace ModernKeePass.ViewModels
         {
             _database = database;
             Groups = _database.RootGroup.Groups;
-        }
-
-        // TODO: Move to another setting class (or a static class)
-        private T GetSetting<T>(string property)
-        {
-            try
-            {
-                return (T) Convert.ChangeType(_localSettings.Values[property], typeof(T));
-            }
-            catch (InvalidCastException)
-            {
-                return default(T);
-            }
         }
     }
 }
