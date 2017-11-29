@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
+using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -113,9 +114,9 @@ namespace ModernKeePass.Pages
                 ? "Are you sure you want to send the whole group and all its entries to the recycle bin?"
                 : "Are you sure you want to delete the whole group and all its entries?";
             var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
-            MessageDialogHelper.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
+            MessageDialogService.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
             {
-                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
+                ToastNotificationService.ShowMovedToast(Model, "Deleting", text);
                 Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             });
@@ -123,7 +124,7 @@ namespace ModernKeePass.Pages
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            ToastNotificationService.ShowMovedToast(Model, "Restored", "Item returned to its original group");
             if (Frame.CanGoBack) Frame.GoBack();
         }
 
@@ -157,6 +158,20 @@ namespace ModernKeePass.Pages
         private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EntryDetailPage), Model.AddNewEntry());
+        }
+
+        private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            e.Cancel = !Model.IsEditMode;
+        }
+
+        private void GridView_Drop(object sender, DragEventArgs e)
+        {
+        }
+        
+        private void LeftListView_Drop(object sender, DragEventArgs e)
+        {
+
         }
     }
 }

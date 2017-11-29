@@ -22,7 +22,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _database.RecycleBinEnabled = value;
-                OnPropertyChanged();
+                OnPropertyChanged("HasRecycleBin");
             }
         }
 

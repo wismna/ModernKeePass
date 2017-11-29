@@ -4,6 +4,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
+using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page Détail de l'élément, consultez la page http://go.microsoft.com/fwlink/?LinkId=234232
@@ -76,9 +77,9 @@ namespace ModernKeePass.Pages
                 ? "Are you sure you want to send this entry to the recycle bin?"
                 : "Are you sure you want to delete this entry?";
             var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
-            MessageDialogHelper.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
+            MessageDialogService.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
             {
-                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
+                ToastNotificationService.ShowMovedToast(Model, "Deleting", text);
                 Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             });
@@ -86,7 +87,7 @@ namespace ModernKeePass.Pages
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            ToastNotificationService.ShowMovedToast(Model, "Restored", "Item returned to its original group");
             if (Frame.CanGoBack) Frame.GoBack();
         }
 
@@ -99,7 +100,7 @@ namespace ModernKeePass.Pages
             }
             catch (Exception ex)
             {
-                MessageDialogHelper.ShowErrorDialog(ex);
+                MessageDialogService.ShowErrorDialog(ex);
             }
         }
     }

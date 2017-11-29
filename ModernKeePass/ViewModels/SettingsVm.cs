@@ -47,7 +47,14 @@ namespace ModernKeePass.ViewModels
         {
             var menuItems = new ObservableCollection<ListMenuItemVm>
             {
-                new ListMenuItemVm { Title = "New", Group = "Application", SymbolIcon = Symbol.Add, PageType = typeof(SettingsNewDatabasePage) }
+                new ListMenuItemVm
+                {
+                    Title = "New",
+                    Group = "Application",
+                    SymbolIcon = Symbol.Add,
+                    PageType = typeof(SettingsNewDatabasePage),
+                    IsSelected = true
+                }
             };
             if (database?.Status == 2)
             {
@@ -56,8 +63,7 @@ namespace ModernKeePass.ViewModels
                     Title = "General",
                     Group = "Database",
                     SymbolIcon = Symbol.Setting,
-                    PageType = typeof(SettingsDatabasePage),
-                    IsSelected = true
+                    PageType = typeof(SettingsDatabasePage)
                 });
                 menuItems.Add(new ListMenuItemVm
                 {

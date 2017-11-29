@@ -106,7 +106,7 @@
                 DataContext="{Binding DataContext, ElementName=PageRoot}" 
                 RequestedTheme="Dark"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
+                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}" AllowDrop="True" Drop="LeftListView_Drop">
                 <ListView.Resources>
                     <DataTemplate x:Name="Collapsed">
                         <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
@@ -167,9 +167,12 @@
                         TabIndex="1"
                         SelectionChanged="entries_SelectionChanged"
                         IsSynchronizedWithCurrentItem="False" 
-                        AllowDrop="{Binding IsEditMode}"
-                        CanReorderItems="{Binding IsEditMode}" 
-                        CanDragItems="{Binding IsEditMode}">
+                        BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
+                        AllowDrop="True"
+                        CanReorderItems="True" 
+                        CanDragItems="True"
+                        DragItemsStarting="GridView_DragItemsStarting" 
+                        Drop="GridView_Drop">
                         <interactivity:Interaction.Behaviors>
                             <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
                                 <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
@@ -177,22 +180,16 @@
                         </interactivity:Interaction.Behaviors>
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Grid Height="110" Width="480" x:Name="EntryGrid" >
+                                <Grid Height="110" Width="480" x:Name="EntryGrid" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
-                                    <Border 
-                                        Grid.Column="0" 
-                                        BorderThickness="2" 
-                                        BorderBrush="{StaticResource SystemColor}"
-                                        Background="{Binding BackgroundColor, ConverterParameter={StaticResource Transparent}, Converter={StaticResource ColorToBrushConverter}}">
-                                        <SymbolIcon Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5" >
-                                            <SymbolIcon.RenderTransform>
-                                                <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
-                                            </SymbolIcon.RenderTransform>
-                                        </SymbolIcon>
-                                    </Border>
+                                    <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5" >
+                                        <SymbolIcon.RenderTransform>
+                                            <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
+                                        </SymbolIcon.RenderTransform>
+                                    </SymbolIcon>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
                                         <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
                                         <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
@@ -260,8 +257,36 @@
                                 OtherItem="{StaticResource GroupOtherItem}" />
                         </GridView.ItemTemplateSelector>-->
                         <GridView.ItemContainerStyle>
-                            <Style TargetType="FrameworkElement">
+                            <!--<Style TargetType="FrameworkElement">
                                 <Setter Property="Margin" Value="52,0,0,2"/>
+                            </Style>-->
+                            <Style TargetType = "GridViewItem" >
+                                <Setter Property = "Template" >
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType = "GridViewItem" >
+                                            <GridViewItemPresenter
+                                                SelectionCheckMarkVisualEnabled="True"
+                                                CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}"
+                                                CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}"
+                                                CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}"
+                                                DragBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
+                                                FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}"
+                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}"
+                                                SelectedBorderThickness="{ThemeResource GridViewItemCompactSelectedBorderThemeThickness}"
+                                                SelectedBackground="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}"
+                                                SelectedForeground="{ThemeResource ListViewItemSelectedForegroundThemeBrush}"
+                                                SelectedPointerOverBackground="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}"
+                                                SelectedPointerOverBorderBrush="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}"
+                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                                                PointerOverBackgroundMargin="1"
+                                                ContentMargin="4" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
                             </Style>
                         </GridView.ItemContainerStyle>
                     </GridView>
@@ -342,5 +367,23 @@
             </StackPanel>
             <SearchBox Grid.Column="2" x:Uid="GroupSearch" Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
         </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DragDropGroup">
+                <VisualState x:Name="Dragging">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridView" Storyboard.TargetProperty="BorderThickness">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Dropped">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridView" Storyboard.TargetProperty="BorderThickness">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

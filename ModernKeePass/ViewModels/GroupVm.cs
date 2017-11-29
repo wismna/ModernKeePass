@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
+using ModernKeePass.Services;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
@@ -85,6 +86,7 @@ namespace ModernKeePass.ViewModels
         private readonly IDatabase _database;
         private bool _isEditMode;
         private PwEntry _reorderedEntry;
+        //private int _reorderedEntryIndex;
 
         public GroupVm() {}
 
@@ -115,7 +117,7 @@ namespace ModernKeePass.ViewModels
                     _pwGroup.Entries.RemoveAt(oldIndex);
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (e.OldStartingIndex == -1) _pwGroup.Entries.Add(((EntryVm)e.NewItems[0]).GetPwEntry());
+                    if (_reorderedEntry == null) _pwGroup.AddEntry(((EntryVm) e.NewItems[0]).GetPwEntry(), true);
                     else _pwGroup.Entries.Insert((uint)e.NewStartingIndex, _reorderedEntry);
                     break;
             }
@@ -184,11 +186,13 @@ namespace ModernKeePass.ViewModels
             var comparer = new PwEntryComparer(PwDefs.TitleField, true, true);
             try
             {
+                // TODO: this throws an exception
                 _pwGroup.Entries.Sort(comparer);
                 Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
             }
             catch (Exception e)
             {
+                MessageDialogService.ShowErrorDialog(e);
             }
         }
 

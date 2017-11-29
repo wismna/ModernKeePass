@@ -2,6 +2,7 @@
 
 using ModernKeePass.Common;
 using ModernKeePass.Events;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.Pages
 {
@@ -17,7 +18,7 @@ namespace ModernKeePass.Pages
 
         private void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
         {
-            ToastNotificationHelper.ShowGenericToast("Composite key", "Database successfully updated.");
+            ToastNotificationService.ShowGenericToast("Composite key", "Database successfully updated.");
         }
     }
 }

@@ -15,17 +15,13 @@ namespace ModernKeePass.ViewModels
     public class EntryVm : INotifyPropertyChanged, IPwEntity
     {
         public GroupVm ParentGroup { get; private set; }
-
         public GroupVm PreviousGroup { get; private set; }
-
         public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
         public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
         public bool IsFirstItem => _pwEntry == null;
-
-
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
         public bool DigitsPatternSelected { get; set; } = true;
@@ -36,6 +32,7 @@ namespace ModernKeePass.ViewModels
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
         public PwUuid IdUuid => _pwEntry?.Uuid;
+        public string Id => _pwEntry?.Uuid.ToHexString();
 
         public double PasswordLength
         {
@@ -46,6 +43,7 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("PasswordLength");
             }
         }
+
         public string Name
         {
             get
@@ -56,7 +54,6 @@ namespace ModernKeePass.ViewModels
             set { SetEntryValue(PwDefs.TitleField, value); }
         }
 
-        public string Id => _pwEntry?.Uuid.ToHexString();
 
         public string UserName
         {

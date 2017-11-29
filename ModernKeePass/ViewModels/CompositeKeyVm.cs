@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Keys;
 using ModernKeePassLib.Serialization;
@@ -117,19 +118,19 @@ namespace ModernKeePass.ViewModels
             {
                 error = $"Error: {e.Message}";
             }
-            switch ((DatabaseHelper.DatabaseStatus)Database.Status)
+            switch ((DatabaseService.DatabaseStatus)Database.Status)
             {
-                case DatabaseHelper.DatabaseStatus.Opened:
+                case DatabaseService.DatabaseStatus.Opened:
                     await Task.Run( () => RootGroup = Database.RootGroup);
                     return true;
-                case DatabaseHelper.DatabaseStatus.CompositeKeyError:
+                case DatabaseService.DatabaseStatus.CompositeKeyError:
                     var errorMessage = new StringBuilder("Error: wrong ");
                     if (HasPassword) errorMessage.Append("password");
                     if (HasPassword && HasKeyFile) errorMessage.Append(" or ");
                     if (HasKeyFile) errorMessage.Append("key file");
                     UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
                     break;
-                case DatabaseHelper.DatabaseStatus.Error:
+                case DatabaseService.DatabaseStatus.Error:
                     UpdateStatus(error, StatusTypes.Error);
                     break;
             }

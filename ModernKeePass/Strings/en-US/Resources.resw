@@ -138,6 +138,9 @@
   <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="DonateDesc.Text" xml:space="preserve">
+    <value>Like this app? Why not make a small donation to support my work and help this app stay ad-free :) ?</value>
+  </data>
   <data name="EntryExpirationDate.Content" xml:space="preserve">
     <value>Expiration date</value>
   </data>
@@ -253,7 +256,7 @@
     <value>Here, you can change some default options when creating a database.</value>
   </data>
   <data name="SettingsNewDatabaseKdf.Text" xml:space="preserve">
-    <value>Default Key Derivation algorithm</value>
+    <value>File format</value>
   </data>
   <data name="SettingsNewDatabaseSample.Header" xml:space="preserve">
     <value>Create sample data</value>

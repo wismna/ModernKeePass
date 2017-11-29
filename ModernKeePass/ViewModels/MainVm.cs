@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Pages;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
@@ -50,14 +51,14 @@ namespace ModernKeePass.ViewModels
         public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database)
         {
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            var isDatabaseOpen = database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opened;
+            var isDatabaseOpen = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened;
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
                 new MainMenuItemVm
                 {
                     Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2,
-                    IsSelected = database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opening
+                    IsSelected = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opening
                 },
                 new MainMenuItemVm
                 {
@@ -70,7 +71,7 @@ namespace ModernKeePass.ViewModels
                 },
                 new MainMenuItemVm {
                     Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
-                    IsSelected = (database == null || database.Status == (int) DatabaseHelper.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
+                    IsSelected = (database == null || database.Status == (int) DatabaseService.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
                 },
                 new MainMenuItemVm
                 {
@@ -83,7 +84,7 @@ namespace ModernKeePass.ViewModels
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
-            if (database != null && database.Status == (int) DatabaseHelper.DatabaseStatus.Opened)
+            if (database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
                     Title = database.Name,

@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock x:Uid="SettingsSecurityTitle" FontSize="14" Margin="5,0,0,0" />
+        <TextBlock x:Uid="SettingsSecurityTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,0" />
         <TextBlock TextWrapping="WrapWholeWords" Margin="5,0,0,0">
             <Run x:Uid="SettingsSecurityDesc1" />
             <Run x:Uid="SettingsSecurityDesc2" FontWeight="SemiBold" />

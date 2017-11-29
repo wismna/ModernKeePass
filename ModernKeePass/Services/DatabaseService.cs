@@ -1,18 +1,20 @@
-﻿using System;
+using System;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
+using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
+using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
 
-namespace ModernKeePass.Common
+namespace ModernKeePass.Services
 {
-    public class DatabaseHelper: IDatabase
+    public class DatabaseService: IDatabase
     {
         public enum DatabaseStatus
         {
@@ -92,7 +94,20 @@ namespace ModernKeePass.Common
                     return;
                 }
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
-                if (createNew) _pwDatabase.New(ioConnection, key);
+                if (createNew)
+                {
+                    _pwDatabase.New(ioConnection, key);
+
+                    //Get settings default values
+                    if (SettingsService.GetSetting<bool>("Sample")) CreateSampleData();
+                    var fileFormat = SettingsService.GetSetting<string>("DefaultFileFormat");
+                    switch (fileFormat)
+                    {
+                        case "4":
+                            KeyDerivation = KdfPool.Get("Argon2").GetDefaultParameters();
+                            break;
+                    }
+                }
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
                 if (!_pwDatabase.IsOpen) return;
@@ -173,6 +188,38 @@ namespace ModernKeePass.Common
         public void UpdateCompositeKey(CompositeKey key)
         {
             _pwDatabase.MasterKey = key;
+        }
+
+        private void CreateSampleData()
+        {
+            _pwDatabase.RootGroup.AddGroup(new PwGroup(true, true, "Banking", PwIcon.Count), true);
+            _pwDatabase.RootGroup.AddGroup(new PwGroup(true, true, "Email", PwIcon.EMail), true);
+            _pwDatabase.RootGroup.AddGroup(new PwGroup(true, true, "Internet", PwIcon.World), true);
+
+            var pe = new PwEntry(true, true);
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectTitle,
+                "Sample Entry"));
+            pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectUserName,
+                "Username"));
+            pe.Strings.Set(PwDefs.UrlField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectUrl,
+                PwDefs.HomepageUrl));
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectPassword,
+                "Password"));
+            pe.Strings.Set(PwDefs.NotesField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectNotes,
+                "You may safely delete this sample"));
+            _pwDatabase.RootGroup.AddEntry(pe, true);
+
+            pe = new PwEntry(true, true);
+            pe.Strings.Set(PwDefs.TitleField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectTitle,
+                "Sample Entry #2"));
+            pe.Strings.Set(PwDefs.UserNameField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectUserName,
+                "Michael321"));
+            pe.Strings.Set(PwDefs.UrlField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectUrl,
+                PwDefs.HelpUrl + "kb/testform.html"));
+            pe.Strings.Set(PwDefs.PasswordField, new ProtectedString(_pwDatabase.MemoryProtection.ProtectPassword,
+                "12345"));
+            pe.AutoType.Add(new AutoTypeAssociation("*Test Form - KeePass*", string.Empty));
+            _pwDatabase.RootGroup.AddEntry(pe, true);
         }
     }
 }
