@@ -262,7 +262,10 @@
     <value>Here, you can change some default options when creating a database.</value>
   </data>
   <data name="SettingsNewDatabaseKdf.Text" xml:space="preserve">
-    <value>File format</value>
+    <value>KDBX database file version</value>
+  </data>
+  <data name="SettingsNewDatabaseKdfMoreInfo.Text" xml:space="preserve">
+    <value>Higher is better, but there may be compatibility issues with older applications</value>
   </data>
   <data name="SettingsNewDatabaseSample.Header" xml:space="preserve">
     <value>Create sample data</value>

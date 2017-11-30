@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -163,15 +164,7 @@ namespace ModernKeePass.Pages
         private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             e.Cancel = !Model.IsEditMode;
-        }
-
-        private void GridView_Drop(object sender, DragEventArgs e)
-        {
-        }
-        
-        private void LeftListView_Drop(object sender, DragEventArgs e)
-        {
-
+            e.Data.RequestedOperation = DataPackageOperation.Move;
         }
     }
 }

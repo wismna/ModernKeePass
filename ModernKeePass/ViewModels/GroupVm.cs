@@ -201,7 +201,7 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _pwGroup.SortSubGroups(false);
-                Groups = new ObservableCollection<GroupVm>(Groups.Skip(1).OrderBy(g => g.Name));
+                Groups = new ObservableCollection<GroupVm>(Groups.OrderBy(g => g.Name).ThenBy(g => g._pwGroup == null));
                 OnPropertyChanged("Groups");
             }
             catch (Exception e)

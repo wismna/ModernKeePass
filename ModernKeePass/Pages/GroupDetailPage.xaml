@@ -119,7 +119,7 @@
                 DataContext="{Binding DataContext, ElementName=PageRoot}" 
                 RequestedTheme="Dark"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}" AllowDrop="True" Drop="LeftListView_Drop">
+                Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
                 <ListView.Resources>
                     <DataTemplate x:Name="Collapsed">
                         <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
@@ -144,6 +144,7 @@
                         <!--<Setter Property="HorizontalContentAlignment" Value="Center" />-->
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="Margin" Value="0"/>
+                        <Setter Property="AllowDrop" Value="True"/>
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.HeaderTemplate>
@@ -184,8 +185,7 @@
                         AllowDrop="True"
                         CanReorderItems="True" 
                         CanDragItems="True"
-                        DragItemsStarting="GridView_DragItemsStarting" 
-                        Drop="GridView_Drop">
+                        DragItemsStarting="GridView_DragItemsStarting">
                         <interactivity:Interaction.Behaviors>
                             <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
                                 <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
