@@ -18,9 +18,7 @@ namespace ModernKeePassLib.Native
 
 	internal static class NativeMethods
 	{
-		public static bool SupportsStrCmpNaturally {
-			get { throw new NotImplementedException(); }
-		}
+		public static bool SupportsStrCmpNaturally => false;
 
 	    internal const int GCRY_CIPHER_AES256 = 9;
 	    internal const int GCRY_CIPHER_MODE_ECB = 1;

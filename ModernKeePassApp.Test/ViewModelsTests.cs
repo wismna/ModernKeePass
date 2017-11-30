@@ -97,7 +97,7 @@ namespace ModernKeePassApp.Test
             Assert.AreEqual(1, firstGroup.Count());
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
-            Assert.AreEqual("General", selectedItem.Title);
+            Assert.AreEqual("New", selectedItem.Title);
         }
     }
 }

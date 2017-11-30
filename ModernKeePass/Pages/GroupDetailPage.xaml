@@ -44,18 +44,31 @@
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarButton Icon="Sort" Label="Sort" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:CallMethodAction MethodName="SortEntries" TargetObject="{Binding}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem x:Uid="AppBarSortEntries">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Click">
+                                    <core:CallMethodAction MethodName="SortEntries" TargetObject="{Binding}" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="AppBarSortGroups">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Click">
+                                    <core:CallMethodAction MethodName="SortGroups" TargetObject="{Binding}" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.Flyout>
             </AppBarButton>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
-                <interactivity:Interaction.Behaviors>
+                <!--<interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
                     </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
+                </interactivity:Interaction.Behaviors>-->
             </AppBarToggleButton>
             <AppBarButton Icon="Undo" Label="Restore" Visibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
                 <interactivity:Interaction.Behaviors>

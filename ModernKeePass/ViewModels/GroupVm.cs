@@ -183,12 +183,26 @@ namespace ModernKeePass.ViewModels
 
         public void SortEntries()
         {
-            var comparer = new PwEntryComparer(PwDefs.TitleField, true, true);
+            var comparer = new PwEntryComparer(PwDefs.TitleField, true, false);
             try
             {
-                // TODO: this throws an exception
                 _pwGroup.Entries.Sort(comparer);
                 Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
+                OnPropertyChanged("Entries");
+            }
+            catch (Exception e)
+            {
+                MessageDialogService.ShowErrorDialog(e);
+            }
+        }
+
+        public void SortGroups()
+        {
+            try
+            {
+                _pwGroup.SortSubGroups(false);
+                Groups = new ObservableCollection<GroupVm>(Groups.Skip(1).OrderBy(g => g.Name));
+                OnPropertyChanged("Groups");
             }
             catch (Exception e)
             {
