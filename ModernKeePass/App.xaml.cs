@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Data.Json;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Exceptions;
-using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -22,7 +19,7 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
-        public DatabaseService Database { get; set; } = new DatabaseService();
+        public DatabaseService Database { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -49,7 +46,7 @@ namespace ModernKeePass
 
             if (!(realException is SaveException)) return;
             unhandledExceptionEventArgs.Handled = true;
-            MessageDialogService.SaveErrorDialog(realException as SaveException, Database);
+            MessageDialogHelper.SaveErrorDialog(realException as SaveException, Database);
         }
 
         /// <summary>
@@ -124,6 +121,7 @@ namespace ModernKeePass
             }*/
             // Ensure the current window is active
             Window.Current.Activate();
+            Database = new DatabaseService();
         }
 
         /// <summary>

@@ -113,18 +113,24 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IRecent.cs" />
+    <Compile Include="Interfaces\IRecentItem.cs" />
+    <Compile Include="Interfaces\IResource.cs" />
     <Compile Include="Pages\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\DatabaseService.cs" />
-    <Compile Include="Services\MessageDialogService.cs" />
+    <Compile Include="Interfaces\ISettings.cs" />
+    <Compile Include="Common\MessageDialogHelper.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
     <Compile Include="Common\NotifyPropertyChangedBase.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Services\RecentService.cs" />
+    <Compile Include="Services\ResourcesService.cs" />
     <Compile Include="Services\SettingsService.cs" />
-    <Compile Include="Services\ToastNotificationService.cs" />
+    <Compile Include="Common\ToastNotificationHelper.cs" />
     <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
@@ -218,6 +224,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <PRIResource Include="Strings\en-US\CodeBehind.resw" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>

@@ -394,11 +394,11 @@
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
             <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
-                <!--<interactivity:Interaction.Behaviors>
+                <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
                     </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>-->
+                </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
             <AppBarButton Icon="Undo" Label="Restore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
                 <interactivity:Interaction.Behaviors>

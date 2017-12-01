@@ -26,6 +26,8 @@ namespace ModernKeePass.Services
             Opened = 2
         }
         private readonly PwDatabase _pwDatabase = new PwDatabase();
+        private readonly ISettings _settings;
+        private readonly IResource _resource;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
 
@@ -77,7 +79,15 @@ namespace ModernKeePass.Services
             get { return _pwDatabase.KdfParameters; }
             set { _pwDatabase.KdfParameters = value; }
         }
-        
+
+        public DatabaseService() : this(new SettingsService())
+        { }
+
+        public DatabaseService(ISettings settings)
+        {
+            _settings = settings;
+        }
+
         /// <summary>
         /// Open a KeePass database
         /// </summary>
@@ -99,8 +109,8 @@ namespace ModernKeePass.Services
                     _pwDatabase.New(ioConnection, key);
 
                     //Get settings default values
-                    if (SettingsService.GetSetting<bool>("Sample")) CreateSampleData();
-                    var fileFormat = SettingsService.GetSetting<string>("DefaultFileFormat");
+                    if (_settings.GetSetting<bool>("Sample")) CreateSampleData();
+                    var fileFormat = _settings.GetSetting<string>("DefaultFileFormat");
                     switch (fileFormat)
                     {
                         case "4":

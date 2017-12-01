@@ -1,15 +1,19 @@
 ﻿using System;
+using Windows.Foundation.Collections;
 using Windows.Storage;
+using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Services
 {
-    public class SettingsService
+    public class SettingsService : ISettings
     {
-        public static T GetSetting<T>(string property)
+        private readonly IPropertySet _values = ApplicationData.Current.LocalSettings.Values;
+
+        public T GetSetting<T>(string property)
         {
             try
             {
-                return (T)Convert.ChangeType(ApplicationData.Current.LocalSettings.Values[property], typeof(T));
+                return (T)Convert.ChangeType(_values[property], typeof(T));
             }
             catch (InvalidCastException)
             {
@@ -17,12 +21,11 @@ namespace ModernKeePass.Services
             }
         }
 
-        public static void PutSetting<T>(string property, T value)
+        public void PutSetting<T>(string property, T value)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values.ContainsKey(property))
-                localSettings.Values[property] = value;
-            else localSettings.Values.Add(property, value);
+            if (_values.ContainsKey(property))
+                _values[property] = value;
+            else _values.Add(property, value);
         }
     }
 }

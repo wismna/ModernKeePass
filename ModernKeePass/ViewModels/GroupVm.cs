@@ -19,10 +19,10 @@ namespace ModernKeePass.ViewModels
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
         public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
-        
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
 
-        public int EntryCount => Entries.Count() - 1;
+        public int EntryCount => Entries.Count;
+        // TODO: put in a converter
         public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
         public int GroupCount => Groups.Count - 1;
         public PwUuid IdUuid => _pwGroup?.Uuid;
@@ -50,7 +50,7 @@ namespace ModernKeePass.ViewModels
 
         public string Name
         {
-            get { return _pwGroup == null ? "< New group >" : _pwGroup.Name; }
+            get { return _pwGroup == null ? string.Empty : _pwGroup.Name; }
             set { _pwGroup.Name = value; }
         }
 
@@ -86,10 +86,9 @@ namespace ModernKeePass.ViewModels
         private readonly IDatabase _database;
         private bool _isEditMode;
         private PwEntry _reorderedEntry;
-        //private int _reorderedEntryIndex;
 
         public GroupVm() {}
-
+        
         internal GroupVm(PwGroup pwGroup, GroupVm parent, PwUuid recycleBinId = null) : this(pwGroup, parent,
             (Application.Current as App)?.Database, recycleBinId)
         { }
@@ -104,7 +103,7 @@ namespace ModernKeePass.ViewModels
             Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)));
-            Groups.Insert(0, new GroupVm ());
+            Groups.Insert(0, new GroupVm());
         }
 
         private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -147,7 +146,6 @@ namespace ModernKeePass.ViewModels
                 _database.CreateRecycleBin();
             Move(_database.RecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
         }
-
 
         public void UndoDelete()
         {
@@ -192,7 +190,7 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogService.ShowErrorDialog(e);
+                MessageDialogHelper.ShowErrorDialog(e);
             }
         }
 
@@ -206,7 +204,7 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogService.ShowErrorDialog(e);
+                MessageDialogHelper.ShowErrorDialog(e);
             }
         }
 

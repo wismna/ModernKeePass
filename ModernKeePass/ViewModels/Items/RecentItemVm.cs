@@ -1,24 +1,15 @@
-﻿using System;
-using Windows.Storage;
+﻿using Windows.Storage;
 using ModernKeePass.Common;
-using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
+    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel, IRecentItem
     {
         private bool _isSelected;
-
-        public RecentItemVm() {}
-        public RecentItemVm(AccessListEntry entry, StorageFile file)
-        {
-            Token = entry.Token;
-            Name = entry.Metadata;
-            DatabaseFile = file;
-        }
-
+        
         public StorageFile DatabaseFile { get; }
         public string Token { get; }
         public string Name { get; }
@@ -28,6 +19,14 @@ namespace ModernKeePass.ViewModels
         {
             get { return _isSelected; }
             set { SetProperty(ref _isSelected, value); }
+        }
+
+        public RecentItemVm() {}
+        public RecentItemVm(string token, string metadata, IStorageItem file)
+        {
+            Token = token;
+            Name = metadata;
+            DatabaseFile = file as StorageFile;
         }
 
         public void OpenDatabaseFile()
@@ -40,10 +39,14 @@ namespace ModernKeePass.ViewModels
             database.DatabaseFile = DatabaseFile;
         }
 
-        public async void UpdateAccessTime()
+        public void UpdateAccessTime()
         {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            await mru.GetFileAsync(Token);
+            UpdateAccessTime(new RecentService());
+        }
+
+        public async void UpdateAccessTime(IRecent recent)
+        {
+            await recent.GetFileAsync(Token);
         }
     }
 }

@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace ModernKeePassApp.Test.Mock
 {
-    public class DatabaseHelperMock : IDatabase
+    public class DatabaseServiceMock : IDatabase
     {
         public PwCompressionAlgorithm CompressionAlgorithm { get; set; }
 

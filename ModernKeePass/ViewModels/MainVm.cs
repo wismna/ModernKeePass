@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel;
-using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
@@ -46,40 +45,68 @@ namespace ModernKeePass.ViewModels
 
         public MainVm() {}
 
-        internal MainVm(Frame referenceFrame, Frame destinationFrame) : this(referenceFrame, destinationFrame, (Application.Current as App)?.Database) { }
+        internal MainVm(Frame referenceFrame, Frame destinationFrame) : this(referenceFrame, destinationFrame,
+            (Application.Current as App)?.Database, new ResourcesService(), new RecentService())
+        { }
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database)
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database, IResource resource, IRecent recent)
         {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
             var isDatabaseOpen = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened;
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
                 new MainMenuItemVm
                 {
-                    Title = "Open", PageType = typeof(OpenDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Page2,
+                    Title = resource.GetResourceValue("MainMenuItemOpen"),
+                    PageType = typeof(OpenDatabasePage),
+                    Destination = destinationFrame,
+                    Parameter = referenceFrame,
+                    SymbolIcon = Symbol.Page2,
                     IsSelected = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opening
                 },
                 new MainMenuItemVm
                 {
-                    Title = "New" , PageType = typeof(NewDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Add
+                    Title = resource.GetResourceValue("MainMenuItemNew"),
+                    PageType = typeof(NewDatabasePage),
+                    Destination = destinationFrame,
+                    Parameter = referenceFrame,
+                    SymbolIcon = Symbol.Add
                 },
                 new MainMenuItemVm
                 {
-                    Title = "Save" , PageType = typeof(SaveDatabasePage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Save,
-                    IsSelected = isDatabaseOpen, IsEnabled = isDatabaseOpen
-                },
-                new MainMenuItemVm {
-                    Title = "Recent" , PageType = typeof(RecentDatabasesPage), Destination = destinationFrame, Parameter = referenceFrame, SymbolIcon = Symbol.Copy,
-                    IsSelected = (database == null || database.Status == (int) DatabaseService.DatabaseStatus.Closed) && mru.Entries.Count > 0, IsEnabled = mru.Entries.Count > 0
-                },
-                new MainMenuItemVm
-                {
-                    Title = "Settings" , PageType = typeof(SettingsPage), Destination = referenceFrame, SymbolIcon = Symbol.Setting
+                    Title = resource.GetResourceValue("MainMenuItemSave"),
+                    PageType = typeof(SaveDatabasePage),
+                    Destination = destinationFrame,
+                    Parameter = referenceFrame,
+                    SymbolIcon = Symbol.Save,
+                    IsSelected = isDatabaseOpen,
+                    IsEnabled = isDatabaseOpen
                 },
                 new MainMenuItemVm
                 {
-                    Title = "About" , PageType = typeof(AboutPage), Destination = destinationFrame, SymbolIcon = Symbol.Help
+                    Title = resource.GetResourceValue("MainMenuItemRecent"),
+                    PageType = typeof(RecentDatabasesPage),
+                    Destination = destinationFrame,
+                    Parameter = referenceFrame,
+                    SymbolIcon = Symbol.Copy,
+                    IsSelected =
+                        (database == null || database.Status == (int) DatabaseService.DatabaseStatus.Closed) &&
+                        recent.EntryCount > 0,
+                    IsEnabled = recent.EntryCount > 0
+                },
+                new MainMenuItemVm
+                {
+                    Title = resource.GetResourceValue("MainMenuItemSettings"),
+                    PageType = typeof(SettingsPage),
+                    Destination = referenceFrame,
+                    SymbolIcon = Symbol.Setting
+                },
+                new MainMenuItemVm
+                {
+                    Title = resource.GetResourceValue("MainMenuItemAbout"),
+                    PageType = typeof(AboutPage),
+                    Destination = destinationFrame,
+                    SymbolIcon = Symbol.Help
                 }
             };
             // Auto-select the Recent Items menu item if the conditions are met

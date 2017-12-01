@@ -6,6 +6,7 @@ using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Pages;
 using ModernKeePass.Pages.SettingsPageFrames;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
@@ -41,32 +42,32 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVm() : this((Application.Current as App)?.Database) { }
+        public SettingsVm() : this((Application.Current as App)?.Database, new ResourcesService()) { }
 
-        public SettingsVm(IDatabase database)
+        public SettingsVm(IDatabase database, IResource resource)
         {
             var menuItems = new ObservableCollection<ListMenuItemVm>
             {
                 new ListMenuItemVm
                 {
-                    Title = "New",
-                    Group = "Application",
+                    Title = resource.GetResourceValue("SettingsMenuItemNew"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupApplication"),
                     SymbolIcon = Symbol.Add,
                     PageType = typeof(SettingsNewDatabasePage),
                     IsSelected = true
                 },
                 new ListMenuItemVm
                 {
-                    Title = "General",
-                    Group = "Database",
+                    Title = resource.GetResourceValue("SettingsMenuItemGeneral"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Setting,
                     PageType = typeof(SettingsDatabasePage),
                     IsEnabled = database?.Status == 2
                 },
                 new ListMenuItemVm
                 {
-                    Title = "Security",
-                    Group = "Database",
+                    Title = resource.GetResourceValue("SettingsMenuItemSecurity"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Permissions,
                     PageType = typeof(SettingsSecurityPage),
                     IsEnabled = database?.Status == 2

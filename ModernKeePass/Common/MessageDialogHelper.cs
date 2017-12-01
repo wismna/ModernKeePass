@@ -5,9 +5,9 @@ using Windows.UI.Popups;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 
-namespace ModernKeePass.Services
+namespace ModernKeePass.Common
 {
-    public static class MessageDialogService
+    public static class MessageDialogHelper
     {
         public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler action)
         {

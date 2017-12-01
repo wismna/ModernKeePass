@@ -4,13 +4,14 @@ using Windows.Storage;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
+using ModernKeePassApp.Test.Mock;
 
 namespace ModernKeePassApp.Test
 {
     [TestClass]
     public class DatabaseTests
     {
-        private readonly DatabaseService _database = new DatabaseService();
+        private readonly DatabaseService _database = new DatabaseService(new SettingsServiceMock());
 
         [TestMethod]
         public void TestCreate()
@@ -47,12 +48,12 @@ namespace ModernKeePassApp.Test
         {
             _database.Open(null, createNew);
             Assert.AreEqual((int)DatabaseService.DatabaseStatus.NoCompositeKey, _database.Status);
-            var compositeKey = new CompositeKeyVm(_database)
+            var compositeKey = new CompositeKeyVm(_database, new ResourceServiceMock())
             {
                 HasPassword = true,
                 Password = "test"
             };
-            compositeKey.OpenDatabase(createNew);
+            compositeKey.OpenDatabase(createNew).GetAwaiter().GetResult();
             Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opened, _database.Status);
         }
     }

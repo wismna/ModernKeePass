@@ -11,6 +11,7 @@ using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePass.ViewModels
 {
+    // TODO: implement Kdf settings
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
         private readonly IDatabase _database;

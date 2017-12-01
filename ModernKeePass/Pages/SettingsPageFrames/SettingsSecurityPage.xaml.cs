@@ -18,7 +18,7 @@ namespace ModernKeePass.Pages
 
         private void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
         {
-            ToastNotificationService.ShowGenericToast("Composite key", "Database successfully updated.");
+            ToastNotificationHelper.ShowGenericToast("Composite key", "Database successfully updated.");
         }
     }
 }

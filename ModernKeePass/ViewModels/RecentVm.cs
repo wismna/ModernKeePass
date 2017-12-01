@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using Windows.Storage.AccessCache;
+﻿using System.Collections.ObjectModel;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
         private ISelectableModel _selectedItem;
-        private ObservableCollection<RecentItemVm> _recentItems = new ObservableCollection<RecentItemVm>();
+        private ObservableCollection<IRecentItem> _recentItems = new ObservableCollection<IRecentItem>();
 
-        public ObservableCollection<RecentItemVm> RecentItems
+        public ObservableCollection<IRecentItem> RecentItems
         {
             get { return _recentItems; }
             set { SetProperty(ref _recentItems, value); }
@@ -35,23 +34,14 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public RecentVm()
+        public RecentVm() : this (new RecentService())
+        { }
+
+        public RecentVm(IRecent recent)
         {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            foreach (var entry in mru.Entries)
-            {
-                try
-                {
-                    var file = mru.GetFileAsync(entry.Token, AccessCacheOptions.SuppressAccessTimeUpdate).GetAwaiter().GetResult();
-                    RecentItems.Add(new RecentItemVm(entry, file));
-                }
-                catch (Exception)
-                {
-                    mru.Remove(entry.Token);
-                }
-            }
+            RecentItems = recent.GetAllFiles();
             if (RecentItems.Count > 0)
-                SelectedItem = RecentItems[0];
+                SelectedItem = RecentItems[0] as RecentItemVm;
         }
 
     }

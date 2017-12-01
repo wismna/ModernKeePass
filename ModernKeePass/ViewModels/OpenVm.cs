@@ -1,5 +1,4 @@
 ﻿using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -23,19 +22,23 @@ namespace ModernKeePass.ViewModels
             if (database == null || database.Status != (int) DatabaseService.DatabaseStatus.Opening) return;
             OpenFile(database.DatabaseFile);
         }
-        
+
         public void OpenFile(StorageFile file)
+        {
+            OpenFile(file, new RecentService());
+        }
+
+        public void OpenFile(StorageFile file, IRecent recent)
         {
             _database.DatabaseFile = file;
             OnPropertyChanged("Name");
             OnPropertyChanged("ShowPasswordBox");
-            AddToRecentList(file);
+            AddToRecentList(file, recent);
         }
         
-        private void AddToRecentList(StorageFile file)
+        private void AddToRecentList(StorageFile file, IRecent recent)
         {
-            var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            mru.Add(file, file.DisplayName);
+            recent.Add(file, file.DisplayName);
         }
     }
 }

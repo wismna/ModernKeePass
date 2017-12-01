@@ -29,7 +29,8 @@ namespace ModernKeePass.ViewModels
         private string _status;
         private StatusTypes _statusType;
         private StorageFile _keyFile;
-        private string _keyFileText = "Select key file from disk...";
+        private string _keyFileText;
+        private readonly IResource _resource;
 
         public IDatabase Database { get; set; }
 
@@ -100,10 +101,12 @@ namespace ModernKeePass.ViewModels
 
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
 
-        public CompositeKeyVm() : this((Application.Current as App)?.Database) { }
+        public CompositeKeyVm() : this((Application.Current as App)?.Database, new ResourcesService()) { }
 
-        public CompositeKeyVm(IDatabase database)
+        public CompositeKeyVm(IDatabase database, IResource resource)
         {
+            _resource = resource;
+            _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
             Database = database;
         }
 
@@ -116,18 +119,18 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                error = $"Error: {e.Message}";
+                error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}: {e.Message}";
             }
             switch ((DatabaseService.DatabaseStatus)Database.Status)
             {
                 case DatabaseService.DatabaseStatus.Opened:
-                    await Task.Run( () => RootGroup = Database.RootGroup);
+                    await Task.Run(() => RootGroup = Database.RootGroup);
                     return true;
                 case DatabaseService.DatabaseStatus.CompositeKeyError:
-                    var errorMessage = new StringBuilder("Error: wrong ");
-                    if (HasPassword) errorMessage.Append("password");
-                    if (HasPassword && HasKeyFile) errorMessage.Append(" or ");
-                    if (HasKeyFile) errorMessage.Append("key file");
+                    var errorMessage = new StringBuilder(_resource.GetResourceValue("CompositeKeyErrorUserStart"));
+                    if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
+                    if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
+                    if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
                     UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
                     break;
                 case DatabaseService.DatabaseStatus.Error:
@@ -140,7 +143,7 @@ namespace ModernKeePass.ViewModels
         public void UpdateKey()
         {
             Database.UpdateCompositeKey(CreateCompositeKey());
-            UpdateStatus("Database composite key updated.", StatusTypes.Success);
+            UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 
         public void CreateKeyFile(StorageFile file)

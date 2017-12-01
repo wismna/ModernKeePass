@@ -5,6 +5,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
+using ModernKeePass.Services;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
@@ -48,8 +49,9 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                var title = GetEntryValue(PwDefs.TitleField);
-                return title == null ? "< New entry >" : title;
+                /*var title = GetEntryValue(PwDefs.TitleField);
+                return title == null ? _resource.GetResourceValue("EntryNew") : title;*/
+                return GetEntryValue(PwDefs.TitleField);
             }
             set { SetEntryValue(PwDefs.TitleField, value); }
         }

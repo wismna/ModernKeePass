@@ -5,9 +5,9 @@ using Windows.UI.Notifications;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 
-namespace ModernKeePass.Services
+namespace ModernKeePass.Common
 {
-    public static class ToastNotificationService
+    public static class ToastNotificationHelper
     {
         public static void ShowMovedToast(IPwEntity entity, string action, string text)
         {

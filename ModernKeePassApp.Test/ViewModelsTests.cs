@@ -3,6 +3,8 @@ using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Storage.AccessCache;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using ModernKeePass.Pages;
+using ModernKeePass.Pages.SettingsPageFrames;
 using ModernKeePass.ViewModels;
 using ModernKeePassApp.Test.Mock;
 
@@ -11,6 +13,9 @@ namespace ModernKeePassApp.Test
     [TestClass]
     public class ViewModelsTests
     {
+        private RecentServiceMock _recent = new RecentServiceMock();
+        private ResourceServiceMock _resource = new ResourceServiceMock();
+
         [TestMethod]
         public void TestAboutVm()
         {
@@ -21,29 +26,30 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestMainVm()
         {
-            var database = new DatabaseHelperMock();
-            var mainVm = new MainVm(null, null, database);
+            var database = new DatabaseServiceMock();
+
+            var mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.AreEqual(1, mainVm.MainMenuItems.Count());
             var firstGroup = mainVm.MainMenuItems.FirstOrDefault();
             Assert.AreEqual(6, firstGroup.Count());
 
             database.Status = 1;
-            mainVm = new MainVm(null, null, database);
+            mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
-            Assert.AreEqual("Open", ((MainMenuItemVm) mainVm.SelectedItem).Title);
+            Assert.AreEqual(typeof(OpenDatabasePage), ((MainMenuItemVm) mainVm.SelectedItem).PageType);
 
             database.Status = 2;
-            mainVm = new MainVm(null, null, database);
+            mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(2, mainVm.MainMenuItems.Count());
-            Assert.AreEqual("Save", ((MainMenuItemVm) mainVm.SelectedItem).Title);
+            Assert.AreEqual(typeof(SaveDatabasePage), ((MainMenuItemVm) mainVm.SelectedItem).PageType);
         }
 
         [TestMethod]
         public void TestCompositeKeyVm()
         {
-            var database = new DatabaseHelperMock();
-            var compositeKeyVm = new CompositeKeyVm(database);
+            var database = new DatabaseServiceMock();
+            var compositeKeyVm = new CompositeKeyVm(database, _resource);
             Assert.IsTrue(compositeKeyVm.OpenDatabase(false).GetAwaiter().GetResult());
             compositeKeyVm.StatusType = 1;
             compositeKeyVm.Password = "test";
@@ -54,7 +60,7 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestOpenVm()
         {
-            var database = new DatabaseHelperMock
+            var database = new DatabaseServiceMock
             {
                 Status = 1,
                 DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Databases\TestDatabase.kdbx")
@@ -78,7 +84,7 @@ namespace ModernKeePassApp.Test
                 .GetAwaiter().GetResult(), "MockDatabase");
             var recentVm = new RecentVm();
             Assert.IsTrue(recentVm.RecentItems.Count == 1);
-            recentVm.SelectedItem = recentVm.RecentItems.FirstOrDefault();
+            recentVm.SelectedItem = recentVm.RecentItems.FirstOrDefault() as RecentItemVm;
             Assert.IsTrue(recentVm.SelectedItem.IsSelected);
             mru.Clear();
         }
@@ -91,13 +97,14 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestSettingsVm()
         {
-            var settingsVm = new SettingsVm();
+            var settingsVm = new SettingsVm(new DatabaseServiceMock(), _resource);
             Assert.AreEqual(1, settingsVm.MenuItems.Count());
             var firstGroup = settingsVm.MenuItems.FirstOrDefault();
-            Assert.AreEqual(1, firstGroup.Count());
+            // All groups have an empty title, so all settings are put inside the empty group
+            Assert.AreEqual(3, firstGroup.Count());
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
-            Assert.AreEqual("New", selectedItem.Title);
+            Assert.AreEqual(typeof(SettingsNewDatabasePage), selectedItem.PageType);
         }
     }
 }
