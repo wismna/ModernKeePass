@@ -54,26 +54,24 @@ namespace ModernKeePass.ViewModels
                     SymbolIcon = Symbol.Add,
                     PageType = typeof(SettingsNewDatabasePage),
                     IsSelected = true
-                }
-            };
-            if (database?.Status == 2)
-            {
-                menuItems.Add(new ListMenuItemVm
+                },
+                new ListMenuItemVm
                 {
                     Title = "General",
                     Group = "Database",
                     SymbolIcon = Symbol.Setting,
-                    PageType = typeof(SettingsDatabasePage)
-                });
-                menuItems.Add(new ListMenuItemVm
+                    PageType = typeof(SettingsDatabasePage),
+                    IsEnabled = database?.Status == 2
+                },
+                new ListMenuItemVm
                 {
                     Title = "Security",
                     Group = "Database",
                     SymbolIcon = Symbol.Permissions,
-                    PageType = typeof(SettingsSecurityPage)
-                });
-
-            }
+                    PageType = typeof(SettingsSecurityPage),
+                    IsEnabled = database?.Status == 2
+                }
+            };
             SelectedItem = menuItems.FirstOrDefault(m => m.IsSelected);
 
             MenuItems = from item in menuItems group item by item.Group into grp orderby grp.Key select grp;
