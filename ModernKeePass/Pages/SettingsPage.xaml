@@ -55,7 +55,7 @@
             Grid.Column="0"
             Grid.Row="1"
             x:Name="MenuListView"
-            SelectionChanged="MenuListView_SelectionChanged" 
+            SelectionChanged="ListView_SelectionChanged" 
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"

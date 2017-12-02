@@ -21,9 +21,9 @@ namespace ModernKeePass.Pages
             ListViewSource = MenuItemsSource;
         }
         
-        private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private new void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ListView_SelectionChanged(sender, e);
+            base.ListView_SelectionChanged(sender, e);
             var selectedItem = Model.SelectedItem as ListMenuItemVm;
             MenuFrame?.Navigate(selectedItem == null ? typeof(SettingsWelcomePage) : selectedItem.PageType);
         }
