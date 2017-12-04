@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;
@@ -169,6 +170,12 @@ namespace ModernKeePass.Pages
         {
             e.Cancel = !Model.IsEditMode;
             e.Data.RequestedOperation = DataPackageOperation.Move;
+        }
+
+        private void TextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            //throw new NotImplementedException();
+            Model.Entries = new ObservableCollection<EntryVm>(Model.Entries.Where(entry => entry.Name.Contains((sender as TextBox).Text)));
         }
     }
 }

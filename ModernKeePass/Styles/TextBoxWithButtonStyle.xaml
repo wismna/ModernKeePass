@@ -83,14 +83,15 @@
                                                         Background="{ThemeResource TextBoxButtonBackgroundThemeBrush}"
                                                         Margin="{TemplateBinding BorderThickness}">
                                                 <TextBlock x:Name="GlyphElement"
-                                                            Foreground="{ThemeResource TextBoxButtonForegroundThemeBrush}"
-                                                            Padding="4,0,4,0"
-                                                            VerticalAlignment="Center"
-                                                            HorizontalAlignment="Center"
-                                                            FontStyle="Normal"
-                                                            Text="{TemplateBinding Content}"
-                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                            AutomationProperties.AccessibilityView="Raw"/>
+                                                    Foreground="{ThemeResource TextBoxButtonForegroundThemeBrush}"
+                                                    Padding="4,0,4,0"
+                                                    VerticalAlignment="Center"
+                                                    HorizontalAlignment="Center"
+                                                    FontStyle="Normal"
+                                                    Text="{TemplateBinding Content}"
+                                                    FontSize="{TemplateBinding FontSize}"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    AutomationProperties.AccessibilityView="Raw"/>
                                                 </Border>
                                             </Grid>
                                         </ControlTemplate>
@@ -142,9 +143,28 @@
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0"
                                                          To="{ThemeResource TextControlPointerOverBorderThemeOpacity}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Focused" />
+                                <VisualState x:Name="Focused">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
@@ -199,6 +219,7 @@
                                       IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
                                       IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Margin="{TemplateBinding BorderThickness}"
                                       Padding="{TemplateBinding Padding}"
                                       IsTabStop="False"
@@ -209,6 +230,7 @@
                                       Foreground="{ThemeResource TextBoxPlaceholderTextThemeBrush}"
                                       Margin="{TemplateBinding BorderThickness}"
                                       Padding="{TemplateBinding Padding}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       IsTabStop="False"
                                       Grid.ColumnSpan="2"
                                       Content="{TemplateBinding PlaceholderText}" 

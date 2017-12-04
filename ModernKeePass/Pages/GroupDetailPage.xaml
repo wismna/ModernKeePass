@@ -7,7 +7,8 @@
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:ModernKeePass.Actions" 
+    xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:controls="using:ModernKeePass.Controls"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
@@ -91,7 +92,7 @@
                 Source="{Binding Groups}" />
             <CollectionViewSource
                 x:Name="EntriesViewSource"
-                Source="{Binding Entries}" />
+                Source="{Binding EntriesFiltered}" />
             <CollectionViewSource
                 x:Name="EntriesZoomedOutViewSource"
                 Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True"/>
@@ -325,7 +326,7 @@
                 </TextBox>
                 <TextBlock FontSize="12" Text="{Binding Path}" />
             </StackPanel>
-            <SearchBox Grid.Column="2" x:Uid="GroupSearch" Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" />
+            <controls:TextBoxWithButton Grid.Column="2" x:Uid="GroupSearch" ButtonSymbol="&#xE11A;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Style="{StaticResource TextBoxWithButtonStyle}" />
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DragDropGroup">

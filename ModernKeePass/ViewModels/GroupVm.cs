@@ -9,7 +9,6 @@ using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
-using ModernKeePass.Services;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
@@ -18,7 +17,13 @@ namespace ModernKeePass.ViewModels
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
-        public ObservableCollection<EntryVm> Entries { get; set; } = new ObservableCollection<EntryVm>();
+
+        public ObservableCollection<EntryVm> Entries
+        {
+            get { return _entries; }
+            set { SetProperty(ref _entries, value); }
+        }
+
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
 
         public int EntryCount => Entries.Count;
@@ -73,6 +78,19 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isEditMode, value); }
         }
 
+        public string Filter
+        {
+            get { return _filter; }
+            set
+            {
+                SetProperty(ref _filter, value);
+                OnPropertyChanged("EntriesFiltered");
+            }
+        }
+
+        public ObservableCollection<EntryVm> EntriesFiltered =>
+            new ObservableCollection<EntryVm>(Entries.Where(e => e.Name.IndexOf(Filter, StringComparison.OrdinalIgnoreCase) >= 0));
+
         public string Path
         {
             get
@@ -88,6 +106,8 @@ namespace ModernKeePass.ViewModels
         private readonly IDatabase _database;
         private bool _isEditMode;
         private PwEntry _reorderedEntry;
+        private ObservableCollection<EntryVm> _entries = new ObservableCollection<EntryVm>();
+        private string _filter = string.Empty;
 
         public GroupVm() {}
         
@@ -188,7 +208,6 @@ namespace ModernKeePass.ViewModels
             {
                 _pwGroup.Entries.Sort(comparer);
                 Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
-                OnPropertyChanged("Entries");
             }
             catch (Exception e)
             {

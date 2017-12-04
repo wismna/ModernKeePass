@@ -318,6 +318,9 @@
   <data name="SettingsSecurityUpdateButton.ButtonLabel" xml:space="preserve">
     <value>Update master key</value>
   </data>
+  <data name="SettingsTitle.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="SettingsWelcomeDesc.Text" xml:space="preserve">
     <value>Here, you may change the application or the database settings.</value>
   </data>
