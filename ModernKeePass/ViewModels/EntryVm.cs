@@ -117,6 +117,8 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
+
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }

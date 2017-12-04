@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Events;
 using ModernKeePass.Extensions;
+using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
@@ -78,8 +79,9 @@ namespace ModernKeePass.Controls
             }
             else
             {
+                var resource = new ResourcesService();
                 var oldLabel = ButtonLabel;
-                ButtonLabel = "Opening...";
+                ButtonLabel = resource.GetResourceValue("CompositeKeyOpening");
                 if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(CreateNew)))
                 {
                     ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));

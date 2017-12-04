@@ -1,3 +1,9 @@
-Improve assets (IMO)
-Adds the ability to create key files
-Hopefully correct a bug while opening databases with key files
+You can now reorder entries
+Entries and groups are sortable
+New Home button that allows returning to the main menu from anywhere
+Change default database creation settings
+Settings is accessible from main menu
+Clear Recent databases
+New French translation
+Design and usability improvements
+Bugs correction

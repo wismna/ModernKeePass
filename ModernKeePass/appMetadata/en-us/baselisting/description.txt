@@ -1,5 +1,5 @@
-ModernKeePass is free, open-source and user friendly yet secure password manager, based on proven and certified technology from KeePass 2.x.
-You can create, open and edit Keepass 2.x password databases.
+ModernKeePass is free, open-source and user friendly yet secure password manager, based on proven and certified technology from KeePass 2.x and fully compatible with it.
+You can safely store all your passwords in an encrypted, secure database that you can store anywhere (local, cloud, USB key...)
 
-It is not intended to replicate all features of the original application, but aims at being simple to use. Suggestions welcome!
+Even though security is an important matter, this app aims at being simple to use. Suggestions welcome!
 Works in Windows 10, 8.1 and RT.

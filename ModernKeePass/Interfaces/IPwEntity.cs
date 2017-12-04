@@ -12,6 +12,7 @@ namespace ModernKeePass.Interfaces
         string Name { get; set; }
         string Path { get; }
         bool IsEditMode { get; }
+        bool IsRecycleOnDelete { get; }
 
         /// <summary>
         /// Move a entity to the destination group

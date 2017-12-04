@@ -110,22 +110,26 @@ namespace ModernKeePass.Pages
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var isRecycleBinEnabled = ((App)Application.Current).Database.RecycleBinEnabled && !Model.IsSelected && !Model.ParentGroup.IsSelected;
-            var message = isRecycleBinEnabled
-                ? "Are you sure you want to send the whole group and all its entries to the recycle bin?"
-                : "Are you sure you want to delete the whole group and all its entries?";
-            var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
-            MessageDialogHelper.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
-            {
-                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
-                Model.MarkForDelete();
-                if (Frame.CanGoBack) Frame.GoBack();
-            });
+            var resource = new ResourcesService();
+            var message = Model.IsRecycleOnDelete
+                ? resource.GetResourceValue("GroupRecyclingConfirmation")
+                : resource.GetResourceValue("GroupDeletingConfirmation");
+            var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("GroupRecycled") : resource.GetResourceValue("GroupDeleted");
+            MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+                resource.GetResourceValue("EntityDeleteActionButton"),
+                resource.GetResourceValue("EntityDeleteCancelButton"), a =>
+                {
+                    ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
+                    Model.MarkForDelete();
+                    if (Frame.CanGoBack) Frame.GoBack();
+                });
         }
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            var resource = new ResourcesService();
+            ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityRestoredTitle"),
+                resource.GetResourceValue("GroupRestored"));
             if (Frame.CanGoBack) Frame.GoBack();
         }
 
@@ -140,7 +144,7 @@ namespace ModernKeePass.Pages
 
         private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
-            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/Logo.scale-80.png"));
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/ModernKeePass-SmallLogo.scale-80.png"));
             var results = Model.Entries.Skip(1).Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {

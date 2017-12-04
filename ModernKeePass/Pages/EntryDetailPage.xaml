@@ -377,14 +377,14 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Home" Label="Home">
+                <AppBarButton Icon="Home" x:Uid="AppBarHome">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
                             <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.MainPage" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Save" Label="Save">
+                <AppBarButton Icon="Save" x:Uid="AppBarSave">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
                             <core:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
@@ -392,7 +392,7 @@
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Setting" Label="Settings">
+                <AppBarButton Icon="Setting" x:Uid="AppBarSettings">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
                             <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.SettingsPage" />
@@ -400,21 +400,21 @@
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
-            <AppBarToggleButton Icon="Edit" Label="Edit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
+            <AppBarToggleButton Icon="Edit" x:Uid="AppBarEdit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
-            <AppBarButton Icon="Undo" Label="Restore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
+            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:CallMethodAction MethodName="UndoDelete" TargetObject="{Binding}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarButton>
-            <AppBarButton Icon="Delete" Label="Delete" Click="DeleteButton_Click" />
+            <AppBarButton Icon="Delete" x:Uid="AppBarDelete" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

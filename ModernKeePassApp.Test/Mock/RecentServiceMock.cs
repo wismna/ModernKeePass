@@ -15,6 +15,11 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
 
+        public void ClearAll()
+        {
+            throw new NotImplementedException();
+        }
+
         public ObservableCollection<IRecentItem> GetAllFiles(bool removeIfNonExistant = true)
         {
             throw new NotImplementedException();

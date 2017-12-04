@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -72,14 +71,16 @@ namespace ModernKeePass.Pages
         
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var isRecycleBinEnabled = ((App)Application.Current).Database.RecycleBinEnabled && !Model.ParentGroup.IsSelected;
-            var message = isRecycleBinEnabled
-                ? "Are you sure you want to send this entry to the recycle bin?"
-                : "Are you sure you want to delete this entry?";
-            var text = isRecycleBinEnabled ? "Item moved to the Recycle bin" : "Item permanently removed";
-            MessageDialogHelper.ShowActionDialog("Warning", message, "Delete", "Cancel", a =>
+            var resource = new ResourcesService();
+            var message = Model.IsRecycleOnDelete
+                ? resource.GetResourceValue("EntryRecyclingConfirmation")
+                : resource.GetResourceValue("EntryDeletingConfirmation");
+            var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("EntryRecycled") : resource.GetResourceValue("EntryDeleted");
+            MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+                resource.GetResourceValue("EntityDeleteActionButton"),
+                resource.GetResourceValue("EntityDeleteCancelButton"), a =>
             {
-                ToastNotificationHelper.ShowMovedToast(Model, "Deleting", text);
+                ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
                 Model.MarkForDelete();
                 if (Frame.CanGoBack) Frame.GoBack();
             });
@@ -87,7 +88,8 @@ namespace ModernKeePass.Pages
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)
         {
-            ToastNotificationHelper.ShowMovedToast(Model, "Restored", "Item returned to its original group");
+            var resource = new ResourcesService();
+            ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityRestoredTitle"), resource.GetResourceValue("EntryRestored"));
             if (Frame.CanGoBack) Frame.GoBack();
         }
 

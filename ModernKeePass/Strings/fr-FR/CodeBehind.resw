@@ -118,114 +118,115 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CompositeKeyDefaultKeyFile" xml:space="preserve">
-    <value>Select key file from disk...</value>
+    <value>Choisissez un fichier...</value>
   </data>
   <data name="CompositeKeyErrorOpen" xml:space="preserve">
-    <value>Error</value>
+    <value>Erreur</value>
   </data>
   <data name="CompositeKeyErrorUserKeyFile" xml:space="preserve">
-    <value>key file</value>
+    <value>fichier de clé</value>
   </data>
   <data name="CompositeKeyErrorUserOr" xml:space="preserve">
-    <value> or </value>
+    <value> ou </value>
   </data>
   <data name="CompositeKeyErrorUserPassword" xml:space="preserve">
-    <value>password</value>
+    <value>mot de passe</value>
   </data>
   <data name="CompositeKeyErrorUserStart" xml:space="preserve">
-    <value>Error: wrong </value>
+    <value>Erreur: mauvais </value>
   </data>
   <data name="CompositeKeyOpening" xml:space="preserve">
-    <value>Opening...</value>
+    <value>Ouverture...</value>
   </data>
   <data name="CompositeKeyUpdated" xml:space="preserve">
-    <value>Database composite key updated.</value>
+    <value>Clé composite de la base de données mise à jour.</value>
   </data>
   <data name="EntityDeleteActionButton" xml:space="preserve">
-    <value>Delete</value>
+    <value>Supprimer</value>
   </data>
   <data name="EntityDeleteCancelButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Annuler</value>
   </data>
   <data name="EntityDeleteTitle" xml:space="preserve">
-    <value>Warning</value>
+    <value>Attention</value>
   </data>
   <data name="EntityDeleting" xml:space="preserve">
-    <value>Deleting</value>
+    <value>Suprression</value>
   </data>
   <data name="EntityRestoredTitle" xml:space="preserve">
-    <value>Restored</value>
+    <value>Restauré</value>
   </data>
   <data name="EntryDeleted" xml:space="preserve">
-    <value>Entry permanently removed</value>
+    <value>Entrée supprimée définitivement</value>
   </data>
   <data name="EntryDeletingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete this entry?</value>
+    <value>Êtes-vous sûr de vouloir supprimer cette entrée ?</value>
   </data>
   <data name="EntryNew" xml:space="preserve">
-    <value>&lt; New entry &gt;</value>
+    <value>&lt; Nouvelle entrée &gt;</value>
+    <comment>Unused</comment>
   </data>
   <data name="EntryRecycled" xml:space="preserve">
-    <value>Entry moved to the Recycle bin</value>
+    <value>Entrée placée dans la Corbeille</value>
   </data>
   <data name="EntryRecyclingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to send this entry to the recycle bin?</value>
+    <value>Êtes-vous sûr de vouloir placer cette entrée dans la Corbeille ?</value>
   </data>
   <data name="EntryRestored" xml:space="preserve">
-    <value>Entry returned to its original group</value>
+    <value>Entrée replacée dans son groupe d'origine</value>
   </data>
   <data name="GroupDeleted" xml:space="preserve">
-    <value>Group permanently removed</value>
+    <value>Groupe supprimé défnitivement</value>
   </data>
   <data name="GroupDeletingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete the whole group and all its entries?</value>
+    <value>Êtes-vous sûr de vouloir supprimer ce group et toutes ses entrées ?</value>
   </data>
   <data name="GroupNew" xml:space="preserve">
-    <value>&lt; New group &gt;</value>
+    <value>&lt; Nouveau groupe &gt;</value>
   </data>
   <data name="GroupRecycled" xml:space="preserve">
-    <value>Group moved to the Recycle bin</value>
+    <value>Groupe placé dans la Corbeille</value>
   </data>
   <data name="GroupRecyclingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to send the whole group and all its entries to the recycle bin?</value>
+    <value>Êtes-vous sûr de vouloir envoyer ce groupe et toutes ses entrées vers la Corbeille ?</value>
   </data>
   <data name="GroupRestored" xml:space="preserve">
-    <value>Group returned to its original group</value>
+    <value>Groupe replacé à sa place originelle</value>
   </data>
   <data name="MainMenuItemAbout" xml:space="preserve">
-    <value>About</value>
+    <value>A propos</value>
   </data>
   <data name="MainMenuItemDonate" xml:space="preserve">
-    <value>Donate</value>
+    <value>Donation</value>
   </data>
   <data name="MainMenuItemNew" xml:space="preserve">
-    <value>New</value>
+    <value>Nouveau</value>
   </data>
   <data name="MainMenuItemOpen" xml:space="preserve">
-    <value>Open</value>
+    <value>Ouvrir</value>
   </data>
   <data name="MainMenuItemRecent" xml:space="preserve">
-    <value>Recent</value>
+    <value>Récents</value>
   </data>
   <data name="MainMenuItemSave" xml:space="preserve">
-    <value>Save</value>
+    <value>Sauvegarder</value>
   </data>
   <data name="MainMenuItemSettings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Paramètres</value>
   </data>
   <data name="SettingsMenuGroupApplication" xml:space="preserve">
     <value>Application</value>
   </data>
   <data name="SettingsMenuGroupDatabase" xml:space="preserve">
-    <value>Database</value>
+    <value>Base de données</value>
   </data>
   <data name="SettingsMenuItemGeneral" xml:space="preserve">
-    <value>General</value>
+    <value>Général</value>
   </data>
   <data name="SettingsMenuItemNew" xml:space="preserve">
-    <value>New</value>
+    <value>Nouveau</value>
   </data>
   <data name="SettingsMenuItemSecurity" xml:space="preserve">
-    <value>Security</value>
+    <value>Securité</value>
   </data>
 </root>

@@ -118,219 +118,219 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AboutCredits1.Text" xml:space="preserve">
-    <value>Dominik Reichl for the KeePass application and file format</value>
+    <value>Dominik Reichl pour l'application KeePass et le format de fichier</value>
   </data>
   <data name="AboutCredits2.Text" xml:space="preserve">
-    <value>David Lechner for his PCL adapatation of the KeePass Library and his correlated tests</value>
+    <value>David Lechner pour son adaptation PCL de la blibliothèque KeePass et ses tests associés</value>
   </data>
   <data name="AboutCreditsLabel.Text" xml:space="preserve">
-    <value>Credits</value>
+    <value>Crédits</value>
   </data>
   <data name="AboutDesc.Text" xml:space="preserve">
-    <value>A modern password manager for the Windows Store</value>
+    <value>Un gestionnaire de mot de passes moderne pour le Windows Store</value>
   </data>
   <data name="AboutHomepage.Text" xml:space="preserve">
-    <value>Homepage:</value>
+    <value>Page d'accueil :</value>
   </data>
   <data name="AppBarDelete.Label" xml:space="preserve">
-    <value>Delete</value>
+    <value>Supprimer</value>
   </data>
   <data name="AppBarEdit.Label" xml:space="preserve">
-    <value>Edit</value>
+    <value>Editer</value>
   </data>
   <data name="AppBarHome.Label" xml:space="preserve">
-    <value>Home</value>
+    <value>Accueil</value>
   </data>
   <data name="AppBarRestore.Label" xml:space="preserve">
-    <value>Restore</value>
+    <value>Restorer</value>
   </data>
   <data name="AppBarSave.Label" xml:space="preserve">
-    <value>Save</value>
+    <value>Sauvegarder</value>
   </data>
   <data name="AppBarSettings.Label" xml:space="preserve">
-    <value>Settings</value>
+    <value>Paramètres</value>
   </data>
   <data name="AppBarSort.Label" xml:space="preserve">
-    <value>Sort</value>
+    <value>Trier</value>
   </data>
   <data name="AppBarSortEntries.Text" xml:space="preserve">
-    <value>Entries</value>
+    <value>Entrées</value>
   </data>
   <data name="AppBarSortGroups.Text" xml:space="preserve">
-    <value>Groups</value>
+    <value>Groupes</value>
   </data>
   <data name="CompositeKeyNewKeyFileTooltip.Content" xml:space="preserve">
-    <value>Create new key file</value>
+    <value>Créer un nouveau fichier de clé</value>
   </data>
   <data name="CompositeKeyOpenButton.ButtonLabel" xml:space="preserve">
-    <value>Open</value>
+    <value>Ouvrir</value>
   </data>
   <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
-    <value>Password</value>
+    <value>Mot de passe</value>
   </data>
   <data name="DonateDesc.Text" xml:space="preserve">
-    <value>Like this app? Why not make a small donation to support my work and help this app stay ad-free :) ?</value>
+    <value>Vous aimez cette app? Pourquoi ne pas faire un petit don afin de m'encourager et d'éviter le recours aux publicités :) ?</value>
   </data>
   <data name="EntryExpirationDate.Content" xml:space="preserve">
-    <value>Expiration date</value>
+    <value>Date d'expiration</value>
   </data>
   <data name="EntryExpirationTooltip.Content" xml:space="preserve">
-    <value>Password has expired</value>
+    <value>Le mot de passe a expiré</value>
   </data>
   <data name="EntryLogin.Text" xml:space="preserve">
-    <value>User name or login</value>
+    <value>Nom d'utilisateur ou login</value>
   </data>
   <data name="EntryNotes.Text" xml:space="preserve">
     <value>Notes</value>
   </data>
   <data name="EntryPassword.Text" xml:space="preserve">
-    <value>Password</value>
+    <value>Mot de passe</value>
   </data>
   <data name="EntryShowPassword.Content" xml:space="preserve">
-    <value>Show password</value>
+    <value>Afficher le mot de passe</value>
   </data>
   <data name="GroupCreateEntry.Text" xml:space="preserve">
-    <value>Create new entry</value>
+    <value>Créer une nouvelle entrée</value>
   </data>
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
-    <value>Search...</value>
+    <value>Rechercher...</value>
   </data>
   <data name="GroupTitle.PlaceholderText" xml:space="preserve">
-    <value>New group name...</value>
+    <value>Nom du nouveau groupe...</value>
   </data>
   <data name="NewCreateButton.Content" xml:space="preserve">
-    <value>Create new...</value>
+    <value>Créer une nouvelle...</value>
   </data>
   <data name="NewCreateDesc.Text" xml:space="preserve">
-    <value>Create a new password database to the location of your chosing.</value>
+    <value>Créer une nouvelle base de données de mots de passe à l'endroit de votre choix.</value>
   </data>
   <data name="OpenBrowseButton.Content" xml:space="preserve">
-    <value>Browse files...</value>
+    <value>Parcourir les fichiers...</value>
   </data>
   <data name="OpenBrowseDesc.Text" xml:space="preserve">
-    <value>Open an existing password database from your PC.</value>
+    <value>Ouvrir une base de données de mots de passe existante sur votre PC.</value>
   </data>
   <data name="OpenUrlButton.Content" xml:space="preserve">
-    <value>From Url...</value>
+    <value>Depuis une URL...</value>
   </data>
   <data name="OpenUrlDesc.Text" xml:space="preserve">
-    <value>Open an existing password database from an Internet location (not yet implemented).</value>
+    <value>Ouvrir une base de données de mots de passe depuis Internet (pas encore implementé).</value>
   </data>
   <data name="PasswordGeneratorAlso.Text" xml:space="preserve">
-    <value>Also add these characters:</value>
+    <value>Ajouter aussi ces caractères :</value>
   </data>
   <data name="PasswordGeneratorBrackets.Content" xml:space="preserve">
-    <value>Brackets ([], {}, (), ...)</value>
+    <value>Parenthèses ([], {}, (), ...)</value>
   </data>
   <data name="PasswordGeneratorButton.Content" xml:space="preserve">
-    <value>Generate</value>
+    <value>Générer</value>
   </data>
   <data name="PasswordGeneratorDigits.Content" xml:space="preserve">
-    <value>Digits (0, 1, 2, ...)</value>
+    <value>Chiffres (0, 1, 2, ...)</value>
   </data>
   <data name="PasswordGeneratorLength.Text" xml:space="preserve">
-    <value>Password Length:</value>
+    <value>Longueur de mot de passe :</value>
   </data>
   <data name="PasswordGeneratorLower.Content" xml:space="preserve">
-    <value>Lower case (a, b, c, ...)</value>
+    <value>Minuscules (a, b, c, ...)</value>
   </data>
   <data name="PasswordGeneratorMinus.Content" xml:space="preserve">
-    <value>Minus (-)</value>
+    <value>Moins (-)</value>
   </data>
   <data name="PasswordGeneratorSpace.Content" xml:space="preserve">
-    <value>Space ( )</value>
+    <value>Espace ( )</value>
   </data>
   <data name="PasswordGeneratorSpecial.Content" xml:space="preserve">
-    <value>Special (!, $, %, ...)</value>
+    <value>Spéciaux (!, $, %, ...)</value>
   </data>
   <data name="PasswordGeneratorTooltip.Content" xml:space="preserve">
-    <value>Generate password</value>
+    <value>Générer le mot de passe</value>
   </data>
   <data name="PasswordGeneratorUnderscore.Content" xml:space="preserve">
     <value>Underscore (_)</value>
   </data>
   <data name="PasswordGeneratorUpper.Content" xml:space="preserve">
-    <value>Upper case (A, B, C, ...)</value>
+    <value>Majuscules (A, B, C, ...)</value>
   </data>
   <data name="RecentClear.Text" xml:space="preserve">
-    <value>Clear all</value>
+    <value>Supprimer tout</value>
   </data>
   <data name="SaveAsButton.Content" xml:space="preserve">
-    <value>Save as...</value>
+    <value>Sauvegarder sous...</value>
   </data>
   <data name="SaveAsDesc.Text" xml:space="preserve">
-    <value>This will save the currently opened database as a new file and leave it open.</value>
+    <value>Cela va sauvegarder la base de données dans un nouveau fichier et l'ouvrir.</value>
   </data>
   <data name="SaveButton.Content" xml:space="preserve">
-    <value>Save and close</value>
+    <value>Sauvegarder et fermer</value>
   </data>
   <data name="SaveDesc.Text" xml:space="preserve">
-    <value>This will save and close the currently opened database.</value>
+    <value>Cela va sauvegarder et fermer la base de données.</value>
   </data>
   <data name="SettingsDatabaseCompression.Text" xml:space="preserve">
-    <value>Compression Algorithm</value>
+    <value>Algorithme de compression</value>
   </data>
   <data name="SettingsDatabaseEncryption.Text" xml:space="preserve">
-    <value>Encryption Algorithm</value>
+    <value>Algorithme de chiffrement</value>
   </data>
   <data name="SettingsDatabaseKdf.Text" xml:space="preserve">
-    <value>Key Derivation Algorithm</value>
+    <value>Algorithme de dérivation de clé</value>
   </data>
   <data name="SettingsDatabaseRecycleBin.Header" xml:space="preserve">
-    <value>Recycle bin</value>
+    <value>Corbeille</value>
   </data>
   <data name="SettingsDatabaseRecycleBin.OffContent" xml:space="preserve">
-    <value>Disabled</value>
+    <value>Désactivé</value>
   </data>
   <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
-    <value>Enabled</value>
+    <value>Activé</value>
   </data>
   <data name="SettingsNewDatabaseDesc.Text" xml:space="preserve">
-    <value>Here, you can change some default options when creating a database.</value>
+    <value>Ici, vous pouvez changer certains options lors de la création d'une nouvelle base de données</value>
   </data>
   <data name="SettingsNewDatabaseKdf.Text" xml:space="preserve">
-    <value>KDBX database file version</value>
+    <value>Version de fichier KDBX</value>
   </data>
   <data name="SettingsNewDatabaseKdfMoreInfo.Text" xml:space="preserve">
-    <value>Higher is better, but there may be compatibility issues with older applications</value>
+    <value>Le plus élévé est le mieux, mais vous pourriez rencontrer des problèmes de compatibilité avec des application plus anciennes</value>
   </data>
   <data name="SettingsNewDatabaseSample.Header" xml:space="preserve">
-    <value>Create sample data</value>
+    <value>Créer des données d'exemple</value>
   </data>
   <data name="SettingsNewDatabaseSample.OffContent" xml:space="preserve">
-    <value>No</value>
+    <value>Non</value>
   </data>
   <data name="SettingsNewDatabaseSample.OnContent" xml:space="preserve">
-    <value>Yes</value>
+    <value>Oui</value>
   </data>
   <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
-    <value>Here, you may change your database password, key file, or both. Just click on on</value>
+    <value>Ici, vous pouvez changer le mot de passe maître, le fichier de clé, ou les deux. Cliquez simplement sur</value>
   </data>
   <data name="SettingsSecurityDesc2.Text" xml:space="preserve">
-    <value>Update master key</value>
+    <value>Mettre à jour la clé maître</value>
   </data>
   <data name="SettingsSecurityDesc3.Text" xml:space="preserve">
-    <value>when you're done. Please make sure to remember the password you choose here!</value>
+    <value>quand vous avez fini. Retenez bien le mot de passe que vous utilisez !</value>
   </data>
   <data name="SettingsSecurityTitle.Text" xml:space="preserve">
-    <value>Change database security options</value>
+    <value>Changer les options de sécurité de la base de données</value>
   </data>
   <data name="SettingsSecurityUpdateButton.ButtonLabel" xml:space="preserve">
-    <value>Update master key</value>
+    <value>Mettre à jour la clé maître</value>
   </data>
   <data name="SettingsWelcomeDesc.Text" xml:space="preserve">
-    <value>Here, you may change the application or the database settings.</value>
+    <value>Ici, vous pouvez changer les options de l'application ou de la base de données.</value>
   </data>
   <data name="SettingsWelcomeHowto.Text" xml:space="preserve">
-    <value>Select a setting pane on the left to access the options.</value>
+    <value>Choisissez un élément dans le menu de gauche.</value>
   </data>
   <data name="SettingsWelcomeTitle.Text" xml:space="preserve">
-    <value>Settings</value>
+    <value>Paramètres</value>
   </data>
   <data name="WelcomeNew.Text" xml:space="preserve">
-    <value>Want to create a new password database? Do it here.</value>
+    <value>Pour créer une nouvelle base de données de mots de passe, c'est ici.</value>
   </data>
   <data name="WelcomeOpen.Text" xml:space="preserve">
-    <value>Have an existing password database? Open it here.</value>
+    <value>Pour ouvrir une base de données existante, c'est ici.</value>
   </data>
 </root>
