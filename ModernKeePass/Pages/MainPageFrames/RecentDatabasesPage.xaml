@@ -17,36 +17,53 @@
     <Page.DataContext>
         <viewModels:RecentVm/>
     </Page.DataContext>
-    <ListView Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
-        ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
-        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-        ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-        <ListView.ItemTemplate>
-            <DataTemplate>
-                <Grid Margin="10,0,10,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Text="{Binding Name}" Padding="5,0,0,0" />
-                    <TextBlock Grid.Row="1" Text="{Binding Path}" Padding="5,0,0,0" FontSize="10" />
-                    <local:CompositeKeyUserControl Grid.Row="2" x:Name="DatabaseUserControl" HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" ButtonLabel="Open">
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="ValidationChecking">
-                                <core:CallMethodAction TargetObject="{Binding}" MethodName="OpenDatabaseFile" />
-                            </core:EventTriggerBehavior>
-                            <core:EventTriggerBehavior EventName="ValidationChecked">
-                                <core:CallMethodAction TargetObject="{Binding}" MethodName="UpdateAccessTime" />
-                                <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </local:CompositeKeyUserControl>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Cancel" />
+                <TextBlock x:Uid="RecentClear" VerticalAlignment="Center" Margin="10,0,0,0" />
+            </StackPanel>
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Click">
+                    <core:CallMethodAction TargetObject="{Binding}" MethodName="ClearAll" />
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </HyperlinkButton>
+        <ListView Grid.Row="1" 
+            ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
+            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="10,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Text="{Binding Name}" Padding="5,0,0,0" />
+                        <TextBlock Grid.Row="1" Text="{Binding Path}" Padding="5,0,0,0" FontSize="10" />
+                        <local:CompositeKeyUserControl Grid.Row="2" x:Name="DatabaseUserControl" HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" ButtonLabel="Open">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="ValidationChecking">
+                                    <core:CallMethodAction TargetObject="{Binding}" MethodName="OpenDatabaseFile" />
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="ValidationChecked">
+                                    <core:CallMethodAction TargetObject="{Binding}" MethodName="UpdateAccessTime" />
+                                    <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.GroupDetailPage" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </local:CompositeKeyUserControl>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
 </Page>

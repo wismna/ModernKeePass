@@ -10,5 +10,6 @@ namespace ModernKeePass.Interfaces
         Task<IStorageItem> GetFileAsync(string token);
         ObservableCollection<IRecentItem> GetAllFiles(bool removeIfNonExistant = true);
         void Add(IStorageItem file, string metadata);
+        void ClearAll();
     }
 }

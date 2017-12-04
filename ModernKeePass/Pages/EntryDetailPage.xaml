@@ -377,6 +377,13 @@
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
+                <AppBarButton Icon="Home" Label="Home">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Click">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Pages.MainPage" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </AppBarButton>
                 <AppBarButton Icon="Save" Label="Save">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">

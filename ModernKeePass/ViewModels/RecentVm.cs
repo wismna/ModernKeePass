@@ -7,6 +7,7 @@ namespace ModernKeePass.ViewModels
 {
     public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
+        private readonly IRecent _recent;
         private ISelectableModel _selectedItem;
         private ObservableCollection<IRecentItem> _recentItems = new ObservableCollection<IRecentItem>();
 
@@ -39,10 +40,16 @@ namespace ModernKeePass.ViewModels
 
         public RecentVm(IRecent recent)
         {
-            RecentItems = recent.GetAllFiles();
+            _recent = recent;
+            RecentItems = _recent.GetAllFiles();
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0] as RecentItemVm;
         }
 
+        public void ClearAll()
+        {
+            _recent.ClearAll();
+            RecentItems.Clear();
+        }
     }
 }

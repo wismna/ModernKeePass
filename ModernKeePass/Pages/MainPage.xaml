@@ -65,7 +65,6 @@
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
-            IsSynchronizedWithCurrentItem="False"
             ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
             <controls:ListViewWithDisable.ItemTemplate>
                 <DataTemplate>

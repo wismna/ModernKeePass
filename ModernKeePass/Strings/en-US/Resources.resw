@@ -228,6 +228,9 @@
   <data name="PasswordGeneratorUpper.Content" xml:space="preserve">
     <value>Upper case (A, B, C, ...)</value>
   </data>
+  <data name="RecentClear.Text" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
   <data name="SaveAsButton.Content" xml:space="preserve">
     <value>Save as...</value>
   </data>

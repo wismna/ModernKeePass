@@ -37,6 +37,11 @@ namespace ModernKeePass.Services
             _mru.Add(file, metadata);
         }
 
+        public void ClearAll()
+        {
+            _mru.Clear();
+        }
+
         public async Task<IStorageItem> GetFileAsync(string token)
         {
             return await _mru.GetFileAsync(token);

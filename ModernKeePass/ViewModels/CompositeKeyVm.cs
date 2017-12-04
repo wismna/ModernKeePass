@@ -22,16 +22,6 @@ namespace ModernKeePass.ViewModels
             Success = 5
         }
 
-        //private readonly App _app = Application.Current as App;
-        private bool _hasPassword;
-        private bool _hasKeyFile;
-        private string _password = string.Empty;
-        private string _status;
-        private StatusTypes _statusType;
-        private StorageFile _keyFile;
-        private string _keyFileText;
-        private readonly IResource _resource;
-
         public IDatabase Database { get; set; }
 
         public bool HasPassword
@@ -54,7 +44,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsValid => HasPassword || HasKeyFile && KeyFile != null;
+        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && KeyFile != null);
 
         public string Status
         {
@@ -101,6 +91,16 @@ namespace ModernKeePass.ViewModels
 
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
 
+        private bool _hasPassword;
+        private bool _hasKeyFile;
+        private bool _isOpening;
+        private string _password = string.Empty;
+        private string _status;
+        private StatusTypes _statusType;
+        private StorageFile _keyFile;
+        private string _keyFileText;
+        private readonly IResource _resource;
+
         public CompositeKeyVm() : this((Application.Current as App)?.Database, new ResourcesService()) { }
 
         public CompositeKeyVm(IDatabase database, IResource resource)
@@ -115,11 +115,16 @@ namespace ModernKeePass.ViewModels
             var error = string.Empty;
             try
             {
+                _isOpening = true;
                 Database.Open(CreateCompositeKey(), createNew);
             }
             catch (Exception e)
             {
                 error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}: {e.Message}";
+            }
+            finally
+            {
+                _isOpening = false;
             }
             switch ((DatabaseService.DatabaseStatus)Database.Status)
             {

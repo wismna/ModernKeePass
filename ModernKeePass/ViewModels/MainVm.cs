@@ -111,6 +111,8 @@ namespace ModernKeePass.ViewModels
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
+
+            // Add currently opened database to the menu
             if (database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
