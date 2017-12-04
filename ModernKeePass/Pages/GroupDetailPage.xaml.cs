@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -143,22 +140,6 @@ namespace ModernKeePass.Pages
             }
         }
 
-        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
-        {
-            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/ModernKeePass-SmallLogo.scale-80.png"));
-            var results = Model.Entries.Skip(1).Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
-            foreach (var result in results)
-            {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Name, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
-            }
-        }
-
-        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
-        {
-            var entry = Model.Entries.Skip(1).FirstOrDefault(e => e.Id == args.Tag);
-            Frame.Navigate(typeof(EntryDetailPage), entry);
-        }
-
         #endregion
 
         private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
@@ -170,12 +151,6 @@ namespace ModernKeePass.Pages
         {
             e.Cancel = !Model.IsEditMode;
             e.Data.RequestedOperation = DataPackageOperation.Move;
-        }
-
-        private void TextBox_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            //throw new NotImplementedException();
-            Model.Entries = new ObservableCollection<EntryVm>(Model.Entries.Where(entry => entry.Name.Contains((sender as TextBox).Text)));
         }
     }
 }
