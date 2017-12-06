@@ -31,7 +31,7 @@
                 </SymbolIcon>
                 <Button.Flyout>
                     <Flyout>
-                        <TextBlock x:Uid="SettingsNewDatabaseKdfMoreInfo" />
+                        <TextBlock x:Uid="SettingsNewDatabaseKdfMoreInfo" TextWrapping="WrapWholeWords" MaxWidth="400" />
                     </Flyout>
                 </Button.Flyout>
             </Button>
