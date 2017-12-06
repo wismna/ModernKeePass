@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
@@ -25,14 +24,11 @@ namespace ModernKeePass.ViewModels
         }
 
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
-
-        public int EntryCount => Entries.Count;
-        // TODO: put in a converter
-        public FontWeight FontWeight => _pwGroup == null ? FontWeights.Bold : FontWeights.Normal;
-        public int GroupCount => Groups.Count - 1;
+        
         public PwUuid IdUuid => _pwGroup?.Uuid;
         public string Id => IdUuid?.ToHexString();
         public bool IsNotRoot => ParentGroup != null;
+
 
         public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
 
@@ -78,6 +74,12 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isEditMode, value); }
         }
 
+        public bool IsMenuClosed
+        {
+            get { return _isMenuClosed; }
+            set { SetProperty(ref _isMenuClosed, value); }
+        }
+
         public string Filter
         {
             get { return _filter; }
@@ -108,6 +110,7 @@ namespace ModernKeePass.ViewModels
         private PwEntry _reorderedEntry;
         private ObservableCollection<EntryVm> _entries = new ObservableCollection<EntryVm>();
         private string _filter = string.Empty;
+        private bool _isMenuClosed = true;
 
         public GroupVm() {}
         

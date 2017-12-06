@@ -192,6 +192,12 @@
   <data name="GroupCreateEntry.Text" xml:space="preserve">
     <value>Create new entry</value>
   </data>
+  <data name="GroupNewItemTextBox.Text" xml:space="preserve">
+    <value>&lt; New group &gt;</value>
+  </data>
+  <data name="GroupNewItemTooltip.Content" xml:space="preserve">
+    <value>&lt; New group &gt;</value>
+  </data>
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
     <value>Search...</value>
   </data>

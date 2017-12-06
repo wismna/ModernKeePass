@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
     xmlns:controls="using:ModernKeePass.Controls"
+    xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Pages.GroupDetailPage"
     mc:Ignorable="d" >
@@ -111,7 +112,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="50" x:Name="LeftListViewColumn" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <ListView 
@@ -126,17 +127,24 @@
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
                 <ListView.Resources>
-                    <DataTemplate x:Name="Collapsed">
-                        <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
-                            <ToolTipService.ToolTip>
-                                <ToolTip Content="{Binding Name}" />
-                            </ToolTipService.ToolTip>
-                        </SymbolIcon>
-                    </DataTemplate>
-                    <DataTemplate x:Name="Expanded">
+                    <DataTemplate x:Name="GroupOtherItem">
                         <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0" />
-                            <TextBlock Text="{Binding Name}" FontWeight="{Binding FontWeight}" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding IsSelected, Converter={StaticResource BooleanToFontStyleConverter}}" />
+                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="{Binding Name}" />
+                                </ToolTipService.ToolTip>
+                             </SymbolIcon>
+                            <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding IsSelected, Converter={StaticResource BooleanToFontStyleConverter}}" />
+                        </StackPanel>
+                    </DataTemplate>
+                    <DataTemplate x:Name="GroupFirstItem">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip x:Uid="GroupNewItemTooltip" />
+                                </ToolTipService.ToolTip>
+                            </SymbolIcon>
+                            <TextBlock x:Name="GroupTextBlock" x:Uid="GroupNewItemTextBox" FontWeight="SemiBold" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.Resources>
@@ -155,19 +163,21 @@
                     <DataTemplate>
                         <ToggleButton Style="{StaticResource HamburgerToggleButton}">
                             <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="Loaded">
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}" TargetObject="{Binding ElementName=LeftListView}"/>
-                                </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Checked">
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Expanded}" TargetObject="{Binding ElementName=LeftListView}"/>
+                                    <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
                                 </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="Unchecked">
-                                    <core:ChangePropertyAction PropertyName="ItemTemplate" Value="{StaticResource Collapsed}" TargetObject="{Binding ElementName=LeftListView}"/>
+                                    <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </ToggleButton>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
+                <ListView.ItemTemplateSelector>
+                    <templateSelectors:FirstItemDataTemplateSelector 
+                        FirstItem="{StaticResource GroupFirstItem}" 
+                        OtherItem="{StaticResource GroupOtherItem}" />
+                </ListView.ItemTemplateSelector>
             </ListView>
             <!-- Horizontal scrolling grid -->
             <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,0,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" >

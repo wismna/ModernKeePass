@@ -93,7 +93,7 @@ namespace ModernKeePass.ViewModels
         public SettingsDatabaseVm(IDatabase database)
         {
             _database = database;
-            Groups = _database.RootGroup.Groups;
+            Groups = _database?.RootGroup.Groups;
         }
     }
 }
