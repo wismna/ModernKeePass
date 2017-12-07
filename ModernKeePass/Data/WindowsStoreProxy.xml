@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CurrentApp>
+  <ListingInformation>
+    <App>
+      <AppId>0719A91A-C322-4EE0-A257-E60733EECF06</AppId>
+      <LinkUri>https://www.microsoft.com/store/apps/9mwq48zk8nhv</LinkUri>
+      <CurrentMarket>en-us</CurrentMarket>
+      <AgeRating>3</AgeRating>
+      <MarketData xml:lang="en-us">
+        <Name>App with several in-app products</Name>
+        <Description>Sample app for demonstrating an expiring in-app product and a consumable in-app product</Description>
+        <Price>5.99</Price>
+        <CurrencySymbol>$</CurrencySymbol>
+      </MarketData>
+    </App>
+    <Product ProductId="donate1" LicenseDuration="0" ProductType="Consumable">
+      <MarketData xml:lang="en-us">
+        <Name>Small Donation</Name>
+        <Price>0.99</Price>
+        <CurrencySymbol>$</CurrencySymbol>
+      </MarketData>
+    </Product>
+    <Product ProductId="donate5" LicenseDuration="0" ProductType="Consumable">
+      <MarketData xml:lang="en-us">
+        <Name>Medium Donation</Name>
+        <Price>4.99</Price>
+        <CurrencySymbol>$</CurrencySymbol>
+      </MarketData>
+    </Product>
+    <Product ProductId="donate10" LicenseDuration="0" ProductType="Consumable">
+      <MarketData xml:lang="en-us">
+        <Name>Large Donation</Name>
+        <Price>9.99</Price>
+        <CurrencySymbol>$</CurrencySymbol>
+      </MarketData>
+    </Product>
+    <Product ProductId="donate20" LicenseDuration="0" ProductType="Consumable">
+      <MarketData xml:lang="en-us">
+        <Name>Generous Donation</Name>
+        <Price>19.99</Price>
+        <CurrencySymbol>$</CurrencySymbol>
+      </MarketData>
+    </Product>
+  </ListingInformation>
+  <LicenseInformation>
+    <App>
+      <IsActive>true</IsActive>
+      <IsTrial>false</IsTrial>
+    </App>
+  </LicenseInformation>
+  <ConsumableInformation>
+    <Product ProductId="donate1" TransactionId="00000001-0000-0000-0000-000000000000" Status="Active"/>
+    <Product ProductId="donate5" TransactionId="00000001-0000-0000-0000-000000000000" Status="Active"/>
+    <Product ProductId="donate10" TransactionId="00000001-0000-0000-0000-000000000000" Status="Active"/>
+    <Product ProductId="donate20" TransactionId="00000001-0000-0000-0000-000000000000" Status="Active"/>
+  </ConsumableInformation>
+</CurrentApp>

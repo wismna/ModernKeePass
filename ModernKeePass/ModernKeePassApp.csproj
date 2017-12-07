@@ -113,6 +113,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\ILicenseService.cs" />
     <Compile Include="Interfaces\IRecent.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
     <Compile Include="Interfaces\IResource.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
+    <Compile Include="Services\LicenseService.cs" />
     <Compile Include="Services\RecentService.cs" />
     <Compile Include="Services\ResourcesService.cs" />
     <Compile Include="Services\SettingsService.cs" />
@@ -410,6 +412,9 @@
     <Content Include="Assets\Wide310x150Logo.scale-140.png" />
     <Content Include="Assets\Wide310x150Logo.scale-180.png" />
     <Content Include="Assets\Wide310x150Logo.scale-80.png" />
+    <Content Include="Data\WindowsStoreProxy.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>

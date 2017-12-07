@@ -8,7 +8,10 @@
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock x:Uid="DonateDesc" />
-        <RadioButton GroupName="DonateOptions"  />
+        <RadioButton GroupName="DonateOptions" Content="1"  />
+        <RadioButton GroupName="DonateOptions" Content="5"  />
+        <RadioButton GroupName="DonateOptions" Content="10"  />
+        <RadioButton GroupName="DonateOptions" Content="20"  />
         <Button x:Uid="DonateButton" />
     </StackPanel>
 </Page>

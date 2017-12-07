@@ -168,6 +168,9 @@
   <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
     <value>Mot de passe</value>
   </data>
+  <data name="DonateButton.Content" xml:space="preserve">
+    <value>Donner</value>
+  </data>
   <data name="DonateDesc.Text" xml:space="preserve">
     <value>Vous aimez cette app? Pourquoi ne pas faire un petit don afin de m'encourager et d'éviter le recours aux publicités :) ?</value>
   </data>
