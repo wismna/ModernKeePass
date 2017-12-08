@@ -5,8 +5,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Pages;
 using ModernKeePass.Services;
+using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels
 {
@@ -107,6 +107,13 @@ namespace ModernKeePass.ViewModels
                     PageType = typeof(AboutPage),
                     Destination = destinationFrame,
                     SymbolIcon = Symbol.Help
+                },
+                new MainMenuItemVm
+                {
+                    Title = resource.GetResourceValue("MainMenuItemDonate"),
+                    PageType = typeof(DonatePage),
+                    Destination = destinationFrame,
+                    SymbolIcon = Symbol.Shop
                 }
             };
             // Auto-select the Recent Items menu item if the conditions are met

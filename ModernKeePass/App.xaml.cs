@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Services;
+using ModernKeePass.Views;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -103,7 +104,7 @@ namespace ModernKeePass
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(Pages.MainPage), lauchActivatedEventArgs.Arguments);
+                    rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
                 }
                 /*else
                 {
@@ -158,7 +159,7 @@ namespace ModernKeePass
             base.OnFileActivated(args);
             var rootFrame = new Frame();
             Database.DatabaseFile = args.Files[0] as StorageFile;
-            rootFrame.Navigate(typeof(Pages.MainPage), args);
+            rootFrame.Navigate(typeof(MainPage), args);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }

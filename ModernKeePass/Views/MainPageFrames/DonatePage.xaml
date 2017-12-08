@@ -1,0 +1,30 @@
+﻿<Page
+    x:Class="ModernKeePass.Views.DonatePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
+    xmlns:converters="using:ModernKeePass.Converters"
+    mc:Ignorable="d">
+    <Page.DataContext>
+        <viewModels:DonateVm />
+    </Page.DataContext>
+    <Page.Resources>
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <CollectionViewSource 
+            x:Name="DonateItemsSource" 
+            Source="{Binding Donations}" />
+    </Page.Resources>
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock x:Uid="DonateDesc" Style="{StaticResource BodyTextBlockStyle}" />
+        <ItemsControl ItemsSource="{Binding Source={StaticResource DonateItemsSource}}" Margin="0,10,0,10">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <RadioButton GroupName="DonateOptions" Content="{Binding FormattedPrice}" Checked="ToggleButton_OnChecked" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <Button x:Uid="DonateButton" Click="ButtonBase_OnClick" IsEnabled="{Binding SelectedItem, Converter={StaticResource NullToBooleanConverter}}" />
+    </StackPanel>
+</Page>

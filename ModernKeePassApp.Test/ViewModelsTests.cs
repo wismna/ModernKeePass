@@ -3,9 +3,8 @@ using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Storage.AccessCache;
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using ModernKeePass.Pages;
-using ModernKeePass.Pages.SettingsPageFrames;
 using ModernKeePass.ViewModels;
+using ModernKeePass.Views;
 using ModernKeePassApp.Test.Mock;
 
 namespace ModernKeePassApp.Test
@@ -31,7 +30,7 @@ namespace ModernKeePassApp.Test
             var mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.AreEqual(1, mainVm.MainMenuItems.Count());
             var firstGroup = mainVm.MainMenuItems.FirstOrDefault();
-            Assert.AreEqual(6, firstGroup.Count());
+            Assert.AreEqual(7, firstGroup.Count());
 
             database.Status = 1;
             mainVm = new MainVm(null, null, database, _resource, _recent);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Media.Animation;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 
@@ -12,18 +13,11 @@ namespace ModernKeePass.Common
         public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler action)
         {
             // Create the message dialog and set its content
-            var messageDialog = new MessageDialog(contentText, title);
+            var messageDialog = CreateBasicDialog(title, contentText, cancelButtonText);
 
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand(actionButtonText, action));
-            messageDialog.Commands.Add(new UICommand(cancelButtonText));
-
-            // Set the command that will be invoked by default
-            messageDialog.DefaultCommandIndex = 1;
-
-            // Set the command to be invoked when escape is pressed
-            messageDialog.CancelCommandIndex = 1;
-
+            
             // Show the message dialog
             await messageDialog.ShowAsync();
         }
@@ -48,13 +42,35 @@ namespace ModernKeePass.Common
         {
             if (exception == null) return;
             // Create the message dialog and set its content
-            var messageDialog = new MessageDialog(exception.Message, "Error occured");
-
-            // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
-            messageDialog.Commands.Add(new UICommand("OK"));
+            var messageDialog = CreateBasicDialog("Error occured", exception.Message, "OK");
             
             // Show the message dialog
             await messageDialog.ShowAsync();
+        }
+
+        public static async void ShowNotificationDialog(string title, string message)
+        {
+            var dialog = CreateBasicDialog(title, message, "OK");
+
+            // Show the message dialog
+            await dialog.ShowAsync();
+        }
+
+        private static MessageDialog CreateBasicDialog(string title, string message, string dismissActionText)
+        {
+            // Create the message dialog and set its content
+            var messageDialog = new MessageDialog(message, title);
+
+            // Add commands and set their callbacks; 
+            messageDialog.Commands.Add(new UICommand(dismissActionText));
+
+            // Set the command that will be invoked by default
+            messageDialog.DefaultCommandIndex = 1;
+
+            // Set the command to be invoked when escape is pressed
+            messageDialog.CancelCommandIndex = 1;
+
+            return messageDialog;
         }
     }
 }

@@ -117,7 +117,8 @@
     <Compile Include="Interfaces\IRecent.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
     <Compile Include="Interfaces\IResource.cs" />
-    <Compile Include="Pages\MainPageFrames\DonatePage.xaml.cs">
+    <Compile Include="ViewModels\DonateVm.cs" />
+    <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\DatabaseService.cs" />
@@ -141,22 +142,22 @@
     <Compile Include="Interfaces\IDatabase.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
-    <Compile Include="Pages\BasePages\LayoutAwarePageBase.cs" />
-    <Compile Include="Pages\SettingsPageFrames\SettingsDatabasePage.xaml.cs">
+    <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
+    <Compile Include="Views\SettingsPageFrames\SettingsDatabasePage.xaml.cs">
       <DependentUpon>SettingsDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPageFrames\SettingsNewDatabasePage.xaml.cs">
+    <Compile Include="Views\SettingsPageFrames\SettingsNewDatabasePage.xaml.cs">
       <DependentUpon>SettingsNewDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
+    <Compile Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
       <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
+    <Compile Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
       <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
-    <Compile Include="Controls\CompositeKeyUserControl.xaml.cs">
+    <Compile Include="Views\UserControls\CompositeKeyUserControl.xaml.cs">
       <DependentUpon>CompositeKeyUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\TextBoxWithButton.cs" />
@@ -171,20 +172,20 @@
     <Compile Include="Events\PasswordEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="Interfaces\IPwEntity.cs" />
-    <Compile Include="Pages\MainPage.xaml.cs">
+    <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Mappings\PwIconToSegoeMapping.cs" />
-    <Compile Include="Pages\MainPageFrames\AboutPage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageFrames\NewDatabasePage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\NewDatabasePage.xaml.cs">
       <DependentUpon>NewDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SettingsPage.xaml.cs">
+    <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageFrames\WelcomePage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
@@ -192,19 +193,19 @@
     <Compile Include="ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="ViewModels\Items\RecentItemVm.cs" />
-    <Compile Include="Pages\EntryDetailPage.xaml.cs">
+    <Compile Include="Views\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\GroupDetailPage.xaml.cs">
+    <Compile Include="Views\GroupDetailPage.xaml.cs">
       <DependentUpon>GroupDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageFrames\OpenDatabasePage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\OpenDatabasePage.xaml.cs">
       <DependentUpon>OpenDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageFrames\RecentDatabasesPage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\RecentDatabasesPage.xaml.cs">
       <DependentUpon>RecentDatabasesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainPageFrames\SaveDatabasePage.xaml.cs">
+    <Compile Include="Views\MainPageFrames\SaveDatabasePage.xaml.cs">
       <DependentUpon>SaveDatabasePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -239,67 +240,67 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\CompositeKeyUserControl.xaml">
+    <Page Include="Views\UserControls\CompositeKeyUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPage.xaml">
+    <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\MainPageFrames\AboutPage.xaml">
+    <Page Include="Views\MainPageFrames\AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\EntryDetailPage.xaml">
+    <Page Include="Views\EntryDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\GroupDetailPage.xaml">
+    <Page Include="Views\GroupDetailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\DonatePage.xaml">
+    <Page Include="Views\MainPageFrames\DonatePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\NewDatabasePage.xaml">
+    <Page Include="Views\MainPageFrames\NewDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\OpenDatabasePage.xaml">
+    <Page Include="Views\MainPageFrames\OpenDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\RecentDatabasesPage.xaml">
+    <Page Include="Views\MainPageFrames\RecentDatabasesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\SaveDatabasePage.xaml">
+    <Page Include="Views\MainPageFrames\SaveDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPage.xaml">
+    <Page Include="Views\SettingsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainPageFrames\WelcomePage.xaml">
+    <Page Include="Views\MainPageFrames\WelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPageFrames\SettingsDatabasePage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPageFrames\SettingsNewDatabasePage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsNewDatabasePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPageFrames\SettingsSecurityPage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\SettingsPageFrames\SettingsWelcomePage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

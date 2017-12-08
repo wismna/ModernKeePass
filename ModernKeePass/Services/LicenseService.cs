@@ -35,8 +35,12 @@ namespace ModernKeePass.Services
             // Comment the following line in the release version of your app.
             //_licenseInformation = CurrentAppSimulator.LicenseInformation;
 #if DEBUG
-            var proxyFile = Package.Current.InstalledLocation.GetFileAsync("data\\WindowsStoreProxy.xml").GetAwaiter().GetResult();
-            CurrentAppSimulator.ReloadSimulatorAsync(proxyFile).GetAwaiter().GetResult();
+            try
+            {
+                var proxyFile = Package.Current.InstalledLocation.GetFileAsync("data\\WindowsStoreProxy.xml").GetAwaiter().GetResult();
+                CurrentAppSimulator.ReloadSimulatorAsync(proxyFile).GetAwaiter().GetResult();
+            }
+            catch { }
             var listing = CurrentAppSimulator.LoadListingInformationAsync().GetAwaiter().GetResult();
 #else
             var listing = CurrentApp.LoadListingInformationAsync().GetAwaiter().GetResult();
@@ -44,7 +48,7 @@ namespace ModernKeePass.Services
             Products = listing.ProductListings;
         }
 
-        public async Task<PurchaseResult> Purchase(string addOn)
+        public async Task<int> Purchase(string addOn)
         {
 #if DEBUG
             var purchaseResults = await CurrentAppSimulator.RequestProductPurchaseAsync(addOn);
@@ -55,7 +59,7 @@ namespace ModernKeePass.Services
             {
                 case ProductPurchaseStatus.Succeeded:
                     GrantFeatureLocally(purchaseResults.TransactionId);
-                    return await ReportFulfillmentAsync(purchaseResults.TransactionId, addOn);
+                    return (int) await ReportFulfillmentAsync(purchaseResults.TransactionId, addOn);
                 case ProductPurchaseStatus.NotFulfilled:
                     // The purchase failed because we haven't confirmed fulfillment of a previous purchase.
                     // Fulfill it now.
@@ -63,11 +67,11 @@ namespace ModernKeePass.Services
                     {
                         GrantFeatureLocally(purchaseResults.TransactionId);
                     }
-                    return await ReportFulfillmentAsync(purchaseResults.TransactionId, addOn);
+                    return (int) await ReportFulfillmentAsync(purchaseResults.TransactionId, addOn);
                 case ProductPurchaseStatus.NotPurchased:
-                    return PurchaseResult.NotPurchased;
+                    return (int) PurchaseResult.NotPurchased;
                 case ProductPurchaseStatus.AlreadyPurchased:
-                    return PurchaseResult.AlreadyPurchased;
+                    return (int) PurchaseResult.AlreadyPurchased;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -75,11 +79,10 @@ namespace ModernKeePass.Services
 
         private async Task<PurchaseResult> ReportFulfillmentAsync(Guid transactionId, string productName)
         {
-            FulfillmentResult result;
 #if DEBUG
-            result = await CurrentAppSimulator.ReportConsumableFulfillmentAsync(productName, transactionId);
+            var result = await CurrentAppSimulator.ReportConsumableFulfillmentAsync(productName, transactionId);
 #else
-            result = await CurrentApp.ReportConsumableFulfillmentAsync(productName, transactionId);
+            var result = await CurrentApp.ReportConsumableFulfillmentAsync(productName, transactionId);
 #endif
             return (PurchaseResult) result;
         }
