@@ -139,9 +139,6 @@ namespace ModernKeePass.Views
                 e.DestinationItem.Item = e.SourceItem.Item;
             }
         }
-
-        #endregion
-
         private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EntryDetailPage), Model.AddNewEntry());
@@ -152,5 +149,12 @@ namespace ModernKeePass.Views
             e.Cancel = !Model.IsEditMode;
             e.Data.RequestedOperation = DataPackageOperation.Move;
         }
+        
+        private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);
+        }
+
+        #endregion
     }
 }

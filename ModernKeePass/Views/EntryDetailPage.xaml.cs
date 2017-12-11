@@ -105,5 +105,10 @@ namespace ModernKeePass.Views
                 MessageDialogHelper.ShowErrorDialog(ex);
             }
         }
+
+        private void EntryDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);
+        }
     }
 }

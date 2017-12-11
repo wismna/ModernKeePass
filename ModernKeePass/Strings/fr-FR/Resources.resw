@@ -195,6 +195,9 @@
   <data name="GroupCreateEntry.Text" xml:space="preserve">
     <value>Créer une nouvelle entrée</value>
   </data>
+  <data name="GroupFilter.PlaceholderText" xml:space="preserve">
+    <value>Filtrer...</value>
+  </data>
   <data name="GroupNewItemTextBox.Text" xml:space="preserve">
     <value>&lt; Nouveau groupe &gt;</value>
   </data>

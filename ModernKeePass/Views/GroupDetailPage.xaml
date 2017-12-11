@@ -12,7 +12,8 @@
     xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.GroupDetailPage"
-    mc:Ignorable="d" >
+    mc:Ignorable="d"
+    SizeChanged="GroupDetailPage_OnSizeChanged">
     <Page.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
         <converters:BooleanToFontStyleConverter x:Key="BooleanToFontStyleConverter"/>
@@ -180,13 +181,13 @@
                 </ListView.ItemTemplateSelector>
             </ListView>
             <!-- Horizontal scrolling grid -->
-            <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,0,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" >
+            <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,15,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Add"></SymbolIcon>
                     <TextBlock x:Uid="GroupCreateEntry" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
             </HyperlinkButton>
-            <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="0,45,0,0">
+            <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="20,60,0,0">
                 <SemanticZoom.ZoomedInView>
                     <GridView
                         x:Name="GridView"
@@ -303,7 +304,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
@@ -336,7 +337,15 @@
                 </TextBox>
                 <TextBlock FontSize="12" Text="{Binding Path}" />
             </StackPanel>
-            <controls:TextBoxWithButton Grid.Column="2" x:Uid="GroupSearch" ButtonSymbol="&#xE11A;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Style="{StaticResource TextBoxWithButtonStyle}" />
+            <Button Grid.Column="2" x:Name="FilterButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Filter" />
+                <Button.Flyout>
+                    <Flyout>
+                        <controls:TextBoxWithButton x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+            <controls:TextBoxWithButton Grid.Column="2" x:Name="FilterBox" x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DragDropGroup">
@@ -351,6 +360,28 @@
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridView" Storyboard.TargetProperty="BorderThickness">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FilterGroup">
+                <VisualState x:Name="Small">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterBox" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Large">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterBox" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

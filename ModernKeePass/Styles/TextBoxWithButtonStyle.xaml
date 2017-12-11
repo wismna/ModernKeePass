@@ -62,7 +62,7 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
-                                                        <VisualState x:Name="Disabled">
+                                                        <!--<VisualState x:Name="Disabled">
                                                             <Storyboard>
                                                                 <DoubleAnimation Storyboard.TargetName="BackgroundElement"
                                                                                  Storyboard.TargetProperty="Opacity"
@@ -73,7 +73,7 @@
                                                                                  To="0"
                                                                                  Duration="0" />
                                                             </Storyboard>
-                                                        </VisualState>
+                                                        </VisualState>-->
                                                     </VisualStateGroup>
                                                 </VisualStateManager.VisualStateGroups>
                                                 <Border x:Name="BorderElement"
@@ -244,6 +244,7 @@
                                 Visibility="Collapsed"
                                 FontSize="{TemplateBinding FontSize}"
                                 Content="{TemplateBinding ButtonSymbol}"
+                                IsEnabled="{TemplateBinding IsButtonEnabled}"
                                 VerticalAlignment="Stretch">
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{TemplateBinding ButtonTooltip}" />

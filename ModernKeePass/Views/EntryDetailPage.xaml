@@ -11,7 +11,8 @@
     xmlns:actions="using:ModernKeePass.Actions"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.EntryDetailPage"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    SizeChanged="EntryDetailPage_OnSizeChanged">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
@@ -428,7 +429,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel x:Name="stackPanel" Grid.Row="1" Margin="20,0,0,0" >
+        <StackPanel Grid.Row="1" Margin="20,0,0,0" >
             <StackPanel.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="Margin" Value="0,20,0,0"/>
@@ -458,18 +459,24 @@
             <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
             <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
             <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonClick="UrlButton_Click" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL" />
-            <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18"/>
+            <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18" />
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
             <CheckBox  x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" />
-            <StackPanel Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <SymbolIcon Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <SymbolIcon Grid.Column="0" Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="EntryExpirationTooltip" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
-                <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
+                <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
                 <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
             </StackPanel>
+            </Grid>
         </StackPanel>
 
         <!-- Bouton Précédent et titre de la page -->
@@ -479,7 +486,6 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
-                    x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Height="50"
                     Width="50"
@@ -511,5 +517,23 @@
                 <TextBlock FontSize="12" Text="{Binding Path}" />
             </StackPanel>
         </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Large">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Horizontal"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Small">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
