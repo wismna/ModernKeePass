@@ -26,8 +26,16 @@ namespace ModernKeePass.ViewModels
 
         public DonateVm(ILicenseService license)
         {
+            var usNfi = new NumberFormatInfo
+            {
+                NegativeSign = "-",
+                NumberDecimalSeparator = ".",
+                NumberGroupSeparator = ",",
+                CurrencySymbol = "$"
+            };
             _license = license;
-            Donations = new ObservableCollection<ProductListing>(_license.Products.Values.OrderBy(p => /*decimal.Parse(*/p.FormattedPrice/*, NumberStyles.Currency | NumberStyles.AllowDecimalPoint)*/));
+            Donations = new ObservableCollection<ProductListing>(
+                _license.Products.Values.OrderBy(p => decimal.Parse(p.FormattedPrice, NumberStyles.Currency, usNfi)));
         }
 
         public async Task<int> Purchase()

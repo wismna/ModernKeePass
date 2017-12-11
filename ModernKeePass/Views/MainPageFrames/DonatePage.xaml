@@ -16,7 +16,7 @@
             x:Name="DonateItemsSource" 
             Source="{Binding Donations}" />
     </Page.Resources>
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Margin="10,0,0,0">
         <TextBlock x:Uid="DonateDesc" Style="{StaticResource BodyTextBlockStyle}" />
         <ItemsControl ItemsSource="{Binding Source={StaticResource DonateItemsSource}}" Margin="0,10,0,10">
             <ItemsControl.ItemTemplate>
