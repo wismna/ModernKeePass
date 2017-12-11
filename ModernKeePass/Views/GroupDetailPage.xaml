@@ -20,6 +20,15 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <!--<Style TargetType="controls:TextBoxWithButton" x:Name="FilterBoxStyle">
+            <Setter Property="ButtonSymbol" Value="&#xE16E;" />
+            <Setter Property="Text" Value="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Width" Value="400" />
+            <Setter Property="Style" Value="{StaticResource TextBoxWithButtonStyle}" />
+            <Setter Property="IsButtonEnabled" Value="False" />
+        </Style>-->
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
@@ -119,7 +128,6 @@
             <ListView 
                 Grid.Column="0"
                 x:Name="LeftListView"
-                Margin="0,0,0,-10"
                 SelectionChanged="groups_SelectionChanged"
                 IsSwipeEnabled="false"
                 IsSynchronizedWithCurrentItem="False"
