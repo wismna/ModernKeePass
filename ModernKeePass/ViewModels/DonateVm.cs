@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,16 +27,13 @@ namespace ModernKeePass.ViewModels
 
         public DonateVm(ILicenseService license)
         {
-            var usNfi = new NumberFormatInfo
-            {
-                NegativeSign = "-",
-                NumberDecimalSeparator = ".",
-                NumberGroupSeparator = ",",
-                CurrencySymbol = "$"
-            };
+            // TODO: find a nice way to order products
             _license = license;
             Donations = new ObservableCollection<ProductListing>(
-                _license.Products.Values.OrderBy(p => decimal.Parse(p.FormattedPrice, NumberStyles.Currency, usNfi)));
+                _license.Products.Values
+                /*.OrderBy(p => decimal.Parse(p.FormattedPrice.Replace('\u00A0', ' '), NumberStyles.Currency,
+                    CultureInfo.CurrentCulture.NumberFormat))*/
+                );
         }
 
         public async Task<int> Purchase()
