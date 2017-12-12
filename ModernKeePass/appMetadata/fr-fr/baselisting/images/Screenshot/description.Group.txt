@@ -1,0 +1,1 @@
+Vue d'un groupe, avec ses sous-groupes et ses entrées
