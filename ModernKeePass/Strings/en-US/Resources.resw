@@ -159,6 +159,9 @@
   <data name="AppBarSortGroups.Text" xml:space="preserve">
     <value>Groups</value>
   </data>
+  <data name="CompositeKeyNewButton.ButtonLabel" xml:space="preserve">
+    <value>Create</value>
+  </data>
   <data name="CompositeKeyNewKeyFileTooltip.Content" xml:space="preserve">
     <value>Create new key file</value>
   </data>

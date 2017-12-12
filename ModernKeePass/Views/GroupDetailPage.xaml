@@ -20,15 +20,6 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
-        <!--<Style TargetType="controls:TextBoxWithButton" x:Name="FilterBoxStyle">
-            <Setter Property="ButtonSymbol" Value="&#xE16E;" />
-            <Setter Property="Text" Value="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Width" Value="400" />
-            <Setter Property="Style" Value="{StaticResource TextBoxWithButtonStyle}" />
-            <Setter Property="IsButtonEnabled" Value="False" />
-        </Style>-->
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
@@ -189,7 +180,7 @@
                 </ListView.ItemTemplateSelector>
             </ListView>
             <!-- Horizontal scrolling grid -->
-            <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,15,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,10,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Add"></SymbolIcon>
                     <TextBlock x:Uid="GroupCreateEntry" VerticalAlignment="Center" Margin="10,0,0,0" />

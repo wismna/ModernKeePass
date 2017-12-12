@@ -1,5 +1,6 @@
+Tired of trying to remember your numerous passwords? Worried that using the same password everywhere is a security risk?
 ModernKeePass is free, open-source and user friendly yet secure password manager, based on proven and certified technology from KeePass 2.x and fully compatible with it.
-You can safely store all your passwords in an encrypted, secure database that you can store anywhere (local, cloud, USB key...)
+You can safely store and generate all your passwords in an encrypted, secure database that you can put anywhere (local computer/tablet, cloud, USB key...)
 
 Even though security is an important matter, this app aims at being simple to use. Suggestions welcome!
 Works in Windows 10, 8.1 and RT.
