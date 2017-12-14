@@ -79,20 +79,7 @@ namespace ModernKeePass.ViewModels
             get { return _isMenuClosed; }
             set { SetProperty(ref _isMenuClosed, value); }
         }
-
-        public string Filter
-        {
-            get { return _filter; }
-            set
-            {
-                SetProperty(ref _filter, value);
-                OnPropertyChanged("EntriesFiltered");
-            }
-        }
-
-        public ObservableCollection<EntryVm> EntriesFiltered =>
-            new ObservableCollection<EntryVm>(Entries.Where(e => e.Name.IndexOf(Filter, StringComparison.OrdinalIgnoreCase) >= 0));
-
+        
         public string Path
         {
             get

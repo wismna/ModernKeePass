@@ -270,6 +270,9 @@
   <data name="RecentClear.Text" xml:space="preserve">
     <value>Clear all</value>
   </data>
+  <data name="ReorderEntriesLabel.Text" xml:space="preserve">
+    <value>Drag and drop entries to reorder them</value>
+  </data>
   <data name="SaveAsButton.Content" xml:space="preserve">
     <value>Save as...</value>
   </data>

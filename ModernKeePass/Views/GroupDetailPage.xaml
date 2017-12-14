@@ -179,7 +179,7 @@
                         OtherItem="{StaticResource GroupOtherItem}" />
                 </ListView.ItemTemplateSelector>
             </ListView>
-            <!-- Horizontal scrolling grid -->
+            <TextBlock Grid.Column="1" x:Uid="ReorderEntriesLabel" Margin="20,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
             <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,10,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Add"></SymbolIcon>
@@ -188,6 +188,7 @@
             </HyperlinkButton>
             <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="20,60,0,0">
                 <SemanticZoom.ZoomedInView>
+                    <!-- Horizontal scrolling grid -->
                     <GridView
                         x:Name="GridView"
                         AutomationProperties.AutomationId="ItemGridView"
