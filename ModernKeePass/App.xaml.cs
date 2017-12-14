@@ -31,6 +31,7 @@ namespace ModernKeePass
             InitializeComponent();
             Suspending += OnSuspending;
             UnhandledException += OnUnhandledException;
+            Database = new DatabaseService();
         }
 
         #region Event Handlers
@@ -122,7 +123,6 @@ namespace ModernKeePass
             }*/
             // Ensure the current window is active
             Window.Current.Activate();
-            Database = new DatabaseService();
         }
 
         /// <summary>

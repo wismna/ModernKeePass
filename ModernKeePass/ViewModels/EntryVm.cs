@@ -5,7 +5,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
-using ModernKeePass.Services;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
@@ -116,6 +115,16 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("IsEditMode");
             }
         }
+        
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                _isVisible = value;
+                NotifyPropertyChanged("IsVisible");
+            }
+        }
 
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
 
@@ -155,6 +164,7 @@ namespace ModernKeePass.ViewModels
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
+        private bool _isVisible = true;
 
         private void NotifyPropertyChanged(string propertyName)
         {

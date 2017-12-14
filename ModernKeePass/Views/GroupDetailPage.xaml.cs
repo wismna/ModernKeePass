@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -149,7 +151,24 @@ namespace ModernKeePass.Views
             e.Cancel = !Model.IsEditMode;
             e.Data.RequestedOperation = DataPackageOperation.Move;
         }
-        
+
+        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        {
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/ModernKeePass-SmallLogo.scale-80.png"));
+            var results = Model.Entries.Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            foreach (var result in results)
+            {
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Name, result.ParentGroup.Name, result.Id, imageUri, string.Empty);
+            }
+        }
+
+        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
+        {
+            var entry = Model.Entries.FirstOrDefault(e => e.Id == args.Tag);
+            Frame.Navigate(typeof(EntryDetailPage), entry);
+        }
+
+
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);

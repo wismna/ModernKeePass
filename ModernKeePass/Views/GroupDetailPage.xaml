@@ -94,7 +94,7 @@
                 Source="{Binding Groups}" />
             <CollectionViewSource
                 x:Name="EntriesViewSource"
-                Source="{Binding EntriesFiltered}" />
+                Source="{Binding Entries}" />
             <CollectionViewSource
                 x:Name="EntriesZoomedOutViewSource"
                 Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True"/>
@@ -336,15 +336,17 @@
                 </TextBox>
                 <TextBlock FontSize="12" Text="{Binding Path}" />
             </StackPanel>
-            <Button Grid.Column="2" x:Name="FilterButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-                <SymbolIcon Symbol="Filter" />
+            <Button Grid.Column="2" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Find" />
                 <Button.Flyout>
                     <Flyout>
-                        <controls:TextBoxWithButton x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />
+                        <!--<controls:TextBoxWithButton x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />-->
+                        <SearchBox x:Uid="GroupSearch" Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" VerticalContentAlignment="Center" />
                     </Flyout>
                 </Button.Flyout>
             </Button>
-            <controls:TextBoxWithButton Grid.Column="2" x:Name="FilterBox" x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />
+            <!--<controls:TextBoxWithButton Grid.Column="2" x:Name="FilterBox" x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />-->
+            <SearchBox Grid.Column="2" x:Uid="GroupSearch" x:Name="SearchBox"  Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" VerticalContentAlignment="Center" />
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DragDropGroup">
@@ -363,23 +365,23 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
-            <VisualStateGroup x:Name="FilterGroup">
+            <VisualStateGroup x:Name="SearchGroup">
                 <VisualState x:Name="Small">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterButton" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterBox" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterButton" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FilterBox" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>

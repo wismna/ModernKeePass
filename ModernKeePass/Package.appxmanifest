@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest" xmlns:m2="http://schemas.microsoft.com/appx/2013/manifest">
-  <Identity Name="wismna.ModernKeePass" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="1.10.0.31" />
+  <Identity Name="wismna.ModernKeePass" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="1.11.0.31" />
   <Properties>
     <DisplayName>ModernKeePass</DisplayName>
     <PublisherDisplayName>wismna</PublisherDisplayName>
