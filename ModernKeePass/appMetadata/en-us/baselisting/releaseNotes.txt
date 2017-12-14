@@ -1,11 +1,2 @@
-You can now reorder entries
-Entries and groups are sortable
-New Home button that allows returning to the main menu from anywhere
-Change default database creation settings
-Settings is accessible from main menu
-Clear Recent databases
-New French translation
-Better layout whith small screen size
-Search becomes Filter
-Design and usability improvements
-Bugs correction
+Error when opening file from Explorer corrected
+Filter entries reverted to search entries because of regressions

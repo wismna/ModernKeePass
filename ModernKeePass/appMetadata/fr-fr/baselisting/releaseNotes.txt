@@ -1,11 +1,2 @@
-Vous pouvez désormais réorganiser vos entrées
-Les entrées et les groupes peuvent être triés
-Nouveau bouton d'Accueil qui permet de retourner au menu principal
-Changez les options de création des nouvelles bases de données
-Les paramètres sont accessibles depuis le menu principal
-Effacez les éléments récents
-Traduction française
-Meilleur rendu en petit écran
-La recherche devient Filtre
-Améliorations de design et d'ergonomie
-Corrections de bogues
+Correction d'un bug lors de l'ouverture d'un fichier par Explorer
+R&eacute;tablissement de la recherche d'entr&eacute;es &agrave; la place du filtre &agrave; cause de r&eacute;gressions multiples
