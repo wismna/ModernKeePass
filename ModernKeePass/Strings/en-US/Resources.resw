@@ -183,6 +183,15 @@
   <data name="EntryExpirationTooltip.Content" xml:space="preserve">
     <value>Password has expired</value>
   </data>
+  <data name="EntryItemCopyLogin.Text" xml:space="preserve">
+    <value>Copy login</value>
+  </data>
+  <data name="EntryItemCopyPassword.Text" xml:space="preserve">
+    <value>Copy password</value>
+  </data>
+  <data name="EntryItemCopyUrl.Text" xml:space="preserve">
+    <value>Copy URL</value>
+  </data>
   <data name="EntryLogin.Text" xml:space="preserve">
     <value>User name or login</value>
   </data>

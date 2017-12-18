@@ -212,6 +212,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <SymbolIcon Grid.Column="0" Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5" >
                                         <SymbolIcon.RenderTransform>
@@ -224,6 +225,34 @@
                                         <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
                                         <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
                                     </StackPanel>
+                                    <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" VerticalAlignment="Bottom">
+                                        <SymbolIcon Symbol="More" />
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyLogin">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:ClipboardAction Text="{Binding UserName}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:ClipboardAction Text="{Binding Password}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:ClipboardAction Text="{Binding Url}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
                                 </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
