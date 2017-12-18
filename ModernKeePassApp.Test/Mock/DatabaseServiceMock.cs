@@ -50,7 +50,7 @@ namespace ModernKeePassApp.Test.Mock
 
         public void Save()
         {
-            throw new NotImplementedException();
+            // Do Nothing
         }
 
         public void Save(StorageFile file)

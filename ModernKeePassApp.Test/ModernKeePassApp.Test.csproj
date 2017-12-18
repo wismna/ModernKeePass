@@ -121,6 +121,7 @@
   <ItemGroup>
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Mock\DatabaseServiceMock.cs" />
+    <Compile Include="Mock\LicenseServiceMock.cs" />
     <Compile Include="Mock\RecentServiceMock.cs" />
     <Compile Include="Mock\ResourceServiceMock.cs" />
     <Compile Include="Mock\SettingsServiceMock.cs" />
@@ -131,11 +132,14 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="Databases\TestDatabase.kdbx" />
+    <Content Include="Data\TestDatabase.kdbx" />
     <None Include="ModernKeePassApp.Test_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data\WindowsStoreProxy.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Images\UnitTestLogo.scale-100.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

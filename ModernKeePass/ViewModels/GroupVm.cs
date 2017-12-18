@@ -61,7 +61,7 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                if (_pwGroup == null) return Symbol.Add;
+                //if (_pwGroup == null) return Symbol.Add;
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
                 return result == Symbol.More ? Symbol.Folder : result;
             }
@@ -115,7 +115,6 @@ namespace ModernKeePass.ViewModels
             Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)));
-            Groups.Insert(0, new GroupVm());
         }
 
         private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

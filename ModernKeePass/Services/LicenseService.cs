@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Store;
 using ModernKeePass.Interfaces;
 
@@ -27,34 +26,13 @@ namespace ModernKeePass.Services
 
         public LicenseService()
         {
-            // Initialize the license info for use in the app that is uploaded to the Store.
-            // Uncomment the following line in the release version of your app.
-            //_licenseInformation = CurrentApp.LicenseInformation;
-
-            // Initialize the license info for testing.
-            // Comment the following line in the release version of your app.
-            //_licenseInformation = CurrentAppSimulator.LicenseInformation;
-#if DEBUG
-            try
-            {
-                var proxyFile = Package.Current.InstalledLocation.GetFileAsync("data\\WindowsStoreProxy.xml").GetAwaiter().GetResult();
-                CurrentAppSimulator.ReloadSimulatorAsync(proxyFile).GetAwaiter().GetResult();
-            }
-            catch { }
-            var listing = CurrentAppSimulator.LoadListingInformationAsync().GetAwaiter().GetResult();
-#else
             var listing = CurrentApp.LoadListingInformationAsync().GetAwaiter().GetResult();
-#endif
             Products = listing.ProductListings;
         }
 
         public async Task<int> Purchase(string addOn)
         {
-#if DEBUG
-            var purchaseResults = await CurrentAppSimulator.RequestProductPurchaseAsync(addOn);
-#else
             var purchaseResults = await CurrentApp.RequestProductPurchaseAsync(addOn);
-#endif
             switch (purchaseResults.Status)
             {
                 case ProductPurchaseStatus.Succeeded:
@@ -79,11 +57,7 @@ namespace ModernKeePass.Services
 
         private async Task<PurchaseResult> ReportFulfillmentAsync(Guid transactionId, string productName)
         {
-#if DEBUG
-            var result = await CurrentAppSimulator.ReportConsumableFulfillmentAsync(productName, transactionId);
-#else
             var result = await CurrentApp.ReportConsumableFulfillmentAsync(productName, transactionId);
-#endif
             return (PurchaseResult) result;
         }
 

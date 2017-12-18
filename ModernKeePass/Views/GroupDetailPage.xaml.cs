@@ -84,9 +84,6 @@ namespace ModernKeePass.Views
             {
                 case -1:
                     return;
-                case 0:
-                    group = Model.AddNewGroup();
-                    break;
                 default:
                     group = LeftListView.SelectedItem as GroupVm;
                     break;
@@ -144,6 +141,10 @@ namespace ModernKeePass.Views
         private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(EntryDetailPage), Model.AddNewEntry());
+        }
+        private void CreateGroup_ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(GroupDetailPage), Model.AddNewGroup());
         }
 
         private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)

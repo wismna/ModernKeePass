@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using ModernKeePass.ViewModels;
 using ModernKeePass.Views;
 using ModernKeePassApp.Test.Mock;
+using ModernKeePassLib;
 
 namespace ModernKeePassApp.Test
 {
@@ -57,12 +58,19 @@ namespace ModernKeePassApp.Test
         }
 
         [TestMethod]
+        public void TestDonateVm()
+        {
+            var donateVm = new DonateVm(new LicenseServiceMock());
+            Assert.AreEqual(4, donateVm.Donations.Count);
+        }
+
+        [TestMethod]
         public void TestOpenVm()
         {
             var database = new DatabaseServiceMock
             {
                 Status = 1,
-                DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Databases\TestDatabase.kdbx")
+                DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
                     .GetAwaiter().GetResult()
             };
             var openVm = new OpenVm(database);
@@ -79,7 +87,7 @@ namespace ModernKeePassApp.Test
         public void TestRecentVm()
         {
             var mru = StorageApplicationPermissions.MostRecentlyUsedList;
-            mru.Add(Package.Current.InstalledLocation.GetFileAsync(@"Databases\TestDatabase.kdbx")
+            mru.Add(Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
                 .GetAwaiter().GetResult(), "MockDatabase");
             var recentVm = new RecentVm();
             Assert.IsTrue(recentVm.RecentItems.Count == 1);
@@ -88,10 +96,19 @@ namespace ModernKeePassApp.Test
             mru.Clear();
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public void TestSaveVm()
         {
-        }*/
+            var database = new DatabaseServiceMock
+            {
+                Status = 2
+            };
+            var saveVm = new SaveVm(database);
+            saveVm.Save(false);
+            Assert.AreEqual(2, database.Status);
+            saveVm.Save();
+            Assert.AreEqual(0, database.Status);
+        }
 
         [TestMethod]
         public void TestSettingsVm()
@@ -104,6 +121,34 @@ namespace ModernKeePassApp.Test
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
             Assert.AreEqual(typeof(SettingsNewDatabasePage), selectedItem.PageType);
+        }
+
+        [TestMethod]
+        public void TestEntryVm()
+        {
+            var database = new DatabaseServiceMock
+            {
+                Status = 2
+            };
+            var entryVm = new EntryVm(new PwEntry(true, true), new GroupVm(), database)
+            {
+                Name = "Test",
+                UserName = "login",
+                Password = "password"
+            };
+        }
+
+        [TestMethod]
+        public void TestGroupVm()
+        {
+            var database = new DatabaseServiceMock
+            {
+                Status = 2
+            };
+            var entryVm = new GroupVm(new PwGroup(true, true), new GroupVm(), database)
+            {
+                Name = "Test"
+            };
         }
     }
 }

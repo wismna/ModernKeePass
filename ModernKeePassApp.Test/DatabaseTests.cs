@@ -28,7 +28,7 @@ namespace ModernKeePassApp.Test
         public void TestOpen()
         {
             Assert.AreEqual((int)DatabaseService.DatabaseStatus.Closed, _database.Status);
-            _database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Databases\TestDatabase.kdbx").GetAwaiter().GetResult();
+            _database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx").GetAwaiter().GetResult();
             Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opening, _database.Status);
             OpenOrCreateDatabase(false);
         }
