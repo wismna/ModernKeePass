@@ -1,2 +1,2 @@
 Correction d'un bug lors de l'ouverture d'un fichier par Explorer
-R&eacute;tablissement de la recherche d'entr&eacute;es &agrave; la place du filtre &agrave; cause de r&eacute;gressions multiples
+R&amp;eacute;tablissement de la recherche d'entr&amp;eacute;es &amp;agrave; la place du filtre &amp;agrave; cause de r&amp;eacute;gressions multiples

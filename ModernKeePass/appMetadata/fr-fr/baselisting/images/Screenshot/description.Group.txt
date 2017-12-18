@@ -1,1 +1,1 @@
-Vue d'un groupe, avec ses sous-groupes et ses entrées
+Vue d'un groupe, avec ses sous-groupes et ses entr&amp;eacute;es
