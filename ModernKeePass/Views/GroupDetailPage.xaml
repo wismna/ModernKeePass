@@ -8,7 +8,6 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
-    xmlns:controls="using:ModernKeePass.Controls"
     xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.GroupDetailPage"
@@ -16,7 +15,6 @@
     SizeChanged="GroupDetailPage_OnSizeChanged">
     <Page.Resources>
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter"/>
-        <converters:BooleanToFontStyleConverter x:Key="BooleanToFontStyleConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
@@ -126,18 +124,31 @@
                 RequestedTheme="Dark"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 Foreground="{ThemeResource DefaultTextForegroundThemeBrush}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:Name="GroupOtherItem">
+                <ListView.Resources>
+                    <DataTemplate x:Name="IsRecycleBin">
                         <StackPanel Orientation="Horizontal">
                             <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding Name}" />
                                 </ToolTipService.ToolTip>
                              </SymbolIcon>
-                            <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="{Binding IsSelected, Converter={StaticResource BooleanToFontStyleConverter}}" />
+                            <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="Italic" />
                         </StackPanel>
                     </DataTemplate>
-                </ListView.ItemTemplate>
+                    <DataTemplate x:Name="IsNotRecycleBin">
+                        <StackPanel Orientation="Horizontal">
+                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip Content="{Binding Name}" />
+                                </ToolTipService.ToolTip>
+                             </SymbolIcon>
+                            <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.Resources>
+                <ListView.ItemTemplateSelector>
+                    <templateSelectors:SelectableDataTemplateSelector FalseItem="{StaticResource IsNotRecycleBin}" TrueItem="{StaticResource IsRecycleBin}" />
+                </ListView.ItemTemplateSelector>
                 <ListView.ItemsSource>
                     <Binding Source="{StaticResource GroupsViewSource}"/>
                 </ListView.ItemsSource>
@@ -162,7 +173,7 @@
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </ToggleButton>
-                            <Button Padding="0" Height="50" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" Foreground="White" BorderThickness="0" Click="CreateGroup_ButtonClick">
+                            <Button Padding="0" Height="50" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Click="CreateGroup_ButtonClick">
                                 <StackPanel Orientation="Horizontal" Margin="13,0,5,0">
                                     <SymbolIcon Symbol="Add">
                                         <ToolTipService.ToolTip>

@@ -117,6 +117,7 @@
     <Compile Include="Interfaces\IRecent.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
     <Compile Include="Interfaces\IResource.cs" />
+    <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\DonateVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
@@ -165,7 +166,6 @@
     <Compile Include="Converters\ColorToBrushConverter.cs" />
     <Compile Include="Converters\DoubleToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\BooleanToFontStyleConverter.cs" />
     <Compile Include="Converters\PluralizationConverter.cs" />
     <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />
     <Compile Include="Converters\TextToWidthConverter.cs" />

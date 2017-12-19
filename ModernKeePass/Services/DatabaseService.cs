@@ -27,7 +27,6 @@ namespace ModernKeePass.Services
         }
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private readonly ISettings _settings;
-        private readonly IResource _resource;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
 
