@@ -271,4 +271,7 @@
   <data name="SettingsMenuItemSecurity" xml:space="preserve">
     <value>Sécurité</value>
   </data>
+  <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
+    <value>compte utilisateur</value>
+  </data>
 </root>

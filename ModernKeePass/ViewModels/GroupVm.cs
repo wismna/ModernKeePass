@@ -96,7 +96,6 @@ namespace ModernKeePass.ViewModels
         private bool _isEditMode;
         private PwEntry _reorderedEntry;
         private ObservableCollection<EntryVm> _entries = new ObservableCollection<EntryVm>();
-        private string _filter = string.Empty;
         private bool _isMenuClosed = true;
 
         public GroupVm() {}

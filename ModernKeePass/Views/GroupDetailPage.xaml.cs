@@ -169,7 +169,6 @@ namespace ModernKeePass.Views
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 
-
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);

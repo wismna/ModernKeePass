@@ -31,6 +31,7 @@
             <RowDefinition Height="45" />
             <RowDefinition Height="40" />
             <RowDefinition Height="40" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
@@ -55,7 +56,9 @@
                 </ToolTipService.ToolTip>
             </SymbolIcon>
         </HyperlinkButton>
-        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Height="28" FontSize="14" FontWeight="Light" Text="{Binding Status}" Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" Visibility="{Binding Status, Converter={StaticResource EmptyStringToVisibilityConverter}}" />
-        <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Content="{Binding ButtonLabel, ElementName=UserControl}" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" IsEnabled="{Binding IsValid}" />
+        <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding HasUserAccount, Mode=TwoWay}" />
+        <TextBlock Grid.Row="2" Grid.Column="1" x:Uid="CompositeKeyUserAccount" FontSize="14" VerticalAlignment="Center" />
+        <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Content="{Binding ButtonLabel, ElementName=UserControl}" Click="OpenButton_OnClick" Background="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}" Foreground="{ThemeResource TextBoxBackgroundThemeBrush}" IsEnabled="{Binding IsValid}" />
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" Height="28" FontSize="14" FontWeight="Light" Text="{Binding Status}" Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" Visibility="{Binding Status, Converter={StaticResource EmptyStringToVisibilityConverter}}" />
     </Grid>
 </UserControl>

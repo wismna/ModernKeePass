@@ -81,6 +81,7 @@
     <Compile Include="Cryptography\PasswordGenerator\PwCharSet.cs" />
     <Compile Include="Cryptography\PasswordGenerator\PwProfile.cs" />
     <Compile Include="Cryptography\PopularPasswords.cs" />
+    <Compile Include="Cryptography\ProtectedData.cs" />
     <Compile Include="Cryptography\QualityEstimation.cs" />
     <Compile Include="Cryptography\SelfTest.cs" />
     <Compile Include="Interfaces\IStructureItem.cs" />

@@ -171,6 +171,9 @@
   <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
     <value>Mot de passe</value>
   </data>
+  <data name="CompositeKeyUserAccount.Text" xml:space="preserve">
+    <value>Compte Utilisateur Windows</value>
+  </data>
   <data name="DonateButton.Content" xml:space="preserve">
     <value>Donner</value>
   </data>

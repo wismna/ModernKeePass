@@ -34,6 +34,7 @@ using System.Security.Cryptography;
 #endif
 
 using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Security;

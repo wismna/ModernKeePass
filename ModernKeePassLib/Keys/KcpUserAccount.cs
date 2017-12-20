@@ -98,8 +98,9 @@ namespace ModernKeePassLib.Keys
 #endif
 
 			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
-			strUserDir += PwDefs.ShortProductName;
+
 #if !ModernKeePassLib
+			strUserDir += PwDefs.ShortProductName;
 
 			if(bCreate && !Directory.Exists(strUserDir))
 				Directory.CreateDirectory(strUserDir);
@@ -117,10 +118,13 @@ namespace ModernKeePassLib.Keys
 			{
 				string strFilePath = GetUserKeyFilePath(false);
 #if ModernKeePassLib
-                var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForReadAsync().GetAwaiter().GetResult();
-			    var pbProtectedKey = new byte[(int)fileStream.Length];
-			    fileStream.Read(pbProtectedKey, 0, (int)fileStream.Length);
-                fileStream.Dispose();
+			    byte[] pbProtectedKey;
+			    using (var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult()
+			        .OpenStreamForReadAsync().GetAwaiter().GetResult())
+			    {
+			        pbProtectedKey = new byte[(int) fileStream.Length];
+			        fileStream.Read(pbProtectedKey, 0, (int) fileStream.Length);
+			    }
 #else
 				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
 #endif
@@ -148,9 +152,11 @@ namespace ModernKeePassLib.Keys
 			byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
 				m_pbEntropy, DataProtectionScope.CurrentUser);
 #if ModernKeePassLib
-		    var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForWriteAsync().GetAwaiter().GetResult();
-		    fileStream.Write(pbProtectedKey, 0, (int)fileStream.Length);
-		    fileStream.Dispose();
+		    using (var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult()
+		        .OpenStreamForWriteAsync().GetAwaiter().GetResult())
+		    {
+		        fileStream.Write(pbProtectedKey, 0, (int) fileStream.Length);
+		    }
 #else
 			File.WriteAllBytes(strFilePath, pbProtectedKey);
 #endif

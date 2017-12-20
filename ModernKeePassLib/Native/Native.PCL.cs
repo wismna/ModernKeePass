@@ -54,25 +54,12 @@ namespace ModernKeePassLib.Native
         }
     }
 
-	internal enum DataProtectionScope
+	public enum DataProtectionScope
 	{
 		CurrentUser,
 		LocalMachine
 	}
-
-	internal static class ProtectedData
-	{
-		public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
-		{
-			throw new NotImplementedException();
-		}
-
-		public static byte[] Unprotect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
+    
 	internal enum MemoryProtectionScope
 	{
 		CrossProcess,

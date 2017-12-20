@@ -44,7 +44,17 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && KeyFile != null);
+        public bool HasUserAccount
+        {
+            get { return _hasUserAccount; }
+            set
+            {
+                SetProperty(ref _hasUserAccount, value);
+                OnPropertyChanged("IsValid");
+            }
+        }
+
+        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && KeyFile != null || HasUserAccount);
 
         public string Status
         {
@@ -91,8 +101,10 @@ namespace ModernKeePass.ViewModels
 
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
 
+
         private bool _hasPassword;
         private bool _hasKeyFile;
+        private bool _hasUserAccount;
         private bool _isOpening;
         private string _password = string.Empty;
         private string _status;
@@ -136,6 +148,7 @@ namespace ModernKeePass.ViewModels
                     if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
                     if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
                     if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
+                    if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
                     UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
                     break;
                 case DatabaseService.DatabaseStatus.Error:
@@ -169,6 +182,7 @@ namespace ModernKeePass.ViewModels
             var compositeKey = new CompositeKey();
             if (HasPassword) compositeKey.AddUserKey(new KcpPassword(Password));
             if (HasKeyFile && KeyFile != null) compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
+            if (HasUserAccount) compositeKey.AddUserKey(new KcpUserAccount());
             return compositeKey;
         }
     }
