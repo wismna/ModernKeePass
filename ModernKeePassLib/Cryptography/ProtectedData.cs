@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Security.Cryptography.DataProtection;
 using Windows.Storage.Streams;
 using ModernKeePassLib.Native;
@@ -8,47 +9,62 @@ namespace ModernKeePassLib.Cryptography
 {
     public static class ProtectedData
     {
-        public static byte[] Protect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
+        public static async Task ProtectStream(byte[] buffer, IOutputStream stream)
         {
-            var provider =
-                new DataProtectionProvider(scope == DataProtectionScope.CurrentUser ? "LOCAL=user" : "LOCAL=machine");
-            // Encode the plaintext input message to a buffer.
-            var buffMsg = userData.AsBuffer();
+            //instantiate a DataProtectionProvider for decryption
+            var dpp = new DataProtectionProvider("LOCAL=user");
 
-            // Encrypt the message.
-            IBuffer buffProtected;
-            try
+            //Open a stream to load data in
+            using (var inputStream = new InMemoryRandomAccessStream())
             {
-                buffProtected = provider.ProtectAsync(buffMsg).GetAwaiter().GetResult();
+                //cteate data writer to write data to the input stream
+                using (var dw = new DataWriter(inputStream))
+                {
+                    //write data to the stream
+                    dw.WriteBuffer(buffer.AsBuffer());
+                    await dw.StoreAsync();
+
+                    //encrypt the intput stream into the file stream
+                    await dpp.ProtectStreamAsync(inputStream.GetInputStreamAt(0),
+                        stream);
+                }
             }
-            catch (Exception e)
-            {
-                throw;
-            }
-            
-            return buffProtected.ToArray();
         }
 
-
-        public static byte[] Unprotect(byte[] userData, byte[] optionalEntropy, DataProtectionScope scope)
+        public static async Task<byte[]> UnprotectStream(IInputStream stream)
         {
-            var provider =
-                new DataProtectionProvider(scope == DataProtectionScope.CurrentUser ? "LOCAL=user" : "LOCAL=machine");
-            // Decode the encrypted input message to a buffer.
-            var buffMsg = userData.AsBuffer();
+            //instantiate a DataProtectionProvider for decryption
+            var dpp = new DataProtectionProvider();
 
-            // Decrypt the message.
-            IBuffer buffUnprotected;
-            try
+            //create a stream to decrypte the data to
+            using (var outputStream = new InMemoryRandomAccessStream())
             {
-                buffUnprotected = provider.UnprotectAsync(buffMsg).GetAwaiter().GetResult();
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
+                //decrypt the data
+                await dpp.UnprotectStreamAsync(stream, outputStream);
 
-            return buffUnprotected.ToArray();
+                //fill the data reader with the content of the outputStream,
+                //but from position 0
+                using (var dr = new DataReader(outputStream.GetInputStreamAt(0)))
+                {
+                    //load data from the stream to the dataReader
+                    await dr.LoadAsync((uint)outputStream.Size);
+
+                    //load the data from the datareader into a buffer
+                    IBuffer data = dr.ReadBuffer((uint)outputStream.Size);
+
+                    return data.ToArray();
+                }
+            }
+        }
+
+        public static byte[] Unprotect(byte[] pbEnc, byte[] mPbOptEnt, DataProtectionScope currentUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static byte[] Protect(byte[] pbPlain, byte[] mPbOptEnt, DataProtectionScope currentUser)
+        {
+            throw new NotImplementedException();
         }
     }
 }

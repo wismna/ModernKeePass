@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security;
 
 #if ModernKeePassLib
@@ -67,9 +68,9 @@ namespace ModernKeePassLib.Keys
 		{
 			// Test if ProtectedData is supported -- throws an exception
 			// when running on an old system (Windows 98 / ME).
-			byte[] pbDummyData = new byte[128];
+			/*byte[] pbDummyData = new byte[128];
 			ProtectedData.Protect(pbDummyData, m_pbEntropy,
-				DataProtectionScope.CurrentUser);
+				DataProtectionScope.CurrentUser);*/
 
 			byte[] pbKey = LoadUserKey(false);
 			if(pbKey == null) pbKey = CreateUserKey();
@@ -118,18 +119,16 @@ namespace ModernKeePassLib.Keys
 			{
 				string strFilePath = GetUserKeyFilePath(false);
 #if ModernKeePassLib
-			    byte[] pbProtectedKey;
-			    using (var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult()
-			        .OpenStreamForReadAsync().GetAwaiter().GetResult())
+			    var file = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult();
+			    using (var fileStream = file.OpenReadAsync().GetAwaiter().GetResult())
 			    {
-			        pbProtectedKey = new byte[(int) fileStream.Length];
-			        fileStream.Read(pbProtectedKey, 0, (int) fileStream.Length);
+			        pbKey = ProtectedData.UnprotectStream(fileStream).GetAwaiter().GetResult();
 			    }
 #else
 				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
-#endif
-				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+                pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
+#endif
 			}
 			catch(Exception)
 			{
@@ -149,19 +148,19 @@ namespace ModernKeePassLib.Keys
 			string strFilePath = GetUserKeyFilePath(true);
 
 			byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
-			byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
-				m_pbEntropy, DataProtectionScope.CurrentUser);
 #if ModernKeePassLib
-		    using (var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult()
-		        .OpenStreamForWriteAsync().GetAwaiter().GetResult())
+		    var file = ApplicationData.Current.RoamingFolder.CreateFileAsync(UserKeyFileName, CreationCollisionOption.ReplaceExisting).GetAwaiter().GetResult();
+		    using (var fileStream = file.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult())
 		    {
-		        fileStream.Write(pbProtectedKey, 0, (int) fileStream.Length);
+		        ProtectedData.ProtectStream(pbRandomKey, fileStream).GetAwaiter().GetResult();
 		    }
 #else
+			byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
+				m_pbEntropy, DataProtectionScope.CurrentUser);
 			File.WriteAllBytes(strFilePath, pbProtectedKey);
 #endif
 
-			byte[] pbKey = LoadUserKey(true);
+            byte[] pbKey = LoadUserKey(true);
 			Debug.Assert(MemUtil.ArraysEqual(pbKey, pbRandomKey));
 
 			MemUtil.ZeroByteArray(pbRandomKey);
