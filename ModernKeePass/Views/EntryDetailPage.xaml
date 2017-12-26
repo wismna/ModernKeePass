@@ -458,7 +458,13 @@
             <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
             <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-            <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonClick="UrlButton_Click" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL" />
+            <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="ButtonClick">
+                        <actions:NavigateToUrlAction Url="{Binding Url}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </local:TextBoxWithButton>
             <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18" />
             <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
             <CheckBox  x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" />

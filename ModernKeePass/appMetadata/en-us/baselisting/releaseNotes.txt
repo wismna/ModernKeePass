@@ -1,2 +1,2 @@
-Error when opening file from Explorer corrected
-Filter entries reverted to search entries because of regressions
+New inline menu on Entries to quickly copy login, password, and navigate to URL
+Design changes

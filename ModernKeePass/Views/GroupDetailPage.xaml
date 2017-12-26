@@ -255,7 +255,7 @@
                                                 <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
                                                     <interactivity:Interaction.Behaviors>
                                                         <core:EventTriggerBehavior EventName="Click">
-                                                            <actions:ClipboardAction Text="{Binding Url}" />
+                                                            <actions:NavigateToUrlAction Url="{Binding Url}" />
                                                         </core:EventTriggerBehavior>
                                                     </interactivity:Interaction.Behaviors>
                                                 </MenuFlyoutItem>

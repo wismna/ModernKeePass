@@ -92,20 +92,7 @@ namespace ModernKeePass.Views
             ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityRestoredTitle"), resource.GetResourceValue("EntryRestored"));
             if (Frame.CanGoBack) Frame.GoBack();
         }
-
-        private async void UrlButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var uri = new Uri(UrlTextBox.Text);
-                await Windows.System.Launcher.LaunchUriAsync(uri);
-            }
-            catch (Exception ex)
-            {
-                MessageDialogHelper.ShowErrorDialog(ex);
-            }
-        }
-
+        
         private void EntryDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);

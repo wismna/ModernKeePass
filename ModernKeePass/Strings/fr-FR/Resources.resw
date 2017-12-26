@@ -193,7 +193,7 @@
     <value>Copier le mot de passe</value>
   </data>
   <data name="EntryItemCopyUrl.Text" xml:space="preserve">
-    <value>Copier l'URL</value>
+    <value>Naviguer vers l'URL</value>
   </data>
   <data name="EntryLogin.Text" xml:space="preserve">
     <value>Nom d'utilisateur ou login</value>
