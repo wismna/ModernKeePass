@@ -107,14 +107,14 @@ namespace ModernKeePass.ViewModels
                     PageType = typeof(AboutPage),
                     Destination = destinationFrame,
                     SymbolIcon = Symbol.Help
-                },
+                }/*,
                 new MainMenuItemVm
                 {
                     Title = resource.GetResourceValue("MainMenuItemDonate"),
                     PageType = typeof(DonatePage),
                     Destination = destinationFrame,
                     SymbolIcon = Symbol.Shop
-                }
+                }*/
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
