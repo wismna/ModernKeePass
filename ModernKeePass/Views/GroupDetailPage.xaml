@@ -162,7 +162,6 @@
                 </ListView.ItemContainerStyle>
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Vertical">
                             <ToggleButton Style="{StaticResource HamburgerToggleButton}">
                                 <interactivity:Interaction.Behaviors>
                                     <core:EventTriggerBehavior EventName="Checked">
@@ -173,6 +172,12 @@
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </ToggleButton>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                <ListView.FooterTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical">
+                            <Border BorderBrush="White" BorderThickness="0,0,0,1" />
                             <Button Padding="0" Height="50" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Click="CreateGroup_ButtonClick">
                                 <StackPanel Orientation="Horizontal" Margin="13,0,5,0">
                                     <SymbolIcon Symbol="Add">
@@ -183,10 +188,9 @@
                                     <TextBlock x:Uid="GroupNewItemTextBox" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
                                 </StackPanel>
                             </Button>
-                            <Border BorderBrush="White" BorderThickness="0,0,0,1" />
                         </StackPanel>
                     </DataTemplate>
-                </ListView.HeaderTemplate>
+                </ListView.FooterTemplate>
             </ListView>
             <TextBlock Grid.Column="1" x:Uid="ReorderEntriesLabel" Margin="20,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
             <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,10,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right">
