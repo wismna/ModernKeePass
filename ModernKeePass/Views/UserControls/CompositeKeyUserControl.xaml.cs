@@ -90,7 +90,12 @@ namespace ModernKeePass.Views.UserControls
 
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter && Model.IsValid) OpenButton_OnClick(null, null);
+            if (e.Key == VirtualKey.Enter && Model.IsValid)
+            {
+                OpenButton_OnClick(sender, e);
+                // Stop the event from triggering twice
+                e.Handled = true;
+            }
         }
 
         private async void KeyFileButton_Click(object sender, RoutedEventArgs e)

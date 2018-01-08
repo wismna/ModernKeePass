@@ -124,36 +124,30 @@ namespace ModernKeePass.ViewModels
 
         public async Task<bool> OpenDatabase(bool createNew)
         {
-            var error = string.Empty;
             try
             {
                 _isOpening = true;
-                Database.Open(CreateCompositeKey(), createNew);
+                await Database.Open(CreateCompositeKey(), createNew);
+                await Task.Run(() => RootGroup = Database.RootGroup);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                var errorMessage = new StringBuilder(_resource.GetResourceValue("CompositeKeyErrorUserStart"));
+                if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
+                if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
+                if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
+                if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
+                UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
             }
             catch (Exception e)
             {
-                error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}: {e.Message}";
+                var error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}: {e.Message}";
+                UpdateStatus(error, StatusTypes.Error);
             }
             finally
             {
                 _isOpening = false;
-            }
-            switch ((DatabaseService.DatabaseStatus)Database.Status)
-            {
-                case DatabaseService.DatabaseStatus.Opened:
-                    await Task.Run(() => RootGroup = Database.RootGroup);
-                    return true;
-                case DatabaseService.DatabaseStatus.CompositeKeyError:
-                    var errorMessage = new StringBuilder(_resource.GetResourceValue("CompositeKeyErrorUserStart"));
-                    if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
-                    if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
-                    if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
-                    if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
-                    UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
-                    break;
-                case DatabaseService.DatabaseStatus.Error:
-                    UpdateStatus(error, StatusTypes.Error);
-                    break;
             }
             return false;
         }

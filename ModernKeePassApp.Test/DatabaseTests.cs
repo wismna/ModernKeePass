@@ -16,20 +16,20 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestCreate()
         {
-            Assert.AreEqual((int) DatabaseService.DatabaseStatus.Closed, _database.Status);
+            Assert.IsTrue(_database.IsClosed);
             _database.DatabaseFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync("NewDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opening, _database.Status);
+            Assert.IsTrue(_database.IsFileOpen);
             OpenOrCreateDatabase(true);
-            _database.Close();
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Closed, _database.Status);
+            _database.Close().GetAwaiter().GetResult();
+            Assert.IsTrue(_database.IsClosed);
         }
 
         [TestMethod]
         public void TestOpen()
         {
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Closed, _database.Status);
+            Assert.IsTrue(_database.IsClosed);
             _database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opening, _database.Status);
+            Assert.IsTrue(_database.IsFileOpen);
             OpenOrCreateDatabase(false);
         }
 
@@ -38,23 +38,23 @@ namespace ModernKeePassApp.Test
         {
             TestOpen();
             _database.Save(ApplicationData.Current.TemporaryFolder.CreateFileAsync("SaveDatabase.kdbx").GetAwaiter().GetResult());
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opened, _database.Status);
-            _database.Close();
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Closed, _database.Status);
+            Assert.IsTrue(_database.IsOpen);
+            _database.Close().GetAwaiter().GetResult();
+            Assert.IsTrue(_database.IsClosed);
             TestOpen();
         }
 
         private void OpenOrCreateDatabase(bool createNew)
         {
-            _database.Open(null, createNew);
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.NoCompositeKey, _database.Status);
+            Assert.ThrowsException<ArgumentNullException>(
+                () => _database.Open(null, createNew).GetAwaiter().GetResult());
             var compositeKey = new CompositeKeyVm(_database, new ResourceServiceMock())
             {
                 HasPassword = true,
                 Password = "test"
             };
             compositeKey.OpenDatabase(createNew).GetAwaiter().GetResult();
-            Assert.AreEqual((int)DatabaseService.DatabaseStatus.Opened, _database.Status);
+            Assert.IsTrue(_database.IsOpen);
         }
     }
 }

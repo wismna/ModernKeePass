@@ -61,7 +61,7 @@ namespace ModernKeePass.ViewModels
                     Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Setting,
                     PageType = typeof(SettingsDatabasePage),
-                    IsEnabled = database?.Status == 2
+                    IsEnabled = database.IsOpen
                 },
                 new ListMenuItemVm
                 {
@@ -69,7 +69,7 @@ namespace ModernKeePass.ViewModels
                     Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Permissions,
                     PageType = typeof(SettingsSecurityPage),
-                    IsEnabled = database?.Status == 2
+                    IsEnabled = database.IsOpen
                 }
             };
             SelectedItem = menuItems.FirstOrDefault(m => m.IsSelected);

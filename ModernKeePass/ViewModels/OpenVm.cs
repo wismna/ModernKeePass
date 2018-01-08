@@ -8,7 +8,7 @@ namespace ModernKeePass.ViewModels
 {
     public class OpenVm: NotifyPropertyChangedBase
     {
-        public bool ShowPasswordBox => _database?.Status == (int) DatabaseService.DatabaseStatus.Opening;
+        public bool ShowPasswordBox => _database.IsFileOpen;
 
         public string Name => _database?.Name;
 
@@ -19,7 +19,7 @@ namespace ModernKeePass.ViewModels
         public OpenVm(IDatabase database)
         {
             _database = database;
-            if (database == null || database.Status != (int) DatabaseService.DatabaseStatus.Opening) return;
+            if (database == null || !database.IsFileOpen) return;
             OpenFile(database.DatabaseFile);
         }
 

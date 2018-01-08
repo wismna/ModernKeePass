@@ -51,7 +51,7 @@ namespace ModernKeePass.ViewModels
 
         public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database, IResource resource, IRecent recent)
         {
-            var isDatabaseOpen = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened;
+            var isDatabaseOpen = database != null && database.IsOpen;
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
@@ -62,7 +62,7 @@ namespace ModernKeePass.ViewModels
                     Destination = destinationFrame,
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Page2,
-                    IsSelected = database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opening
+                    IsSelected = database != null && database.IsFileOpen
                 },
                 new MainMenuItemVm
                 {
@@ -90,7 +90,7 @@ namespace ModernKeePass.ViewModels
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Copy,
                     IsSelected =
-                        (database == null || database.Status == (int) DatabaseService.DatabaseStatus.Closed) &&
+                        (database == null || database.IsClosed) &&
                         recent.EntryCount > 0,
                     IsEnabled = recent.EntryCount > 0
                 },
@@ -120,7 +120,7 @@ namespace ModernKeePass.ViewModels
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
 
             // Add currently opened database to the menu
-            if (database != null && database.Status == (int) DatabaseService.DatabaseStatus.Opened)
+            if (database != null && database.IsOpen)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
                     Title = database.Name,

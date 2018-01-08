@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Exceptions;
@@ -16,7 +17,7 @@ namespace ModernKeePass.Services
 {
     public class DatabaseService: IDatabase
     {
-        public enum DatabaseStatus
+        /*public enum DatabaseStatus
         {
             Error = -3,
             NoCompositeKey = -2,
@@ -24,9 +25,10 @@ namespace ModernKeePass.Services
             Closed = 0,
             Opening = 1,
             Opened = 2
-        }
+        }*/
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private readonly ISettings _settings;
+        private StorageFile _realDatabaseFile;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
 
@@ -42,7 +44,7 @@ namespace ModernKeePass.Services
             }
         }
         
-        public int Status { get; set; } = (int)DatabaseStatus.Closed;
+        //public int Status { get; set; } = (int)DatabaseStatus.Closed;
         public string Name => DatabaseFile?.Name;
         
         public bool RecycleBinEnabled
@@ -56,8 +58,28 @@ namespace ModernKeePass.Services
             get { return _databaseFile; }
             set
             {
+                // No file, database is closed
+                /*if (value == null)
+                    Status = (int) DatabaseStatus.Closed;
+                else
+                {
+                    // There already is an opened file
+                    if (Status == (int) DatabaseStatus.Opened)
+                    {
+                        if (_pwDatabase.Modified)
+                            throw new DatabaseOpenedException();
+                        Close().GetAwaiter().GetResult();
+                    }
+                    _databaseFile = value;
+                    Status = (int) DatabaseStatus.Opening;
+                }*/
+                if (IsOpen)
+                {
+                    //if (_pwDatabase.Modified)
+                        throw new DatabaseOpenedException();
+                    //Close().GetAwaiter().GetResult();
+                }
                 _databaseFile = value;
-                Status = (int)DatabaseStatus.Opening;
             }
         }
 
@@ -79,6 +101,10 @@ namespace ModernKeePass.Services
             set { _pwDatabase.KdfParameters = value; }
         }
 
+        public bool IsOpen => _pwDatabase.IsOpen;
+        public bool IsFileOpen => !_pwDatabase.IsOpen && _databaseFile != null;
+        public bool IsClosed => _databaseFile == null;
+
         public DatabaseService() : this(new SettingsService())
         { }
 
@@ -93,14 +119,16 @@ namespace ModernKeePass.Services
         /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public void Open(CompositeKey key, bool createNew = false)
+        public async Task Open(CompositeKey key, bool createNew = false)
         {
+            // TODO: Check if there is an existing backup file
             try
             {
                 if (key == null)
                 {
-                    Status = (int)DatabaseStatus.NoCompositeKey;
-                    return;
+                    //Status = (int)DatabaseStatus.NoCompositeKey;
+                    //return;
+                    throw new ArgumentNullException(nameof(key));
                 }
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew)
@@ -120,17 +148,51 @@ namespace ModernKeePass.Services
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
                 if (!_pwDatabase.IsOpen) return;
-                Status = (int)DatabaseStatus.Opened;
+
+                // Copy database in temp directory and use this file for operations
+                if (_settings.GetSetting<bool>("AntiCorruption"))
+                {
+                    _realDatabaseFile = _databaseFile;
+                    var backupFile =
+                        await ApplicationData.Current.RoamingFolder.CreateFileAsync(Name,
+                            CreationCollisionOption.FailIfExists);
+                    Save(backupFile);
+                }
+
+                //Status = (int)DatabaseStatus.Opened;
                 RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
             }
-            catch (InvalidCompositeKeyException)
+            catch (InvalidCompositeKeyException ex)
             {
-                Status = (int)DatabaseStatus.CompositeKeyError;
+                //Status = (int)DatabaseStatus.CompositeKeyError;
+                throw new ArgumentException(ex.Message, ex);
             }
-            catch (Exception)
+            /*catch (Exception)
             {
-                Status = (int)DatabaseStatus.Error;
+                //Status = (int)DatabaseStatus.Error;
                 throw;
+            }*/
+        }
+
+        /// <summary>
+        /// Commit the changes to the currently opened database to file
+        /// </summary>
+        public void Save()
+        {
+            if (!_pwDatabase.IsOpen) return;
+            try
+            {
+                _pwDatabase.Save(new NullStatusLogger());
+
+                // Test if save worked correctly
+                if (_settings.GetSetting<bool>("AntiCorruption"))
+                {
+                    _pwDatabase.Open(_pwDatabase.IOConnectionInfo, _pwDatabase.MasterKey, new NullStatusLogger());
+                }
+            }
+            catch (Exception e)
+            {
+                throw new SaveException(e);
             }
         }
 
@@ -151,35 +213,28 @@ namespace ModernKeePass.Services
                 DatabaseFile = oldFile;
                 throw;
             }
-            finally
+            /*finally
             {
                 Status = (int)DatabaseStatus.Opened;
-            }
-        }
-
-        /// <summary>
-        /// Commit the changes to the currently opened database to file
-        /// </summary>
-        public void Save()
-        {
-            if (_pwDatabase == null || !_pwDatabase.IsOpen) return;
-            try
-            {
-                _pwDatabase.Save(new NullStatusLogger());
-            }
-            catch (Exception e)
-            {
-                throw new SaveException(e);
-            }
+            }*/
         }
 
         /// <summary>
         /// Close the currently opened database
         /// </summary>
-        public void Close()
+        public async Task Close()
         {
             _pwDatabase?.Close();
-            Status = (int)DatabaseStatus.Closed;
+
+            // Restore the backup DB to the original one
+            if (_settings.GetSetting<bool>("AntiCorruption"))
+            {
+                if (_pwDatabase.Modified)
+                    Save(_realDatabaseFile);
+                await DatabaseFile.DeleteAsync();
+            }
+            DatabaseFile = null;
+
         }
 
         public void AddDeletedItem(PwUuid id)

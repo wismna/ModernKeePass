@@ -28,10 +28,10 @@ namespace ModernKeePass.Views
             _mainFrame = e.Parameter as Frame;
         }
 
-        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        private async void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            Model.Save();
-            _mainFrame.Navigate(typeof(Views.MainPage));
+            await Model.Save();
+            _mainFrame.Navigate(typeof(MainPage));
         }
 
         private async void SaveAsButton_OnClick(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace ModernKeePass.Views
             if (file == null) return;
             Model.Save(file);
 
-            _mainFrame.Navigate(typeof(Views.MainPage));
+            _mainFrame.Navigate(typeof(MainPage));
         }
     }
 }

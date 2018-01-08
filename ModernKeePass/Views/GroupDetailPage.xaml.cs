@@ -119,7 +119,7 @@ namespace ModernKeePass.Views
                     ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
                     Model.MarkForDelete();
                     if (Frame.CanGoBack) Frame.GoBack();
-                });
+                }, null);
         }
 
         private void RestoreButton_Click(object sender, RoutedEventArgs e)

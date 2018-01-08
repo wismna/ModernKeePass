@@ -46,9 +46,16 @@ namespace ModernKeePass
                     ? exception.InnerException
                     : exception;
 
-            if (!(realException is SaveException)) return;
-            unhandledExceptionEventArgs.Handled = true;
-            MessageDialogHelper.SaveErrorDialog(realException as SaveException, Database);
+            if (realException is SaveException)
+            {
+                unhandledExceptionEventArgs.Handled = true;
+                MessageDialogHelper.SaveErrorDialog(realException as SaveException, Database);
+            }
+            else if (realException is DatabaseOpenedException)
+            {
+                unhandledExceptionEventArgs.Handled = true;
+                MessageDialogHelper.SaveUnchangedDialog(realException as DatabaseOpenedException, Database);
+            }
         }
 
         /// <summary>

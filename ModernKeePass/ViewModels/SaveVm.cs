@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
 
@@ -14,10 +15,11 @@ namespace ModernKeePass.ViewModels
             _database = database;
         }
 
-        public void Save(bool close = true)
+        public async Task Save(bool close = true)
         {
             _database.Save();
-            if (close) _database.Close();
+            if (close)
+                await _database.Close();
         }
 
         public void Save(StorageFile file)

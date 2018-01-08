@@ -114,6 +114,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Exceptions\DatabaseOpenedException.cs" />
     <Compile Include="Interfaces\ILicenseService.cs" />
     <Compile Include="Interfaces\IRecent.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />

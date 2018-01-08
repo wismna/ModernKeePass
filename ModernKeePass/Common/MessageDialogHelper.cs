@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
-using Windows.UI.Xaml.Media.Animation;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 
@@ -10,13 +9,16 @@ namespace ModernKeePass.Common
 {
     public static class MessageDialogHelper
     {
-        public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler action)
+        // TODO: include resources
+        public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler actionCommand, UICommandInvokedHandler cancelCommand)
         {
             // Create the message dialog and set its content
             var messageDialog = CreateBasicDialog(title, contentText, cancelButtonText);
 
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
-            messageDialog.Commands.Add(new UICommand(actionButtonText, action));
+            messageDialog.Commands.Add(new UICommand(actionButtonText, actionCommand));
+            // TODO: correct this
+            //messageDialog.Commands.Add(new UICommand(cancelButtonText, cancelCommand));
             
             // Show the message dialog
             await messageDialog.ShowAsync();
@@ -35,6 +37,19 @@ namespace ModernKeePass.Common
 
                 var file = await savePicker.PickSaveFileAsync();
                 if (file != null) database.Save(file);
+            }, null);
+        }
+
+        public static void SaveUnchangedDialog(DatabaseOpenedException exception, IDatabase database)
+        {
+            ShowActionDialog("Opened database", $"Database {database.Name} is currently opened. What to you wish to do?", "Save changes", "Discard", command => 
+            {
+                database.Save();
+                database.Close();
+            },
+            command =>
+            {
+                database.Close();
             });
         }
 
