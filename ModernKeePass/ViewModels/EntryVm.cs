@@ -46,12 +46,7 @@ namespace ModernKeePass.ViewModels
 
         public string Name
         {
-            get
-            {
-                /*var title = GetEntryValue(PwDefs.TitleField);
-                return title == null ? _resource.GetResourceValue("EntryNew") : title;*/
-                return GetEntryValue(PwDefs.TitleField);
-            }
+            get { return GetEntryValue(PwDefs.TitleField); }
             set { SetEntryValue(PwDefs.TitleField, value); }
         }
 

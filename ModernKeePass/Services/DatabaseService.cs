@@ -17,15 +17,6 @@ namespace ModernKeePass.Services
 {
     public class DatabaseService: IDatabase
     {
-        /*public enum DatabaseStatus
-        {
-            Error = -3,
-            NoCompositeKey = -2,
-            CompositeKeyError = -1,
-            Closed = 0,
-            Opening = 1,
-            Opened = 2
-        }*/
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private readonly ISettings _settings;
         private StorageFile _realDatabaseFile;
@@ -44,7 +35,6 @@ namespace ModernKeePass.Services
             }
         }
         
-        //public int Status { get; set; } = (int)DatabaseStatus.Closed;
         public string Name => DatabaseFile?.Name;
         
         public bool RecycleBinEnabled
@@ -58,26 +48,9 @@ namespace ModernKeePass.Services
             get { return _databaseFile; }
             set
             {
-                // No file, database is closed
-                /*if (value == null)
-                    Status = (int) DatabaseStatus.Closed;
-                else
-                {
-                    // There already is an opened file
-                    if (Status == (int) DatabaseStatus.Opened)
-                    {
-                        if (_pwDatabase.Modified)
-                            throw new DatabaseOpenedException();
-                        Close().GetAwaiter().GetResult();
-                    }
-                    _databaseFile = value;
-                    Status = (int) DatabaseStatus.Opening;
-                }*/
                 if (IsOpen)
                 {
-                    //if (_pwDatabase.Modified)
-                        throw new DatabaseOpenedException();
-                    //Close().GetAwaiter().GetResult();
+                    throw new DatabaseOpenedException();
                 }
                 _databaseFile = value;
             }
@@ -126,8 +99,6 @@ namespace ModernKeePass.Services
             {
                 if (key == null)
                 {
-                    //Status = (int)DatabaseStatus.NoCompositeKey;
-                    //return;
                     throw new ArgumentNullException(nameof(key));
                 }
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
@@ -164,14 +135,8 @@ namespace ModernKeePass.Services
             }
             catch (InvalidCompositeKeyException ex)
             {
-                //Status = (int)DatabaseStatus.CompositeKeyError;
                 throw new ArgumentException(ex.Message, ex);
             }
-            /*catch (Exception)
-            {
-                //Status = (int)DatabaseStatus.Error;
-                throw;
-            }*/
         }
 
         /// <summary>
@@ -213,10 +178,6 @@ namespace ModernKeePass.Services
                 DatabaseFile = oldFile;
                 throw;
             }
-            /*finally
-            {
-                Status = (int)DatabaseStatus.Opened;
-            }*/
         }
 
         /// <summary>
@@ -234,7 +195,6 @@ namespace ModernKeePass.Services
                 await DatabaseFile.DeleteAsync();
             }
             DatabaseFile = null;
-
         }
 
         public void AddDeletedItem(PwUuid id)

@@ -13,12 +13,10 @@ namespace ModernKeePass.Common
         public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler actionCommand, UICommandInvokedHandler cancelCommand)
         {
             // Create the message dialog and set its content
-            var messageDialog = CreateBasicDialog(title, contentText, cancelButtonText);
+            var messageDialog = CreateBasicDialog(title, contentText, cancelButtonText, cancelCommand);
 
             // Add commands and set their callbacks; both buttons use the same callback function instead of inline event handlers
             messageDialog.Commands.Add(new UICommand(actionButtonText, actionCommand));
-            // TODO: correct this
-            //messageDialog.Commands.Add(new UICommand(cancelButtonText, cancelCommand));
             
             // Show the message dialog
             await messageDialog.ShowAsync();
@@ -71,13 +69,13 @@ namespace ModernKeePass.Common
             await dialog.ShowAsync();
         }
 
-        private static MessageDialog CreateBasicDialog(string title, string message, string dismissActionText)
+        private static MessageDialog CreateBasicDialog(string title, string message, string dismissActionText, UICommandInvokedHandler cancelCommand = null)
         {
             // Create the message dialog and set its content
             var messageDialog = new MessageDialog(message, title);
 
             // Add commands and set their callbacks; 
-            messageDialog.Commands.Add(new UICommand(dismissActionText));
+            messageDialog.Commands.Add(new UICommand(dismissActionText, cancelCommand));
 
             // Set the command that will be invoked by default
             messageDialog.DefaultCommandIndex = 1;
