@@ -7,7 +7,7 @@ using ModernKeePassLib.Keys;
 
 namespace ModernKeePass.Interfaces
 {
-    public interface IDatabase
+    public interface IDatabaseService
     {
         string Name { get; }
         bool RecycleBinEnabled { get; set; }
@@ -21,6 +21,7 @@ namespace ModernKeePass.Interfaces
         bool IsOpen { get; }
         bool IsFileOpen { get; }
         bool IsClosed { get; }
+        bool HasChanged { get; set; }
 
         Task Open(CompositeKey key, bool createNew);
         void UpdateCompositeKey(CompositeKey key);

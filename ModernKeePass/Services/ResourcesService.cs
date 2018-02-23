@@ -3,7 +3,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Services
 {
-    public class ResourcesService: IResource
+    public class ResourcesService: IResourceService
     {
         private const string ResourceFileName = "CodeBehind";
         private readonly ResourceLoader _resourceLoader = ResourceLoader.GetForCurrentView();

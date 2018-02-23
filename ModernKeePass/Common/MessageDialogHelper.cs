@@ -22,7 +22,7 @@ namespace ModernKeePass.Common
             await messageDialog.ShowAsync();
         }
 
-        public static void SaveErrorDialog(SaveException exception, IDatabase database)
+        public static void SaveErrorDialog(SaveException exception, IDatabaseService database)
         {
             ShowActionDialog("Save error", exception.InnerException.Message, "Save as", "Discard", async command => 
             {
@@ -38,7 +38,7 @@ namespace ModernKeePass.Common
             }, null);
         }
 
-        public static void SaveUnchangedDialog(DatabaseOpenedException exception, IDatabase database)
+        public static void SaveUnchangedDialog(DatabaseOpenedException exception, IDatabaseService database)
         {
             ShowActionDialog("Opened database", $"Database {database.Name} is currently opened. What to you wish to do?", "Save changes", "Discard", command => 
             {

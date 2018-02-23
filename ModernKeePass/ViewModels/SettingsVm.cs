@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -41,9 +40,9 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVm() : this((Application.Current as App)?.Database, new ResourcesService()) { }
+        public SettingsVm() : this(DatabaseService.Instance, new ResourcesService()) { }
 
-        public SettingsVm(IDatabase database, IResource resource)
+        public SettingsVm(IDatabaseService database, IResourceService resource)
         {
             var menuItems = new ObservableCollection<ListMenuItemVm>
             {

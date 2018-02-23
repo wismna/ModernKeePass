@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -46,10 +45,10 @@ namespace ModernKeePass.ViewModels
         public MainVm() {}
 
         internal MainVm(Frame referenceFrame, Frame destinationFrame) : this(referenceFrame, destinationFrame,
-            (Application.Current as App)?.Database, new ResourcesService(), new RecentService())
+            DatabaseService.Instance, new ResourcesService(), RecentService.Instance)
         { }
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabase database, IResource resource, IRecent recent)
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabaseService database, IResourceService resource, IRecentService recent)
         {
             var isDatabaseOpen = database != null && database.IsOpen;
 
@@ -62,7 +61,7 @@ namespace ModernKeePass.ViewModels
                     Destination = destinationFrame,
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Page2,
-                    IsSelected = database != null && database.IsFileOpen
+                    IsSelected = database != null && database.IsFileOpen && !database.IsOpen
                 },
                 new MainMenuItemVm
                 {
@@ -107,14 +106,14 @@ namespace ModernKeePass.ViewModels
                     PageType = typeof(AboutPage),
                     Destination = destinationFrame,
                     SymbolIcon = Symbol.Help
-                }/*,
+                },
                 new MainMenuItemVm
                 {
                     Title = resource.GetResourceValue("MainMenuItemDonate"),
                     PageType = typeof(DonatePage),
                     Destination = destinationFrame,
                     SymbolIcon = Symbol.Shop
-                }*/
+                }
             };
             // Auto-select the Recent Items menu item if the conditions are met
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);

@@ -31,14 +31,15 @@ namespace ModernKeePassApp.Test
             var mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.AreEqual(1, mainVm.MainMenuItems.Count());
             var firstGroup = mainVm.MainMenuItems.FirstOrDefault();
-            Assert.AreEqual(6, firstGroup.Count());
+            Assert.AreEqual(7, firstGroup.Count());
 
-            database.Status = 1;
+            database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
+                .GetAwaiter().GetResult();
             mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(typeof(OpenDatabasePage), ((MainMenuItemVm) mainVm.SelectedItem).PageType);
 
-            database.Status = 2;
+            database.Open(null, false).GetAwaiter().GetResult();
             mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(2, mainVm.MainMenuItems.Count());
@@ -58,18 +59,10 @@ namespace ModernKeePassApp.Test
         }
 
         [TestMethod]
-        public void TestDonateVm()
-        {
-            var donateVm = new DonateVm(new LicenseServiceMock());
-            Assert.AreEqual(4, donateVm.Donations.Count);
-        }
-
-        [TestMethod]
         public void TestOpenVm()
         {
             var database = new DatabaseServiceMock
             {
-                Status = 1,
                 DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
                     .GetAwaiter().GetResult()
             };
@@ -99,15 +92,13 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestSaveVm()
         {
-            var database = new DatabaseServiceMock
-            {
-                Status = 2
-            };
+            var database = new DatabaseServiceMock();
             var saveVm = new SaveVm(database);
-            saveVm.Save(false);
-            Assert.AreEqual(2, database.Status);
-            saveVm.Save();
-            Assert.AreEqual(0, database.Status);
+            database.Open(null, false).GetAwaiter().GetResult();
+            saveVm.Save(false).GetAwaiter().GetResult();
+            Assert.IsTrue(database.IsOpen);
+            saveVm.Save().GetAwaiter().GetResult();
+            Assert.IsFalse(database.IsOpen);
         }
 
         [TestMethod]
@@ -126,10 +117,7 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestEntryVm()
         {
-            var database = new DatabaseServiceMock
-            {
-                Status = 2
-            };
+            var database = new DatabaseServiceMock();
             var entryVm = new EntryVm(new PwEntry(true, true), new GroupVm(), database)
             {
                 Name = "Test",
@@ -141,10 +129,7 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestGroupVm()
         {
-            var database = new DatabaseServiceMock
-            {
-                Status = 2
-            };
+            var database = new DatabaseServiceMock();
             var entryVm = new GroupVm(new PwGroup(true, true), new GroupVm(), database)
             {
                 Name = "Test"

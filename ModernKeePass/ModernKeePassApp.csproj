@@ -111,21 +111,24 @@
     <Compile Include="Actions\ClipboardAction.cs" />
     <Compile Include="Actions\NavigateToUrlAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
+    <Compile Include="Aop\DatabaseChangedProxy.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Aop\DatabaseChanged.cs" />
     <Compile Include="Exceptions\DatabaseOpenedException.cs" />
     <Compile Include="Interfaces\ILicenseService.cs" />
-    <Compile Include="Interfaces\IRecent.cs" />
+    <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
+    <Compile Include="Interfaces\IRecentService.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
-    <Compile Include="Interfaces\IResource.cs" />
+    <Compile Include="Interfaces\IResourceService.cs" />
+    <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
-    <Compile Include="ViewModels\DonateVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\DatabaseService.cs" />
-    <Compile Include="Interfaces\ISettings.cs" />
+    <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="Common\MessageDialogHelper.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
     <Compile Include="Common\NotifyPropertyChangedBase.cs" />
@@ -142,7 +145,7 @@
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Exceptions\SaveException.cs" />
     <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
-    <Compile Include="Interfaces\IDatabase.cs" />
+    <Compile Include="Interfaces\IDatabaseService.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
@@ -335,6 +338,18 @@
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.1.3\lib\netstandard1.0\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.1.4.0\lib\portable-net45+win8+wpa81+wp8\Microsoft.AppCenter.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.4.0\lib\portable-net45+win8+wpa81+wp8\Microsoft.AppCenter.Analytics.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Push, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Push.1.4.0\lib\portable-net45+win8+wpa81+wp8\Microsoft.AppCenter.Push.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Toolkit.Uwp.Notifications, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">

@@ -6,6 +6,9 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Push;
 using ModernKeePass.Common;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Services;
@@ -20,18 +23,16 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
-        public DatabaseService Database { get; private set; }
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
+            AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics), typeof(Push));
             InitializeComponent();
             Suspending += OnSuspending;
             UnhandledException += OnUnhandledException;
-            Database = new DatabaseService();
         }
 
         #region Event Handlers
@@ -49,12 +50,12 @@ namespace ModernKeePass
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                MessageDialogHelper.SaveErrorDialog(realException as SaveException, Database);
+                MessageDialogHelper.SaveErrorDialog(realException as SaveException, DatabaseService.Instance);
             }
             else if (realException is DatabaseOpenedException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                MessageDialogHelper.SaveUnchangedDialog(realException as DatabaseOpenedException, Database);
+                MessageDialogHelper.SaveUnchangedDialog(realException as DatabaseOpenedException, DatabaseService.Instance);
             }
         }
 
@@ -153,8 +154,9 @@ namespace ModernKeePass
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             UnhandledException -= OnUnhandledException;
-            Database.Save();
-            await Database.Close();
+            var database = DatabaseService.Instance;
+            database.Save();
+            await database.Close();
             deferral.Complete();
         }
         
@@ -166,7 +168,7 @@ namespace ModernKeePass
         {
             base.OnFileActivated(args);
             var rootFrame = new Frame();
-            Database.DatabaseFile = args.Files[0] as StorageFile;
+            DatabaseService.Instance.DatabaseFile = args.Files[0] as StorageFile;
             rootFrame.Navigate(typeof(MainPage), args);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();

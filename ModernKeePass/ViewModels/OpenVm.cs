@@ -1,5 +1,4 @@
 ﻿using Windows.Storage;
-using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -12,11 +11,11 @@ namespace ModernKeePass.ViewModels
 
         public string Name => _database?.Name;
 
-        private readonly IDatabase _database;
+        private readonly IDatabaseService _database;
 
-        public OpenVm() : this((Application.Current as App)?.Database) { }
+        public OpenVm() : this(DatabaseService.Instance) { }
 
-        public OpenVm(IDatabase database)
+        public OpenVm(IDatabaseService database)
         {
             _database = database;
             if (database == null || !database.IsFileOpen) return;
@@ -25,10 +24,10 @@ namespace ModernKeePass.ViewModels
 
         public void OpenFile(StorageFile file)
         {
-            OpenFile(file, new RecentService());
+            OpenFile(file, RecentService.Instance);
         }
 
-        public void OpenFile(StorageFile file, IRecent recent)
+        public void OpenFile(StorageFile file, IRecentService recent)
         {
             _database.DatabaseFile = file;
             OnPropertyChanged("Name");
@@ -36,7 +35,7 @@ namespace ModernKeePass.ViewModels
             AddToRecentList(file, recent);
         }
         
-        private void AddToRecentList(StorageFile file, IRecent recent)
+        private void AddToRecentList(StorageFile file, IRecentService recent)
         {
             recent.Add(file, file.DisplayName);
         }

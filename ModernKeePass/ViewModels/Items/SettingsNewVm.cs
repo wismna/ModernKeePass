@@ -6,12 +6,12 @@ namespace ModernKeePass.ViewModels
 {
     public class SettingsNewVm
     {
-        private ISettings _settings;
+        private ISettingsService _settings;
 
-        public SettingsNewVm() : this(new SettingsService())
+        public SettingsNewVm() : this(SettingsService.Instance)
         { }
 
-        public SettingsNewVm(ISettings settings)
+        public SettingsNewVm(ISettingsService settings)
         {
             _settings = settings;
         }

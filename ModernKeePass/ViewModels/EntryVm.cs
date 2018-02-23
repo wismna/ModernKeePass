@@ -1,10 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Text;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Attributes;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
+using ModernKeePass.Services;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Security;
@@ -67,6 +68,7 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("PasswordComplexityIndicator");
             }
         }
+        
         public string Url
         {
             get { return GetEntryValue(PwDefs.UrlField); }
@@ -155,7 +157,7 @@ namespace ModernKeePass.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly PwEntry _pwEntry;
-        private readonly IDatabase _database;
+        private readonly IDatabaseService _database;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
@@ -168,9 +170,9 @@ namespace ModernKeePass.ViewModels
 
         public EntryVm() { }
         
-        internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, (Application.Current as App)?.Database) { }
+        internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance) { }
 
-        public EntryVm(PwEntry entry, GroupVm parent, IDatabase database)
+        public EntryVm(PwEntry entry, GroupVm parent, IDatabaseService database)
         {
             _database = database;
             _pwEntry = entry;
@@ -211,6 +213,7 @@ namespace ModernKeePass.ViewModels
             return _pwEntry?.Strings.GetSafe(key).ReadString();
         }
         
+        [DatabaseChanged]
         private void SetEntryValue(string key, string newValue)
         {
             _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));

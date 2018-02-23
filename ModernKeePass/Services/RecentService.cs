@@ -8,10 +8,10 @@ using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Services
 {
-    public class RecentService : IRecent
+    public class RecentService : SingletonServiceBase<RecentService>, IRecentService
     {
         private readonly StorageItemMostRecentlyUsedList _mru = StorageApplicationPermissions.MostRecentlyUsedList;
-
+        
         public int EntryCount => _mru.Entries.Count;
 
         public ObservableCollection<IRecentItem> GetAllFiles(bool removeIfNonExistant = true)

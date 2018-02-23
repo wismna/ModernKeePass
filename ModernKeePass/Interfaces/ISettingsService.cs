@@ -1,6 +1,6 @@
 ﻿namespace ModernKeePass.Interfaces
 {
-    public interface ISettings
+    public interface ISettingsService
     {
         T GetSetting<T>(string property);
         void PutSetting<T>(string property, T value);

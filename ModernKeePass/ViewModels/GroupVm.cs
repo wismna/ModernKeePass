@@ -3,11 +3,12 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Attributes;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
+using ModernKeePass.Services;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
@@ -54,6 +55,7 @@ namespace ModernKeePass.ViewModels
         public string Name
         {
             get { return _pwGroup == null ? string.Empty : _pwGroup.Name; }
+            [DatabaseChanged]
             set { _pwGroup.Name = value; }
         }
 
@@ -92,7 +94,7 @@ namespace ModernKeePass.ViewModels
         }
 
         private readonly PwGroup _pwGroup;
-        private readonly IDatabase _database;
+        private readonly IDatabaseService _database;
         private bool _isEditMode;
         private PwEntry _reorderedEntry;
         private ObservableCollection<EntryVm> _entries = new ObservableCollection<EntryVm>();
@@ -101,10 +103,10 @@ namespace ModernKeePass.ViewModels
         public GroupVm() {}
         
         internal GroupVm(PwGroup pwGroup, GroupVm parent, PwUuid recycleBinId = null) : this(pwGroup, parent,
-            (Application.Current as App)?.Database, recycleBinId)
+            DatabaseService.Instance, recycleBinId)
         { }
 
-        public GroupVm(PwGroup pwGroup, GroupVm parent, IDatabase database, PwUuid recycleBinId = null)
+        public GroupVm(PwGroup pwGroup, GroupVm parent, IDatabaseService database, PwUuid recycleBinId = null)
         {
             _pwGroup = pwGroup;
             _database = database;
@@ -115,7 +117,8 @@ namespace ModernKeePass.ViewModels
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)));
         }
-
+        
+        [DatabaseChanged]
         private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -131,7 +134,8 @@ namespace ModernKeePass.ViewModels
                     break;
             }
         }
-
+        
+        [DatabaseChanged]
         public GroupVm AddNewGroup(string name = "")
         {
             var pwGroup = new PwGroup(true, true, name, PwIcon.Folder);
@@ -162,6 +166,8 @@ namespace ModernKeePass.ViewModels
             Move(PreviousGroup);
         }
 
+
+        [DatabaseChanged]
         public void Move(GroupVm destination)
         {
             PreviousGroup = ParentGroup;
@@ -189,6 +195,8 @@ namespace ModernKeePass.ViewModels
             _database.Save();
         }
 
+
+        [DatabaseChanged]
         public void SortEntries()
         {
             var comparer = new PwEntryComparer(PwDefs.TitleField, true, false);
@@ -203,6 +211,8 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+
+        [DatabaseChanged]
         public void SortGroups()
         {
             try

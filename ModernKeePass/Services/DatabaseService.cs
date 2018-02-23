@@ -15,10 +15,10 @@ using ModernKeePassLib.Serialization;
 
 namespace ModernKeePass.Services
 {
-    public class DatabaseService: IDatabase
+    public class DatabaseService: SingletonServiceBase<DatabaseService>, IDatabaseService
     {
         private readonly PwDatabase _pwDatabase = new PwDatabase();
-        private readonly ISettings _settings;
+        private readonly ISettingsService _settings;
         private StorageFile _realDatabaseFile;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
@@ -48,7 +48,7 @@ namespace ModernKeePass.Services
             get { return _databaseFile; }
             set
             {
-                if (IsOpen)
+                if (IsOpen && HasChanged)
                 {
                     throw new DatabaseOpenedException();
                 }
@@ -77,14 +77,17 @@ namespace ModernKeePass.Services
         public bool IsOpen => _pwDatabase.IsOpen;
         public bool IsFileOpen => !_pwDatabase.IsOpen && _databaseFile != null;
         public bool IsClosed => _databaseFile == null;
+        public bool HasChanged { get; set; }
+        
+        public DatabaseService() : this(SettingsService.Instance)
+        {
+        }
 
-        public DatabaseService() : this(new SettingsService())
-        { }
-
-        public DatabaseService(ISettings settings)
+        public DatabaseService(ISettingsService settings)
         {
             _settings = settings;
         }
+
 
         /// <summary>
         /// Open a KeePass database
@@ -118,7 +121,7 @@ namespace ModernKeePass.Services
                 }
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
 
-                if (!_pwDatabase.IsOpen) return;
+                //if (!_pwDatabase.IsOpen) return;
 
                 // Copy database in temp directory and use this file for operations
                 if (_settings.GetSetting<bool>("AntiCorruption"))

@@ -5,10 +5,10 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Services
 {
-    public class SettingsService : ISettings
+    public class SettingsService : SingletonServiceBase<SettingsService>, ISettingsService
     {
         private readonly IPropertySet _values = ApplicationData.Current.LocalSettings.Values;
-
+        
         public T GetSetting<T>(string property)
         {
             try

@@ -7,7 +7,7 @@ namespace ModernKeePass.ViewModels
 {
     public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly IRecent _recent;
+        private readonly IRecentService _recent;
         private ISelectableModel _selectedItem;
         private ObservableCollection<IRecentItem> _recentItems = new ObservableCollection<IRecentItem>();
 
@@ -35,10 +35,10 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public RecentVm() : this (new RecentService())
+        public RecentVm() : this (RecentService.Instance)
         { }
 
-        public RecentVm(IRecent recent)
+        public RecentVm(IRecentService recent)
         {
             _recent = recent;
             RecentItems = _recent.GetAllFiles();

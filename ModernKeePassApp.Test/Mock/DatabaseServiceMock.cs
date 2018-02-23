@@ -9,13 +9,11 @@ using Windows.Storage;
 
 namespace ModernKeePassApp.Test.Mock
 {
-    public class DatabaseServiceMock : IDatabase
+    public class DatabaseServiceMock : IDatabaseService
     {
         private bool _isOpen;
-        private bool _isFileOpen;
         private bool _isClosed;
-
-
+        
         public PwCompressionAlgorithm CompressionAlgorithm { get; set; }
 
         public StorageFile DatabaseFile { get; set; }
@@ -24,20 +22,13 @@ namespace ModernKeePassApp.Test.Mock
 
         public KdfParameters KeyDerivation { get; set; }
 
-        public bool IsOpen
-        {
-            get { return _isOpen; }
-        }
+        public bool IsOpen => _isOpen;
 
-        public bool IsFileOpen
-        {
-            get { return _isFileOpen; }
-        }
+        public bool IsFileOpen => DatabaseFile != null;
 
-        public bool IsClosed
-        {
-            get { return _isClosed; }
-        }
+        public bool IsClosed => _isClosed;
+
+        public bool HasChanged { get; set; }
 
         public string Name => "MockDatabase";
 

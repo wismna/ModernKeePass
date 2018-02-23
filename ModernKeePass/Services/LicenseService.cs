@@ -6,7 +6,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Services
 {
-    public class LicenseService : ILicenseService
+    public class LicenseService : SingletonServiceBase<LicenseService>, ILicenseService
     {
         public enum PurchaseResult
         {

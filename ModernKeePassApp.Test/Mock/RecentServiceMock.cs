@@ -6,7 +6,7 @@ using Windows.Storage;
 
 namespace ModernKeePassApp.Test.Mock
 {
-    class RecentServiceMock : IRecent
+    class RecentServiceMock : IRecentService
     {
         public int EntryCount => 0;
 

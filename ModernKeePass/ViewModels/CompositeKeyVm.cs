@@ -22,7 +22,7 @@ namespace ModernKeePass.ViewModels
             Success = 5
         }
 
-        public IDatabase Database { get; set; }
+        public IDatabaseService Database { get; set; }
 
         public bool HasPassword
         {
@@ -111,11 +111,11 @@ namespace ModernKeePass.ViewModels
         private StatusTypes _statusType;
         private StorageFile _keyFile;
         private string _keyFileText;
-        private readonly IResource _resource;
+        private readonly IResourceService _resource;
 
-        public CompositeKeyVm() : this((Application.Current as App)?.Database, new ResourcesService()) { }
+        public CompositeKeyVm() : this(DatabaseService.Instance, new ResourcesService()) { }
 
-        public CompositeKeyVm(IDatabase database, IResource resource)
+        public CompositeKeyVm(IDatabaseService database, IResourceService resource)
         {
             _resource = resource;
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");

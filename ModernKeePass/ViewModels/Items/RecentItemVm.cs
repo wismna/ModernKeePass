@@ -1,6 +1,5 @@
 ﻿using Windows.Storage;
 using ModernKeePass.Common;
-using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 
@@ -31,20 +30,20 @@ namespace ModernKeePass.ViewModels
 
         public void OpenDatabaseFile()
         {
-            OpenDatabaseFile((Application.Current as App)?.Database);
+            OpenDatabaseFile(DatabaseService.Instance);
         }
 
-        public void OpenDatabaseFile(IDatabase database)
+        public void OpenDatabaseFile(IDatabaseService database)
         {
             database.DatabaseFile = DatabaseFile;
         }
 
         public void UpdateAccessTime()
         {
-            UpdateAccessTime(new RecentService());
+            UpdateAccessTime(RecentService.Instance);
         }
 
-        public async void UpdateAccessTime(IRecent recent)
+        public async void UpdateAccessTime(IRecentService recent)
         {
             await recent.GetFileAsync(Token);
         }

@@ -4,7 +4,7 @@ using Windows.Storage;
 
 namespace ModernKeePass.Interfaces
 {
-    public interface IRecent
+    public interface IRecentService
     {
         int EntryCount { get; }
         Task<IStorageItem> GetFileAsync(string token);

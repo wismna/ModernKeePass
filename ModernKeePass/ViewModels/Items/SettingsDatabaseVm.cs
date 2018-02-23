@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -14,7 +14,7 @@ namespace ModernKeePass.ViewModels
     // TODO: implement Kdf settings
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly IDatabase _database;
+        private readonly IDatabaseService _database;
         private GroupVm _selectedItem;
 
         public bool HasRecycleBin
@@ -88,9 +88,9 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsDatabaseVm() : this((Application.Current as App)?.Database) { }
+        public SettingsDatabaseVm() : this(DatabaseService.Instance) { }
 
-        public SettingsDatabaseVm(IDatabase database)
+        public SettingsDatabaseVm(IDatabaseService database)
         {
             _database = database;
             Groups = _database?.RootGroup.Groups;

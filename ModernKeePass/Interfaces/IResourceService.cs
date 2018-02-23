@@ -1,6 +1,6 @@
 ﻿namespace ModernKeePass.Interfaces
 {
-    public interface IResource
+    public interface IResourceService
     {
         string GetResourceValue(string key);
     }

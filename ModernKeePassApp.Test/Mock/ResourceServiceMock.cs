@@ -3,7 +3,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePassApp.Test.Mock
 {
-    class ResourceServiceMock : IResource
+    class ResourceServiceMock : IResourceService
     {
         public string GetResourceValue(string key)
         {

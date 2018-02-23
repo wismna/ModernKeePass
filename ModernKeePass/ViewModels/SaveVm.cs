@@ -1,16 +1,16 @@
 ﻿using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class SaveVm
     {
-        private readonly IDatabase _database;
-        public SaveVm() : this((Application.Current as App)?.Database) { }
+        private readonly IDatabaseService _database;
+        public SaveVm() : this(DatabaseService.Instance) { }
 
-        public SaveVm(IDatabase database)
+        public SaveVm(IDatabaseService database)
         {
             _database = database;
         }
