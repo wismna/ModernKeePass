@@ -22,6 +22,7 @@ namespace ModernKeePass.Services
         private StorageFile _realDatabaseFile;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
+        private CompositeKey _compositeKey;
 
         public GroupVm RootGroup { get; set; }
 
@@ -56,6 +57,8 @@ namespace ModernKeePass.Services
             }
         }
 
+        public CompositeKey CompositeKey => _compositeKey;
+
         public PwUuid DataCipher
         {
             get { return _pwDatabase.DataCipherUuid; }
@@ -87,7 +90,7 @@ namespace ModernKeePass.Services
         {
             _settings = settings;
         }
-
+        
 
         /// <summary>
         /// Open a KeePass database
@@ -104,6 +107,8 @@ namespace ModernKeePass.Services
                 {
                     throw new ArgumentNullException(nameof(key));
                 }
+                
+                _compositeKey = key;
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew)
                 {
@@ -142,12 +147,17 @@ namespace ModernKeePass.Services
             }
         }
 
+        public async Task ReOpen()
+        {
+            await Open(_compositeKey);
+        }
+
         /// <summary>
         /// Commit the changes to the currently opened database to file
         /// </summary>
         public void Save()
         {
-            if (!_pwDatabase.IsOpen) return;
+            if (!IsOpen) return;
             try
             {
                 _pwDatabase.Save(new NullStatusLogger());
@@ -186,18 +196,18 @@ namespace ModernKeePass.Services
         /// <summary>
         /// Close the currently opened database
         /// </summary>
-        public async Task Close()
+        public async Task Close(bool releaseFile = true)
         {
             _pwDatabase?.Close();
 
             // Restore the backup DB to the original one
             if (_settings.GetSetting<bool>("AntiCorruption"))
             {
-                if (_pwDatabase.Modified)
+                if (_pwDatabase != null && _pwDatabase.Modified)
                     Save(_realDatabaseFile);
                 await DatabaseFile.DeleteAsync();
             }
-            DatabaseFile = null;
+            if (releaseFile) DatabaseFile = null;
         }
 
         public void AddDeletedItem(PwUuid id)

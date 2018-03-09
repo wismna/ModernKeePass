@@ -1,1 +1,1 @@
-Ouvrez une base de donn&amp;eacute;es avec mot de passe et/ou fichier de cl&amp;eacute;
+Ouvrez une base de donnees avec mot de passe et/ou fichier de cle

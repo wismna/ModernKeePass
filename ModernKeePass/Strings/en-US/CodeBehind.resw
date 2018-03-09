@@ -273,4 +273,7 @@
   <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
     <value>user account</value>
   </data>
+  <data name="SettingsMenuItemSave" xml:space="preserve">
+    <value>Saving</value>
+  </data>
 </root>

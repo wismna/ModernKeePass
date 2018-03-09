@@ -13,8 +13,8 @@ namespace ModernKeePassApp.Test
     [TestClass]
     public class ViewModelsTests
     {
-        private RecentServiceMock _recent = new RecentServiceMock();
-        private ResourceServiceMock _resource = new ResourceServiceMock();
+        private readonly RecentServiceMock _recent = new RecentServiceMock();
+        private readonly ResourceServiceMock _resource = new ResourceServiceMock();
 
         [TestMethod]
         public void TestAboutVm()
@@ -108,7 +108,7 @@ namespace ModernKeePassApp.Test
             Assert.AreEqual(1, settingsVm.MenuItems.Count());
             var firstGroup = settingsVm.MenuItems.FirstOrDefault();
             // All groups have an empty title, so all settings are put inside the empty group
-            Assert.AreEqual(3, firstGroup.Count());
+            Assert.AreEqual(4, firstGroup.Count());
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
             Assert.AreEqual(typeof(SettingsNewDatabasePage), selectedItem.PageType);

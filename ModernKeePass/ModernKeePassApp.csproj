@@ -124,6 +124,7 @@
     <Compile Include="Interfaces\IResourceService.cs" />
     <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
+    <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
@@ -154,6 +155,9 @@
     </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsNewDatabasePage.xaml.cs">
       <DependentUpon>SettingsNewDatabasePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsPageFrames\SettingsSavePage.xaml.cs">
+      <DependentUpon>SettingsSavePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
       <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
@@ -245,6 +249,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\SettingsPageFrames\SettingsSavePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\UserControls\CompositeKeyUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -357,7 +365,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="ModernKeePassLib, Version=2.37.0.2000, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.37.8000\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+      <HintPath>..\packages\ModernKeePassLib.2.38.1\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Splat, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">

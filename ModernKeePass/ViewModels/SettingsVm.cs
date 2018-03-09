@@ -56,6 +56,13 @@ namespace ModernKeePass.ViewModels
                 },
                 new ListMenuItemVm
                 {
+                    Title = resource.GetResourceValue("SettingsMenuItemSave"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupApplication"),
+                    SymbolIcon = Symbol.Save,
+                    PageType = typeof(SettingsSavePage)
+                },
+                new ListMenuItemVm
+                {
                     Title = resource.GetResourceValue("SettingsMenuItemGeneral"),
                     Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Setting,

@@ -137,7 +137,7 @@ namespace ModernKeePass.ViewModels
                 if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
                 if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
                 if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
-                if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
+                if (HasUserAccount) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
                 UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
             }
             catch (Exception e)

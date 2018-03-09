@@ -1,2 +1,4 @@
-New inline menu on Entries to quickly copy login, password, and navigate to URL
-Design changes
+Application now correctly resumes from suspend
+Code enhancements
+Return of the Donate page, with Paypal
+KeePassLib version bump to 2.38

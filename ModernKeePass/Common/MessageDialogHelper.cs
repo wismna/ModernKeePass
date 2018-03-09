@@ -55,7 +55,7 @@ namespace ModernKeePass.Common
         {
             if (exception == null) return;
             // Create the message dialog and set its content
-            var messageDialog = CreateBasicDialog("Error occured", exception.Message, "OK");
+            var messageDialog = CreateBasicDialog(exception.Message, exception.StackTrace, "OK");
             
             // Show the message dialog
             await messageDialog.ShowAsync();

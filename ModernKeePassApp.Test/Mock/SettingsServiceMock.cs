@@ -5,9 +5,9 @@ namespace ModernKeePassApp.Test.Mock
 {
     public class SettingsServiceMock : ISettingsService
     {
-        public T GetSetting<T>(string property)
+        public T GetSetting<T>(string property, T defaultValue = default(T))
         {
-            return default(T);
+            return defaultValue;
         }
 
         public void PutSetting<T>(string property, T value)

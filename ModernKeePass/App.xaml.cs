@@ -32,8 +32,10 @@ namespace ModernKeePass
             AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics), typeof(Push));
             InitializeComponent();
             Suspending += OnSuspending;
+            Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
         }
+
 
         #region Event Handlers
 
@@ -98,7 +100,10 @@ namespace ModernKeePass
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //TODO: Load state from previously suspended application
+                    //TODO: Load state from previously terminated application
+#if DEBUG
+                    MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
+#endif
                 }
 
                 // Place the frame in the current Window
@@ -133,6 +138,31 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
 
+        private async void OnResuming(object sender, object e)
+        {
+            var currentFrame = Window.Current.Content as Frame;
+            var database = DatabaseService.Instance;
+            if (database.DatabaseFile == null)
+            {
+#if DEBUG
+                ToastNotificationHelper.ShowGenericToast("App suspended", "Nothing to do, no previous database opened");
+#endif
+                return;
+            }
+            try
+            {
+                if (database.CompositeKey != null) await database.ReOpen();
+            }
+            catch (Exception ex)
+            {
+                currentFrame?.Navigate(typeof(MainPage));
+#if DEBUG
+                MessageDialogHelper.ShowErrorDialog(ex);
+#endif
+                ToastNotificationHelper.ShowGenericToast("App suspended", "Database was closed (changes were saved)");
+            }
+        }
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>
@@ -155,8 +185,8 @@ namespace ModernKeePass
             var deferral = e.SuspendingOperation.GetDeferral();
             UnhandledException -= OnUnhandledException;
             var database = DatabaseService.Instance;
-            database.Save();
-            await database.Close();
+            if (SettingsService.Instance.GetSetting("SaveSuspend", true)) database.Save();
+            await database.Close(false);
             deferral.Complete();
         }
         

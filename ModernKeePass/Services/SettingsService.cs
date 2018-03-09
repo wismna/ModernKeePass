@@ -9,7 +9,7 @@ namespace ModernKeePass.Services
     {
         private readonly IPropertySet _values = ApplicationData.Current.LocalSettings.Values;
         
-        public T GetSetting<T>(string property)
+        public T GetSetting<T>(string property, T defaultValue = default(T))
         {
             try
             {
@@ -17,7 +17,7 @@ namespace ModernKeePass.Services
             }
             catch (InvalidCastException)
             {
-                return default(T);
+                return defaultValue;
             }
         }
 

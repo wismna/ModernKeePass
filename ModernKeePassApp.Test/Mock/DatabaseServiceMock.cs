@@ -13,10 +13,13 @@ namespace ModernKeePassApp.Test.Mock
     {
         private bool _isOpen;
         private bool _isClosed;
+        private CompositeKey _compositeKey;
         
         public PwCompressionAlgorithm CompressionAlgorithm { get; set; }
 
         public StorageFile DatabaseFile { get; set; }
+
+        public CompositeKey CompositeKey => _compositeKey;
 
         public PwUuid DataCipher { get; set; }
 
@@ -43,7 +46,7 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
         
-        public Task Close()
+        public Task Close(bool releaseFile = true)
         {
             return Task.Run(() =>
             {
@@ -57,13 +60,19 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
 
-        public Task Open(CompositeKey key, bool createNew)
+        public Task Open(CompositeKey key, bool createNew = false)
         {
+            _compositeKey = key;
             return Task.Run(() =>
             {
                 _isOpen = true;
                 _isClosed = false;
             });
+        }
+
+        public async Task ReOpen()
+        {
+            await Open(_compositeKey);
         }
 
         public void Save()

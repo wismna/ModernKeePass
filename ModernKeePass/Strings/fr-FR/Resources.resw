@@ -333,6 +333,18 @@
   <data name="SettingsNewDatabaseSample.OnContent" xml:space="preserve">
     <value>Oui</value>
   </data>
+  <data name="SettingsSaveDatabaseSuspend.OffContent" xml:space="preserve">
+    <value>Ne pas sauvegarder</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspend.OnContent" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
+    <value>Ce paramètre est généralement recommandé. Si vous l'activez, la base de données sera sauvegardée automatiquement lors de la suspension et de la fermeture. Cependant, si votre base de données est très volumineuse, il se peut que Windows estime que cela prend trop de temps et tue l'application.</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendTitle.Text" xml:space="preserve">
+    <value>Sauvegarder automatiquement lors de la suspension ?</value>
+  </data>
   <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
     <value>Ici, vous pouvez changer le mot de passe maître, le fichier de clé, ou les deux. Cliquez simplement sur</value>
   </data>

@@ -1,2 +1,4 @@
-Ajout d'un menu int&amp;eacute;gr&amp;eacute; &amp;agrave; la liste d'entr&amp;eacute;es afin de copier rapidement le login, mot de passe et de naviguer vers l'URL
-Quelques changements de design
+L'application recupere correctement d'une suspension
+Ameliorations de code
+Retour de la page de donation, avec Paypal
+Version de la KeePassLib montee a 2.38

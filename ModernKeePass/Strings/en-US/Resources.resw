@@ -333,6 +333,18 @@
   <data name="SettingsNewDatabaseSample.OnContent" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="SettingsSaveDatabaseSuspend.OffContent" xml:space="preserve">
+    <value>Don't save</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspend.OnContent" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
+    <value>This settings is generally recommended. If you enable it, database will automatically be saved on application suspension and closing. However, if your database is huge, saving may be deemed too long by Windows, which will then forcibly kill the app.</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendTitle.Text" xml:space="preserve">
+    <value>Auto-save on suspend?</value>
+  </data>
   <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
     <value>Here, you may change your database password, key file, or both. Just click on on</value>
   </data>

@@ -45,5 +45,10 @@ namespace ModernKeePass.Common
             };
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+
+        public static void ShowErrorToast(Exception exception)
+        {
+            ShowGenericToast(exception.Source, exception.Message);
+        }
     }
 }
