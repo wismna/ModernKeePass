@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -19,13 +19,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.Text;
+
 #if ModernKeePassLib
-//using PCLStorage;
 using Windows.Storage;
 #endif
 
@@ -56,7 +55,7 @@ namespace ModernKeePassLib.Utility
 #else
 			get { return Path.DirectorySeparatorChar; }
 #endif
-        }
+		}
 
 		/// <summary>
 		/// Get the directory (path) of a file name. The returned string may be
@@ -650,8 +649,7 @@ namespace ModernKeePassLib.Utility
 
 			try
 			{
-				if(Directory.Exists(strDir) == false)
-					Directory.CreateDirectory(strDir);
+				if(!Directory.Exists(strDir)) Directory.CreateDirectory(strDir);
 			}
 			catch(Exception) { Debug.Assert(false); }
 

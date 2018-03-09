@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,9 +22,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
+#if ModernKeePassLib || KeePassUAP
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Parameters;
+#else
+using System.Security.Cryptography;
+#endif
 
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Native;
@@ -134,7 +138,7 @@ namespace ModernKeePassLib.Cryptography.KeyDerivation
 			return null;
 		}
 
-	    public static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
+		internal static bool TransformKeyManaged(byte[] pbNewKey32, byte[] pbKeySeed32,
 			ulong uNumRounds)
 		{
 #if ModernKeePassLib || KeePassUAP

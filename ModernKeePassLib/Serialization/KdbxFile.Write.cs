@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ namespace ModernKeePassLib.Serialization
 			    if (m_uFileVersion >= FileVersion32_4) xws.CloseOutput = true;
 #endif
 
-                XmlWriter xw = XmlWriter.Create(sXml, xws);
+				XmlWriter xw = XmlWriter.Create(sXml, xws);
 #else
 				XmlTextWriter xw = new XmlTextWriter(sXml, encNoBom);
 

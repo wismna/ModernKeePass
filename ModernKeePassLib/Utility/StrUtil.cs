@@ -1,6 +1,6 @@
 ﻿/*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2014 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,24 +21,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using System.Drawing;
 #if ModernKeePassLib
-using Windows.Security.Cryptography;
+using ModernKeePassLib.Cryptography;
 #else
 using System.Security.Cryptography;
 #endif
 
 using ModernKeePassLib.Collections;
-using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Native;
 using ModernKeePassLib.Security;
-using ModernKeePassLib.Resources;
 
 namespace ModernKeePassLib.Utility
 {
@@ -225,11 +223,11 @@ namespace ModernKeePassLib.Utility
 				List<StrEncodingInfo> l = new List<StrEncodingInfo>();
 
 				l.Add(new StrEncodingInfo(StrEncodingType.Default,
-#if ModernKeePassLib || KeePassRT
-					StrUtil.Utf8.WebName, StrUtil.Utf8, 1, null));
+#if ModernKeePassLib ||KeePassUAP
+					"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
 #else
 #if !KeePassLibSD
-					Encoding.Default.EncodingName,
+                    Encoding.Default.EncodingName,
 #else
 					Encoding.Default.WebName,
 #endif
@@ -304,19 +302,26 @@ namespace ModernKeePassLib.Utility
 		}
 
 		/// <summary>
-		/// Convert a string into a valid HTML sequence representing that string.
+		/// Convert a string to a HTML sequence representing that string.
 		/// </summary>
 		/// <param name="str">String to convert.</param>
 		/// <returns>String, HTML-encoded.</returns>
 		public static string StringToHtml(string str)
 		{
+			return StringToHtml(str, false);
+		}
+
+		internal static string StringToHtml(string str, bool bNbsp)
+		{
 			Debug.Assert(str != null); if(str == null) throw new ArgumentNullException("str");
 
-			str = str.Replace(@"&", @"&amp;");
+			str = str.Replace(@"&", @"&amp;"); // Must be first
 			str = str.Replace(@"<", @"&lt;");
 			str = str.Replace(@">", @"&gt;");
 			str = str.Replace("\"", @"&quot;");
 			str = str.Replace("\'", @"&#39;");
+
+			if(bNbsp) str = str.Replace(" ", @"&nbsp;"); // Before <br />
 
 			str = NormalizeNewLines(str, false);
 			str = str.Replace("\n", @"<br />" + Environment.NewLine);
@@ -833,10 +838,10 @@ namespace ModernKeePassLib.Utility
 #if ModernKeePassLib
 		    if (bExpNum != bExpNumY) return StringComparer.OrdinalIgnoreCase.Compare(strX, strY);
 #else
-            if(bExpNum != bExpNumY) return string.Compare(strX, strY, true);
+			if(bExpNum != bExpNumY) return string.Compare(strX, strY, true);
 #endif
 
-            int pX = 0;
+			int pX = 0;
 			int pY = 0;
 			while((pX < cX) && (pY < cY))
 			{
@@ -894,7 +899,7 @@ namespace ModernKeePassLib.Utility
 					}
 				}
 				if(bStrCmp)
-                {
+				{
 #if ModernKeePassLib
                     int c = StringComparer.OrdinalIgnoreCase.Compare(strPartX, strPartY);
 #else

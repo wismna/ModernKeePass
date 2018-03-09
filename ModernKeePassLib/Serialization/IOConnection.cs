@@ -1,6 +1,6 @@
 /*
   KeePass Password Safe - The Open-Source Password Manager
-  Copyright (C) 2003-2017 Dominik Reichl <dominik.reichl@t-online.de>
+  Copyright (C) 2003-2018 Dominik Reichl <dominik.reichl@t-online.de>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -634,10 +634,15 @@ namespace ModernKeePassLib.Serialization
 
 		private static Stream OpenWriteLocal(IOConnectionInfo ioc)
 		{
+#if ModernKeePassLib
             return ioc.StorageFile.OpenAsync(FileAccessMode.ReadWrite).GetAwaiter().GetResult().AsStream();
-        }
+#else
+			return new FileStream(ioc.Path, FileMode.Create, FileAccess.Write,
+				FileShare.None);
+#endif
+		}
 
-		public static bool FileExists(IOConnectionInfo ioc)
+        public static bool FileExists(IOConnectionInfo ioc)
 		{
 			return FileExists(ioc, false);
 		}
@@ -647,16 +652,72 @@ namespace ModernKeePassLib.Serialization
 			if(ioc == null) { Debug.Assert(false); return false; }
 
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Exists);
-            
+
+#if ModernKeePassLib
             return ioc.StorageFile.IsAvailable;
+#else
+			if(ioc.IsLocalFile()) return File.Exists(ioc.Path);
+
+#if !KeePassLibSD
+			if(ioc.Path.StartsWith("ftp://", StrUtil.CaseIgnoreCmp))
+			{
+				bool b = SendCommand(ioc, WebRequestMethods.Ftp.GetDateTimestamp);
+				if(!b && bThrowErrors) throw new InvalidOperationException();
+				return b;
+			}
+#endif
+
+			try
+			{
+				Stream s = OpenRead(ioc);
+				if(s == null) throw new FileNotFoundException();
+
+				try { s.ReadByte(); }
+				catch(Exception) { }
+
+				// We didn't download the file completely; close may throw
+				// an exception -- that's okay
+				try { s.Close(); }
+				catch(Exception) { }
+			}
+			catch(Exception)
+			{
+				if(bThrowErrors) throw;
+				return false;
+			}
+
+			return true;
+#endif
 		}
 
 		public static void DeleteFile(IOConnectionInfo ioc)
 		{
 			RaiseIOAccessPreEvent(ioc, IOAccessType.Delete);
-            
-		    if (!ioc.IsLocalFile()) return;
+
+#if ModernKeePassLib
+            if (!ioc.IsLocalFile()) return;
 		    ioc.StorageFile?.DeleteAsync().GetAwaiter().GetResult();
+#else
+			if(ioc.IsLocalFile()) { File.Delete(ioc.Path); return; }
+
+#if !KeePassLibSD
+			WebRequest req = CreateWebRequest(ioc);
+			if(req != null)
+			{
+				if(IsHttpWebRequest(req)) req.Method = "DELETE";
+				else if(IsFtpWebRequest(req))
+					req.Method = WebRequestMethods.Ftp.DeleteFile;
+				else if(IsFileWebRequest(req))
+				{
+					File.Delete(UrlUtil.FileUrlToPath(ioc.Path));
+					return;
+				}
+				else req.Method = WrmDeleteFile;
+
+				DisposeResponse(req.GetResponse(), true);
+			}
+#endif
+#endif
 		}
 
 		/// <summary>
@@ -671,10 +732,76 @@ namespace ModernKeePassLib.Serialization
 		public static void RenameFile(IOConnectionInfo iocFrom, IOConnectionInfo iocTo)
 		{
 			RaiseIOAccessPreEvent(iocFrom, iocTo, IOAccessType.Move);
-            
-		    if (!iocFrom.IsLocalFile()) return;
+
+#if ModernKeePassLib
+            if (!iocFrom.IsLocalFile()) return;
 		    iocFrom.StorageFile?.RenameAsync(iocTo.Path).GetAwaiter().GetResult();
-        }
+#else
+			if(iocFrom.IsLocalFile()) { File.Move(iocFrom.Path, iocTo.Path); return; }
+
+#if !KeePassLibSD
+			WebRequest req = CreateWebRequest(iocFrom);
+			if(req != null)
+			{
+				if(IsHttpWebRequest(req))
+				{
+#if KeePassUAP
+					throw new NotSupportedException();
+#else
+					req.Method = "MOVE";
+					req.Headers.Set("Destination", iocTo.Path); // Full URL supported
+#endif
+				}
+				else if(IsFtpWebRequest(req))
+				{
+#if KeePassUAP
+					throw new NotSupportedException();
+#else
+					req.Method = WebRequestMethods.Ftp.Rename;
+					string strTo = UrlUtil.GetFileName(iocTo.Path);
+
+					// We're affected by .NET bug 621450:
+					// https://connect.microsoft.com/VisualStudio/feedback/details/621450/problem-renaming-file-on-ftp-server-using-ftpwebrequest-in-net-framework-4-0-vs2010-only
+					// Prepending "./", "%2E/" or "Dummy/../" doesn't work.
+
+					((FtpWebRequest)req).RenameTo = strTo;
+#endif
+				}
+				else if(IsFileWebRequest(req))
+				{
+					File.Move(UrlUtil.FileUrlToPath(iocFrom.Path),
+						UrlUtil.FileUrlToPath(iocTo.Path));
+					return;
+				}
+				else
+				{
+#if KeePassUAP
+					throw new NotSupportedException();
+#else
+					req.Method = WrmMoveFile;
+					req.Headers.Set(WrhMoveFileTo, iocTo.Path);
+#endif
+				}
+
+#if !KeePassUAP // Unreachable code
+				DisposeResponse(req.GetResponse(), true);
+#endif
+			}
+#endif
+
+			// using(Stream sIn = IOConnection.OpenRead(iocFrom))
+			// {
+			//	using(Stream sOut = IOConnection.OpenWrite(iocTo))
+			//	{
+			//		MemUtil.CopyStream(sIn, sOut);
+			//		sOut.Close();
+			//	}
+			//
+			//	sIn.Close();
+			// }
+			// DeleteFile(iocFrom);
+#endif
+		}
 
 #if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 		private static bool SendCommand(IOConnectionInfo ioc, string strMethod)
