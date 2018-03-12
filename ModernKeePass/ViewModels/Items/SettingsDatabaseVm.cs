@@ -94,7 +94,6 @@ namespace ModernKeePass.ViewModels
         {
             _database = database;
             Groups = _database?.RootGroup.Groups;
-            Groups?.Insert(0, new GroupVm());
         }
     }
 }

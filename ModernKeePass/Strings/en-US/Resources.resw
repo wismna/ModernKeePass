@@ -315,6 +315,12 @@
   <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
     <value>Enabled</value>
   </data>
+  <data name="SettingsDatabaseRecycleBinCreate.Content" xml:space="preserve">
+    <value>Create a new group</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBinExisting.Content" xml:space="preserve">
+    <value>Use an existing group</value>
+  </data>
   <data name="SettingsNewDatabaseDesc.Text" xml:space="preserve">
     <value>Here, you can change some default options when creating a database.</value>
   </data>

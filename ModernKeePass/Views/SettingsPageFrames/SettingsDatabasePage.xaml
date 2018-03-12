@@ -5,35 +5,27 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
+    xmlns:converters="using:ModernKeePass.Converters"
     mc:Ignorable="d">
     <Page.Resources>
         <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
         <CollectionViewSource x:Name="Ciphers" Source="{Binding Ciphers}" />
         <CollectionViewSource x:Name="Compressions" Source="{Binding Compressions}" />
         <CollectionViewSource x:Name="KeyDerivations" Source="{Binding KeyDerivations}" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:SettingsDatabaseVm />
     </Page.DataContext>
-    
+
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ToggleSwitch x:Uid="SettingsDatabaseRecycleBin" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
-        <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding HasRecycleBin}">
-            <ComboBox.Resources>
-                <DataTemplate x:Name="GroupFirstItem">
-                    <TextBlock x:Uid="GroupNewItemTextBox" />
-                </DataTemplate>
-                <DataTemplate x:Name="GroupOtherItem">
-                    <TextBlock Text="{Binding}" />
-                </DataTemplate>
-            </ComboBox.Resources>
-            <ComboBox.ItemTemplateSelector>
-                <templateSelectors:FirstItemDataTemplateSelector 
-                    FirstItem="{StaticResource GroupFirstItem}" 
-                    OtherItem="{StaticResource GroupOtherItem}" />
-            </ComboBox.ItemTemplateSelector>
-        </ComboBox>
+        <StackPanel Visibility="{Binding HasRecycleBin, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <RadioButton x:Uid="SettingsDatabaseRecycleBinCreate" GroupName="Recycle" IsChecked="True" />
+            <RadioButton x:Name="RadioButton" x:Uid="SettingsDatabaseRecycleBinExisting" GroupName="Recycle" IsChecked="{Binding SelectedItem, Converter={StaticResource NullToBooleanConverter}}" />
+            <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding IsChecked, ElementName=RadioButton}" />
+        </StackPanel>
         <TextBlock x:Uid="SettingsDatabaseEncryption" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
         <ComboBox ItemsSource="{Binding Source={StaticResource Ciphers}}" SelectedIndex="{Binding CipherIndex, Mode=TwoWay}" />
         <TextBlock x:Uid="SettingsDatabaseCompression" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />

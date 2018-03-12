@@ -63,7 +63,6 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                //if (_pwGroup == null) return Symbol.Add;
                 var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
                 return result == Symbol.More ? Symbol.Folder : result;
             }

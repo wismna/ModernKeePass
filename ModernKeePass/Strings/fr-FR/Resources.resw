@@ -315,6 +315,12 @@
   <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
     <value>Activé</value>
   </data>
+  <data name="SettingsDatabaseRecycleBinCreate.Content" xml:space="preserve">
+    <value>Créer un nouveau groupe</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBinExisting.Content" xml:space="preserve">
+    <value>Utiliser un groupe existant</value>
+  </data>
   <data name="SettingsNewDatabaseDesc.Text" xml:space="preserve">
     <value>Ici, vous pouvez changer certains options lors de la création d'une nouvelle base de données</value>
   </data>
