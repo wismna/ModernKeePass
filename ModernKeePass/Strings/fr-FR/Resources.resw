@@ -142,7 +142,7 @@
     <value>Accueil</value>
   </data>
   <data name="AppBarRestore.Label" xml:space="preserve">
-    <value>Restorer</value>
+    <value>Restaurer</value>
   </data>
   <data name="AppBarSave.Label" xml:space="preserve">
     <value>Sauvegarder</value>
