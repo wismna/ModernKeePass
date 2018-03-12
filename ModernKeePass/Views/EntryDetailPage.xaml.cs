@@ -81,7 +81,7 @@ namespace ModernKeePass.Views
                 resource.GetResourceValue("EntityDeleteCancelButton"), a =>
             {
                 ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
-                Model.MarkForDelete();
+                Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
                 if (Frame.CanGoBack) Frame.GoBack();
             }, null);
         }

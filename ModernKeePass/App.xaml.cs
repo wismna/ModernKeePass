@@ -191,7 +191,9 @@ namespace ModernKeePass
             }
             catch (Exception exception)
             {
+#if DEBUG
                 ToastNotificationHelper.ShowErrorToast(exception);
+#endif
             }
             deferral.Complete();
         }

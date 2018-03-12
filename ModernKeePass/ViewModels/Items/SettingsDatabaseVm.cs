@@ -27,6 +27,15 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public bool IsNewRecycleBin
+        {
+            get { return _database.RecycleBin == null; }
+            set
+            {
+                if (value) _database.RecycleBin = null;
+            }
+        }
+
         public ObservableCollection<GroupVm> Groups { get; set; }
 
         public IEnumerable<string> Ciphers
@@ -73,7 +82,7 @@ namespace ModernKeePass.ViewModels
             get { return Groups.FirstOrDefault(g => g.IsSelected); }
             set
             {
-                if (_selectedItem == value) return;
+                if (_selectedItem == value || IsNewRecycleBin) return;
                 if (_selectedItem != null)
                 {
                     _selectedItem.IsSelected = false;

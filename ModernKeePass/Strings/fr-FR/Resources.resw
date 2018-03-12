@@ -214,10 +214,10 @@
     <value>Filtrer...</value>
   </data>
   <data name="GroupNewItemTextBox.Text" xml:space="preserve">
-    <value>&lt; Nouveau groupe &gt;</value>
+    <value>Nouveau groupe</value>
   </data>
   <data name="GroupNewItemTooltip.Content" xml:space="preserve">
-    <value>&lt; Nouveau groupe &gt;</value>
+    <value>Nouveau groupe</value>
   </data>
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
     <value>Rechercher...</value>

@@ -15,7 +15,7 @@ namespace ModernKeePass.Interfaces
         GroupVm RootGroup { get; set; }
         GroupVm RecycleBin { get; set; }
         StorageFile DatabaseFile { get; set; }
-        CompositeKey CompositeKey { get; }
+        CompositeKey CompositeKey { get; set; }
         PwUuid DataCipher { get; set; }
         PwCompressionAlgorithm CompressionAlgorithm { get; set; }
         KdfParameters KeyDerivation { get; set; }
@@ -26,10 +26,9 @@ namespace ModernKeePass.Interfaces
 
         Task Open(CompositeKey key, bool createNew = false);
         Task ReOpen();
-        void UpdateCompositeKey(CompositeKey key);
         void Save();
         void Save(StorageFile file);
-        void CreateRecycleBin();
+        void CreateRecycleBin(string title);
         void AddDeletedItem(PwUuid id);
         Task Close(bool releaseFile = true);
     }

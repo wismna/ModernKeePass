@@ -32,7 +32,7 @@ namespace ModernKeePass.Services
             set
             {
                 _recycleBin = value;
-                _pwDatabase.RecycleBinUuid = _recycleBin.IdUuid;
+                _pwDatabase.RecycleBinUuid = _recycleBin?.IdUuid;
             }
         }
         
@@ -57,7 +57,11 @@ namespace ModernKeePass.Services
             }
         }
 
-        public CompositeKey CompositeKey => _compositeKey;
+        public CompositeKey CompositeKey
+        {
+            get { return _compositeKey; }
+            set { _compositeKey = value; }
+        }
 
         public PwUuid DataCipher
         {
@@ -137,8 +141,7 @@ namespace ModernKeePass.Services
                             CreationCollisionOption.FailIfExists);
                     Save(backupFile);
                 }
-
-                //Status = (int)DatabaseStatus.Opened;
+                
                 RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
             }
             catch (InvalidCompositeKeyException ex)
@@ -215,18 +218,13 @@ namespace ModernKeePass.Services
             _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
         }
 
-        public void CreateRecycleBin()
+        public void CreateRecycleBin(string title)
         {
-            RecycleBin = RootGroup.AddNewGroup("Recycle bin");
+            RecycleBin = RootGroup.AddNewGroup(title);
             RecycleBin.IsSelected = true;
             RecycleBin.IconSymbol = Symbol.Delete;
         }
-
-        public void UpdateCompositeKey(CompositeKey key)
-        {
-            _pwDatabase.MasterKey = key;
-        }
-
+        
         private void CreateSampleData()
         {
             _pwDatabase.RootGroup.AddGroup(new PwGroup(true, true, "Banking", PwIcon.Count), true);

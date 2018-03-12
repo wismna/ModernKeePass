@@ -219,10 +219,10 @@ namespace ModernKeePass.ViewModels
             _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
         }
         
-        public void MarkForDelete()
+        public void MarkForDelete(string recycleBinTitle)
         {
             if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
-                _database.CreateRecycleBin();
+                _database.CreateRecycleBin(recycleBinTitle);
             Move(_database.RecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
         }
 

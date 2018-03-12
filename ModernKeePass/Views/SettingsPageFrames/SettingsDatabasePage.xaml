@@ -22,7 +22,7 @@
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ToggleSwitch x:Uid="SettingsDatabaseRecycleBin" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" />
         <StackPanel Visibility="{Binding HasRecycleBin, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <RadioButton x:Uid="SettingsDatabaseRecycleBinCreate" GroupName="Recycle" IsChecked="True" />
+            <RadioButton x:Uid="SettingsDatabaseRecycleBinCreate" GroupName="Recycle" IsChecked="{Binding IsNewRecycleBin, Mode=TwoWay}" />
             <RadioButton x:Name="RadioButton" x:Uid="SettingsDatabaseRecycleBinExisting" GroupName="Recycle" IsChecked="{Binding SelectedItem, Converter={StaticResource NullToBooleanConverter}}" />
             <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding IsChecked, ElementName=RadioButton}" />
         </StackPanel>

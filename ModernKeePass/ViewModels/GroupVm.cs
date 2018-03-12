@@ -153,10 +153,10 @@ namespace ModernKeePass.ViewModels
             return newEntry;
         }
 
-        public void MarkForDelete()
+        public void MarkForDelete(string recycleBinTitle)
         {
             if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
-                _database.CreateRecycleBin();
+                _database.CreateRecycleBin(recycleBinTitle);
             Move(_database.RecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
         }
 
@@ -164,7 +164,6 @@ namespace ModernKeePass.ViewModels
         {
             Move(PreviousGroup);
         }
-
 
         [DatabaseChanged]
         public void Move(GroupVm destination)
@@ -194,7 +193,6 @@ namespace ModernKeePass.ViewModels
             _database.Save();
         }
 
-
         [DatabaseChanged]
         public void SortEntries()
         {
@@ -209,7 +207,6 @@ namespace ModernKeePass.ViewModels
                 MessageDialogHelper.ShowErrorDialog(e);
             }
         }
-
 
         [DatabaseChanged]
         public void SortGroups()

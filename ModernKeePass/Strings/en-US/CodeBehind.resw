@@ -204,9 +204,6 @@
   <data name="EntryDeletingConfirmation" xml:space="preserve">
     <value>Are you sure you want to delete this entry?</value>
   </data>
-  <data name="EntryNew" xml:space="preserve">
-    <value>&lt; New entry &gt;</value>
-  </data>
   <data name="EntryRecycled" xml:space="preserve">
     <value>Entry moved to the Recycle bin</value>
   </data>
@@ -221,9 +218,6 @@
   </data>
   <data name="GroupDeletingConfirmation" xml:space="preserve">
     <value>Are you sure you want to delete the whole group and all its entries?</value>
-  </data>
-  <data name="GroupNew" xml:space="preserve">
-    <value>&lt; New group &gt;</value>
   </data>
   <data name="GroupRecycled" xml:space="preserve">
     <value>Group moved to the Recycle bin</value>
@@ -275,5 +269,8 @@
   </data>
   <data name="SettingsMenuItemSave" xml:space="preserve">
     <value>Saving</value>
+  </data>
+  <data name="RecycleBinTitle" xml:space="preserve">
+    <value>Recycle Bin</value>
   </data>
 </root>

@@ -19,7 +19,11 @@ namespace ModernKeePassApp.Test.Mock
 
         public StorageFile DatabaseFile { get; set; }
 
-        public CompositeKey CompositeKey => _compositeKey;
+        public CompositeKey CompositeKey
+        {
+            get { return _compositeKey; }
+            set { _compositeKey = value; }
+        }
 
         public PwUuid DataCipher { get; set; }
 
@@ -55,7 +59,7 @@ namespace ModernKeePassApp.Test.Mock
             });
         }
 
-        public void CreateRecycleBin()
+        public void CreateRecycleBin(string title)
         {
             throw new NotImplementedException();
         }
@@ -81,11 +85,6 @@ namespace ModernKeePassApp.Test.Mock
         }
 
         public void Save(StorageFile file)
-        {
-            throw new NotImplementedException();
-        }
-        
-        public void UpdateCompositeKey(CompositeKey key)
         {
             throw new NotImplementedException();
         }

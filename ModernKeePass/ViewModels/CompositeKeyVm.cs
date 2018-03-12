@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -154,7 +153,7 @@ namespace ModernKeePass.ViewModels
 
         public void UpdateKey()
         {
-            Database.UpdateCompositeKey(CreateCompositeKey());
+            Database.CompositeKey = CreateCompositeKey();
             UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 

@@ -34,6 +34,6 @@ namespace ModernKeePass.Interfaces
         /// <summary>
         /// Delete from ViewModel
         /// </summary>
-        void MarkForDelete();
+        void MarkForDelete(string recycleBinTitle);
     }
 }

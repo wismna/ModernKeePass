@@ -1,5 +1,4 @@
-﻿using System;
-using ModernKeePass.Interfaces;
+﻿using ModernKeePass.Interfaces;
 
 namespace ModernKeePassApp.Test.Mock
 {
