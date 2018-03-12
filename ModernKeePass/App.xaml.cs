@@ -183,10 +183,16 @@ namespace ModernKeePass
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            UnhandledException -= OnUnhandledException;
             var database = DatabaseService.Instance;
-            if (SettingsService.Instance.GetSetting("SaveSuspend", true)) database.Save();
-            await database.Close(false);
+            try
+            {
+                if (SettingsService.Instance.GetSetting("SaveSuspend", true)) database.Save();
+                await database.Close(false);
+            }
+            catch (Exception exception)
+            {
+                ToastNotificationHelper.ShowErrorToast(exception);
+            }
             deferral.Complete();
         }
         
