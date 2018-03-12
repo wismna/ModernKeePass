@@ -80,11 +80,7 @@ namespace ModernKeePassLib
 			// MemoryStream ms = new MemoryStream(m_pbImageDataPng, false);
 			// m_imgOrg = Image.FromStream(ms);
 			// ms.Close();
-#if ModernKeePassLib
-            try { m_imgOrg = GfxUtil.LoadImage(m_pbImageDataPng).GetAwaiter().GetResult(); }
-#else
 			try { m_imgOrg = GfxUtil.LoadImage(m_pbImageDataPng); }
-#endif
 			catch(Exception) { Debug.Assert(false); m_imgOrg = null; }
 
 			if(m_imgOrg != null)
@@ -121,13 +117,14 @@ namespace ModernKeePassLib
 
 			Image img;
 			if(m_dImageCache.TryGetValue(lID, out img)) return img;
+
 #if ModernKeePassLib
-            img = GfxUtil.ScaleImage(m_pbImageDataPng, w, h).GetAwaiter().GetResult();
+            img = GfxUtil.ScaleImage(m_pbImageDataPng, w, h);
 #else
 			img = GfxUtil.ScaleImage(m_imgOrg, w, h, ScaleTransformFlags.UIIcon);
 #endif
-		    m_dImageCache[lID] = img;
-		    return img;
+			m_dImageCache[lID] = img;
+			return img;
 		}
 #endif
 	}
