@@ -154,9 +154,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModernKeePass\ModernKeePassApp.csproj">
+    <ProjectReference Include="..\ModernKeePass\ModernKeePass.App.csproj">
       <Project>{A0CFC681-769B-405A-8482-0CDEE595A91F}</Project>
-      <Name>ModernKeePassApp</Name>
+      <Name>ModernKeePass.App</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
