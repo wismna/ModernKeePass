@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ModernKeePassLib</id>
-    <version>2.38.2</version>
+    <version>2.39.1</version>
     <title>ModernKeePassLib</title>
     <authors>Geoffroy Bonneville</authors>
     <owners>Geoffroy Bonneville</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/wismna/ModernKeePass</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Portable KeePass Password Management Library that targets .Net Standard and WinRT. Allows reading, editing and writing to KeePass 2.x databases.</description>
-    <releaseNotes>Deactivation of buggy custom icon implementation</releaseNotes>
+    <releaseNotes>Implementation of KeePass library version 2.39.1</releaseNotes>
     <copyright>Copyright © 2018 Geoffroy Bonneville</copyright>
     <tags>KeePass KeePassLib Portable PCL NetStandard</tags>
     <dependencies>

@@ -75,7 +75,7 @@ namespace ModernKeePassLib.Cryptography
 #endif
 #endif
 
-            try { return IsPopularPasswordPriv(vPassword, out uDictSize); }
+			try { return IsPopularPasswordPriv(vPassword, out uDictSize); }
 			catch(Exception) { Debug.Assert(false); }
 
 			uDictSize = 0;

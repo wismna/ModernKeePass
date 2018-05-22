@@ -23,7 +23,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Text;
 
-#if !KeePassUAP
+#if !ModernKeePassLib
 using System.Windows.Forms;
 #endif
 
@@ -34,7 +34,8 @@ namespace ModernKeePassLib.Utility
 {
 	public sealed class MessageServiceEventArgs : EventArgs
 	{
-		private string m_strTitle = string.Empty;
+#if !ModernKeePassLib
+        private string m_strTitle = string.Empty;
 		private string m_strText = string.Empty;
 		private MessageBoxButtons m_msgButtons = MessageBoxButtons.OK;
 		private MessageBoxIcon m_msgIcon = MessageBoxIcon.None;
@@ -54,12 +55,14 @@ namespace ModernKeePassLib.Utility
 			m_msgButtons = msgButtons;
 			m_msgIcon = msgIcon;
 		}
-	}
+#endif
+    }
 
 	public static class MessageService
 	{
-		private static volatile uint m_uCurrentMessageCount = 0;
+        private static volatile uint m_uCurrentMessageCount = 0;
 
+#if !ModernKeePassLib
 #if !KeePassLibSD
 		private const MessageBoxIcon m_mbiInfo = MessageBoxIcon.Information;
 		private const MessageBoxIcon m_mbiWarning = MessageBoxIcon.Warning;
@@ -73,8 +76,8 @@ namespace ModernKeePassLib.Utility
 		private const MessageBoxIcon m_mbiFatal = MessageBoxIcon.Hand;
 #endif
 		private const MessageBoxIcon m_mbiQuestion = MessageBoxIcon.Question;
-
-		public static string NewLine
+#endif
+        public static string NewLine
 		{
 #if !KeePassLibSD
 			get { return Environment.NewLine; }
@@ -123,7 +126,7 @@ namespace ModernKeePassLib.Utility
 
 				Exception exObj = (obj as Exception);
 				string strObj = (obj as string);
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !ModernKeePassLib)
 				StringCollection scObj = (obj as StringCollection);
 #endif
 
@@ -131,10 +134,10 @@ namespace ModernKeePassLib.Utility
 				{
 					if(bFullExceptions)
 						strAppend = StrUtil.FormatException(exObj);
-					else if((exObj.Message != null) && (exObj.Message.Length > 0))
+					else if(!string.IsNullOrEmpty(exObj.Message))
 						strAppend = exObj.Message;
 				}
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !ModernKeePassLib)
 				else if(scObj != null)
 				{
 					StringBuilder sb = new StringBuilder();
@@ -146,7 +149,7 @@ namespace ModernKeePassLib.Utility
 					strAppend = sb.ToString();
 				}
 #endif
-				else if(strObj != null)
+                else if (strObj != null)
 					strAppend = strObj;
 				else
 					strAppend = obj.ToString();
@@ -163,7 +166,7 @@ namespace ModernKeePassLib.Utility
 			return sbText.ToString();
 		}
 
-#if (!KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !ModernKeePassLib)
 		internal static Form GetTopForm()
 		{
 			FormCollection fc = Application.OpenForms;
@@ -173,8 +176,8 @@ namespace ModernKeePassLib.Utility
 		}
 #endif
 
-#if !KeePassUAP
-		internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
+#if !ModernKeePassLib
+        internal static DialogResult SafeShowMessageBox(string strText, string strTitle,
 			MessageBoxButtons mb, MessageBoxIcon mi, MessageBoxDefaultButton mdb)
 		{
 #if (KeePassLibSD || KeePassRT)
@@ -405,7 +408,7 @@ namespace ModernKeePassLib.Utility
 		}
 #endif // !KeePassUAP
 
-		internal static string GetLoadWarningMessage(string strFilePath,
+        internal static string GetLoadWarningMessage(string strFilePath,
 			Exception ex, bool bFullException)
 		{
 			string str = string.Empty;

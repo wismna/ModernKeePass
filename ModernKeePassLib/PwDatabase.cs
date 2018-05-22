@@ -607,9 +607,8 @@ namespace ModernKeePassLib
 			m_bDatabaseOpened = true;
 			m_bModified = true;
 
-			m_pgRootGroup = new PwGroup(true, true,
-				UrlUtil.StripExtension(UrlUtil.GetFileName(ioConnection.Path)),
-				PwIcon.FolderOpen);
+			m_pgRootGroup = new PwGroup(true, true, UrlUtil.StripExtension(
+				UrlUtil.GetFileName(ioConnection.Path)), PwIcon.FolderOpen);
 			m_pgRootGroup.IsExpanded = true;
 		}
 
@@ -636,15 +635,15 @@ namespace ModernKeePassLib
 				m_pgRootGroup.IsExpanded = true;
 
 				m_pwUserKey = pwKey;
-
 				m_bModified = false;
 
 				KdbxFile kdbx = new KdbxFile(this);
 				kdbx.DetachBinaries = m_strDetachBins;
 
-				Stream s = IOConnection.OpenRead(ioSource);
-				kdbx.Load(s, KdbxFormat.Default, slLogger);
-				s.Dispose();
+				using(Stream s = IOConnection.OpenRead(ioSource))
+				{
+					kdbx.Load(s, KdbxFormat.Default, slLogger);
+				}
 
 				m_pbHashOfLastIO = kdbx.HashOfFileOnDisk;
 				m_pbHashOfFileOnDisk = kdbx.HashOfFileOnDisk;
@@ -673,17 +672,21 @@ namespace ModernKeePassLib
 			if(m_bUseFileLocks) fl = new FileLock(m_ioSource);
 			try
 			{
-				FileTransactionEx ft = new FileTransactionEx(m_ioSource,
-					m_bUseFileTransactions);
-				Stream s = ft.OpenWrite();
+				KdbxFile kdbx = new KdbxFile(this);
 
-				KdbxFile kdb = new KdbxFile(this);
-				kdb.Save(s, null, KdbxFormat.Default, slLogger);
+				using(FileTransactionEx ft = new FileTransactionEx(m_ioSource,
+					m_bUseFileTransactions))
+				{
+					using(Stream s = ft.OpenWrite())
+					{
+						kdbx.Save(s, null, KdbxFormat.Default, slLogger);
+					}
 
-				ft.CommitWrite();
+					ft.CommitWrite();
+				}
 
-				m_pbHashOfLastIO = kdb.HashOfFileOnDisk;
-				m_pbHashOfFileOnDisk = kdb.HashOfFileOnDisk;
+				m_pbHashOfLastIO = kdbx.HashOfFileOnDisk;
+				m_pbHashOfFileOnDisk = kdbx.HashOfFileOnDisk;
 				Debug.Assert(m_pbHashOfFileOnDisk != null);
 			}
 			finally { if(fl != null) fl.Dispose(); }
@@ -1856,10 +1859,7 @@ namespace ModernKeePassLib
 					using(Stream sOut = IOConnection.OpenWrite(iocBk))
 					{
 						MemUtil.CopyStream(sIn, sOut);
-						sOut.Close();
 					}
-
-					sIn.Close();
 				}
 			}
 
@@ -1969,7 +1969,7 @@ namespace ModernKeePassLib
 				if(psB == null) return false;
 
 				// Ignore protection setting, compare values only
-				if(!kvpA.Value.ReadString().Equals(psB.ReadString())) return false;
+				if(!psB.Equals(kvpA.Value, false)) return false;
 			}
 
 			foreach(KeyValuePair<string, ProtectedString> kvpB in b.Strings)
@@ -1980,22 +1980,18 @@ namespace ModernKeePassLib
 				if(psA == null) return false;
 
 				// Must be equal by logic
-				Debug.Assert(kvpB.Value.ReadString().Equals(psA.ReadString()));
+				Debug.Assert(psA.Equals(kvpB.Value, false));
 			}
 
 			if(a.Binaries.UCount != b.Binaries.UCount) return false;
 			foreach(KeyValuePair<string, ProtectedBinary> kvpBin in a.Binaries)
 			{
+				ProtectedBinary pbA = kvpBin.Value;
 				ProtectedBinary pbB = b.Binaries.Get(kvpBin.Key);
 				if(pbB == null) return false;
 
 				// Ignore protection setting, compare values only
-				byte[] pbDataA = kvpBin.Value.ReadData();
-				byte[] pbDataB = pbB.ReadData();
-				bool bBinEq = MemUtil.ArraysEqual(pbDataA, pbDataB);
-				MemUtil.ZeroByteArray(pbDataA);
-				MemUtil.ZeroByteArray(pbDataB);
-				if(!bBinEq) return false;
+				if(!pbB.Equals(pbA, false)) return false;
 			}
 
 			return true;

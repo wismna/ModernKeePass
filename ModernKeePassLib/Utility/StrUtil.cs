@@ -227,7 +227,7 @@ namespace ModernKeePassLib.Utility
 					"Unicode (UTF-8)", StrUtil.Utf8, 1, new byte[] { 0xEF, 0xBB, 0xBF }));
 #else
 #if !KeePassLibSD
-                    Encoding.Default.EncodingName,
+					Encoding.Default.EncodingName,
 #else
 					Encoding.Default.WebName,
 #endif
@@ -301,6 +301,28 @@ namespace ModernKeePassLib.Utility
 			return ("\\u" + sh.ToString(NumberFormatInfo.InvariantInfo) + "?");
 		}
 
+		public static string RtfFix(string strRtf)
+		{
+			if(strRtf == null) { Debug.Assert(false); return string.Empty; }
+
+			string str = strRtf;
+
+			// Workaround for .NET bug: the Rtf property of a RichTextBox
+			// can return an RTF text starting with "{\\urtf", but
+			// setting such an RTF text throws an exception (the setter
+			// checks for the RTF text to start with "{\\rtf");
+			// https://sourceforge.net/p/keepass/discussion/329221/thread/7788872f/
+			// https://www.microsoft.com/en-us/download/details.aspx?id=10725
+			// https://msdn.microsoft.com/en-us/library/windows/desktop/bb774284.aspx
+			// https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/RichTextBox.cs
+			const string p = "{\\urtf"; // Typically "{\\urtf1\\ansi\\ansicpg65001"
+			if(str.StartsWith(p) && (str.Length > p.Length) &&
+				char.IsDigit(str[p.Length]))
+				str = str.Remove(2, 1); // Remove the 'u'
+
+			return str;
+		}
+
 		/// <summary>
 		/// Convert a string to a HTML sequence representing that string.
 		/// </summary>
@@ -324,7 +346,7 @@ namespace ModernKeePassLib.Utility
 			if(bNbsp) str = str.Replace(" ", @"&nbsp;"); // Before <br />
 
 			str = NormalizeNewLines(str, false);
-			str = str.Replace("\n", @"<br />" + Environment.NewLine);
+			str = str.Replace("\n", @"<br />" + MessageService.NewLine);
 
 			return str;
 		}
@@ -497,40 +519,40 @@ namespace ModernKeePassLib.Utility
 		{
 			string strText = string.Empty;
 			
-			if(excp.Message != null)
-				strText += excp.Message + Environment.NewLine;
+			if(!string.IsNullOrEmpty(excp.Message))
+				strText += excp.Message + MessageService.NewLine;
 #if !KeePassLibSD
-			if(excp.Source != null)
-				strText += excp.Source + Environment.NewLine;
+			if(!string.IsNullOrEmpty(excp.Source))
+				strText += excp.Source + MessageService.NewLine;
 #endif
-			if(excp.StackTrace != null)
-				strText += excp.StackTrace + Environment.NewLine;
+			if(!string.IsNullOrEmpty(excp.StackTrace))
+				strText += excp.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
 #if !ModernKeePassLib && !KeePassRT
 			if(excp.TargetSite != null)
-				strText += excp.TargetSite.ToString() + Environment.NewLine;
+				strText += excp.TargetSite.ToString() + MessageService.NewLine;
 #endif
 
 			if(excp.Data != null)
 			{
-				strText += Environment.NewLine;
+				strText += MessageService.NewLine;
 				foreach(DictionaryEntry de in excp.Data)
 					strText += @"'" + de.Key + @"' -> '" + de.Value + @"'" +
-						Environment.NewLine;
+						MessageService.NewLine;
 			}
 #endif
 
 			if(excp.InnerException != null)
 			{
-				strText += Environment.NewLine + "Inner:" + Environment.NewLine;
-				if(excp.InnerException.Message != null)
-					strText += excp.InnerException.Message + Environment.NewLine;
+				strText += MessageService.NewLine + "Inner:" + MessageService.NewLine;
+				if(!string.IsNullOrEmpty(excp.InnerException.Message))
+					strText += excp.InnerException.Message + MessageService.NewLine;
 #if !KeePassLibSD
-				if(excp.InnerException.Source != null)
-					strText += excp.InnerException.Source + Environment.NewLine;
+				if(!string.IsNullOrEmpty(excp.InnerException.Source))
+					strText += excp.InnerException.Source + MessageService.NewLine;
 #endif
-				if(excp.InnerException.StackTrace != null)
-					strText += excp.InnerException.StackTrace + Environment.NewLine;
+				if(!string.IsNullOrEmpty(excp.InnerException.StackTrace))
+					strText += excp.InnerException.StackTrace + MessageService.NewLine;
 #if !KeePassLibSD
 #if !ModernKeePassLib && !KeePassRT
 				if(excp.InnerException.TargetSite != null)
@@ -539,10 +561,10 @@ namespace ModernKeePassLib.Utility
 
 				if(excp.InnerException.Data != null)
 				{
-					strText += Environment.NewLine;
+					strText += MessageService.NewLine;
 					foreach(DictionaryEntry de in excp.InnerException.Data)
 						strText += @"'" + de.Key + @"' -> '" + de.Value + @"'" +
-							Environment.NewLine;
+							MessageService.NewLine;
 				}
 #endif
 			}
@@ -1140,32 +1162,58 @@ namespace ModernKeePassLib.Utility
 			return str;
 		}
 
-		private static char[] m_vNewLineChars = null;
 		public static void NormalizeNewLines(ProtectedStringDictionary dict,
 			bool bWindows)
 		{
 			if(dict == null) { Debug.Assert(false); return; }
 
-			if(m_vNewLineChars == null)
-				m_vNewLineChars = new char[]{ '\r', '\n' };
-
-			List<string> vKeys = dict.GetKeys();
-			foreach(string strKey in vKeys)
+			List<string> lKeys = dict.GetKeys();
+			foreach(string strKey in lKeys)
 			{
 				ProtectedString ps = dict.Get(strKey);
 				if(ps == null) { Debug.Assert(false); continue; }
 
-				string strValue = ps.ReadString();
-				if(strValue.IndexOfAny(m_vNewLineChars) < 0) continue;
-
-				dict.Set(strKey, new ProtectedString(ps.IsProtected,
-					NormalizeNewLines(strValue, bWindows)));
+				char[] v = ps.ReadChars();
+				if(!IsNewLineNormalized(v, bWindows))
+					dict.Set(strKey, new ProtectedString(ps.IsProtected,
+						NormalizeNewLines(ps.ReadString(), bWindows)));
+				MemUtil.ZeroArray<char>(v);
 			}
+		}
+
+		internal static bool IsNewLineNormalized(char[] v, bool bWindows)
+		{
+			if(v == null) { Debug.Assert(false); return true; }
+
+			if(bWindows)
+			{
+				int iFreeCr = -2; // Must be < -1 (for test "!= (i - 1)")
+
+				for(int i = 0; i < v.Length; ++i)
+				{
+					char ch = v[i];
+
+					if(ch == '\r')
+					{
+						if(iFreeCr >= 0) return false;
+						iFreeCr = i;
+					}
+					else if(ch == '\n')
+					{
+						if(iFreeCr != (i - 1)) return false;
+						iFreeCr = -2; // Consume \r
+					}
+				}
+
+				return (iFreeCr < 0); // Ensure no \r at end
+			}
+
+			return (Array.IndexOf<char>(v, '\r') < 0);
 		}
 
 		public static string GetNewLineSeq(string str)
 		{
-			if(str == null) { Debug.Assert(false); return Environment.NewLine; }
+			if(str == null) { Debug.Assert(false); return MessageService.NewLine; }
 
 			int n = str.Length, nLf = 0, nCr = 0, nCrLf = 0;
 			char chLast = char.MinValue;
@@ -1187,7 +1235,7 @@ namespace ModernKeePassLib.Utility
 			nLf -= nCrLf;
 
 			int nMax = Math.Max(nCrLf, Math.Max(nCr, nLf));
-			if(nMax == 0) return Environment.NewLine;
+			if(nMax == 0) return MessageService.NewLine;
 
 			if(nCrLf == nMax) return "\r\n";
 			return ((nLf == nMax) ? "\n" : "\r");
@@ -1319,7 +1367,7 @@ namespace ModernKeePassLib.Utility
 			try
 			{
 				byte[] pbPlain = StrUtil.Utf8.GetBytes(strPlainText);
-				byte[] pbEnc = ProtectedData.Protect(pbPlain, m_pbOptEnt,
+				byte[] pbEnc = CryptoUtil.ProtectData(pbPlain, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
 #if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
@@ -1340,7 +1388,7 @@ namespace ModernKeePassLib.Utility
 			try
 			{
 				byte[] pbEnc = Convert.FromBase64String(strCipherText);
-				byte[] pbPlain = ProtectedData.Unprotect(pbEnc, m_pbOptEnt,
+				byte[] pbPlain = CryptoUtil.UnprotectData(pbEnc, m_pbOptEnt,
 					DataProtectionScope.CurrentUser);
 
 				return StrUtil.Utf8.GetString(pbPlain, 0, pbPlain.Length);

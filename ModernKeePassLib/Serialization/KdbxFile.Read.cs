@@ -530,7 +530,7 @@ namespace ModernKeePassLib.Serialization
 			/* KdbxFile f = new KdbxFile(pwDatabase);
 			f.m_format = KdbxFormat.PlainXml;
 
-			XmlDocument doc = new XmlDocument();
+			XmlDocument doc = XmlUtilEx.CreateXmlDocument();
 			doc.Load(msData);
 
 			XmlElement el = doc.DocumentElement;

@@ -299,7 +299,7 @@ namespace ModernKeePassLib.Utility
 				else // Unhide
 				{
 					fa &= ~FileAttributes.Hidden;
-					if((long)fa == 0) fa |= FileAttributes.Normal;
+					if((long)fa == 0) fa = FileAttributes.Normal;
 				}
 
 				File.SetAttributes(strFile, fa);
@@ -635,13 +635,12 @@ namespace ModernKeePassLib.Utility
 			return false;
 		}
 
-#if !ModernKeePassLib
 		public static string GetTempPath()
 		{
 			string strDir;
 			if(NativeLib.IsUnix())
 				strDir = NativeMethods.GetUserRuntimeDir();
-#if KeePassRT
+#if ModernKeePassLib
 			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 #else
 			else strDir = Path.GetTempPath();
@@ -655,7 +654,6 @@ namespace ModernKeePassLib.Utility
 
 			return strDir;
 		}
-#endif
 
 #if !ModernKeePassLib && !KeePassLibSD
 		// Structurally mostly equivalent to UrlUtil.GetFileInfos
@@ -778,6 +776,18 @@ namespace ModernKeePassLib.Utility
 			}
 
 			return str;
+		}
+
+		public static char GetDriveLetter(string strPath)
+		{
+			if(strPath == null) throw new ArgumentNullException("strPath");
+
+			Debug.Assert(default(char) == '\0');
+			if(strPath.Length < 3) return '\0';
+			if((strPath[1] != ':') || (strPath[2] != '\\')) return '\0';
+
+			char ch = char.ToUpperInvariant(strPath[0]);
+			return (((ch >= 'A') && (ch <= 'Z')) ? ch : '\0');
 		}
 	}
 }

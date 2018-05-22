@@ -65,11 +65,8 @@ namespace ModernKeePassLib.Keys
 		/// </summary>
 		public KcpUserAccount()
 		{
-			// Test if ProtectedData is supported -- throws an exception
-			// when running on an old system (Windows 98 / ME).
-			byte[] pbDummyData = new byte[128];
-			ProtectedData.Protect(pbDummyData, m_pbEntropy,
-				DataProtectionScope.CurrentUser);
+			if(!CryptoUtil.IsProtectedDataSupported)
+				throw new PlatformNotSupportedException(); // Windows 98/ME
 
 			byte[] pbKey = LoadUserKey(false);
 			if(pbKey == null) pbKey = CreateUserKey();
@@ -88,17 +85,17 @@ namespace ModernKeePassLib.Keys
 		//	m_pbKeyData = null;
 		// }
 
-        private static string GetUserKeyFilePath(bool bCreate)
-        {
+		private static string GetUserKeyFilePath(bool bCreate)
+		{
 #if ModernKeePassLib
-            string strUserDir = Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
+			string strUserDir = Windows.Storage.ApplicationData.Current.RoamingFolder.Path;
 #else
 			string strUserDir = Environment.GetFolderPath(
 				Environment.SpecialFolder.ApplicationData);
 #endif
 
-            strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
-            strUserDir += PwDefs.ShortProductName;
+			strUserDir = UrlUtil.EnsureTerminatingSeparator(strUserDir, false);
+			strUserDir += PwDefs.ShortProductName;
 
 #if !ModernKeePassLib
 
@@ -115,9 +112,9 @@ namespace ModernKeePassLib.Keys
 			byte[] pbKey = null;
 
 #if !KeePassLibSD
-		    try
-		    {
-		        string strFilePath = GetUserKeyFilePath(false);
+			try
+			{
+				string strFilePath = GetUserKeyFilePath(false);
 
 #if ModernKeePassLib
                 var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForReadAsync().GetAwaiter().GetResult();
@@ -128,7 +125,7 @@ namespace ModernKeePassLib.Keys
 				byte[] pbProtectedKey = File.ReadAllBytes(strFilePath);
 #endif
 
-				pbKey = ProtectedData.Unprotect(pbProtectedKey, m_pbEntropy,
+				pbKey = CryptoUtil.UnprotectData(pbProtectedKey, m_pbEntropy,
 					DataProtectionScope.CurrentUser);
 			}
 			catch(Exception)
@@ -138,7 +135,7 @@ namespace ModernKeePassLib.Keys
 			}
 #endif
 
-            return pbKey;
+			return pbKey;
 		}
 
 		private static byte[] CreateUserKey()
@@ -148,9 +145,9 @@ namespace ModernKeePassLib.Keys
 #else
 			string strFilePath = GetUserKeyFilePath(true);
 
-            byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
-            byte[] pbProtectedKey = ProtectedData.Protect(pbRandomKey,
-                m_pbEntropy, DataProtectionScope.CurrentUser);
+			byte[] pbRandomKey = CryptoRandom.Instance.GetRandomBytes(64);
+			byte[] pbProtectedKey = CryptoUtil.ProtectData(pbRandomKey,
+				m_pbEntropy, DataProtectionScope.CurrentUser);
 #if ModernKeePassLib
             var fileStream = StorageFile.GetFileFromPathAsync(strFilePath).GetAwaiter().GetResult().OpenStreamForWriteAsync().GetAwaiter().GetResult();
             fileStream.Write(pbProtectedKey, 0, (int)fileStream.Length);

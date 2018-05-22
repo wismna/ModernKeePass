@@ -87,6 +87,7 @@ namespace ModernKeePassLib.Serialization
 
 			m_format = fmt;
 			m_slLogger = slLogger;
+			m_xmlWriter = null;
 
 			PwGroup pgRoot = (pgDataSource ?? m_pwDatabase.RootGroup);
 			UTF8Encoding encNoBom = StrUtil.Utf8;
@@ -203,44 +204,25 @@ namespace ModernKeePassLib.Serialization
 					throw new ArgumentOutOfRangeException("fmt");
 				}
 
-#if ModernKeePassLib || KeePassUAP
-				XmlWriterSettings xws = new XmlWriterSettings();
-				xws.Encoding = encNoBom;
-				xws.Indent = true;
-				xws.IndentChars = "\t";
-				xws.NewLineOnAttributes = false;
-#if ModernKeePassLib
-                // This is needed for Argon2Kdf write
-                xws.Async = true;
-			    if (m_uFileVersion >= FileVersion32_4) xws.CloseOutput = true;
-#endif
-
-				XmlWriter xw = XmlWriter.Create(sXml, xws);
-#else
-				XmlTextWriter xw = new XmlTextWriter(sXml, encNoBom);
-
-				xw.Formatting = Formatting.Indented;
-				xw.IndentChar = '\t';
-				xw.Indentation = 1;
-#endif
-				m_xmlWriter = xw;
+				m_xmlWriter = XmlUtilEx.CreateXmlWriter(sXml, m_uFileVersion >= FileVersion32_4);
 
 				WriteDocument(pgRoot);
 
 				m_xmlWriter.Flush();
-				m_xmlWriter.Dispose();
 			}
 			finally
 			{
+				CommonCleanUpWrite(lStreams, sHashing);
+
 				if(pbCipherKey != null) MemUtil.ZeroByteArray(pbCipherKey);
 				if(pbHmacKey64 != null) MemUtil.ZeroByteArray(pbHmacKey64);
-
-				CommonCleanUpWrite(lStreams, sHashing);
 			}
 		}
 
 		private void CommonCleanUpWrite(List<Stream> lStreams, HashingStreamEx sHashing)
 		{
+			if(m_xmlWriter != null) { m_xmlWriter.Dispose(); m_xmlWriter = null; }
+
 			CloseStreams(lStreams);
 
 			Debug.Assert(lStreams.Contains(sHashing)); // sHashing must be closed
@@ -249,7 +231,6 @@ namespace ModernKeePassLib.Serialization
 
 			CleanUpInnerRandomStream();
 
-			m_xmlWriter = null;
 			m_pbHashOfHeader = null;
 		}
 

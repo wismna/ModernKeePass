@@ -403,8 +403,8 @@ namespace ModernKeePassLib.Serialization
 			ICipherEngine iCipher = CipherPool.GlobalPool.GetCipher(pu);
 			if(iCipher == null) // CryptographicExceptions are translated to "file corrupted"
 				throw new Exception(KLRes.FileUnknownCipher +
-					Environment.NewLine + KLRes.FileNewVerOrPlgReq +
-					Environment.NewLine + "UUID: " + pu.ToHexString() + ".");
+					MessageService.NewParagraph + KLRes.FileNewVerOrPlgReq +
+					MessageService.NewParagraph + "UUID: " + pu.ToHexString() + ".");
 
 			ICipherEngine2 iCipher2 = (iCipher as ICipherEngine2);
 			if(iCipher2 != null)
@@ -469,14 +469,14 @@ namespace ModernKeePassLib.Serialization
 				Debug.Assert((lStreams.IndexOf(lStreams[i]) == i) &&
 					(lStreams.LastIndexOf(lStreams[i]) == i));
 
-			    try { lStreams[i].Dispose(); }
-                // Unnecessary exception from CryptoStream with
-                // RijndaelManagedTransform when a stream hasn't been
-                // read completely (e.g. incorrect master key)
+				try { lStreams[i].Dispose(); }
+				// Unnecessary exception from CryptoStream with
+				// RijndaelManagedTransform when a stream hasn't been
+				// read completely (e.g. incorrect master key)
 #if !ModernKeePassLib
-                catch(CryptographicException) { }
+				catch(CryptographicException) { }
 #endif
-			    catch (Exception) { Debug.Assert(false); }
+				catch(Exception) { Debug.Assert(false); }
 			}
 
 			// Do not clear the list
@@ -539,8 +539,8 @@ namespace ModernKeePassLib.Serialization
 			FileStream fs = new FileStream(strPath, FileMode.Create,
 				FileAccess.Write, FileShare.None);
 			byte[] pbData = pb.ReadData();
-			fs.Write(pbData, 0, pbData.Length);
-			fs.Close();
+			try { File.WriteAllBytes(strPath, pbData); }
+			finally { if(pb.IsProtected) MemUtil.ZeroByteArray(pbData); }
 #endif
 		}
 	}

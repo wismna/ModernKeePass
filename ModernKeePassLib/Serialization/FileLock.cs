@@ -129,9 +129,12 @@ namespace ModernKeePassLib.Serialization
 				{
 					s = IOConnection.OpenRead(iocLockFile);
 					if(s == null) return null;
-					StreamReader sr = new StreamReader(s, StrUtil.Utf8);
-					string str = sr.ReadToEnd();
-					sr.Dispose();
+
+					string str = null;
+					using(StreamReader sr = new StreamReader(s, StrUtil.Utf8))
+					{
+						str = sr.ReadToEnd();
+					}
 					if(str == null) { Debug.Assert(false); return null; }
 
 					str = StrUtil.NormalizeNewLines(str, false);

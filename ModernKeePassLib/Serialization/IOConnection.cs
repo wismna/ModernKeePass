@@ -431,7 +431,7 @@ namespace ModernKeePassLib.Serialization
 					string strInfo = m_strProxyAddr;
 					if(m_strProxyPort.Length > 0)
 						strInfo += ":" + m_strProxyPort;
-					MessageService.ShowWarning(strInfo, ex.Message);
+					MessageService.ShowWarning(strInfo, ex);
 				}
 #endif
 
@@ -642,7 +642,7 @@ namespace ModernKeePassLib.Serialization
 #endif
 		}
 
-        public static bool FileExists(IOConnectionInfo ioc)
+		public static bool FileExists(IOConnectionInfo ioc)
 		{
 			return FileExists(ioc, false);
 		}

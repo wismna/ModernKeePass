@@ -111,11 +111,9 @@
     <Compile Include="Actions\ClipboardAction.cs" />
     <Compile Include="Actions\NavigateToUrlAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
-    <Compile Include="Aop\DatabaseChangedProxy.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Aop\DatabaseChanged.cs" />
     <Compile Include="Exceptions\DatabaseOpenedException.cs" />
     <Compile Include="Interfaces\ILicenseService.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />

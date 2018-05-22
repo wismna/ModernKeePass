@@ -130,6 +130,8 @@
     <Compile Include="Serialization\IOConnectionInfo.cs" />
     <Compile Include="Serialization\OldFormatException.cs" />
     <Compile Include="Utility\AppLogEx.cs" />
+    <Compile Include="Utility\TypeOverridePool.cs" />
+    <Compile Include="Utility\XmlUtilEx.cs" />
     <None Include="Utility\GfxUtil.cs" />
     <Compile Include="Utility\GfxUtil.PCL.cs" />
     <Compile Include="Utility\MemUtil.cs" />
@@ -149,7 +151,7 @@
     <None Include="Libs\Windows.winmd" />
     <None Include="ModernKeePassLib.nuspec" />
     <None Include="project.json" />
-    <None Include="Utility\MessageService.cs" />
+    <Compile Include="Utility\MessageService.cs" />
     <None Include="Native\NativeLib.cs" />
     <None Include="Native\NativeMethods.cs" />
     <None Include="Native\NativeMethods.Unix.cs" />
