@@ -52,7 +52,12 @@ namespace ModernKeePassLib.Native
         {
             throw new NotImplementedException();
         }
-    }
+
+	    public static string GetUserRuntimeDir()
+	    {
+	        throw new NotImplementedException();
+	    }
+	}
 
 	public enum DataProtectionScope
 	{

@@ -32,12 +32,15 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsEnabled="{Binding HasPassword}" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
+        <CheckBox x:Name="PasswordCheckBox" Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
             <interactivity:Interaction.Behaviors>
-                <core:DataTriggerBehavior Binding="{Binding HasPassword}" Value="True">
+                <core:EventTriggerBehavior EventName="GotFocus">
+                    <core:ChangePropertyAction TargetObject="{Binding ElementName=PasswordCheckBox}" PropertyName="IsChecked" Value="True" />
+                </core:EventTriggerBehavior>
+                <!--<core:DataTriggerBehavior Binding="{Binding HasPassword}" Value="True">
                     <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
-                </core:DataTriggerBehavior>
+                </core:DataTriggerBehavior>-->
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
         <ProgressBar Grid.Row="0" Grid.Column="1" 

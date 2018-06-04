@@ -641,10 +641,9 @@ namespace ModernKeePassLib.Utility
 			if(NativeLib.IsUnix())
 				strDir = NativeMethods.GetUserRuntimeDir();
 #if ModernKeePassLib
-			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
+			else strDir = ApplicationData.Current.TemporaryFolder.Path;
 #else
 			else strDir = Path.GetTempPath();
-#endif
 
 			try
 			{
@@ -652,6 +651,7 @@ namespace ModernKeePassLib.Utility
 			}
 			catch(Exception) { Debug.Assert(false); }
 
+#endif
 			return strDir;
 		}
 

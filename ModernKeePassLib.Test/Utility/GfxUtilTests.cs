@@ -4,7 +4,7 @@ using ModernKeePassLib.Utility;
 
 namespace ModernKeePassLib.Test.Utility
 {
-    [TestClass ()]
+    [TestClass]
     public class GfxUtilTests
     {
         // 16x16 all white PNG file, base64 encoded
@@ -18,7 +18,7 @@ namespace ModernKeePassLib.Test.Utility
         public void TestLoadImage ()
         {
             var testData = Convert.FromBase64String (testImageData);
-            var image = GfxUtil.ScaleImage(testData, 16, 16).GetAwaiter().GetResult();
+            var image = GfxUtil.ScaleImage(testData, 16, 16);
             //var image = GfxUtil.LoadImage(testData);
             Assert.AreEqual(image.Width, 16);
             Assert.AreEqual(image.Height, 16);

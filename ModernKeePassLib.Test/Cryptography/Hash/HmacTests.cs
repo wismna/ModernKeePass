@@ -99,7 +99,7 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
             using (var h = new HMACSHA256(pbKey))
             {
                 h.TransformBlock(pbMsg, 0, pbMsg.Length, pbMsg, 0);
-                h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+                h.TransformFinalBlock(new byte[0], 0, 0);
 
                 byte[] pbHash = h.Hash;
                 Assert.IsTrue(MemUtil.ArraysEqual(pbHash, pbExpc));
@@ -107,7 +107,7 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
                 // Reuse the object
                 h.Initialize();
                 h.TransformBlock(pbMsg, 0, pbMsg.Length, pbMsg, 0);
-                h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+                h.TransformFinalBlock(new byte[0], 0, 0);
 
                 pbHash = h.Hash;
                 Assert.IsTrue(MemUtil.ArraysEqual(pbHash, pbExpc));

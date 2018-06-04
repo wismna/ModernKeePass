@@ -80,7 +80,8 @@ namespace ModernKeePassLib.Serialization
 
 			string strPath = m_iocBase.Path;
 
-			if(m_iocBase.IsLocalFile())
+#if !ModernKeePassLib
+            if(m_iocBase.IsLocalFile())
 			{
 				try
 				{
@@ -112,6 +113,7 @@ namespace ModernKeePassLib.Serialization
 				}
 				catch(Exception) { Debug.Assert(false); }
 			}
+#endif
 
 #if !ModernKeePassLib
 			// Prevent transactions for FTP URLs under .NET 4.0 in order to
@@ -210,9 +212,9 @@ namespace ModernKeePassLib.Serialization
 			// UnauthorizedAccessException; thus we restore 'Access' (DACL) only
 			const AccessControlSections acs = AccessControlSections.Access;
 
+#endif
 			bool bEfsEncrypted = false;
 			byte[] pbSec = null;
-#endif
 			DateTime? otCreation = null;
 
 			bool bBaseExists = IOConnection.FileExists(m_iocBase);
@@ -227,7 +229,11 @@ namespace ModernKeePassLib.Serialization
 					try { if(bEfsEncrypted) File.Decrypt(m_iocBase.Path); } // For TxF
 					catch(Exception) { Debug.Assert(false); }
 #endif
-					otCreation = File.GetCreationTimeUtc(m_iocBase.Path);
+#if ModernKeePassLib
+				    otCreation = m_iocBase.StorageFile.DateCreated.UtcDateTime;
+#else
+                    otCreation = File.GetCreationTimeUtc(m_iocBase.Path);
+#endif
 #if !ModernKeePassLib
 					// May throw with Mono
 					FileSecurity sec = File.GetAccessControl(m_iocBase.Path, acs);
@@ -249,12 +255,14 @@ namespace ModernKeePassLib.Serialization
 
 			try
 			{
-				// If File.GetCreationTimeUtc fails, it may return a
-				// date with year 1601, and Unix times start in 1970,
-				// so testing for 1971 should ensure validity;
-				// https://msdn.microsoft.com/en-us/library/system.io.file.getcreationtimeutc.aspx
+                // If File.GetCreationTimeUtc fails, it may return a
+                // date with year 1601, and Unix times start in 1970,
+                // so testing for 1971 should ensure validity;
+                // https://msdn.microsoft.com/en-us/library/system.io.file.getcreationtimeutc.aspx
+#if !ModernKeePassLib
 				if(otCreation.HasValue && (otCreation.Value.Year >= 1971))
-					File.SetCreationTimeUtc(m_iocBase.Path, otCreation.Value);
+                    File.SetCreationTimeUtc(m_iocBase.Path, otCreation.Value);
+#endif
 
 #if !ModernKeePassLib
 				if(bEfsEncrypted)
@@ -277,8 +285,8 @@ namespace ModernKeePassLib.Serialization
 					File.SetAccessControl(m_iocBase.Path, sec);
 				}
 #endif
-			}
-			catch(Exception) { Debug.Assert(false); }
+            }
+            catch (Exception) { Debug.Assert(false); }
 
 			if(bMadeUnhidden) UrlUtil.HideFile(m_iocBase.Path, true);
 		}
@@ -297,8 +305,10 @@ namespace ModernKeePassLib.Serialization
 		{
 			if(chDriveLetter == '\0') return false;
 
-#if !ModernKeePassLib
-			try
+#if ModernKeePassLib
+		    return true;
+#else
+            try
 			{
 				string strRoot = (new string(chDriveLetter, 1)) + ":\\";
 
@@ -317,8 +327,8 @@ namespace ModernKeePassLib.Serialization
 				return ((uFlags & NativeMethods.FILE_SUPPORTS_TRANSACTIONS) != 0);
 			}
 			catch(Exception) { Debug.Assert(false); }
-#endif
 			return false;
+#endif
 		}
 
 		private void TxfPrepare()
@@ -341,24 +351,33 @@ namespace ModernKeePassLib.Serialization
 				if((chT != chB) && !TxfIsSupported(chT)) return;
 
 				m_iocTxfMidFallback = m_iocTemp;
-				m_iocTemp = IOConnectionInfo.FromPath(strTemp);
+#if ModernKeePassLib
+                var tempFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync(m_iocTemp.Path).GetAwaiter()
+                    .GetResult();
+			    m_iocTemp = IOConnectionInfo.FromFile(tempFile);
+#else
+                m_iocTemp = IOConnectionInfo.FromPath(strTemp);
+#endif
 
-				m_lToDelete.Add(m_iocTemp);
+                m_lToDelete.Add(m_iocTemp);
 			}
 			catch(Exception) { Debug.Assert(false); m_iocTxfMidFallback = null; }
 		}
 
-#if !ModernKeePassLib
         private bool TxfMove()
 		{
 			if(m_iocTxfMidFallback == null) return false;
 
 			if(TxfMoveWithTx()) return true;
 
-			// Move the temporary file onto the base file's drive first,
-			// such that it cannot happen that both the base file and
-			// the temporary file are deleted/corrupted
-			const uint f = (NativeMethods.MOVEFILE_COPY_ALLOWED |
+            // Move the temporary file onto the base file's drive first,
+            // such that it cannot happen that both the base file and
+            // the temporary file are deleted/corrupted
+#if ModernKeePassLib
+		    m_iocTemp.StorageFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync(m_iocTemp.Path).GetAwaiter()
+		        .GetResult();
+#else
+            const uint f = (NativeMethods.MOVEFILE_COPY_ALLOWED |
 				NativeMethods.MOVEFILE_REPLACE_EXISTING);
 			bool b = NativeMethods.MoveFileEx(m_iocTemp.Path, m_iocTxfMidFallback.Path, f);
 			if(b) b = NativeMethods.MoveFileEx(m_iocTxfMidFallback.Path, m_iocBase.Path, f);
@@ -366,12 +385,16 @@ namespace ModernKeePassLib.Serialization
 
 			Debug.Assert(!File.Exists(m_iocTemp.Path));
 			Debug.Assert(!File.Exists(m_iocTxfMidFallback.Path));
+#endif
 			return true;
 		}
 
 		private bool TxfMoveWithTx()
 		{
-			IntPtr hTx = new IntPtr((int)NativeMethods.INVALID_HANDLE_VALUE);
+#if ModernKeePassLib
+		    return true;
+#else
+            IntPtr hTx = new IntPtr((int)NativeMethods.INVALID_HANDLE_VALUE);
 			Debug.Assert(hTx.ToInt64() == NativeMethods.INVALID_HANDLE_VALUE);
 			try
 			{
@@ -415,16 +438,20 @@ namespace ModernKeePassLib.Serialization
 					catch(Exception) { Debug.Assert(false); }
 				}
 			}
-
 			return false;
-		}
+#endif
+        }
 
 		internal static void ClearOld()
 		{
 			try
 			{
-				// See also TxfPrepare method
-				DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
+#if ModernKeePassLib
+			    ApplicationData.Current.TemporaryFolder.GetFileAsync(UrlUtil.GetTempPath()).GetAwaiter()
+			        .GetResult().DeleteAsync().GetAwaiter().GetResult();
+#else
+// See also TxfPrepare method
+                DirectoryInfo di = new DirectoryInfo(UrlUtil.GetTempPath());
 				List<FileInfo> l = UrlUtil.GetFileInfos(di, StrTxfTempPrefix +
 					"*" + StrTxfTempSuffix, SearchOption.TopDirectoryOnly);
 
@@ -438,9 +465,9 @@ namespace ModernKeePassLib.Serialization
 					if((DateTime.UtcNow - fi.LastWriteTimeUtc).TotalDays > 1.0)
 						fi.Delete();
 				}
+#endif
 			}
 			catch(Exception) { Debug.Assert(false); }
 		}
-#endif
 	}
 }

@@ -54,7 +54,7 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
                 0xD5, 0x6F, 0x70, 0x1A, 0xFE, 0x9B, 0xE2, 0xCE
             };
 
-            var pbC = h.ComputeHash(MemUtil.EmptyByteArray);
+            var pbC = h.ComputeHash(new byte[0]);
             Assert.IsTrue(MemUtil.ArraysEqual(pbC, pbExpc));
         }
 
@@ -91,7 +91,7 @@ namespace ModernKeePassLib.Test.Cryptography.Hash
             }
             Assert.AreEqual(p, pbData.Length);
 
-            h.TransformFinalBlock(MemUtil.EmptyByteArray, 0, 0);
+            h.TransformFinalBlock(new byte[0], 0, 0);
 
             Assert.IsTrue(MemUtil.ArraysEqual(h.Hash, pbExpc));
 

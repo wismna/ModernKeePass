@@ -373,7 +373,7 @@
         </Style>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:EntryVm/>
+        <viewModels:EntryVm />
     </Page.DataContext>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">

@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Text;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Attributes;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
 using ModernKeePass.Services;
@@ -213,7 +212,6 @@ namespace ModernKeePass.ViewModels
             return _pwEntry?.Strings.GetSafe(key).ReadString();
         }
         
-        [DatabaseChanged]
         private void SetEntryValue(string key, string newValue)
         {
             _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
