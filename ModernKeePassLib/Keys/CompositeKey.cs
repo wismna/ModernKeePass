@@ -237,8 +237,8 @@ namespace ModernKeePassLib.Keys
 
 			KdfEngine kdf = KdfPool.Get(p.KdfUuid);
 			if(kdf == null) // CryptographicExceptions are translated to "file corrupted"
-				throw new Exception(KLRes.UnknownKdf + Environment.NewLine +
-					KLRes.FileNewVerOrPlgReq + Environment.NewLine +
+				throw new Exception(KLRes.UnknownKdf + MessageService.NewParagraph +
+					KLRes.FileNewVerOrPlgReq + MessageService.NewParagraph +
 					"UUID: " + p.KdfUuid.ToHexString() + ".");
 
 			byte[] pbTrf32 = kdf.Transform(pbRaw32, p);
@@ -280,7 +280,7 @@ namespace ModernKeePassLib.Keys
 		{
 			get
 			{
-				return KLRes.InvalidCompositeKey + Environment.NewLine +
+				return KLRes.InvalidCompositeKey + MessageService.NewParagraph +
 					KLRes.InvalidCompositeKeyHint;
 			}
 		}

@@ -316,6 +316,7 @@
                 </SemanticZoom.ZoomedInView>
                 <SemanticZoom.ZoomedOutView>
                     <ListView
+                        Height="Auto" Width="Auto"
                         ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
                         SelectionChanged="groups_SelectionChanged"
                         SelectionMode="None"

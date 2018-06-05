@@ -132,16 +132,15 @@ namespace ModernKeePass.ViewModels
             }
             catch (ArgumentException)
             {
-                var errorMessage = new StringBuilder(_resource.GetResourceValue("CompositeKeyErrorUserStart"));
-                if (HasPassword) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
-                if (HasPassword && HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserOr"));
-                if (HasKeyFile) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
-                if (HasUserAccount) errorMessage.Append(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
+                var errorMessage = new StringBuilder($"{_resource.GetResourceValue("CompositeKeyErrorOpen")}\n");
+                if (HasPassword) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
+                if (HasKeyFile) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
+                if (HasUserAccount) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserAccount"));
                 UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
             }
             catch (Exception e)
             {
-                var error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}: {e.Message}";
+                var error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}{e.Message}";
                 UpdateStatus(error, StatusTypes.Error);
             }
             finally

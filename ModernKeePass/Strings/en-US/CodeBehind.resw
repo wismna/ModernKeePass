@@ -121,19 +121,13 @@
     <value>Select key file from disk...</value>
   </data>
   <data name="CompositeKeyErrorOpen" xml:space="preserve">
-    <value>Error</value>
+    <value>Error: </value>
   </data>
   <data name="CompositeKeyErrorUserKeyFile" xml:space="preserve">
-    <value>key file</value>
-  </data>
-  <data name="CompositeKeyErrorUserOr" xml:space="preserve">
-    <value> or </value>
+    <value>- wrong key file</value>
   </data>
   <data name="CompositeKeyErrorUserPassword" xml:space="preserve">
-    <value>password</value>
-  </data>
-  <data name="CompositeKeyErrorUserStart" xml:space="preserve">
-    <value>Error: wrong </value>
+    <value>- password incorrect</value>
   </data>
   <data name="CompositeKeyOpening" xml:space="preserve">
     <value>Opening...</value>
@@ -265,12 +259,15 @@
     <value>Security</value>
   </data>
   <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
-    <value>user account</value>
+    <value>- user account</value>
   </data>
   <data name="SettingsMenuItemSave" xml:space="preserve">
     <value>Saving</value>
   </data>
   <data name="RecycleBinTitle" xml:space="preserve">
     <value>Recycle Bin</value>
+  </data>
+  <data name="String" xml:space="preserve">
+    <value>##</value>
   </data>
 </root>

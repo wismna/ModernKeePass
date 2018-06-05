@@ -121,19 +121,13 @@
     <value>Choisissez un fichier...</value>
   </data>
   <data name="CompositeKeyErrorOpen" xml:space="preserve">
-    <value>Erreur</value>
+    <value>Erreur: </value>
   </data>
   <data name="CompositeKeyErrorUserKeyFile" xml:space="preserve">
-    <value>fichier de clé</value>
-  </data>
-  <data name="CompositeKeyErrorUserOr" xml:space="preserve">
-    <value> ou </value>
+    <value>- mauvais fichier de clé</value>
   </data>
   <data name="CompositeKeyErrorUserPassword" xml:space="preserve">
-    <value>mot de passe</value>
-  </data>
-  <data name="CompositeKeyErrorUserStart" xml:space="preserve">
-    <value>Erreur: mauvais </value>
+    <value>- mot de passe incorrect</value>
   </data>
   <data name="CompositeKeyOpening" xml:space="preserve">
     <value>Ouverture...</value>
@@ -265,7 +259,7 @@
     <value>Sécurité</value>
   </data>
   <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
-    <value>compte utilisateur</value>
+    <value>- compte utilisateur</value>
   </data>
   <data name="SettingsMenuItemSave" xml:space="preserve">
     <value>Sauvegardes</value>
