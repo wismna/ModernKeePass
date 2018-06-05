@@ -46,8 +46,7 @@ namespace ModernKeePass.ViewModels
         }
 
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
-            where !e.IsFirstItem
-            group e by e.Name.FirstOrDefault() into grp
+            group e by e.Name.ToUpper().FirstOrDefault() into grp
             orderby grp.Key
             select grp;
 

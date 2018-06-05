@@ -162,16 +162,16 @@
                 </ListView.ItemContainerStyle>
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                            <ToggleButton Style="{StaticResource HamburgerToggleButton}">
-                                <interactivity:Interaction.Behaviors>
-                                    <core:EventTriggerBehavior EventName="Checked">
-                                        <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
-                                    </core:EventTriggerBehavior>
-                                    <core:EventTriggerBehavior EventName="Unchecked">
-                                        <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
-                                    </core:EventTriggerBehavior>
-                                </interactivity:Interaction.Behaviors>
-                            </ToggleButton>
+                        <ToggleButton Style="{StaticResource HamburgerToggleButton}">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Checked">
+                                    <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
+                                </core:EventTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="Unchecked">
+                                    <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </ToggleButton>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
                 <ListView.FooterTemplate>
@@ -221,56 +221,56 @@
                         </interactivity:Interaction.Behaviors>
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Border Padding="30,30,0,0" >
-                                    <Grid Height="110" Width="480" x:Name="EntryGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}">
-                                            <SymbolIcon Symbol="{Binding IconSymbol}" Width="100" Height="100" RenderTransformOrigin="0.5,0.5">
-                                                <SymbolIcon.RenderTransform>
+                                <Grid Height="110" Width="480" x:Name="EntryGrid">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}">
+                                        <Viewbox MaxHeight="100" MaxWidth="100">
+                                            <SymbolIcon Symbol="{Binding IconSymbol}">
+                                                <!--<SymbolIcon.RenderTransform>
                                                     <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
-                                                </SymbolIcon.RenderTransform>
+                                                </SymbolIcon.RenderTransform>-->
                                             </SymbolIcon>
-                                        </Border>
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
-                                            <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
-                                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
-                                            <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                            <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                        </StackPanel>
-                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
-                                            <SymbolIcon Symbol="More" />
-                                            <Button.Flyout>
-                                                <MenuFlyout>
-                                                    <MenuFlyoutItem x:Uid="EntryItemCopyLogin">
-                                                        <interactivity:Interaction.Behaviors>
-                                                            <core:EventTriggerBehavior EventName="Click">
-                                                                <actions:ClipboardAction Text="{Binding UserName}" />
-                                                            </core:EventTriggerBehavior>
-                                                        </interactivity:Interaction.Behaviors>
-                                                    </MenuFlyoutItem>
-                                                    <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
-                                                        <interactivity:Interaction.Behaviors>
-                                                            <core:EventTriggerBehavior EventName="Click">
-                                                                <actions:ClipboardAction Text="{Binding Password}" />
-                                                            </core:EventTriggerBehavior>
-                                                        </interactivity:Interaction.Behaviors>
-                                                    </MenuFlyoutItem>
-                                                    <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
-                                                        <interactivity:Interaction.Behaviors>
-                                                            <core:EventTriggerBehavior EventName="Click">
-                                                                <actions:NavigateToUrlAction Url="{Binding Url}" />
-                                                            </core:EventTriggerBehavior>
-                                                        </interactivity:Interaction.Behaviors>
-                                                    </MenuFlyoutItem>
-                                                </MenuFlyout>
-                                            </Button.Flyout>
-                                        </Button>
-                                    </Grid>
-                                </Border>
+                                        </Viewbox>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
+                                        <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
+                                        <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                        <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                    </StackPanel>
+                                    <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
+                                        <SymbolIcon Symbol="More" />
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyLogin">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:ClipboardAction Text="{Binding UserName}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:ClipboardAction Text="{Binding Password}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
+                                                    <interactivity:Interaction.Behaviors>
+                                                        <core:EventTriggerBehavior EventName="Click">
+                                                            <actions:NavigateToUrlAction Url="{Binding Url}" />
+                                                        </core:EventTriggerBehavior>
+                                                    </interactivity:Interaction.Behaviors>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                         <GridView.ItemsSource>
@@ -279,9 +279,9 @@
                         <!--<GridView.DataContext>
                             <viewModels:EntryVm/>
                         </GridView.DataContext>-->
-                        <GridView.ItemContainerStyle>
+                        <!--<GridView.ItemContainerStyle>
                             <Style TargetType = "GridViewItem" >
-                                <Setter Property = "Template" >
+                                <Setter Property = "Template">
                                     <Setter.Value>
                                         <ControlTemplate TargetType = "GridViewItem" >
                                             <GridViewItemPresenter
@@ -307,20 +307,22 @@
                                         </ControlTemplate>
                                     </Setter.Value>
                                 </Setter>
+                            </Style>-->
+                            <!--<Style TargetType="FrameworkElement">
+                                <Setter Property="Margin" Value="52,52,0,2"/>
                             </Style>
-                        </GridView.ItemContainerStyle>
+                        </GridView.ItemContainerStyle>-->
                     </GridView>
                 </SemanticZoom.ZoomedInView>
-
                 <SemanticZoom.ZoomedOutView>
                     <ListView
                         ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
-                        IsSwipeEnabled="false" 
                         SelectionChanged="groups_SelectionChanged"
+                        SelectionMode="None"
                         IsSynchronizedWithCurrentItem="False">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" />
+                                <VirtualizingStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>

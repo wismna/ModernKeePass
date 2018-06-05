@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:ModernKeePass.Actions" 
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     mc:Ignorable="d" >
@@ -32,15 +31,12 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <CheckBox x:Name="PasswordCheckBox" Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Name="PasswordBox" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
+        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="GotFocus">
-                    <core:ChangePropertyAction TargetObject="{Binding ElementName=PasswordCheckBox}" PropertyName="IsChecked" Value="True" />
+                    <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="HasPassword" Value="True" />
                 </core:EventTriggerBehavior>
-                <!--<core:DataTriggerBehavior Binding="{Binding HasPassword}" Value="True">
-                    <actions:SetupFocusAction TargetObject="{Binding ElementName=PasswordBox}" />
-                </core:DataTriggerBehavior>-->
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
         <ProgressBar Grid.Row="0" Grid.Column="1" 
