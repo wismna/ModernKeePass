@@ -1,4 +1,2 @@
-L'application recupere correctement d'une suspension
-Ameliorations de code
-Retour de la page de donation, avec Paypal
-Version de la KeePassLib montee a 2.38
+Ameliorations de design
+Version de la KeePassLib passe a 2.39.1

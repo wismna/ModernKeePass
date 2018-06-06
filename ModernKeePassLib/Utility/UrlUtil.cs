@@ -327,10 +327,10 @@ namespace ModernKeePassLib.Utility
 					return strTargetFile;
 			}
 
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
+#if (!KeePassLibSD && !KeePassUAP && !ModernKeePassLib)
 			if(NativeLib.IsUnix())
-#endif
 			{
+#endif
 				bool bBaseUnc = IsUncPath(strBaseFile);
 				bool bTargetUnc = IsUncPath(strTargetFile);
 				if((!bBaseUnc && bTargetUnc) || (bBaseUnc && !bTargetUnc))
@@ -358,9 +358,9 @@ namespace ModernKeePassLib.Utility
 				}
 
 				return sbRel.ToString();
+#if (!KeePassLibSD && !KeePassUAP && !ModernKeePassLib)
 			}
 
-#if (!ModernKeePassLib && !KeePassLibSD && !KeePassRT)
 			try // Windows
 			{
 				const int nMaxPath = NativeMethods.MAX_PATH * 2;
@@ -453,16 +453,10 @@ namespace ModernKeePassLib.Utility
 			string str;
 			try
 			{
-#if KeePassRT
-				var dirT = Windows.Storage.StorageFolder.GetFolderFromPathAsync(
-					strPath).AwaitEx();
-				str = dirT.Path;
-#elif ModernKeePassLib
+#if ModernKeePassLib
                 var dirT = StorageFolder.GetFolderFromPathAsync(
                     strPath).GetResults();
                 str = dirT.Path;
-                /*var dirT = FileSystem.Current.GetFolderFromPathAsync(strPath).Result;
-				str = dirT.Path;*/
 #else
 				str = Path.GetFullPath(strPath);
 #endif
@@ -640,8 +634,8 @@ namespace ModernKeePassLib.Utility
 			string strDir;
 			if(NativeLib.IsUnix())
 				strDir = NativeMethods.GetUserRuntimeDir();
-#if ModernKeePassLib
-			else strDir = ApplicationData.Current.TemporaryFolder.Path;
+#if KeePassUAP || ModernKeePassLib
+			else strDir = Windows.Storage.ApplicationData.Current.TemporaryFolder.Path;
 #else
 			else strDir = Path.GetTempPath();
 

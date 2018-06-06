@@ -1,4 +1,2 @@
-Application now correctly resumes from suspend
-Code enhancements
-Return of the Donate page, with Paypal
-KeePassLib version bump to 2.38
+Design improvements
+KeePassLib version bump to 2.39.1

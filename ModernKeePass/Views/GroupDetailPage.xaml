@@ -199,7 +199,7 @@
                     <TextBlock x:Uid="GroupCreateEntry" VerticalAlignment="Center" Margin="10,0,0,0" />
                 </StackPanel>
             </HyperlinkButton>
-            <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="20,60,0,0">
+            <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="20,60,0,0" ScrollViewer.HorizontalScrollBarVisibility="Visible">
                 <SemanticZoom.ZoomedInView>
                     <!-- Horizontal scrolling grid -->
                     <GridView
@@ -315,36 +315,30 @@
                     </GridView>
                 </SemanticZoom.ZoomedInView>
                 <SemanticZoom.ZoomedOutView>
-                    <ListView
-                        Height="Auto" Width="Auto"
+                    <GridView
                         ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
                         SelectionChanged="groups_SelectionChanged"
                         SelectionMode="None"
                         IsSynchronizedWithCurrentItem="False">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                        <ListView.ItemTemplate>
+                        <GridView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
+                                    <TextBlock Width="100" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                                 </StackPanel>
                             </DataTemplate>
-                        </ListView.ItemTemplate>
-                        <ListView.GroupStyle>
+                        </GridView.ItemTemplate>
+                        <GridView.GroupStyle>
                             <GroupStyle HidesIfEmpty="True">
                                 <GroupStyle.HeaderTemplate>
                                     <DataTemplate>
-                                        <Grid Background="LightGray" Margin="0,0,10,0" HorizontalAlignment="Left">
-                                            <TextBlock Text="{Binding Key}" Width="40" Foreground="Black" Margin="30" Style="{StaticResource HeaderTextBlockStyle}"/>
+                                        <Grid Background="LightGray" HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding Key}" Width="40" Margin="30" Foreground="Black" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
                                         </Grid>
                                     </DataTemplate>
                                 </GroupStyle.HeaderTemplate>
                             </GroupStyle>
-                        </ListView.GroupStyle>
-                    </ListView>
+                        </GridView.GroupStyle>
+                    </GridView>
                 </SemanticZoom.ZoomedOutView>
             </SemanticZoom>
         </Grid>
