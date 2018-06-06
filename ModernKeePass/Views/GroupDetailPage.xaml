@@ -162,16 +162,22 @@
                 </ListView.ItemContainerStyle>
                 <ListView.HeaderTemplate>
                     <DataTemplate>
-                        <ToggleButton Style="{StaticResource HamburgerToggleButton}">
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="Checked">
-                                    <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
-                                </core:EventTriggerBehavior>
-                                <core:EventTriggerBehavior EventName="Unchecked">
-                                    <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                        </ToggleButton>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Style="{StaticResource HamburgerToggleButton}">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip x:Uid="GroupsHeaderToolTip" />
+                                </ToolTipService.ToolTip>
+                                <interactivity:Interaction.Behaviors>
+                                    <core:EventTriggerBehavior EventName="Checked">
+                                        <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
+                                    </core:EventTriggerBehavior>
+                                    <core:EventTriggerBehavior EventName="Unchecked">
+                                        <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ElementName=LeftListViewColumn}"/>
+                                    </core:EventTriggerBehavior>
+                                </interactivity:Interaction.Behaviors>
+                            </ToggleButton>
+                            <TextBlock x:Uid="GroupsHeaderTextBlock" FontWeight="Bold" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0"  />
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
                 <ListView.FooterTemplate>

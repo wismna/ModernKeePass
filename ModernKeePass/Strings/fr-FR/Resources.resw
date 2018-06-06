@@ -222,6 +222,12 @@
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
     <value>Rechercher...</value>
   </data>
+  <data name="GroupsHeaderTextBlock.Text" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="GroupsHeaderToolTip.Content" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
   <data name="GroupTitle.PlaceholderText" xml:space="preserve">
     <value>Nom du nouveau groupe...</value>
   </data>
