@@ -228,12 +228,8 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}">
-                                        <Viewbox MaxHeight="100" MaxWidth="100">
-                                            <SymbolIcon Symbol="{Binding IconSymbol}">
-                                                <!--<SymbolIcon.RenderTransform>
-                                                    <CompositeTransform ScaleX="2" TranslateX="0" TranslateY="0" ScaleY="2"/>
-                                                </SymbolIcon.RenderTransform>-->
-                                            </SymbolIcon>
+                                        <Viewbox MaxHeight="50" Width="100">
+                                            <SymbolIcon Symbol="{Binding IconSymbol}" />
                                         </Viewbox>
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
