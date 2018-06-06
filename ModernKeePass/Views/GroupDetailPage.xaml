@@ -272,42 +272,9 @@
                         <GridView.ItemsSource>
                             <Binding Source="{StaticResource EntriesViewSource}"/>
                         </GridView.ItemsSource>
-                        <!--<GridView.DataContext>
+                        <GridView.DataContext>
                             <viewModels:EntryVm/>
-                        </GridView.DataContext>-->
-                        <!--<GridView.ItemContainerStyle>
-                            <Style TargetType = "GridViewItem" >
-                                <Setter Property = "Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType = "GridViewItem" >
-                                            <GridViewItemPresenter
-                                                SelectionCheckMarkVisualEnabled="True"
-                                                CheckHintBrush="{ThemeResource ListViewItemCheckHintThemeBrush}"
-                                                CheckSelectingBrush="{ThemeResource ListViewItemCheckSelectingThemeBrush}"
-                                                CheckBrush="{ThemeResource ListViewItemCheckThemeBrush}"
-                                                DragBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}"
-                                                FocusBorderBrush="{ThemeResource ListViewItemFocusBorderThemeBrush}"
-                                                PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
-                                                PointerOverBackground="{ThemeResource ListViewItemPointerOverBackgroundThemeBrush}"
-                                                SelectedBorderThickness="{ThemeResource GridViewItemCompactSelectedBorderThemeThickness}"
-                                                SelectedBackground="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}"
-                                                SelectedForeground="{ThemeResource ListViewItemSelectedForegroundThemeBrush}"
-                                                SelectedPointerOverBackground="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}"
-                                                SelectedPointerOverBorderBrush="{ThemeResource ListViewItemSelectedPointerOverBorderThemeBrush}"
-                                                DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                PointerOverBackgroundMargin="1"
-                                                ContentMargin="4" />
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>-->
-                            <!--<Style TargetType="FrameworkElement">
-                                <Setter Property="Margin" Value="52,52,0,2"/>
-                            </Style>
-                        </GridView.ItemContainerStyle>-->
+                        </GridView.DataContext>
                     </GridView>
                 </SemanticZoom.ZoomedInView>
                 <SemanticZoom.ZoomedOutView>
