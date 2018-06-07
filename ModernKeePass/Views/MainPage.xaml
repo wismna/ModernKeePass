@@ -48,7 +48,6 @@
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Visibility="Collapsed"
                     Height="40"
-                    VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"

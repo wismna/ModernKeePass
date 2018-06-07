@@ -4,7 +4,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:local="using:ModernKeePass.Controls"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
@@ -18,9 +17,9 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" />
+        <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenBrowseDesc" />
-        <HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" />
+        <HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenUrlDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">

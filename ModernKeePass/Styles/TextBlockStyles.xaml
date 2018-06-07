@@ -1,9 +1,0 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style TargetType="TextBlock" x:Name="TextBlockSettingsHeaderStyle" >
-        <Setter Property="FontFamily" Value="Segoe UI" />
-        <Setter Property="FontSize" Value="14.667" />
-        <Setter Property="FontWeight" Value="SemiLight" />
-    </Style>
-</ResourceDictionary>

@@ -11,9 +11,9 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="SaveButton" Click="SaveButton_OnClick" />
+        <HyperlinkButton x:Uid="SaveButton" Click="SaveButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="SaveDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
-        <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" />
+        <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="SaveAsDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
     </StackPanel>
 </Page>

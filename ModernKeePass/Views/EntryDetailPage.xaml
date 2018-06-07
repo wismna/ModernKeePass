@@ -115,7 +115,7 @@
                                                                 <Storyboard>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
                                                                                                Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxButtonPressedBackgroundThemeBrush}" />
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColor}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                                                Storyboard.TargetProperty="BorderBrush">

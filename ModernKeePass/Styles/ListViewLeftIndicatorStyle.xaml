@@ -1,8 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Style for Windows.UI.Xaml.Controls.ListViewItem with left selection indicator -->
     <Style TargetType="ListViewItem" x:Key="ListViewLeftIndicatorItemExpanded">
@@ -360,13 +358,13 @@
                                         </Grid>
                                     </Border>
                                     <Border x:Name="SelectedLeftIndicator"
-                                            BorderBrush="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource MainColor}"
                                             BorderThickness="5,0,0,0"
                                             Opacity="0"/>
                                     <Rectangle x:Name="SelectedBorder"
                                                IsHitTestVisible="False"
                                                Opacity="0"
-                                               Stroke="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}"
+                                               Stroke="{ThemeResource MainColor}"
                                                StrokeThickness="{ThemeResource ListViewItemSelectedBorderThemeThickness}"
                                                Margin="0" />
                                     <Border x:Name="SelectedCheckMarkOuter"
@@ -375,7 +373,7 @@
                                             VerticalAlignment="Top"
                                             Margin="4">
                                         <Grid x:Name="SelectedCheckMark" Opacity="0" Height="40" Width="40">
-                                            <Path x:Name="SelectedEarmark" Data="M0,0 L40,0 L40,40 z"  Fill="{ThemeResource ListViewItemSelectedBackgroundThemeBrush}" Stretch="Fill"/>
+                                            <Path x:Name="SelectedEarmark" Data="M0,0 L40,0 L40,40 z"  Fill="{ThemeResource MainColor}" Stretch="Fill"/>
                                             <Path Data="F1 M133.1,17.9 L137.2,13.2 L144.6,19.6 L156.4,5.8 L161.2,9.9 L145.6,28.4 z" Fill="{ThemeResource ListViewItemCheckThemeBrush}" Height="13" Stretch="Fill" Width="15" HorizontalAlignment="Right" Margin="0,5.5,5.5,0" VerticalAlignment="Top" FlowDirection="LeftToRight"/>
                                         </Grid>
                                     </Border>

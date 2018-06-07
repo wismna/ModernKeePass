@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:ModernKeePass.Controls"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
@@ -19,7 +18,7 @@
     </Page.DataContext>
     
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="NewCreateButton" Click="ButtonBase_OnClick" />
+        <HyperlinkButton x:Uid="NewCreateButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="NewCreateDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding ShowPasswordBox, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">

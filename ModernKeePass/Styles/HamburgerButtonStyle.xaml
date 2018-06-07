@@ -7,7 +7,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
                     <ContentControl>
-                        <Grid Background="{StaticResource ListViewItemSelectedBackgroundThemeBrush}" Margin="0" Width="50" Height="50">
+                        <Grid Background="{StaticResource MainColor}" Margin="0" Width="50" Height="50">
                             <Canvas x:Name="hampurger_menu" HorizontalAlignment="Center" Height="17" UseLayoutRounding="False" VerticalAlignment="Center" Width="28">
                                 <Canvas x:Name="Layer_1" Height="17" Canvas.Left="0" Width="28" Margin="0" RenderTransformOrigin="0.5,0.5">
                                     <Canvas.RenderTransform>
