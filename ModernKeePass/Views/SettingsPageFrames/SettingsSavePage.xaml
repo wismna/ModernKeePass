@@ -13,6 +13,6 @@
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendDesc" TextWrapping="WrapWholeWords" Margin="5,0,0,10"/>
-        <ToggleSwitch x:Uid="SettingsSaveDatabaseSuspend" IsOn="{Binding IsSaveSuspend, Mode=TwoWay}" />
+        <ToggleSwitch x:Uid="SettingsSaveDatabaseSuspend" IsOn="{Binding IsSaveSuspend, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
     </StackPanel>
 </Page>
