@@ -20,7 +20,7 @@ namespace ModernKeePass.ViewModels
         public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
-        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password.ToCharArray());
+        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
         public bool IsFirstItem => _pwEntry == null;
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
