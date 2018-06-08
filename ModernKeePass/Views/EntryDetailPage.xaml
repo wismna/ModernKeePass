@@ -479,7 +479,7 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
                 <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
+                    <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" Style="{StaticResource MainColorDatePicker}" />
                 <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
             </StackPanel>
             </Grid>

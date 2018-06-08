@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding FileFormatVersion, Mode=TwoWay}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding FileFormatVersion, Mode=TwoWay}" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
             <Button Grid.Column="2" Style="{StaticResource TextBlockButtonStyle}">
                 <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
                     <SymbolIcon.RenderTransform>

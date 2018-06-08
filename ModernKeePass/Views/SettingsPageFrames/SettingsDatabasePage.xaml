@@ -27,10 +27,10 @@
             <ComboBox ItemsSource="{Binding Source={StaticResource RecycleBinGroups}}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}" IsEnabled="{Binding IsChecked, ElementName=RadioButton}" />
         </StackPanel>
         <TextBlock x:Uid="SettingsDatabaseEncryption" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
-        <ComboBox ItemsSource="{Binding Source={StaticResource Ciphers}}" SelectedIndex="{Binding CipherIndex, Mode=TwoWay}" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource Ciphers}}" SelectedIndex="{Binding CipherIndex, Mode=TwoWay}" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
         <TextBlock x:Uid="SettingsDatabaseCompression" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
-        <ComboBox ItemsSource="{Binding Source={StaticResource Compressions}}" SelectedItem="{Binding CompressionName, Mode=TwoWay}" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource Compressions}}" SelectedItem="{Binding CompressionName, Mode=TwoWay}" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
         <TextBlock x:Uid="SettingsDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
-        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding KeyDerivationName, Mode=TwoWay}" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding KeyDerivationName, Mode=TwoWay}" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
     </StackPanel>
 </Page>
