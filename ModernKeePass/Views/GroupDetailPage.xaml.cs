@@ -156,7 +156,7 @@ namespace ModernKeePass.Views
         private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appx://Assets/ModernKeePass-SmallLogo.scale-80.png"));
-            var results = Model.Entries.Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            var results = Model.SubEntries.Where(e => e.Name.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {
                 args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Name, result.ParentGroup.Name, result.Id, imageUri, string.Empty);

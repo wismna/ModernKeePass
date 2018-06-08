@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -20,7 +21,22 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<EntryVm> Entries
         {
             get { return _entries; }
-            set { SetProperty(ref _entries, value); }
+            private set { SetProperty(ref _entries, value); }
+        }
+
+        public IEnumerable<EntryVm> SubEntries
+        {
+            get
+            {
+                var subEntries = new List<EntryVm>();
+                subEntries.AddRange(Entries);
+                foreach (var group in Groups)
+                {
+                    subEntries.AddRange(group.SubEntries);
+                }
+
+                return subEntries;
+            }
         }
 
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
@@ -28,8 +44,7 @@ namespace ModernKeePass.ViewModels
         public PwUuid IdUuid => _pwGroup?.Uuid;
         public string Id => IdUuid?.ToHexString();
         public bool IsNotRoot => ParentGroup != null;
-
-
+        
         public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
 
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !IsSelected && !ParentGroup.IsSelected;
