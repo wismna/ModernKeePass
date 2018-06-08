@@ -92,6 +92,23 @@ namespace ModernKeePass.ViewModels
             get { return _isMenuClosed; }
             set { SetProperty(ref _isMenuClosed, value); }
         }
+
+        public ObservableCollection<GroupVm> BreadCrumb
+        {
+            get
+            {
+                var groups = new List<GroupVm>();
+                var group = this;
+                while (group.ParentGroup != null)
+                {
+                    group = group.ParentGroup;
+                    groups.Add(group);
+                }
+
+                groups.Reverse();
+                return new ObservableCollection<GroupVm>(groups);
+            }
+        }
         
         public string Path
         {
