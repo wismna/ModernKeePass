@@ -191,7 +191,7 @@
                                                          To="1" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="contentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ListViewItemSelectedForegroundThemeBrush}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColor}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
