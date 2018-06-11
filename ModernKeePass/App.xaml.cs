@@ -6,9 +6,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Push;
+using Microsoft.HockeyApp;
 using ModernKeePass.Common;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Services;
@@ -29,7 +27,7 @@ namespace ModernKeePass
         /// </summary>
         public App()
         {
-            AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics), typeof(Push));
+            HockeyClient.Current.Configure("ModernKeePass");
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
@@ -66,9 +64,10 @@ namespace ModernKeePass
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             OnLaunchOrActivated(e);
+            await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
         protected override void OnActivated(IActivatedEventArgs args)
