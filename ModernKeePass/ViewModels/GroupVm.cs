@@ -97,16 +97,15 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                var groups = new List<GroupVm>();
+                var groups = new ObservableCollection<GroupVm>();
                 var group = this;
                 while (group.ParentGroup != null)
                 {
                     group = group.ParentGroup;
-                    groups.Add(group);
+                    groups.Insert(0, group);
                 }
-
-                groups.Reverse();
-                return new ObservableCollection<GroupVm>(groups);
+                
+                return groups;
             }
         }
         
