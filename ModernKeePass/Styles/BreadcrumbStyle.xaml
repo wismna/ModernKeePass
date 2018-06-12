@@ -1,0 +1,58 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:ModernKeePass.Controls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors">
+    <Style TargetType="controls:Breadcrumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:Breadcrumb">
+                    <ItemsControl ItemsSource="{TemplateBinding PathItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.Resources>
+                            <DataTemplate x:Name="FirstItemTemplate">
+                                <TextBlock>
+                                <Hyperlink Foreground="{StaticResource MainColor}">
+                                    <Run Text="{Binding Name}" />
+                                    <interactivity:Interaction.Behaviors>
+                                        <core:EventTriggerBehavior EventName="Click" >
+                                            <core:NavigateToPageAction Parameter="{Binding}" TargetPage="{TemplateBinding TargetPage}" />
+                                        </core:EventTriggerBehavior>
+                                    </interactivity:Interaction.Behaviors>
+                                </Hyperlink>
+                                </TextBlock>
+                            </DataTemplate>
+                            <DataTemplate x:Name="OtherItemsTemplate">
+                                <StackPanel Orientation="Horizontal">
+                                    <Viewbox MaxHeight="12" >
+                                        <SymbolIcon Symbol="{TemplateBinding SeparatorSymbol}" />
+                                    </Viewbox>
+                                    <TextBlock>
+                                    <Hyperlink Foreground="{StaticResource MainColor}">
+                                        <Run Text="{Binding Name}" />
+                                        <interactivity:Interaction.Behaviors>
+                                            <core:EventTriggerBehavior EventName="Click" >
+                                                <core:NavigateToPageAction Parameter="{Binding}" TargetPage="{TemplateBinding TargetPage}" />
+                                            </core:EventTriggerBehavior>
+                                        </interactivity:Interaction.Behaviors>
+                                    </Hyperlink>
+                                    </TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemTemplateSelector>
+                            <templateSelectors:FirstItemDataTemplateSelector FirstItem="{StaticResource FirstItemTemplate}" OtherItem="{StaticResource OtherItemsTemplate}"/>
+                        </ItemsControl.ItemTemplateSelector>
+                    </ItemsControl>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>
+

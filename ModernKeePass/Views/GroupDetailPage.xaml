@@ -9,6 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
     xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
+    xmlns:controls="using:ModernKeePass.Controls"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.GroupDetailPage"
     mc:Ignorable="d"
@@ -95,7 +96,10 @@
                 Source="{Binding Entries}" />
             <CollectionViewSource
                 x:Name="EntriesZoomedOutViewSource"
-                Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True"/>
+                Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True" />
+            <CollectionViewSource
+                x:Name="BreadCrumbViewSource"
+                Source="{Binding BreadCrumb}" />
         </Grid.Resources>
         <Grid.Background>
             <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
@@ -131,7 +135,7 @@
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding Name}" />
                                 </ToolTipService.ToolTip>
-                             </SymbolIcon>
+                            </SymbolIcon>
                             <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="Italic" />
                         </StackPanel>
                     </DataTemplate>
@@ -141,7 +145,7 @@
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding Name}" />
                                 </ToolTipService.ToolTip>
-                             </SymbolIcon>
+                            </SymbolIcon>
                             <TextBlock Text="{Binding Name}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
                         </StackPanel>
                     </DataTemplate>
@@ -210,6 +214,7 @@
                     <!-- Horizontal scrolling grid -->
                     <GridView
                         x:Name="GridView"
+                        ItemsSource="{Binding Source={StaticResource EntriesViewSource}}"
                         AutomationProperties.AutomationId="ItemGridView"
                         AutomationProperties.Name="Entries"
                         TabIndex="1"
@@ -275,12 +280,6 @@
                                 </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
-                        <GridView.ItemsSource>
-                            <Binding Source="{StaticResource EntriesViewSource}"/>
-                        </GridView.ItemsSource>
-                        <GridView.DataContext>
-                            <viewModels:EntryVm/>
-                        </GridView.DataContext>
                     </GridView>
                 </SemanticZoom.ZoomedInView>
                 <SemanticZoom.ZoomedOutView>
@@ -347,7 +346,8 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <TextBlock FontSize="12" Text="{Binding Path}" />
+                <!--<TextBlock FontSize="12" Text="{Binding Path}" />-->
+                <controls:Breadcrumb PathItems="{Binding Source={StaticResource BreadCrumbViewSource}}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
             </StackPanel>
             <Button Grid.Column="2" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Find" />

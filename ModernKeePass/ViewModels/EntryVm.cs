@@ -143,6 +143,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        [Obsolete]
         public string Path
         {
             get

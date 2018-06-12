@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Styles/HamburgerButtonStyle.xaml" />
                 <ResourceDictionary Source="Styles/ListViewLeftIndicatorStyle.xaml" />
                 <ResourceDictionary Source="Styles/NoBorderButtonStyle.xaml" />
+                <ResourceDictionary Source="Styles/BreadcrumbStyle.xaml" />
                 <ResourceDictionary Source="Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

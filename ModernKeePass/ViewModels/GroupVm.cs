@@ -93,22 +93,23 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isMenuClosed, value); }
         }
 
-        public ObservableCollection<GroupVm> BreadCrumb
+        public Stack<GroupVm> BreadCrumb
         {
             get
             {
-                var groups = new ObservableCollection<GroupVm>();
+                var groups = new Stack<GroupVm>();
                 var group = this;
                 while (group.ParentGroup != null)
                 {
                     group = group.ParentGroup;
-                    groups.Insert(0, group);
+                    groups.Push(group);
                 }
                 
                 return groups;
             }
         }
         
+        [Obsolete]
         public string Path
         {
             get

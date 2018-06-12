@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using Microsoft.HockeyApp;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
@@ -146,6 +147,7 @@ namespace ModernKeePass.Services
             }
             catch (InvalidCompositeKeyException ex)
             {
+                HockeyClient.Current.TrackException(ex);
                 throw new ArgumentException(ex.Message, ex);
             }
         }
