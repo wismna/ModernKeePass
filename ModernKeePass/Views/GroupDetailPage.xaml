@@ -9,7 +9,7 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
     xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
-    xmlns:controls="using:ModernKeePass.Controls"
+    xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.GroupDetailPage"
     mc:Ignorable="d"
@@ -97,9 +97,6 @@
             <CollectionViewSource
                 x:Name="EntriesZoomedOutViewSource"
                 Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True" />
-            <CollectionViewSource
-                x:Name="BreadCrumbViewSource"
-                Source="{Binding BreadCrumb}" />
         </Grid.Resources>
         <Grid.Background>
             <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
@@ -180,7 +177,7 @@
                                     </core:EventTriggerBehavior>
                                 </interactivity:Interaction.Behaviors>
                             </ToggleButton>
-                            <TextBlock x:Uid="GroupsHeaderTextBlock" FontWeight="Bold" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0"  />
+                            <TextBlock x:Uid="GroupsHeaderTextBlock" FontWeight="Bold" FontSize="18" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" HorizontalAlignment="Center" />
                         </StackPanel>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
@@ -346,8 +343,7 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <!--<TextBlock FontSize="12" Text="{Binding Path}" />-->
-                <controls:Breadcrumb PathItems="{Binding Source={StaticResource BreadCrumbViewSource}}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
+                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" />
             </StackPanel>
             <Button Grid.Column="2" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Find" />

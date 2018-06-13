@@ -10,7 +10,6 @@ namespace ModernKeePass.Interfaces
         Symbol IconSymbol { get; }
         string Id { get; }
         string Name { get; set; }
-        string Path { get; }
         bool IsEditMode { get; }
         bool IsRecycleOnDelete { get; }
 

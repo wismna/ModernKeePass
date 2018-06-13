@@ -9,6 +9,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.EntryDetailPage"
     mc:Ignorable="d"
@@ -458,7 +459,7 @@
             <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
             <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
             <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-            <local:TextBoxWithButton x:Name="UrlTextBox" HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL">
+            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="ButtonClick">
                         <actions:NavigateToUrlAction Url="{Binding Url}" />
@@ -520,7 +521,7 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <TextBlock FontSize="12" Text="{Binding Path}" />
+                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" />
             </StackPanel>
         </Grid>
         <VisualStateManager.VisualStateGroups>

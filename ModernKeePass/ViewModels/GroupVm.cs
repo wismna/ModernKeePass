@@ -93,7 +93,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isMenuClosed, value); }
         }
 
-        public Stack<GroupVm> BreadCrumb
+        public IEnumerable<IPwEntity> BreadCrumb
         {
             get
             {
@@ -109,18 +109,6 @@ namespace ModernKeePass.ViewModels
             }
         }
         
-        [Obsolete]
-        public string Path
-        {
-            get
-            {
-                if (ParentGroup == null) return string.Empty;
-                var path = new StringBuilder(ParentGroup.Path);
-                path.Append($" > {ParentGroup.Name}");
-                return path.ToString();
-            }
-        }
-
         private readonly PwGroup _pwGroup;
         private readonly IDatabaseService _database;
         private bool _isEditMode;

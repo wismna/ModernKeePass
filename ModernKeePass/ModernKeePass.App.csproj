@@ -114,7 +114,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Breadcrumb.cs" />
     <Compile Include="Exceptions\DatabaseOpenedException.cs" />
     <Compile Include="Interfaces\ILicenseService.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
@@ -166,6 +165,9 @@
     </Compile>
     <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="Controls\ListViewWithDisable.cs" />
+    <Compile Include="Views\UserControls\BreadCrumbUserControl.xaml.cs">
+      <DependentUpon>BreadCrumbUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\CompositeKeyUserControl.xaml.cs">
       <DependentUpon>CompositeKeyUserControl.xaml</DependentUpon>
     </Compile>
@@ -248,17 +250,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Styles\BreadcrumbStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Page>
     <Page Include="Styles\Colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Views\SettingsPageFrames\SettingsSavePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\BreadCrumbUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

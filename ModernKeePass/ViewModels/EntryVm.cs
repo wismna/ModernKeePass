@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Mappings;
@@ -143,16 +143,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        [Obsolete]
-        public string Path
-        {
-            get
-            {
-                var path = new StringBuilder(ParentGroup.Path);
-                path.Append($" > {ParentGroup.Name}");
-                return path.ToString();
-            }
-        }
+        public IEnumerable<IPwEntity> BreadCrumb => new List<IPwEntity>(ParentGroup.BreadCrumb) {ParentGroup};
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -168,7 +159,7 @@ namespace ModernKeePass.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public EntryVm() { }
+        public EntryVm(): this(null, null) { }
         
         internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance) { }
 

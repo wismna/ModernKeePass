@@ -11,7 +11,7 @@ namespace ModernKeePass.TemplateSelectors
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
-            var returnTemplate = itemsControl.IndexFromContainer(container) == 0 ? FirstItem : OtherItem;
+            var returnTemplate = itemsControl?.IndexFromContainer(container) == 0 ? FirstItem : OtherItem;
             return returnTemplate;
         }
     }
