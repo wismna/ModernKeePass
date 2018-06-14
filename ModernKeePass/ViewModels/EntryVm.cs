@@ -155,7 +155,7 @@ namespace ModernKeePass.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public EntryVm(): this(null, null) { }
+        public EntryVm() { }
         
         internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance) { }
 

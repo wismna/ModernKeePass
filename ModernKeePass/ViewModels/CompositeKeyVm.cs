@@ -99,8 +99,7 @@ namespace ModernKeePass.ViewModels
         public GroupVm RootGroup { get; set; }
 
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
-
-
+        
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _hasUserAccount;

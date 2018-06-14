@@ -521,7 +521,7 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" />
+                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </StackPanel>
         </Grid>
         <VisualStateManager.VisualStateGroups>

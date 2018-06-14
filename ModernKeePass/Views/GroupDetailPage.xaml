@@ -344,7 +344,7 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" />
+                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </StackPanel>
             <Button Grid.Column="2" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Find" />

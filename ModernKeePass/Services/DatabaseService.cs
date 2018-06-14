@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
 using Microsoft.HockeyApp;
 using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
