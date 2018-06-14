@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Mappings;
 using ModernKeePass.Services;
 using ModernKeePassLib;
 
@@ -71,14 +68,14 @@ namespace ModernKeePass.ViewModels
             set { _pwGroup.Name = value; }
         }
 
-        public Symbol IconSymbol
+        public int IconId
         {
             get
             {
-                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwGroup.IconId);
-                return result == Symbol.More ? Symbol.Folder : result;
+                if (_pwGroup?.IconId != null) return (int) _pwGroup?.IconId;
+                return -1;
             }
-            set { _pwGroup.IconId = PwIconToSegoeMapping.GetIconFromSymbol(value); }
+            set { _pwGroup.IconId = (PwIcon)value; }
         }
         
         public bool IsEditMode

@@ -19,6 +19,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <converters:IntToSymbolConverter x:Key="IntToSymbolConverter"/>
     </Page.Resources>
     <Page.DataContext>
         <viewModels:GroupVm />
@@ -128,7 +129,7 @@
                 <ListView.Resources>
                     <DataTemplate x:Name="IsRecycleBin">
                         <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
+                            <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="8,0,0,0">
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding Name}" />
                                 </ToolTipService.ToolTip>
@@ -138,7 +139,7 @@
                     </DataTemplate>
                     <DataTemplate x:Name="IsNotRecycleBin">
                         <StackPanel Orientation="Horizontal">
-                            <SymbolIcon Symbol="{Binding IconSymbol}" Margin="8,0,0,0">
+                            <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="8,0,0,0">
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding Name}" />
                                 </ToolTipService.ToolTip>
@@ -237,7 +238,7 @@
                                     </Grid.ColumnDefinitions>
                                     <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColor}, Converter={StaticResource ColorToBrushConverter}}">
                                         <Viewbox MaxHeight="50" Width="100">
-                                            <SymbolIcon Symbol="{Binding IconSymbol}" Foreground="{StaticResource TextColor}" />
+                                            <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Foreground="{StaticResource TextColor}" />
                                         </Viewbox>
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >

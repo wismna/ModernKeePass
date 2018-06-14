@@ -1,12 +1,15 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using System;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using ModernKeePassLib;
 
-namespace ModernKeePass.Mappings
+namespace ModernKeePass.Converters
 {
-    public static class PwIconToSegoeMapping
+    public class IntToSymbolConverter : IValueConverter
     {
-        public static Symbol GetSymbolFromIcon(PwIcon icon)
+        public object Convert(object value, Type targetType, object parameter, string language)
         {
+            var icon = (PwIcon) value;
             switch (icon)
             {
                 case PwIcon.Key: return Symbol.Permissions;
@@ -29,7 +32,7 @@ namespace ModernKeePass.Mappings
                 case PwIcon.Scanner: return Symbol.Scan;
                 case PwIcon.CDRom: return Symbol.Rotate;
                 case PwIcon.Monitor: return Symbol.Caption;
-                case PwIcon.EMailBox: 
+                case PwIcon.EMailBox:
                 case PwIcon.EMail: return Symbol.Mail;
                 case PwIcon.Configuration: return Symbol.Setting;
                 case PwIcon.ClipboardReady: return Symbol.Paste;
@@ -56,7 +59,7 @@ namespace ModernKeePass.Mappings
                 case PwIcon.Info: return Symbol.Help;
                 //case PwIcon.Package: return Symbol.;
                 case PwIcon.Folder:
-                case PwIcon.FolderOpen: 
+                case PwIcon.FolderOpen:
                 case PwIcon.FolderPackage: return Symbol.Folder;
                 //case PwIcon.LockOpen: return Symbol.;
                 case PwIcon.PaperLocked: return Symbol.ProtectedDocument;
@@ -79,8 +82,9 @@ namespace ModernKeePass.Mappings
             }
         }
 
-        public static PwIcon GetIconFromSymbol(Symbol symbol)
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
+            var symbol = (Symbol) value;
             switch (symbol)
             {
                 /*case Symbol.Previous:

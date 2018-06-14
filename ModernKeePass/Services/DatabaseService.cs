@@ -224,7 +224,7 @@ namespace ModernKeePass.Services
         {
             RecycleBin = RootGroup.AddNewGroup(title);
             RecycleBin.IsSelected = true;
-            RecycleBin.IconSymbol = Symbol.Delete;
+            RecycleBin.IconId = (int)PwIcon.TrashBin;
         }
         
         private void CreateSampleData()

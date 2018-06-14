@@ -1,4 +1,4 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using System.Collections.Generic;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Interfaces
@@ -7,9 +7,10 @@ namespace ModernKeePass.Interfaces
     {
         GroupVm ParentGroup { get; }
         GroupVm PreviousGroup { get; }
-        Symbol IconSymbol { get; }
+        int IconId { get; }
         string Id { get; }
         string Name { get; set; }
+        IEnumerable<IPwEntity> BreadCrumb { get; }
         bool IsEditMode { get; }
         bool IsRecycleOnDelete { get; }
 

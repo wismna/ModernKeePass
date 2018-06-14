@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Mappings;
 using ModernKeePass.Services;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
@@ -79,14 +77,12 @@ namespace ModernKeePass.ViewModels
             set { SetEntryValue(PwDefs.NotesField, value); }
         }
 
-        public Symbol IconSymbol
+        public int IconId
         {
             get
             {
-                if (_pwEntry == null) return Symbol.Add;
-                if (HasExpired) return Symbol.Priority;
-                var result = PwIconToSegoeMapping.GetSymbolFromIcon(_pwEntry.IconId);
-                return result == Symbol.More ? Symbol.Permissions : result;
+                if (_pwEntry?.IconId != null) return (int) _pwEntry?.IconId;
+                return -1;
             }
         }
 
