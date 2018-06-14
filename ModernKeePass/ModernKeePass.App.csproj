@@ -123,6 +123,7 @@
     <Compile Include="Interfaces\IResourceService.cs" />
     <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
+    <Compile Include="ViewModels\HistoryVm.cs" />
     <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
@@ -229,6 +230,9 @@
     <Compile Include="ViewModels\RecentVm.cs" />
     <Compile Include="ViewModels\SaveVm.cs" />
     <Compile Include="ViewModels\Items\SettingsDatabaseVm.cs" />
+    <Compile Include="Views\UserControls\HamburgerMenuUserControl.xaml.cs">
+      <DependentUpon>HamburgerMenuUserControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -351,6 +355,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\UserControls\HamburgerMenuUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

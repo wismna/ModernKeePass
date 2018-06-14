@@ -213,20 +213,8 @@
   <data name="GroupFilter.PlaceholderText" xml:space="preserve">
     <value>Filter...</value>
   </data>
-  <data name="GroupNewItemTextBox.Text" xml:space="preserve">
-    <value>New group</value>
-  </data>
-  <data name="GroupNewItemTooltip.Content" xml:space="preserve">
-    <value>New group</value>
-  </data>
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
     <value>Search...</value>
-  </data>
-  <data name="GroupsHeaderTextBlock.Text" xml:space="preserve">
-    <value>Groups</value>
-  </data>
-  <data name="GroupsHeaderToolTip.Content" xml:space="preserve">
-    <value>Groups</value>
   </data>
   <data name="GroupTitle.PlaceholderText" xml:space="preserve">
     <value>New group name...</value>
@@ -389,5 +377,14 @@
   </data>
   <data name="WelcomeOpen.Text" xml:space="preserve">
     <value>Have an existing password database? Open it here.</value>
+  </data>
+  <data name="GroupsLeftListView.ButtonLabel" xml:space="preserve">
+    <value>New group</value>
+  </data>
+  <data name="GroupsLeftListView.HeaderLabel" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
+    <value>History</value>
   </data>
 </root>

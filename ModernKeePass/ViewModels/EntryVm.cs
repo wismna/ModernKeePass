@@ -31,6 +31,8 @@ namespace ModernKeePass.ViewModels
         public string CustomChars { get; set; } = string.Empty;
         public PwUuid IdUuid => _pwEntry?.Uuid;
         public string Id => _pwEntry?.Uuid.ToHexString();
+        public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
+        public IEnumerable<IPwEntity> BreadCrumb => new List<IPwEntity>(ParentGroup.BreadCrumb) {ParentGroup};
 
         public double PasswordLength
         {
@@ -117,9 +119,7 @@ namespace ModernKeePass.ViewModels
                 NotifyPropertyChanged("IsVisible");
             }
         }
-
-        public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
-
+        
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }
@@ -139,7 +139,16 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public IEnumerable<IPwEntity> BreadCrumb => new List<IPwEntity>(ParentGroup.BreadCrumb) {ParentGroup};
+        public IEnumerable<IPwEntity> History
+        {
+            get
+            {
+                foreach (var historyEntry in _pwEntry.History)
+                {
+                    yield return new EntryVm(historyEntry, ParentGroup);
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

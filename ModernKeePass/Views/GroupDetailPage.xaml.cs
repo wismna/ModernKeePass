@@ -79,13 +79,14 @@ namespace ModernKeePass.Views
 
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var listView = sender as ListView;
             GroupVm group;
-            switch (LeftListView.SelectedIndex)
+            switch (listView?.SelectedIndex)
             {
                 case -1:
                     return;
                 default:
-                    group = LeftListView.SelectedItem as GroupVm;
+                    group = listView?.SelectedItem as GroupVm;
                     break;
             }
             Frame.Navigate(typeof(GroupDetailPage), group);

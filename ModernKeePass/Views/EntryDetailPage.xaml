@@ -373,9 +373,9 @@
             </Setter>
         </Style>
     </Page.Resources>
-    <Page.DataContext>
+    <!--<Page.DataContext>
         <viewModels:EntryVm />
-    </Page.DataContext>
+    </Page.DataContext>-->
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
@@ -429,63 +429,68 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="1" Margin="20,0,0,0" >
-            <StackPanel.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Margin" Value="0,20,0,0"/>
-                </Style>
-                <Style TargetType="CheckBox">
-                    <Setter Property="Margin" Value="0,20,0,0"/>
-                </Style>
-            </StackPanel.Resources>
-            <TextBlock x:Uid="EntryLogin" TextWrapping="Wrap" FontSize="18"/>
-            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="ButtonClick">
-                        <actions:ClipboardAction Text="{Binding UserName}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </local:TextBoxWithButton>
-            <TextBlock x:Uid="EntryPassword" TextWrapping="Wrap" FontSize="18"/>
-            <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" />
-            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="ButtonClick">
-                        <actions:ClipboardAction Text="{Binding Password}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </local:TextBoxWithButton>
-            <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
-            <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
-            <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-            <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="ButtonClick">
-                        <actions:NavigateToUrlAction Url="{Binding Url}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </local:TextBoxWithButton>
-            <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18" />
-            <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
-            <CheckBox  x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" />
-            <Grid>
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="50" x:Name="LeftListViewColumn" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <SymbolIcon Grid.Column="0" Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <ToolTipService.ToolTip>
-                        <ToolTip x:Uid="EntryExpirationTooltip" />
-                    </ToolTipService.ToolTip>
-                </SymbolIcon>
-                <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" Style="{StaticResource MainColorDatePicker}" />
-                <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
+                <userControls:HamburgerMenuUserControl x:Uid="HistoryLeftListView" ItemsSource="{Binding History}" ResizeTarget="{Binding ElementName=LeftListViewColumn}" />
+                <StackPanel Grid.Column="1" Margin="20,0,0,0" >
+                <StackPanel.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,20,0,0"/>
+                    </Style>
+                    <Style TargetType="CheckBox">
+                        <Setter Property="Margin" Value="0,20,0,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock x:Uid="EntryLogin" TextWrapping="Wrap" FontSize="18"/>
+                <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ButtonClick">
+                            <actions:ClipboardAction Text="{Binding UserName}" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </local:TextBoxWithButton>
+                <TextBlock x:Uid="EntryPassword" TextWrapping="Wrap" FontSize="18"/>
+                <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" />
+                <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ButtonClick">
+                            <actions:ClipboardAction Text="{Binding Password}" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </local:TextBoxWithButton>
+                <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
+                <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
+                <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
+                <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ButtonClick">
+                            <actions:NavigateToUrlAction Url="{Binding Url}" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </local:TextBoxWithButton>
+                <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18" />
+                <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" />
+                <CheckBox  x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <SymbolIcon Grid.Column="0" Symbol="Important" Foreground="DarkRed" Visibility="{Binding HasExpired, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ToolTipService.ToolTip>
+                            <ToolTip x:Uid="EntryExpirationTooltip" />
+                        </ToolTipService.ToolTip>
+                    </SymbolIcon>
+                    <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" Style="{StaticResource MainColorDatePicker}" />
+                    <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
+                </StackPanel>
+                </Grid>
             </StackPanel>
-            </Grid>
-        </StackPanel>
-
+        </Grid>
         <!-- Bouton Précédent et titre de la page -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
