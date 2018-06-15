@@ -97,5 +97,21 @@ namespace ModernKeePass.Views
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);
         }
+
+        private void HamburgerMenuUserControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listView = sender as ListView;
+            EntryVm entry;
+            switch (listView?.SelectedIndex)
+            {
+                case -1:
+                    return;
+                default:
+                    entry = listView?.SelectedItem as EntryVm;
+                    break;
+            }
+
+            StackPanel.DataContext = entry;
+        }
     }
 }

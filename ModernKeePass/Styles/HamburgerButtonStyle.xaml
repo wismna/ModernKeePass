@@ -16,13 +16,13 @@
                                     <Canvas.Projection>
                                         <PlaneProjection/>
                                     </Canvas.Projection>
-                                    <Path x:Name="path" Data="M0,12.997 L30,12.997" Height="3" Stretch="Fill" StrokeThickness="3" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" RenderTransformOrigin="0.5,0.5">
+                                    <Path x:Name="path" Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" RenderTransformOrigin="0.5,0.5">
                                         <Path.RenderTransform>
                                             <CompositeTransform/>
                                         </Path.RenderTransform>
                                     </Path>
-                                    <Path Data="M0,12.997 L30,12.997" Height="3" Stretch="Fill" StrokeThickness="3" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="7"/>
-                                    <Path x:Name="path1" Data="M0,12.997 L30,12.997" Height="3" Stretch="Fill" StrokeThickness="3" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="14" RenderTransformOrigin="0.5,0.5">
+                                    <Path Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="7"/>
+                                    <Path x:Name="path1" Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="14" RenderTransformOrigin="0.5,0.5">
                                         <Path.RenderTransform>
                                             <CompositeTransform/>
                                         </Path.RenderTransform>

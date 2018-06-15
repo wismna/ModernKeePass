@@ -116,7 +116,7 @@
                 <ColumnDefinition Width="50" x:Name="LeftListViewColumn" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl x:Uid="GroupsLeftListView" ItemsSource="{Binding Groups}" DisplayMemberPath="Name" SelectionChanged="groups_SelectionChanged" ButtonClicked="CreateGroup_ButtonClick" ResizeTarget="{Binding ElementName=LeftListViewColumn}" IsButtonVisible="{Binding IsSelected}" />
+            <userControls:HamburgerMenuUserControl x:Uid="GroupsLeftListView" ItemsSource="{Binding Groups}" SelectionChanged="groups_SelectionChanged" ButtonClicked="CreateGroup_ButtonClick" ResizeTarget="{Binding ElementName=LeftListViewColumn}" IsButtonVisible="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
             <TextBlock Grid.Column="1" x:Uid="ReorderEntriesLabel" Margin="20,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
             <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,10,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
                 <StackPanel Orientation="Horizontal">

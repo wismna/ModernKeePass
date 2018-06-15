@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePassLib;
@@ -10,7 +11,7 @@ using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : INotifyPropertyChanged, IPwEntity
+    public class EntryVm : INotifyPropertyChanged, IPwEntity, ISelectableModel
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
@@ -19,7 +20,6 @@ namespace ModernKeePass.ViewModels
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
-        public bool IsFirstItem => _pwEntry == null;
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
         public bool DigitsPatternSelected { get; set; } = true;
@@ -33,6 +33,10 @@ namespace ModernKeePass.ViewModels
         public string Id => _pwEntry?.Uuid.ToHexString();
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
         public IEnumerable<IPwEntity> BreadCrumb => new List<IPwEntity>(ParentGroup.BreadCrumb) {ParentGroup};
+        /// <summary>
+        /// Determines if the Entry is current or from history
+        /// </summary>
+        public bool IsSelected { get; set; } = true;
 
         public double PasswordLength
         {
@@ -73,6 +77,7 @@ namespace ModernKeePass.ViewModels
             get { return GetEntryValue(PwDefs.UrlField); }
             set { SetEntryValue(PwDefs.UrlField, value); }
         }
+
         public string Notes
         {
             get { return GetEntryValue(PwDefs.NotesField); }
@@ -102,7 +107,7 @@ namespace ModernKeePass.ViewModels
 
         public bool IsEditMode
         {
-            get { return _isEditMode; }
+            get { return IsSelected && _isEditMode; }
             set
             {
                 _isEditMode = value;
@@ -143,10 +148,13 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
+                var history = new List<EntryVm> {this};
                 foreach (var historyEntry in _pwEntry.History)
                 {
-                    yield return new EntryVm(historyEntry, ParentGroup);
+                    history.Add(new EntryVm(historyEntry, ParentGroup) {IsSelected = false});
                 }
+
+                return history;
             }
         }
 
@@ -154,6 +162,7 @@ namespace ModernKeePass.ViewModels
 
         private readonly PwEntry _pwEntry;
         private readonly IDatabaseService _database;
+        private readonly IResourceService _resource;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
@@ -166,11 +175,12 @@ namespace ModernKeePass.ViewModels
 
         public EntryVm() { }
         
-        internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance) { }
+        internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance, new ResourcesService()) { }
 
-        public EntryVm(PwEntry entry, GroupVm parent, IDatabaseService database)
+        public EntryVm(PwEntry entry, GroupVm parent, IDatabaseService database, IResourceService resource)
         {
             _database = database;
+            _resource = resource;
             _pwEntry = entry;
             ParentGroup = parent;
         }
@@ -253,6 +263,11 @@ namespace ModernKeePass.ViewModels
         public PwEntry GetPwEntry()
         {
             return _pwEntry;
+        }
+
+        public override string ToString()
+        {
+            return IsSelected ? _resource.GetResourceValue("EntryCurrent") : _pwEntry.LastModificationTime.ToString("g");
         }
     }
 }

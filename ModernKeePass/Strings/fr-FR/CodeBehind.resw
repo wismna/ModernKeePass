@@ -267,4 +267,7 @@
   <data name="RecycleBinTitle" xml:space="preserve">
     <value>Corbeille</value>
   </data>
+  <data name="EntryCurrent" xml:space="preserve">
+    <value>Courante</value>
+  </data>
 </root>

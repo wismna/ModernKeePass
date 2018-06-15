@@ -45,6 +45,7 @@ namespace ModernKeePass.ViewModels
         public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
 
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !IsSelected && !ParentGroup.IsSelected;
+        
         /// <summary>
         /// Is the Group the database Recycle Bin?
         /// </summary>

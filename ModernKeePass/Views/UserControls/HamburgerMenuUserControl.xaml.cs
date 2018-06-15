@@ -48,7 +48,7 @@ namespace ModernKeePass.Views.UserControls
                 "DisplayMemberPath",
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata("Name", (o, args) => { }));
+                new PropertyMetadata("Title", (o, args) => { }));
 
         public object ResizeTarget
         {
@@ -62,17 +62,17 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public bool IsButtonVisible
+        public Visibility IsButtonVisible
         {
-            get { return (bool)GetValue(IsButtonVisibleProperty); }
+            get { return (Visibility)GetValue(IsButtonVisibleProperty); }
             set { SetValue(IsButtonVisibleProperty, value); }
         }
         public static readonly DependencyProperty IsButtonVisibleProperty =
             DependencyProperty.Register(
                 "IsButtonVisible",
-                typeof(bool),
+                typeof(Visibility),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(false, (o, args) => { }));
+                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
         public IEnumerable<IPwEntity> ItemsSource
         {
@@ -86,6 +86,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(IEnumerable<IPwEntity>),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(new List<IPwEntity>(), (o, args) => { }));
+
+        public object SelectedItem
+        {
+            get { return GetValue(SelectedItemProperty); }
+            set { SetValue(SelectedItemProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedItemProperty =
+            DependencyProperty.Register(
+                "SelectedItem",
+                typeof(object),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(null, (o, args) => { }));
 
         public event SelectionChangedEventHandler SelectionChanged;
         public delegate void SelectionChangedEventHandler(object sender, SelectionChangedEventArgs e);
