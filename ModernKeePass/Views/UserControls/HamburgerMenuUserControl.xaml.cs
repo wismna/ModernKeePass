@@ -7,7 +7,6 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.Views.UserControls
 {
-    // TODO: Add a property (string path) that allows chosing which field to display 
     public sealed partial class HamburgerMenuUserControl
     {
         public HamburgerMenuUserControl()
@@ -32,13 +31,24 @@ namespace ModernKeePass.Views.UserControls
             get { return (string)GetValue(ButtonLabelProperty); }
             set { SetValue(ButtonLabelProperty, value); }
         }
-        // TODO: set a boolean that will show/hide the button when a value is set/not set
         public static readonly DependencyProperty ButtonLabelProperty =
             DependencyProperty.Register(
                 "ButtonLabel",
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Button", (o, args) => { }));
+
+        public string DisplayMemberPath
+        {
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
+        }
+        public static readonly DependencyProperty DisplayMemberPathProperty =
+            DependencyProperty.Register(
+                "DisplayMemberPath",
+                typeof(string),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata("Name", (o, args) => { }));
 
         public object ResizeTarget
         {
@@ -51,6 +61,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(object),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
+
+        public bool IsButtonVisible
+        {
+            get { return (bool)GetValue(IsButtonVisibleProperty); }
+            set { SetValue(IsButtonVisibleProperty, value); }
+        }
+        public static readonly DependencyProperty IsButtonVisibleProperty =
+            DependencyProperty.Register(
+                "IsButtonVisible",
+                typeof(bool),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
 
         public IEnumerable<IPwEntity> ItemsSource
         {
