@@ -11,7 +11,6 @@ namespace ModernKeePass.Interfaces
     {
         string Name { get; }
         bool RecycleBinEnabled { get; set; }
-        //int Status { get; set; }
         GroupVm RootGroup { get; set; }
         GroupVm RecycleBin { get; set; }
         StorageFile DatabaseFile { get; set; }

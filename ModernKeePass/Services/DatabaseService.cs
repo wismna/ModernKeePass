@@ -22,7 +22,6 @@ namespace ModernKeePass.Services
         private StorageFile _realDatabaseFile;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
-        private CompositeKey _compositeKey;
 
         public GroupVm RootGroup { get; set; }
 
@@ -57,11 +56,7 @@ namespace ModernKeePass.Services
             }
         }
 
-        public CompositeKey CompositeKey
-        {
-            get { return _compositeKey; }
-            set { _compositeKey = value; }
-        }
+        public CompositeKey CompositeKey { get; set; }
 
         public PwUuid DataCipher
         {
@@ -112,7 +107,7 @@ namespace ModernKeePass.Services
                     throw new ArgumentNullException(nameof(key));
                 }
                 
-                _compositeKey = key;
+                CompositeKey = key;
                 var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
                 if (createNew)
                 {
@@ -153,7 +148,7 @@ namespace ModernKeePass.Services
 
         public async Task ReOpen()
         {
-            await Open(_compositeKey);
+            await Open(CompositeKey);
         }
 
         /// <summary>

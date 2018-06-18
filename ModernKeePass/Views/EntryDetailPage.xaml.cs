@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
@@ -28,21 +27,7 @@ namespace ModernKeePass.Views
         {
             InitializeComponent();
             NavigationHelper = new NavigationHelper(this);
-            NavigationHelper.LoadState += navigationHelper_LoadState;
         }
-
-        /// <summary>
-        /// Remplit la page à l'aide du contenu passé lors de la navigation. Tout état enregistré est également
-        /// fourni lorsqu'une page est recréée à partir d'une session antérieure.
-        /// </summary>
-        /// <param name="sender">
-        /// Source de l'événement ; en général <see cref="Common.NavigationHelper"/>
-        /// </param>
-        /// <param name="e">Données d'événement qui fournissent le paramètre de navigation transmis à
-        /// <see cref="Frame.Navigate(Type, object)"/> lors de la requête initiale de cette page et
-        /// un dictionnaire d'état conservé par cette page durant une session
-        /// antérieure.  L'état n'aura pas la valeur Null lors de la première visite de la page.</param>
-        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e) {}
 
         #region Inscription de NavigationHelper
 

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
@@ -23,7 +20,7 @@ namespace ModernKeePass.Common
     internal sealed class SuspensionManager
     {
         private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();
-        private static List<Type> _knownTypes = new List<Type>();
+        private static readonly List<Type> _knownTypes = new List<Type>();
         private const string sessionStateFilename = "_sessionState.xml";
 
         /// <summary>
@@ -33,20 +30,14 @@ namespace ModernKeePass.Common
         /// <see cref="DataContractSerializer"/> and should be as compact as possible.  Strings
         /// and other self-contained data types are strongly recommended.
         /// </summary>
-        public static Dictionary<string, object> SessionState
-        {
-            get { return _sessionState; }
-        }
+        public static Dictionary<string, object> SessionState => _sessionState;
 
         /// <summary>
         /// List of custom types provided to the <see cref="DataContractSerializer"/> when
         /// reading and writing session state.  Initially empty, additional types may be
         /// added to customize the serialization process.
         /// </summary>
-        public static List<Type> KnownTypes
-        {
-            get { return _knownTypes; }
-        }
+        public static List<Type> KnownTypes => _knownTypes;
 
         /// <summary>
         /// Save the current <see cref="SessionState"/>.  Any <see cref="Frame"/> instances

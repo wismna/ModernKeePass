@@ -31,21 +31,7 @@ namespace ModernKeePass.Views
         {
             InitializeComponent();
             NavigationHelper = new NavigationHelper(this);
-            NavigationHelper.LoadState += navigationHelper_LoadState;
         }
-
-        /// <summary>
-        /// Populates the page with content passed during navigation.  Any saved state is also
-        /// provided when recreating a page from a prior session.
-        /// </summary>
-        /// <param name="sender">
-        /// The source of the event; typically <see cref="Common.NavigationHelper"/>
-        /// </param>
-        /// <param name="e">Event data that provides both the navigation parameter passed to
-        /// <see cref="Frame.Navigate(Type, object)"/> when this page was initially requested and
-        /// a dictionary of state preserved by this page during an earlier
-        /// session.  The state will be null the first time a page is visited.</param>
-        private void navigationHelper_LoadState(object sender, LoadStateEventArgs e) {}
 
         #region NavigationHelper registration
 
@@ -62,10 +48,15 @@ namespace ModernKeePass.Views
         {
             NavigationHelper.OnNavigatedTo(e);
 
-            if (e.Parameter is PasswordEventArgs)
-                DataContext = ((PasswordEventArgs) e.Parameter).RootGroup;
-            else if (e.Parameter is GroupVm)
-                DataContext = (GroupVm) e.Parameter;
+            var args = e.Parameter as PasswordEventArgs;
+            if (args != null)
+                DataContext = args.RootGroup;
+            else
+            {
+                var vm = e.Parameter as GroupVm;
+                if (vm != null)
+                    DataContext = vm;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -134,7 +125,7 @@ namespace ModernKeePass.Views
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             // We need to synchronize the two lists (zoomed-in and zoomed-out) because the source is different
-            if (e.IsSourceZoomedInView == false)
+            if (!e.IsSourceZoomedInView)
             {
                 e.DestinationItem.Item = e.SourceItem.Item;
             }

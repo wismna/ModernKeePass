@@ -20,8 +20,7 @@ namespace ModernKeePass.Services
         }
 
         public IReadOnlyDictionary<string, ProductListing> Products { get; }
-
-        //private LicenseInformation _licenseInformation;
+        
         private readonly HashSet<Guid> _consumedTransactionIds = new HashSet<Guid>();
 
         public LicenseService()
@@ -51,7 +50,7 @@ namespace ModernKeePass.Services
                 case ProductPurchaseStatus.AlreadyPurchased:
                     return (int) PurchaseResult.AlreadyPurchased;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(purchaseResults.Status));
             }
         }
 

@@ -63,10 +63,10 @@ namespace ModernKeePass
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
-        /// <param name="e">Details about the launch request and process.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        /// <param name="args">Details about the launch request and process.</param>
+        protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            OnLaunchOrActivated(e);
+            OnLaunchOrActivated(args);
             await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
@@ -81,7 +81,7 @@ namespace ModernKeePass
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                //DebugSettings.EnableFrameRateCounter = true;
+                DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
 
@@ -109,9 +109,9 @@ namespace ModernKeePass
                 Window.Current.Content = rootFrame;
             }
 
-            if (e is LaunchActivatedEventArgs)
+            var lauchActivatedEventArgs = e as LaunchActivatedEventArgs;
+            if (lauchActivatedEventArgs != null)
             {
-                var lauchActivatedEventArgs = (LaunchActivatedEventArgs) e;
                 if (rootFrame.Content == null)
                 {
                     // When the navigation stack isn't restored navigate to the first page,
@@ -119,20 +119,8 @@ namespace ModernKeePass
                     // parameter
                     rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
                 }
-                /*else
-                {
-                    // App is "launched" via the Toast Activation event
-                    UndoEntityDelete(lauchActivatedEventArgs.Arguments);
-                }*/
             }
-            // This is only available on Windows 10...
-            /*else if (e is ToastNotificationActivatedEventArgs)
-            {
-                var toastActivationArgs = e as ToastNotificationActivatedEventArgs;
-
-                // Parse the query string (using QueryString.NET)
-                UndoEntityDelete(QueryString.Parse(toastActivationArgs.Argument));
-            }*/
+            
             // Ensure the current window is active
             Window.Current.Activate();
         }

@@ -74,7 +74,7 @@ namespace ModernKeePass.Common
             // Create the message dialog and set its content
             var messageDialog = new MessageDialog(message, title);
 
-            // Add commands and set their callbacks; 
+            // Add commands and set their callbacks
             messageDialog.Commands.Add(new UICommand(dismissActionText, cancelCommand));
 
             // Set the command that will be invoked by default
