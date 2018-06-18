@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePassLib;
@@ -148,11 +147,12 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
-                var history = new List<EntryVm> {this};
+                var history = new Stack<EntryVm>();
                 foreach (var historyEntry in _pwEntry.History)
                 {
-                    history.Add(new EntryVm(historyEntry, ParentGroup) {IsSelected = false});
+                    history.Push(new EntryVm(historyEntry, ParentGroup) {IsSelected = false});
                 }
+                history.Push(this);
 
                 return history;
             }
@@ -164,6 +164,7 @@ namespace ModernKeePass.ViewModels
         private readonly IDatabaseService _database;
         private readonly IResourceService _resource;
         private bool _isEditMode;
+        private bool _isDirty;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isVisible = true;
@@ -221,7 +222,13 @@ namespace ModernKeePass.ViewModels
         
         private void SetEntryValue(string key, string newValue)
         {
+            if (!_isDirty)
+            {
+                _pwEntry.Touch(true);
+                _pwEntry?.CreateBackup(null);
+            }
             _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
+            _isDirty = true;
         }
         
         public void MarkForDelete(string recycleBinTitle)
@@ -264,10 +271,15 @@ namespace ModernKeePass.ViewModels
         {
             return _pwEntry;
         }
-
+        public void Reset()
+        {
+            _isDirty = false;
+        }
+        
         public override string ToString()
         {
             return IsSelected ? _resource.GetResourceValue("EntryCurrent") : _pwEntry.LastModificationTime.ToString("g");
         }
+
     }
 }
