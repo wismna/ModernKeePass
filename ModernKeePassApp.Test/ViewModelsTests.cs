@@ -39,7 +39,7 @@ namespace ModernKeePassApp.Test
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(typeof(OpenDatabasePage), ((MainMenuItemVm) mainVm.SelectedItem).PageType);
 
-            database.Open(null, false).GetAwaiter().GetResult();
+            database.Open(null);
             mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(2, mainVm.MainMenuItems.Count());
@@ -94,10 +94,10 @@ namespace ModernKeePassApp.Test
         {
             var database = new DatabaseServiceMock();
             var saveVm = new SaveVm(database);
-            database.Open(null, false).GetAwaiter().GetResult();
-            saveVm.Save(false).GetAwaiter().GetResult();
+            database.Open(null);
+            saveVm.Save(false);
             Assert.IsTrue(database.IsOpen);
-            saveVm.Save().GetAwaiter().GetResult();
+            saveVm.Save();
             Assert.IsFalse(database.IsOpen);
         }
 
@@ -118,7 +118,7 @@ namespace ModernKeePassApp.Test
         public void TestEntryVm()
         {
             var database = new DatabaseServiceMock();
-            var entryVm = new EntryVm(new PwEntry(true, true), new GroupVm(), database)
+            var entryVm = new EntryVm(new PwEntry(true, true), new GroupVm(), database, _resource)
             {
                 Name = "Test",
                 UserName = "login",

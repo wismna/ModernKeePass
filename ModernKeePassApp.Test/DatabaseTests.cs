@@ -20,7 +20,7 @@ namespace ModernKeePassApp.Test
             _database.DatabaseFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync("NewDatabase.kdbx").GetAwaiter().GetResult();
             Assert.IsTrue(_database.IsFileOpen);
             OpenOrCreateDatabase(true);
-            _database.Close().GetAwaiter().GetResult();
+            _database.Close();
             Assert.IsTrue(_database.IsClosed);
         }
 
@@ -39,7 +39,7 @@ namespace ModernKeePassApp.Test
             TestOpen();
             _database.Save(ApplicationData.Current.TemporaryFolder.CreateFileAsync("SaveDatabase.kdbx").GetAwaiter().GetResult());
             Assert.IsTrue(_database.IsOpen);
-            _database.Close().GetAwaiter().GetResult();
+            _database.Close();
             Assert.IsTrue(_database.IsClosed);
             TestOpen();
         }
@@ -47,7 +47,7 @@ namespace ModernKeePassApp.Test
         private void OpenOrCreateDatabase(bool createNew)
         {
             Assert.ThrowsException<ArgumentNullException>(
-                () => _database.Open(null, createNew).GetAwaiter().GetResult());
+                () => _database.Open(null, createNew));
             var compositeKey = new CompositeKeyVm(_database, new ResourceServiceMock())
             {
                 HasPassword = true,

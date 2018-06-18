@@ -121,7 +121,6 @@
   <ItemGroup>
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Mock\DatabaseServiceMock.cs" />
-    <Compile Include="Mock\LicenseServiceMock.cs" />
     <Compile Include="Mock\RecentServiceMock.cs" />
     <Compile Include="Mock\ResourceServiceMock.cs" />
     <Compile Include="Mock\SettingsServiceMock.cs" />

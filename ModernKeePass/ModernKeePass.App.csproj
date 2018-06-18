@@ -116,7 +116,6 @@
     </Compile>
     <Compile Include="Converters\IntToSymbolConverter.cs" />
     <Compile Include="Exceptions\DatabaseOpenedException.cs" />
-    <Compile Include="Interfaces\ILicenseService.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
     <Compile Include="Interfaces\IRecentService.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
@@ -135,7 +134,6 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Services\LicenseService.cs" />
     <Compile Include="Services\RecentService.cs" />
     <Compile Include="Services\ResourcesService.cs" />
     <Compile Include="Services\SettingsService.cs" />
