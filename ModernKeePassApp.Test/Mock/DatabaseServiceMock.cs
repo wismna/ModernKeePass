@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
@@ -50,13 +49,10 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
         
-        public Task Close(bool releaseFile = true)
+        public void Close(bool releaseFile = true)
         {
-            return Task.Run(() =>
-            {
-                _isClosed = true;
-                _isOpen = false;
-            });
+            _isClosed = true;
+            _isOpen = false;
         }
 
         public void CreateRecycleBin(string title)
@@ -64,19 +60,16 @@ namespace ModernKeePassApp.Test.Mock
             throw new NotImplementedException();
         }
 
-        public Task Open(CompositeKey key, bool createNew = false)
+        public void Open(CompositeKey key, bool createNew = false)
         {
             _compositeKey = key;
-            return Task.Run(() =>
-            {
-                _isOpen = true;
-                _isClosed = false;
-            });
+            _isOpen = true;
+            _isClosed = false;
         }
 
-        public async Task ReOpen()
+        public void ReOpen()
         {
-            await Open(_compositeKey);
+            Open(_compositeKey);
         }
 
         public void Save()

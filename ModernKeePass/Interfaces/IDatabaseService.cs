@@ -23,12 +23,12 @@ namespace ModernKeePass.Interfaces
         bool IsClosed { get; }
         bool HasChanged { get; set; }
 
-        Task Open(CompositeKey key, bool createNew = false);
-        Task ReOpen();
+        void Open(CompositeKey key, bool createNew = false);
+        void ReOpen();
         void Save();
         void Save(StorageFile file);
         void CreateRecycleBin(string title);
         void AddDeletedItem(PwUuid id);
-        Task Close(bool releaseFile = true);
+        void Close(bool releaseFile = true);
     }
 }

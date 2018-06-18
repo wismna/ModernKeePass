@@ -28,9 +28,9 @@ namespace ModernKeePass.Views
             _mainFrame = e.Parameter as Frame;
         }
 
-        private async void SaveButton_OnClick(object sender, RoutedEventArgs e)
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            await Model.Save();
+            Model.Save();
             _mainFrame.Navigate(typeof(MainPage));
         }
 

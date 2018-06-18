@@ -125,7 +125,7 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
 
-        private async void OnResuming(object sender, object e)
+        private void OnResuming(object sender, object e)
         {
             var currentFrame = Window.Current.Content as Frame;
             var database = DatabaseService.Instance;
@@ -138,7 +138,7 @@ namespace ModernKeePass
             }
             try
             {
-                if (database.CompositeKey != null) await database.ReOpen();
+                if (database.CompositeKey != null) database.ReOpen();
             }
             catch (Exception ex)
             {
@@ -167,14 +167,14 @@ namespace ModernKeePass
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             var database = DatabaseService.Instance;
             try
             {
                 if (SettingsService.Instance.GetSetting("SaveSuspend", true)) database.Save();
-                await database.Close(false);
+                database.Close(false);
             }
             catch (Exception exception)
             {

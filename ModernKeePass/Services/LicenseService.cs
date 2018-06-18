@@ -50,7 +50,7 @@ namespace ModernKeePass.Services
                 case ProductPurchaseStatus.AlreadyPurchased:
                     return (int) PurchaseResult.AlreadyPurchased;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(purchaseResults.Status));
+                    throw new IndexOutOfRangeException("Purchase results status does not have a valid value");
             }
         }
 

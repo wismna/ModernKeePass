@@ -125,7 +125,7 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
-                await Database.Open(CreateCompositeKey(), createNew);
+                Database.Open(CreateCompositeKey(), createNew);
                 await Task.Run(() => RootGroup = Database.RootGroup);
                 return true;
             }

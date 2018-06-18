@@ -62,9 +62,6 @@ namespace ModernKeePass.Views.BasePages
         /// session.  The state will be null the first time a page is visited.</param>
         protected void navigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
-            // TODO: Assign a bindable group to Me.DefaultViewModel("Group")
-            // TODO: Assign a collection of bindable items to Me.DefaultViewModel("Items")
-
             if (e.PageState == null)
             {
                 // When this is a new page, select the first item automatically unless logical page

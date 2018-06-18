@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Windows.Storage;
 using Microsoft.HockeyApp;
 using ModernKeePass.Exceptions;
@@ -19,7 +18,6 @@ namespace ModernKeePass.Services
     {
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private readonly ISettingsService _settings;
-        private StorageFile _realDatabaseFile;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
 
@@ -97,9 +95,8 @@ namespace ModernKeePass.Services
         /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public async Task Open(CompositeKey key, bool createNew = false)
+        public void Open(CompositeKey key, bool createNew = false)
         {
-            // TODO: Check if there is an existing backup file
             try
             {
                 if (key == null)
@@ -124,18 +121,6 @@ namespace ModernKeePass.Services
                     }
                 }
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
-
-                //if (!_pwDatabase.IsOpen) return;
-
-                // Copy database in temp directory and use this file for operations
-                if (_settings.GetSetting<bool>("AntiCorruption"))
-                {
-                    _realDatabaseFile = _databaseFile;
-                    var backupFile =
-                        await ApplicationData.Current.RoamingFolder.CreateFileAsync(Name,
-                            CreationCollisionOption.FailIfExists);
-                    Save(backupFile);
-                }
                 
                 RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
             }
@@ -146,9 +131,9 @@ namespace ModernKeePass.Services
             }
         }
 
-        public async Task ReOpen()
+        public void ReOpen()
         {
-            await Open(CompositeKey);
+            Open(CompositeKey);
         }
 
         /// <summary>
@@ -160,12 +145,6 @@ namespace ModernKeePass.Services
             try
             {
                 _pwDatabase.Save(new NullStatusLogger());
-
-                // Test if save worked correctly
-                if (_settings.GetSetting<bool>("AntiCorruption"))
-                {
-                    _pwDatabase.Open(_pwDatabase.IOConnectionInfo, _pwDatabase.MasterKey, new NullStatusLogger());
-                }
             }
             catch (Exception e)
             {
@@ -195,17 +174,9 @@ namespace ModernKeePass.Services
         /// <summary>
         /// Close the currently opened database
         /// </summary>
-        public async Task Close(bool releaseFile = true)
+        public void Close(bool releaseFile = true)
         {
             _pwDatabase?.Close();
-
-            // Restore the backup DB to the original one
-            if (_settings.GetSetting<bool>("AntiCorruption"))
-            {
-                if (_pwDatabase != null && _pwDatabase.Modified)
-                    Save(_realDatabaseFile);
-                await DatabaseFile.DeleteAsync();
-            }
             if (releaseFile) DatabaseFile = null;
         }
 
