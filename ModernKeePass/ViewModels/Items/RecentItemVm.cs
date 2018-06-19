@@ -27,17 +27,7 @@ namespace ModernKeePass.ViewModels
             Name = metadata;
             DatabaseFile = file as StorageFile;
         }
-
-        public void OpenDatabaseFile()
-        {
-            OpenDatabaseFile(DatabaseService.Instance);
-        }
-
-        public void OpenDatabaseFile(IDatabaseService database)
-        {
-            database.DatabaseFile = DatabaseFile;
-        }
-
+        
         public void UpdateAccessTime()
         {
             UpdateAccessTime(RecentService.Instance);

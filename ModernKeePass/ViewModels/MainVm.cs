@@ -60,8 +60,7 @@ namespace ModernKeePass.ViewModels
                     PageType = typeof(OpenDatabasePage),
                     Destination = destinationFrame,
                     Parameter = referenceFrame,
-                    SymbolIcon = Symbol.Page2,
-                    IsSelected = database != null && database.IsFileOpen && !database.IsOpen
+                    SymbolIcon = Symbol.Page2
                 },
                 new MainMenuItemVm
                 {
@@ -89,7 +88,7 @@ namespace ModernKeePass.ViewModels
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Copy,
                     IsSelected =
-                        (database == null || database.IsClosed) &&
+                        (database == null || !database.IsOpen) &&
                         recent.EntryCount > 0,
                     IsEnabled = recent.EntryCount > 0
                 },

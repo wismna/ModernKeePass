@@ -33,25 +33,12 @@ namespace ModernKeePass.Services
             }
         }
         
-        public string Name => DatabaseFile?.Name;
+        public string Name => _databaseFile?.Name;
         
         public bool RecycleBinEnabled
         {
             get { return _pwDatabase.RecycleBinEnabled; }
             set { _pwDatabase.RecycleBinEnabled = value; }
-        }
-        
-        public StorageFile DatabaseFile
-        {
-            get { return _databaseFile; }
-            set
-            {
-                if (IsOpen && HasChanged)
-                {
-                    throw new DatabaseOpenedException();
-                }
-                _databaseFile = value;
-            }
         }
 
         public CompositeKey CompositeKey { get; set; }
@@ -92,10 +79,11 @@ namespace ModernKeePass.Services
         /// <summary>
         /// Open a KeePass database
         /// </summary>
+        /// <param name="databaseFile">The database file</param>
         /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public void Open(CompositeKey key, bool createNew = false)
+        public void Open(StorageFile databaseFile, CompositeKey key, bool createNew = false)
         {
             try
             {
@@ -105,7 +93,7 @@ namespace ModernKeePass.Services
                 }
                 
                 CompositeKey = key;
-                var ioConnection = IOConnectionInfo.FromFile(DatabaseFile);
+                var ioConnection = IOConnectionInfo.FromFile(databaseFile);
                 if (createNew)
                 {
                     _pwDatabase.New(ioConnection, key);
@@ -121,7 +109,8 @@ namespace ModernKeePass.Services
                     }
                 }
                 else _pwDatabase.Open(ioConnection, key, new NullStatusLogger());
-                
+
+                _databaseFile = databaseFile;
                 RootGroup = new GroupVm(_pwDatabase.RootGroup, null, RecycleBinEnabled ? _pwDatabase.RecycleBinUuid : null);
             }
             catch (InvalidCompositeKeyException ex)
@@ -133,7 +122,7 @@ namespace ModernKeePass.Services
 
         public void ReOpen()
         {
-            Open(CompositeKey);
+            Open(_databaseFile, CompositeKey);
         }
 
         /// <summary>
@@ -158,15 +147,15 @@ namespace ModernKeePass.Services
         /// <param name="file">The new database file</param>
         public void Save(StorageFile file)
         {
-            var oldFile = DatabaseFile;
-            DatabaseFile = file;
+            var oldFile = _databaseFile;
+            _databaseFile = file;
             try
             {
-                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(DatabaseFile), true, new NullStatusLogger());
+                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(_databaseFile), true, new NullStatusLogger());
             }
             catch
             {
-                DatabaseFile = oldFile;
+                _databaseFile = oldFile;
                 throw;
             }
         }
@@ -177,7 +166,7 @@ namespace ModernKeePass.Services
         public void Close(bool releaseFile = true)
         {
             _pwDatabase?.Close();
-            if (releaseFile) DatabaseFile = null;
+            if (releaseFile) _databaseFile = null;
         }
 
         public void AddDeletedItem(PwUuid id)

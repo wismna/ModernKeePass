@@ -1,2 +1,3 @@
+Entry history feature added
 Design improvements
 KeePassLib version bump to 2.39.1

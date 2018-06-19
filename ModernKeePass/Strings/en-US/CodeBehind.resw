@@ -270,4 +270,28 @@
   <data name="EntryCurrent" xml:space="preserve">
     <value>Current</value>
   </data>
+  <data name="MessageDialogDBOpenButtonDiscard" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="MessageDialogDBOpenButtonSave" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="MessageDialogDBOpenDesc" xml:space="preserve">
+    <value>Database {0} is currently opened. What would you wish to do?</value>
+  </data>
+  <data name="MessageDialogDBOpenTitle" xml:space="preserve">
+    <value>Opened database</value>
+  </data>
+  <data name="MessageDialogSaveErrorButtonDiscard" xml:space="preserve">
+    <value>Discard</value>
+  </data>
+  <data name="MessageDialogSaveErrorButtonSaveAs" xml:space="preserve">
+    <value>Save as</value>
+  </data>
+  <data name="MessageDialogSaveErrorFileTypeDesc" xml:space="preserve">
+    <value>KeePass 2.x database</value>
+  </data>
+  <data name="MessageDialogSaveErrorTitle" xml:space="preserve">
+    <value>Save error</value>
+  </data>
 </root>

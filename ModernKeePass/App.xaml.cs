@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -47,15 +49,28 @@ namespace ModernKeePass
                     ? exception.InnerException
                     : exception;
 
+            var database = DatabaseService.Instance;
+            var resource = new ResourcesService();
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                MessageDialogHelper.SaveErrorDialog(realException as SaveException, DatabaseService.Instance);
-            }
-            else if (realException is DatabaseOpenedException)
-            {
-                unhandledExceptionEventArgs.Handled = true;
-                MessageDialogHelper.SaveUnchangedDialog(realException as DatabaseOpenedException, DatabaseService.Instance);
+                MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogSaveErrorTitle"),
+                    realException.InnerException.Message,
+                    resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
+                    resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
+                    async command =>
+                    {
+                        var savePicker = new FileSavePicker
+                        {
+                            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                            SuggestedFileName = $"{database.Name} - copy"
+                        };
+                        savePicker.FileTypeChoices.Add(resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
+                            new List<string> {".kdbx"});
+
+                        var file = await savePicker.PickSaveFileAsync();
+                        if (file != null) database.Save(file);
+                    }, null);
             }
         }
 
@@ -110,17 +125,9 @@ namespace ModernKeePass
             }
 
             var lauchActivatedEventArgs = e as LaunchActivatedEventArgs;
-            if (lauchActivatedEventArgs != null)
-            {
-                if (rootFrame.Content == null)
-                {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
-                }
-            }
-            
+            if (lauchActivatedEventArgs != null && rootFrame.Content == null)
+                rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
@@ -129,7 +136,7 @@ namespace ModernKeePass
         {
             var currentFrame = Window.Current.Content as Frame;
             var database = DatabaseService.Instance;
-            if (database.DatabaseFile == null)
+            if (!database.IsOpen)
             {
 #if DEBUG
                 ToastNotificationHelper.ShowGenericToast("App suspended", "Nothing to do, no previous database opened");
@@ -191,8 +198,8 @@ namespace ModernKeePass
         {
             base.OnFileActivated(args);
             var rootFrame = new Frame();
-            DatabaseService.Instance.DatabaseFile = args.Files[0] as StorageFile;
-            rootFrame.Navigate(typeof(MainPage), args);
+            var file = args.Files[0] as StorageFile;
+            rootFrame.Navigate(typeof(OpenDatabasePage), file);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }

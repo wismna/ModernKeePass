@@ -23,6 +23,7 @@ namespace ModernKeePass.Views
         private new void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             base.ListView_SelectionChanged(sender, e);
+
             var selectedItem = Model.SelectedItem as MainMenuItemVm;
             if (selectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
             else selectedItem.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);

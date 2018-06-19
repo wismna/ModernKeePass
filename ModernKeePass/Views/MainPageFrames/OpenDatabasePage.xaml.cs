@@ -1,7 +1,7 @@
 ﻿using System;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.ViewModels;
 
@@ -14,8 +14,6 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class OpenDatabasePage
     {
-        private Frame _mainFrame;
-
         public OpenVm Model => (OpenVm)DataContext;
 
         public OpenDatabasePage()
@@ -26,7 +24,11 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            _mainFrame = e.Parameter as Frame;
+            var file = e.Parameter as StorageFile;
+            if (file != null)
+            {
+                Model.OpenFile(file);
+            }
         }
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)

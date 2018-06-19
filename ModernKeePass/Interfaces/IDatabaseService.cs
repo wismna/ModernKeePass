@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Windows.Storage;
+﻿using Windows.Storage;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -13,17 +12,14 @@ namespace ModernKeePass.Interfaces
         bool RecycleBinEnabled { get; set; }
         GroupVm RootGroup { get; set; }
         GroupVm RecycleBin { get; set; }
-        StorageFile DatabaseFile { get; set; }
         CompositeKey CompositeKey { get; set; }
         PwUuid DataCipher { get; set; }
         PwCompressionAlgorithm CompressionAlgorithm { get; set; }
         KdfParameters KeyDerivation { get; set; }
         bool IsOpen { get; }
-        bool IsFileOpen { get; }
-        bool IsClosed { get; }
         bool HasChanged { get; set; }
 
-        void Open(CompositeKey key, bool createNew = false);
+        void Open(StorageFile databaseFile, CompositeKey key, bool createNew = false);
         void ReOpen();
         void Save();
         void Save(StorageFile file);

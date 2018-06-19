@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
+using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.Extensions;
+using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
@@ -53,6 +57,17 @@ namespace ModernKeePass.Views.UserControls
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata("OK", (o, args) => { }));
 
+        public StorageFile DatabaseFile
+        {
+            get { return (StorageFile)GetValue(DatabaseFileProperty); }
+            set { SetValue(DatabaseFileProperty, value); }
+        }
+        public static readonly DependencyProperty DatabaseFileProperty =
+            DependencyProperty.Register(
+                "DatabaseFile",
+                typeof(StorageFile),
+                typeof(CompositeKeyUserControl),
+                new PropertyMetadata(null, (o, args) => { }));
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
@@ -77,14 +92,30 @@ namespace ModernKeePass.Views.UserControls
             }
             else
             {
+                var database = DatabaseService.Instance;
                 var resource = new ResourcesService();
-                var oldLabel = ButtonLabel;
-                ButtonLabel = resource.GetResourceValue("CompositeKeyOpening");
-                if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(CreateNew)))
+                if (database.IsOpen)
                 {
-                    ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+                    MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogDBOpenTitle"),
+                        string.Format(resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
+                        resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
+                        resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
+                        async command =>
+                        {
+                            database.Save();
+                            database.Close(false);
+                            await OpenDatabase(resource);
+                        },
+                        async command =>
+                        {
+                            database.Close(false);
+                            await OpenDatabase(resource);
+                        });
                 }
-                ButtonLabel = oldLabel;
+                else
+                {
+                    await OpenDatabase(resource);
+                }
             }
         }
 
@@ -127,6 +158,18 @@ namespace ModernKeePass.Views.UserControls
             if (file == null) return;
             
             Model.CreateKeyFile(file);
+        }
+
+        private async Task OpenDatabase(IResourceService resource)
+        {
+            var oldLabel = ButtonLabel;
+            ButtonLabel = resource.GetResourceValue("CompositeKeyOpening");
+            if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(DatabaseFile, CreateNew)))
+            {
+                ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+            }
+
+            ButtonLabel = oldLabel;
         }
     }
 }

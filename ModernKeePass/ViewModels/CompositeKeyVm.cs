@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ModernKeePass.Common;
+using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePassLib.Cryptography;
@@ -120,12 +121,12 @@ namespace ModernKeePass.ViewModels
             Database = database;
         }
 
-        public async Task<bool> OpenDatabase(bool createNew)
+        public async Task<bool> OpenDatabase(StorageFile databaseFile, bool createNew)
         {
             try
             {
                 _isOpening = true;
-                Database.Open(CreateCompositeKey(), createNew);
+                Database.Open(databaseFile, CreateCompositeKey(), createNew);
                 await Task.Run(() => RootGroup = Database.RootGroup);
                 return true;
             }

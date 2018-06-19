@@ -45,8 +45,8 @@
                      Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushConverter}}" 
                      Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
-        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="{Binding KeyFileText}" IsEnabled="{Binding HasKeyFile}" Click="KeyFileButton_Click" />
-        <HyperlinkButton Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding HasKeyFile}" Click="CreateKeyFileButton_Click">
+        <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="{Binding KeyFileText}" IsEnabled="{Binding HasKeyFile}" Click="KeyFileButton_Click" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding HasKeyFile}" Style="{StaticResource MainColorHyperlinkButton}" Click="CreateKeyFileButton_Click">
             <SymbolIcon Symbol="Add">
                 <ToolTipService.ToolTip>
                     <ToolTip x:Uid="CompositeKeyNewKeyFileTooltip" />

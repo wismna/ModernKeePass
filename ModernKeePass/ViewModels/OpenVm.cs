@@ -7,19 +7,18 @@ namespace ModernKeePass.ViewModels
 {
     public class OpenVm: NotifyPropertyChangedBase
     {
-        public bool ShowPasswordBox => _database.IsFileOpen;
+        public bool IsFileSelected => DatabaseFile != null;
 
-        public string Name => _database?.Name;
+        public string Name => DatabaseFile.DisplayName;
 
-        private readonly IDatabaseService _database;
+        public StorageFile DatabaseFile { get; private set; }
 
-        public OpenVm() : this(DatabaseService.Instance) { }
+        public OpenVm() : this(null) { }
 
-        public OpenVm(IDatabaseService database)
+        public OpenVm(StorageFile file)
         {
-            _database = database;
-            if (database == null || !database.IsFileOpen) return;
-            OpenFile(database.DatabaseFile);
+            if (!IsFileSelected) return;
+            OpenFile(file);
         }
 
         public void OpenFile(StorageFile file)
@@ -29,9 +28,9 @@ namespace ModernKeePass.ViewModels
 
         public void OpenFile(StorageFile file, IRecentService recent)
         {
-            _database.DatabaseFile = file;
+            DatabaseFile = file;
             OnPropertyChanged("Name");
-            OnPropertyChanged("ShowPasswordBox");
+            OnPropertyChanged("IsFileSelected");
             AddToRecentList(file, recent);
         }
         
