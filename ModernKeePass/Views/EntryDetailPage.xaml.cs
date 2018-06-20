@@ -55,14 +55,14 @@ namespace ModernKeePass.Views
 
         #endregion
         
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var resource = new ResourcesService();
             var message = Model.IsRecycleOnDelete
                 ? resource.GetResourceValue("EntryRecyclingConfirmation")
                 : resource.GetResourceValue("EntryDeletingConfirmation");
             var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("EntryRecycled") : resource.GetResourceValue("EntryDeleted");
-            MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
                 resource.GetResourceValue("EntityDeleteActionButton"),
                 resource.GetResourceValue("EntityDeleteCancelButton"), a =>
             {

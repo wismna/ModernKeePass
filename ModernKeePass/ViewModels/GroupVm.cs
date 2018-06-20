@@ -215,7 +215,7 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogHelper.ShowErrorDialog(e);
+                MessageDialogHelper.ShowErrorDialog(e).Wait();
             }
         }
         
@@ -229,7 +229,7 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogHelper.ShowErrorDialog(e);
+                MessageDialogHelper.ShowErrorDialog(e).Wait();
             }
         }
 

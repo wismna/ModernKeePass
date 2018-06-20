@@ -96,7 +96,7 @@ namespace ModernKeePass.Views.UserControls
                 var resource = new ResourcesService();
                 if (database.IsOpen)
                 {
-                    MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogDBOpenTitle"),
+                    await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogDBOpenTitle"),
                         string.Format(resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
                         resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
                         resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),

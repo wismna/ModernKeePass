@@ -39,7 +39,7 @@ namespace ModernKeePass
 
         #region Event Handlers
 
-        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             // Save the argument exception because it's cleared on first access
             var exception = unhandledExceptionEventArgs.Exception;
@@ -54,7 +54,7 @@ namespace ModernKeePass
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogSaveErrorTitle"),
+                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     realException.InnerException.Message,
                     resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
                     resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
@@ -90,7 +90,7 @@ namespace ModernKeePass
             OnLaunchOrActivated(args);
         }
 
-        private void OnLaunchOrActivated(IActivatedEventArgs e)
+        private async void OnLaunchOrActivated(IActivatedEventArgs e)
         {
 
 #if DEBUG
@@ -116,7 +116,7 @@ namespace ModernKeePass
                 {
                     //TODO: Load state from previously terminated application
 #if DEBUG
-                    MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
+                    await MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
 #endif
                 }
 
@@ -132,7 +132,7 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
 
-        private void OnResuming(object sender, object e)
+        private async void OnResuming(object sender, object e)
         {
             var currentFrame = Window.Current.Content as Frame;
             var database = DatabaseService.Instance;
@@ -151,7 +151,7 @@ namespace ModernKeePass
             {
                 currentFrame?.Navigate(typeof(MainPage));
 #if DEBUG
-                MessageDialogHelper.ShowErrorDialog(ex);
+                await MessageDialogHelper.ShowErrorDialog(ex);
 #endif
                 ToastNotificationHelper.ShowGenericToast("App suspended", "Database was closed (changes were saved)");
             }

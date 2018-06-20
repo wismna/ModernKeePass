@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
 
 namespace ModernKeePass.Common
 {
     public static class MessageDialogHelper
     {
-        public static async void ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler actionCommand, UICommandInvokedHandler cancelCommand)
+        public static async Task ShowActionDialog(string title, string contentText, string actionButtonText, string cancelButtonText, UICommandInvokedHandler actionCommand, UICommandInvokedHandler cancelCommand)
         {
             // Create the message dialog and set its content
             var messageDialog = CreateBasicDialog(title, contentText, cancelButtonText, cancelCommand);
@@ -17,7 +18,7 @@ namespace ModernKeePass.Common
             await messageDialog.ShowAsync();
         }
         
-        public static async void ShowErrorDialog(Exception exception)
+        public static async Task ShowErrorDialog(Exception exception)
         {
             if (exception == null) return;
             // Create the message dialog and set its content
@@ -27,7 +28,7 @@ namespace ModernKeePass.Common
             await messageDialog.ShowAsync();
         }
 
-        public static async void ShowNotificationDialog(string title, string message)
+        public static async Task ShowNotificationDialog(string title, string message)
         {
             var dialog = CreateBasicDialog(title, message, "OK");
 

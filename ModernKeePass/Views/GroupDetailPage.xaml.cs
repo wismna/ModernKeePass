@@ -97,14 +97,14 @@ namespace ModernKeePass.Views
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var resource = new ResourcesService();
             var message = Model.IsRecycleOnDelete
                 ? resource.GetResourceValue("GroupRecyclingConfirmation")
                 : resource.GetResourceValue("GroupDeletingConfirmation");
             var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("GroupRecycled") : resource.GetResourceValue("GroupDeleted");
-            MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
                 resource.GetResourceValue("EntityDeleteActionButton"),
                 resource.GetResourceValue("EntityDeleteCancelButton"), a =>
                 {

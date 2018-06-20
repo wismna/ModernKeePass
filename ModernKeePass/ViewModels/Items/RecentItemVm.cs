@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Threading.Tasks;
+using Windows.Storage;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -30,10 +31,10 @@ namespace ModernKeePass.ViewModels
         
         public void UpdateAccessTime()
         {
-            UpdateAccessTime(RecentService.Instance);
+            UpdateAccessTime(RecentService.Instance).Wait();
         }
 
-        public async void UpdateAccessTime(IRecentService recent)
+        public async Task UpdateAccessTime(IRecentService recent)
         {
             await recent.GetFileAsync(Token);
         }
