@@ -22,16 +22,11 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainColorHyperlinkButton}" Foreground="{StaticResource MainColor}">
+        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainColorHyperlinkButton}" Foreground="{StaticResource MainColor}" Command="{Binding ClearAllCommand}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Cancel" />
                 <TextBlock x:Uid="RecentClear" VerticalAlignment="Center" Margin="10,0,0,0" />
             </StackPanel>
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="Click">
-                    <core:CallMethodAction TargetObject="{Binding}" MethodName="ClearAll" />
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
         </HyperlinkButton>
         <ListView Grid.Row="1" 
             ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"

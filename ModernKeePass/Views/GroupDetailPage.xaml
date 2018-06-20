@@ -34,10 +34,9 @@
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Save" x:Uid="AppBarSave">
+                <AppBarButton Icon="Save" x:Uid="AppBarSave" Command="{Binding SaveCommand}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
-                            <core:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
                             <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
@@ -53,20 +52,8 @@
             <AppBarButton Icon="Sort" x:Uid="AppBarSort" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="AppBarSortEntries">
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="Click">
-                                    <core:CallMethodAction MethodName="SortEntries" TargetObject="{Binding}" />
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                        </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="AppBarSortGroups">
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="Click">
-                                    <core:CallMethodAction MethodName="SortGroups" TargetObject="{Binding}" />
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                        </MenuFlyoutItem>
+                        <MenuFlyoutItem x:Uid="AppBarSortEntries" Command="{Binding SortEntriesCommand}" />
+                        <MenuFlyoutItem x:Uid="AppBarSortGroups" Command="{Binding SortGroupsCommand}" />
                     </MenuFlyout>
                 </Button.Flyout>
             </AppBarButton>
@@ -77,13 +64,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
-            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:CallMethodAction MethodName="UndoDelete" TargetObject="{Binding}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </AppBarButton>
+            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click" Command="{Binding UndoDeleteCommand}" />
             <AppBarButton Icon="Delete" x:Uid="AppBarDelete" IsEnabled="{Binding IsNotRoot}" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>

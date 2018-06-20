@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Input;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Interfaces
@@ -15,6 +16,14 @@ namespace ModernKeePass.Interfaces
         bool IsRecycleOnDelete { get; }
 
         /// <summary>
+        /// Save changes to Model
+        /// </summary>
+        ICommand SaveCommand { get; }
+        /// <summary>
+        /// Restore ViewModel
+        /// </summary>
+        ICommand UndoDeleteCommand { get; }
+        /// <summary>
         /// Move a entity to the destination group
         /// </summary>
         /// <param name="destination">The destination to move the entity to</param>
@@ -23,14 +32,6 @@ namespace ModernKeePass.Interfaces
         /// Delete from Model
         /// </summary>
         void CommitDelete();
-        /// <summary>
-        /// Restore ViewModel
-        /// </summary>
-        void UndoDelete();
-        /// <summary>
-        /// Save changes to Model
-        /// </summary>
-        void Save();
         /// <summary>
         /// Delete from ViewModel
         /// </summary>

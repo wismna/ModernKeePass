@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
@@ -81,18 +82,17 @@ namespace ModernKeePass
         /// <param name="args">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
-            OnLaunchOrActivated(args);
+            await OnLaunchOrActivated(args);
             await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
-        protected override void OnActivated(IActivatedEventArgs args)
+        protected override async void OnActivated(IActivatedEventArgs args)
         {
-            OnLaunchOrActivated(args);
+            await OnLaunchOrActivated(args);
         }
 
-        private async void OnLaunchOrActivated(IActivatedEventArgs e)
+        private async Task OnLaunchOrActivated(IActivatedEventArgs e)
         {
-
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -34,6 +35,8 @@ namespace ModernKeePass.ViewModels
                 _selectedItem.IsSelected = true;
             }
         }
+        
+        public ICommand ClearAllCommand { get; }
 
         public RecentVm() : this (RecentService.Instance)
         { }
@@ -41,12 +44,14 @@ namespace ModernKeePass.ViewModels
         public RecentVm(IRecentService recent)
         {
             _recent = recent;
+            ClearAllCommand = new RelayCommand(ClearAll);
+
             RecentItems = _recent.GetAllFiles();
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0] as RecentItemVm;
         }
 
-        public void ClearAll()
+        private void ClearAll()
         {
             _recent.ClearAll();
             RecentItems.Clear();

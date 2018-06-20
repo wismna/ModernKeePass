@@ -15,11 +15,11 @@
     mc:Ignorable="d"
     SizeChanged="EntryDetailPage_OnSizeChanged">
     <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
-        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
-        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter"/>
-        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
+        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
+        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter" />
+        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -353,13 +353,7 @@
                                             <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorBrackets" />
                                             <TextBlock  x:Uid="PasswordGeneratorAlso" Margin="0,5,0,0"/>
                                             <TextBox Text="{Binding CustomChars, Mode=TwoWay}" />
-                                            <Button x:Uid="PasswordGeneratorButton">
-                                                <interactivity:Interaction.Behaviors>
-                                                    <core:EventTriggerBehavior EventName="Click">
-                                                        <core:CallMethodAction TargetObject="{Binding}" MethodName="GeneratePassword"/>
-                                                    </core:EventTriggerBehavior>
-                                                </interactivity:Interaction.Behaviors>
-                                            </Button>
+                                            <Button x:Uid="PasswordGeneratorButton" Command="{Binding GeneratePasswordCommand}" />
                                         </StackPanel>
                                     </Flyout>
                                 </Button.Flyout>
@@ -373,9 +367,9 @@
             </Setter>
         </Style>
     </Page.Resources>
-    <!--<Page.DataContext>
+    <Page.DataContext>
         <viewModels:EntryVm />
-    </Page.DataContext>-->
+    </Page.DataContext>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
@@ -386,10 +380,9 @@
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </AppBarButton>
-                <AppBarButton Icon="Save" x:Uid="AppBarSave">
+                <AppBarButton Icon="Save" x:Uid="AppBarSave" Command="{Binding SaveCommand}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
-                            <core:CallMethodAction TargetObject="{Binding}" MethodName="Save"/>
                             <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
@@ -409,13 +402,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
-            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:CallMethodAction MethodName="UndoDelete" TargetObject="{Binding}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </AppBarButton>
+            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click" Command="{Binding UndoDeleteCommand}" />
             <AppBarButton Icon="Delete" x:Uid="AppBarDelete" Click="DeleteButton_Click" />
         </CommandBar>
     </Page.BottomAppBar>
@@ -434,7 +421,7 @@
                 <ColumnDefinition Width="50" x:Name="LeftListViewColumn" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl x:Name="HamburgerMenu" x:Uid="HistoryLeftListView" ItemsSource="{Binding History}" ResizeTarget="{Binding ElementName=LeftListViewColumn}" SelectionChanged="HamburgerMenuUserControl_OnSelectionChanged" />
+            <userControls:HamburgerMenuUserControl x:Uid="HistoryLeftListView" ItemsSource="{Binding History}" ResizeTarget="{Binding ElementName=LeftListViewColumn}" SelectionChanged="HamburgerMenuUserControl_OnSelectionChanged" />
             <StackPanel x:Name="StackPanel" Grid.Column="1" Margin="20,0,0,0">
                 <StackPanel.Resources>
                     <Style TargetType="TextBlock">

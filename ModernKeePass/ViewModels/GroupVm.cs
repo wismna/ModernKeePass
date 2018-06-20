@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -106,7 +108,12 @@ namespace ModernKeePass.ViewModels
                 return groups;
             }
         }
-        
+
+        public ICommand SaveCommand { get; }
+        public ICommand SortEntriesCommand { get; }
+        public ICommand SortGroupsCommand { get; }
+        public ICommand UndoDeleteCommand { get; }
+
         private readonly PwGroup _pwGroup;
         private readonly IDatabaseService _database;
         private bool _isEditMode;
@@ -125,6 +132,13 @@ namespace ModernKeePass.ViewModels
             _pwGroup = pwGroup;
             _database = database;
             ParentGroup = parent;
+
+            SaveCommand = new RelayCommand(() => _database.Save());
+            SortEntriesCommand = new RelayCommand(async () =>
+                await SortEntriesAsync().ConfigureAwait(false));
+            SortGroupsCommand = new RelayCommand(async () =>
+                await SortGroupsAsync().ConfigureAwait(false));
+            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup));
 
             if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _database.RecycleBin = this;
             Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
@@ -199,13 +213,13 @@ namespace ModernKeePass.ViewModels
             if (_database.RecycleBinEnabled && !PreviousGroup.IsSelected) _database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
             else _database.AddDeletedItem(IdUuid);
         }
-
-        public void Save()
-        {
-            _database.Save();
-        }
         
-        public void SortEntries()
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        private async Task SortEntriesAsync()
         {
             var comparer = new PwEntryComparer(PwDefs.TitleField, true, false);
             try
@@ -215,11 +229,11 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogHelper.ShowErrorDialog(e).Wait();
+                await MessageDialogHelper.ShowErrorDialog(e);
             }
         }
         
-        public void SortGroups()
+        private async Task SortGroupsAsync()
         {
             try
             {
@@ -229,13 +243,9 @@ namespace ModernKeePass.ViewModels
             }
             catch (Exception e)
             {
-                MessageDialogHelper.ShowErrorDialog(e).Wait();
+                await MessageDialogHelper.ShowErrorDialog(e);
             }
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
     }
 }
