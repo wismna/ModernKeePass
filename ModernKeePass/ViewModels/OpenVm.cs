@@ -9,7 +9,7 @@ namespace ModernKeePass.ViewModels
     {
         public bool IsFileSelected => DatabaseFile != null;
 
-        public string Name => DatabaseFile.DisplayName;
+        public string Name => DatabaseFile?.DisplayName;
 
         public StorageFile DatabaseFile { get; private set; }
 
@@ -31,6 +31,7 @@ namespace ModernKeePass.ViewModels
             DatabaseFile = file;
             OnPropertyChanged("Name");
             OnPropertyChanged("IsFileSelected");
+            OnPropertyChanged("DatabaseFile");
             AddToRecentList(file, recent);
         }
         

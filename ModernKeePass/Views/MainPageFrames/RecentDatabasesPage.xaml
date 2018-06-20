@@ -50,11 +50,8 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="0" Text="{Binding Name}" Padding="5,0,0,0" />
                         <TextBlock Grid.Row="1" Text="{Binding Path}" Padding="5,0,0,0" FontSize="10" />
-                        <userControls:CompositeKeyUserControl Grid.Row="2" x:Name="DatabaseUserControl" x:Uid="CompositeKeyOpenButton" HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <userControls:CompositeKeyUserControl Grid.Row="2" x:Name="DatabaseUserControl" x:Uid="CompositeKeyOpenButton" HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" DatabaseFile="{Binding DatabaseFile}">
                             <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="ValidationChecking">
-                                    <core:CallMethodAction TargetObject="{Binding}" MethodName="OpenDatabaseFile" />
-                                </core:EventTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="ValidationChecked">
                                     <core:CallMethodAction TargetObject="{Binding}" MethodName="UpdateAccessTime" />
                                     <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />

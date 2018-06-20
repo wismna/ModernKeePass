@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using ModernKeePass.Common;
-using ModernKeePass.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePassLib.Cryptography;

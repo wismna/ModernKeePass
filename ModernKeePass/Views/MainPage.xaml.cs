@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.Storage;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.ViewModels;
 
@@ -32,7 +33,8 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            DataContext = new MainVm(Frame, MenuFrame);
+            var file = e.Parameter as StorageFile;
+            DataContext = new MainVm(Frame, MenuFrame, file);
         }
     }
 }

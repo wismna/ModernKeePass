@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -44,11 +45,11 @@ namespace ModernKeePass.ViewModels
 
         public MainVm() {}
 
-        internal MainVm(Frame referenceFrame, Frame destinationFrame) : this(referenceFrame, destinationFrame,
-            DatabaseService.Instance, new ResourcesService(), RecentService.Instance)
+        internal MainVm(Frame referenceFrame, Frame destinationFrame, StorageFile databaseFile = null) : this(referenceFrame, destinationFrame,
+            DatabaseService.Instance, new ResourcesService(), RecentService.Instance, databaseFile)
         { }
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabaseService database, IResourceService resource, IRecentService recent)
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabaseService database, IResourceService resource, IRecentService recent, StorageFile databaseFile = null)
         {
             var isDatabaseOpen = database != null && database.IsOpen;
 
@@ -59,8 +60,9 @@ namespace ModernKeePass.ViewModels
                     Title = resource.GetResourceValue("MainMenuItemOpen"),
                     PageType = typeof(OpenDatabasePage),
                     Destination = destinationFrame,
-                    Parameter = referenceFrame,
-                    SymbolIcon = Symbol.Page2
+                    Parameter = databaseFile,
+                    SymbolIcon = Symbol.Page2,
+                    IsSelected = databaseFile != null
                 },
                 new MainMenuItemVm
                 {

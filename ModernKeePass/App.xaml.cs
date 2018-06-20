@@ -199,7 +199,7 @@ namespace ModernKeePass
             base.OnFileActivated(args);
             var rootFrame = new Frame();
             var file = args.Files[0] as StorageFile;
-            rootFrame.Navigate(typeof(OpenDatabasePage), file);
+            rootFrame.Navigate(typeof(MainPage), file);
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }
