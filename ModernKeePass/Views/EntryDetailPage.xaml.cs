@@ -55,30 +55,6 @@ namespace ModernKeePass.Views
 
         #endregion
         
-        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            var resource = new ResourcesService();
-            var message = Model.IsRecycleOnDelete
-                ? resource.GetResourceValue("EntryRecyclingConfirmation")
-                : resource.GetResourceValue("EntryDeletingConfirmation");
-            var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("EntryRecycled") : resource.GetResourceValue("EntryDeleted");
-            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
-                resource.GetResourceValue("EntityDeleteActionButton"),
-                resource.GetResourceValue("EntityDeleteCancelButton"), a =>
-            {
-                ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
-                Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
-                if (Frame.CanGoBack) Frame.GoBack();
-            }, null);
-        }
-
-        private void RestoreButton_Click(object sender, RoutedEventArgs e)
-        {
-            var resource = new ResourcesService();
-            ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityRestoredTitle"), resource.GetResourceValue("EntryRestored"));
-            if (Frame.CanGoBack) Frame.GoBack();
-        }
-        
         private void EntryDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);

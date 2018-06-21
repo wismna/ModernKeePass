@@ -109,7 +109,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Actions\ClipboardAction.cs" />
+    <Compile Include="Actions\DeleteEntityAction.cs" />
     <Compile Include="Actions\NavigateToUrlAction.cs" />
+    <Compile Include="Actions\RestoreEntityAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
     <Compile Include="Actions\ToastAction.cs" />
     <Compile Include="App.xaml.cs">

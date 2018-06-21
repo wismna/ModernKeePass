@@ -402,8 +402,20 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </AppBarToggleButton>
-            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Click="RestoreButton_Click" Command="{Binding UndoDeleteCommand}" />
-            <AppBarButton Icon="Delete" x:Uid="AppBarDelete" Click="DeleteButton_Click" />
+            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Command="{Binding UndoDeleteCommand}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <actions:RestoreEntityAction Entity="{Binding}" Frame="{Binding Frame, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarButton>
+            <AppBarButton Icon="Delete" x:Uid="AppBarDelete">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <actions:DeleteEntityAction Entity="{Binding}" Frame="{Binding Frame, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

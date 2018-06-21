@@ -96,32 +96,7 @@ namespace ModernKeePass.Views
             }
             Frame.Navigate(typeof(EntryDetailPage), entry);
         }
-
-        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            var resource = new ResourcesService();
-            var message = Model.IsRecycleOnDelete
-                ? resource.GetResourceValue("GroupRecyclingConfirmation")
-                : resource.GetResourceValue("GroupDeletingConfirmation");
-            var text = Model.IsRecycleOnDelete ? resource.GetResourceValue("GroupRecycled") : resource.GetResourceValue("GroupDeleted");
-            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
-                resource.GetResourceValue("EntityDeleteActionButton"),
-                resource.GetResourceValue("EntityDeleteCancelButton"), a =>
-                {
-                    ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityDeleting"), text);
-                    Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
-                    if (Frame.CanGoBack) Frame.GoBack();
-                }, null);
-        }
-
-        private void RestoreButton_Click(object sender, RoutedEventArgs e)
-        {
-            var resource = new ResourcesService();
-            ToastNotificationHelper.ShowMovedToast(Model, resource.GetResourceValue("EntityRestoredTitle"),
-                resource.GetResourceValue("GroupRestored"));
-            if (Frame.CanGoBack) Frame.GoBack();
-        }
-
+        
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             // We need to synchronize the two lists (zoomed-in and zoomed-out) because the source is different
