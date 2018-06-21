@@ -111,11 +111,12 @@
     <Compile Include="Actions\ClipboardAction.cs" />
     <Compile Include="Actions\NavigateToUrlAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
+    <Compile Include="Actions\ToastAction.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\IntToSymbolConverter.cs" />
-    <Compile Include="Exceptions\DatabaseOpenedException.cs" />
+    <Compile Include="Exceptions\NavigationException.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
     <Compile Include="Interfaces\IRecentService.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />

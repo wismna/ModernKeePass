@@ -114,7 +114,8 @@ namespace ModernKeePass
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //TODO: Load state from previously terminated application
+                    // Load state from previously terminated application
+                    await SuspensionManager.RestoreAsync();
 #if DEBUG
                     await MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
 #endif
@@ -164,7 +165,7 @@ namespace ModernKeePass
         /// <param name="e">Details about the navigation failure</param>
         void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+            throw new NavigationException(e.SourcePageType);
         }
 
         /// <summary>
@@ -174,7 +175,7 @@ namespace ModernKeePass
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             var database = DatabaseService.Instance;
@@ -187,6 +188,7 @@ namespace ModernKeePass
             {
                 ToastNotificationHelper.ShowErrorToast(exception);
             }
+            await SuspensionManager.SaveAsync();
             deferral.Complete();
         }
         

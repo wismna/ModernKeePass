@@ -17,9 +17,8 @@ namespace ModernKeePassApp.Test
         public void TestCreate()
         {
             Assert.IsTrue(_database.IsClosed);
-            _database.DatabaseFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync("NewDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.IsTrue(_database.IsFileOpen);
-            OpenOrCreateDatabase(true);
+            var databaseFile = ApplicationData.Current.TemporaryFolder.CreateFileAsync("NewDatabase.kdbx").GetAwaiter().GetResult();
+            OpenOrCreateDatabase(databaseFile, true);
             _database.Close();
             Assert.IsTrue(_database.IsClosed);
         }
@@ -28,9 +27,8 @@ namespace ModernKeePassApp.Test
         public void TestOpen()
         {
             Assert.IsTrue(_database.IsClosed);
-            _database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx").GetAwaiter().GetResult();
-            Assert.IsTrue(_database.IsFileOpen);
-            OpenOrCreateDatabase(false);
+           var databaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx").GetAwaiter().GetResult();
+            OpenOrCreateDatabase(databaseFile, false);
         }
 
         [TestMethod]
@@ -44,16 +42,16 @@ namespace ModernKeePassApp.Test
             TestOpen();
         }
 
-        private void OpenOrCreateDatabase(bool createNew)
+        private void OpenOrCreateDatabase(StorageFile databaseFile, bool createNew)
         {
             Assert.ThrowsException<ArgumentNullException>(
-                () => _database.Open(null, createNew));
+                () => _database.Open(databaseFile, null, createNew));
             var compositeKey = new CompositeKeyVm(_database, new ResourceServiceMock())
             {
                 HasPassword = true,
                 Password = "test"
             };
-            compositeKey.OpenDatabase(createNew).GetAwaiter().GetResult();
+            compositeKey.OpenDatabase(databaseFile, createNew).GetAwaiter().GetResult();
             Assert.IsTrue(_database.IsOpen);
         }
     }

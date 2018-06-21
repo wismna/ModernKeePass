@@ -187,7 +187,7 @@
     <value>Attention</value>
   </data>
   <data name="EntityDeleting" xml:space="preserve">
-    <value>Suprression</value>
+    <value>Suppression</value>
   </data>
   <data name="EntityRestoredTitle" xml:space="preserve">
     <value>Restauré</value>
@@ -208,10 +208,10 @@
     <value>Entrée replacée dans son groupe d'origine</value>
   </data>
   <data name="GroupDeleted" xml:space="preserve">
-    <value>Groupe supprimé défnitivement</value>
+    <value>Groupe supprimé définitivement</value>
   </data>
   <data name="GroupDeletingConfirmation" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir supprimer ce group et toutes ses entrées ?</value>
+    <value>Êtes-vous sûr de vouloir supprimer ce groupe et toutes ses entrées ?</value>
   </data>
   <data name="GroupRecycled" xml:space="preserve">
     <value>Groupe placé dans la Corbeille</value>
@@ -293,5 +293,8 @@
   </data>
   <data name="MessageDialogSaveErrorTitle" xml:space="preserve">
     <value>Erreur de sauvegarde</value>
+  </data>
+  <data name="ToastSavedMessage" xml:space="preserve">
+    <value>Base de données sauvegardée avec succès !</value>
   </data>
 </root>

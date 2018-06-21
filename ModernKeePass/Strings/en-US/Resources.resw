@@ -387,4 +387,13 @@
   <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
     <value>History</value>
   </data>
+  <data name="ToastCopyLogin.Message" xml:space="preserve">
+    <value>Login successfully copied!</value>
+  </data>
+  <data name="ToastCopyPassword.Message" xml:space="preserve">
+    <value>Password successfully copied!</value>
+  </data>
+  <data name="ToastCopyUrl.Message" xml:space="preserve">
+    <value>URL successfully copied!</value>
+  </data>
 </root>

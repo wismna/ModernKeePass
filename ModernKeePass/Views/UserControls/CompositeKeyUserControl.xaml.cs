@@ -103,6 +103,9 @@ namespace ModernKeePass.Views.UserControls
                         async command =>
                         {
                             database.Save();
+                            ToastNotificationHelper.ShowGenericToast(
+                                database.Name,
+                                resource.GetResourceValue("ToastSavedMessage"));
                             database.Close(false);
                             await OpenDatabase(resource);
                         },

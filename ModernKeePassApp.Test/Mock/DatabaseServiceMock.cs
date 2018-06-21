@@ -11,13 +11,11 @@ namespace ModernKeePassApp.Test.Mock
     public class DatabaseServiceMock : IDatabaseService
     {
         private bool _isOpen;
-        private bool _isClosed;
         private CompositeKey _compositeKey;
-        
+        private StorageFile _databaseFile;
+
         public PwCompressionAlgorithm CompressionAlgorithm { get; set; }
-
-        public StorageFile DatabaseFile { get; set; }
-
+        
         public CompositeKey CompositeKey
         {
             get { return _compositeKey; }
@@ -29,10 +27,6 @@ namespace ModernKeePassApp.Test.Mock
         public KdfParameters KeyDerivation { get; set; }
 
         public bool IsOpen => _isOpen;
-
-        public bool IsFileOpen => DatabaseFile != null;
-
-        public bool IsClosed => _isClosed;
 
         public bool HasChanged { get; set; }
 
@@ -51,7 +45,6 @@ namespace ModernKeePassApp.Test.Mock
         
         public void Close(bool releaseFile = true)
         {
-            _isClosed = true;
             _isOpen = false;
         }
 
@@ -59,17 +52,17 @@ namespace ModernKeePassApp.Test.Mock
         {
             throw new NotImplementedException();
         }
-
-        public void Open(CompositeKey key, bool createNew = false)
+        
+        public void Open(StorageFile databaseFile, CompositeKey key, bool createNew = false)
         {
+            _databaseFile = databaseFile;
             _compositeKey = key;
             _isOpen = true;
-            _isClosed = false;
         }
 
         public void ReOpen()
         {
-            Open(_compositeKey);
+            Open(_databaseFile, _compositeKey);
         }
 
         public void Save()

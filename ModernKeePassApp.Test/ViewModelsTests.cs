@@ -31,15 +31,15 @@ namespace ModernKeePassApp.Test
             var mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.AreEqual(1, mainVm.MainMenuItems.Count());
             var firstGroup = mainVm.MainMenuItems.FirstOrDefault();
-            Assert.AreEqual(7, firstGroup.Count());
+            Assert.AreEqual(7, firstGroup?.Count());
 
-            database.DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
+            var databaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
                 .GetAwaiter().GetResult();
-            mainVm = new MainVm(null, null, database, _resource, _recent);
+            mainVm = new MainVm(null, null, database, _resource, _recent, databaseFile);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(typeof(OpenDatabasePage), ((MainMenuItemVm) mainVm.SelectedItem).PageType);
 
-            database.Open(null);
+            database.Open(databaseFile, null);
             mainVm = new MainVm(null, null, database, _resource, _recent);
             Assert.IsNotNull(mainVm.SelectedItem);
             Assert.AreEqual(2, mainVm.MainMenuItems.Count());
@@ -51,7 +51,7 @@ namespace ModernKeePassApp.Test
         {
             var database = new DatabaseServiceMock();
             var compositeKeyVm = new CompositeKeyVm(database, _resource);
-            Assert.IsTrue(compositeKeyVm.OpenDatabase(false).GetAwaiter().GetResult());
+            Assert.IsTrue(compositeKeyVm.OpenDatabase(null, false).GetAwaiter().GetResult());
             compositeKeyVm.StatusType = 1;
             compositeKeyVm.Password = "test";
             Assert.AreEqual(0, compositeKeyVm.StatusType);
@@ -61,13 +61,10 @@ namespace ModernKeePassApp.Test
         [TestMethod]
         public void TestOpenVm()
         {
-            var database = new DatabaseServiceMock
-            {
-                DatabaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
-                    .GetAwaiter().GetResult()
-            };
-            var openVm = new OpenVm(database);
-            Assert.IsTrue(openVm.ShowPasswordBox);
+            var databaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
+                .GetAwaiter().GetResult();
+            var openVm = new OpenVm(databaseFile);
+            Assert.IsTrue(openVm.IsFileSelected);
             Assert.AreEqual("MockDatabase", openVm.Name);
         }
 
@@ -94,7 +91,7 @@ namespace ModernKeePassApp.Test
         {
             var database = new DatabaseServiceMock();
             var saveVm = new SaveVm(database);
-            database.Open(null);
+            database.Open(null, null);
             saveVm.Save(false);
             Assert.IsTrue(database.IsOpen);
             saveVm.Save();
@@ -108,7 +105,7 @@ namespace ModernKeePassApp.Test
             Assert.AreEqual(1, settingsVm.MenuItems.Count());
             var firstGroup = settingsVm.MenuItems.FirstOrDefault();
             // All groups have an empty title, so all settings are put inside the empty group
-            Assert.AreEqual(4, firstGroup.Count());
+            Assert.AreEqual(4, firstGroup?.Count());
             Assert.IsNotNull(settingsVm.SelectedItem);
             var selectedItem = (ListMenuItemVm) settingsVm.SelectedItem;
             Assert.AreEqual(typeof(SettingsNewDatabasePage), selectedItem.PageType);

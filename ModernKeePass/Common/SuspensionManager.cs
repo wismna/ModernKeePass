@@ -17,7 +17,7 @@ namespace ModernKeePass.Common
     /// carry across sessions, but that should be discarded when an application crashes or is
     /// upgraded.
     /// </summary>
-    internal sealed class SuspensionManager
+    internal static class SuspensionManager
     {
         private static Dictionary<string, object> _sessionState = new Dictionary<string, object>();
         private static readonly List<Type> _knownTypes = new List<Type>();

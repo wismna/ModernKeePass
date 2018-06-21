@@ -294,4 +294,7 @@
   <data name="MessageDialogSaveErrorTitle" xml:space="preserve">
     <value>Save error</value>
   </data>
+  <data name="ToastSavedMessage" xml:space="preserve">
+    <value>Database successfully saved!</value>
+  </data>
 </root>

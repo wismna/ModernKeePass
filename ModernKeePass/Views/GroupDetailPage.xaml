@@ -153,6 +153,7 @@
                                                     <interactivity:Interaction.Behaviors>
                                                         <core:EventTriggerBehavior EventName="Click">
                                                             <actions:ClipboardAction Text="{Binding UserName}" />
+                                                            <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Name}" />
                                                         </core:EventTriggerBehavior>
                                                     </interactivity:Interaction.Behaviors>
                                                 </MenuFlyoutItem>
@@ -160,6 +161,7 @@
                                                     <interactivity:Interaction.Behaviors>
                                                         <core:EventTriggerBehavior EventName="Click">
                                                             <actions:ClipboardAction Text="{Binding Password}" />
+                                                            <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Name}" />
                                                         </core:EventTriggerBehavior>
                                                     </interactivity:Interaction.Behaviors>
                                                 </MenuFlyoutItem>
@@ -167,6 +169,7 @@
                                                     <interactivity:Interaction.Behaviors>
                                                         <core:EventTriggerBehavior EventName="Click">
                                                             <actions:NavigateToUrlAction Url="{Binding Url}" />
+                                                            <actions:ToastAction x:Uid="ToastCopyUrl" Title="{Binding Name}" />
                                                         </core:EventTriggerBehavior>
                                                     </interactivity:Interaction.Behaviors>
                                                 </MenuFlyoutItem>
