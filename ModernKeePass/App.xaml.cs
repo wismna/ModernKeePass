@@ -37,7 +37,6 @@ namespace ModernKeePass
             UnhandledException += OnUnhandledException;
         }
 
-
         #region Event Handlers
 
         private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
@@ -133,28 +132,24 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
 
-        private async void OnResuming(object sender, object e)
+        private void OnResuming(object sender, object e)
         {
             var currentFrame = Window.Current.Content as Frame;
             var database = DatabaseService.Instance;
-            if (!database.IsOpen)
-            {
-#if DEBUG
-                ToastNotificationHelper.ShowGenericToast("App suspended", "Nothing to do, no previous database opened");
-#endif
-                return;
-            }
+
             try
             {
-                if (database.CompositeKey != null) database.ReOpen();
+                database.ReOpen();
+#if DEBUG
+                ToastNotificationHelper.ShowGenericToast(database.Name, "Database reopened (changes were saved)");
+#endif
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 currentFrame?.Navigate(typeof(MainPage));
 #if DEBUG
-                await MessageDialogHelper.ShowErrorDialog(ex);
+                ToastNotificationHelper.ShowGenericToast("App resumed", "Nothing to do, no previous database opened");
 #endif
-                ToastNotificationHelper.ShowGenericToast("App suspended", "Database was closed (changes were saved)");
             }
         }
 
@@ -163,7 +158,7 @@ namespace ModernKeePass
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new NavigationException(e.SourcePageType);
         }

@@ -16,12 +16,6 @@ namespace ModernKeePassApp.Test.Mock
 
         public PwCompressionAlgorithm CompressionAlgorithm { get; set; }
         
-        public CompositeKey CompositeKey
-        {
-            get { return _compositeKey; }
-            set { _compositeKey = value; }
-        }
-
         public PwUuid DataCipher { get; set; }
 
         public KdfParameters KeyDerivation { get; set; }
@@ -46,6 +40,11 @@ namespace ModernKeePassApp.Test.Mock
         public void Close(bool releaseFile = true)
         {
             _isOpen = false;
+        }
+
+        public void UpdateCompositeKey(CompositeKey newCompositeKey)
+        {
+            _compositeKey = newCompositeKey;
         }
 
         public void CreateRecycleBin(string title)

@@ -20,6 +20,7 @@ namespace ModernKeePass.Services
         private readonly ISettingsService _settings;
         private StorageFile _databaseFile;
         private GroupVm _recycleBin;
+        private CompositeKey _compositeKey;
 
         public GroupVm RootGroup { get; set; }
 
@@ -40,9 +41,7 @@ namespace ModernKeePass.Services
             get { return _pwDatabase.RecycleBinEnabled; }
             set { _pwDatabase.RecycleBinEnabled = value; }
         }
-
-        public CompositeKey CompositeKey { get; set; }
-
+        
         public PwUuid DataCipher
         {
             get { return _pwDatabase.DataCipherUuid; }
@@ -87,12 +86,16 @@ namespace ModernKeePass.Services
         {
             try
             {
+                if (databaseFile == null)
+                {
+                    throw new ArgumentNullException(nameof(databaseFile));
+                }
                 if (key == null)
                 {
                     throw new ArgumentNullException(nameof(key));
                 }
                 
-                CompositeKey = key;
+                _compositeKey = key;
                 var ioConnection = IOConnectionInfo.FromFile(databaseFile);
                 if (createNew)
                 {
@@ -122,7 +125,7 @@ namespace ModernKeePass.Services
 
         public void ReOpen()
         {
-            Open(_databaseFile, CompositeKey);
+            Open(_databaseFile, _compositeKey);
         }
 
         /// <summary>
@@ -179,6 +182,11 @@ namespace ModernKeePass.Services
             RecycleBin = RootGroup.AddNewGroup(title);
             RecycleBin.IsSelected = true;
             RecycleBin.IconId = (int)PwIcon.TrashBin;
+        }
+
+        public void UpdateCompositeKey(CompositeKey newCompositeKey)
+        {
+            if (newCompositeKey != null) _compositeKey = newCompositeKey;
         }
         
         private void CreateSampleData()

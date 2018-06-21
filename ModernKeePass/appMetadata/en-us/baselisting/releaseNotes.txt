@@ -1,3 +1,5 @@
 Entry history feature added
+App now uses Windows theme color as its base color
 Design improvements
+Bug corrections
 KeePassLib version bump to 2.39.1

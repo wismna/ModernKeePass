@@ -151,7 +151,7 @@ namespace ModernKeePass.ViewModels
 
         public void UpdateKey()
         {
-            Database.CompositeKey = CreateCompositeKey();
+            Database.UpdateCompositeKey(CreateCompositeKey());
             UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 
