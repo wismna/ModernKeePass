@@ -256,12 +256,12 @@
                                 <Setter Property="Padding" Value="0" />
                             </Style>
                         </Flyout.FlyoutPresenterStyle>
-                        <!--<controls:TextBoxWithButton x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />-->
+                        <!--<controls:TextBoxWithButton x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" SelectionHighlightColor="{StaticResource MainColor}" IsButtonEnabled="False" />-->
                         <SearchBox x:Uid="GroupSearch" Width="350" Padding="12" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}" />
                     </Flyout>
                 </Button.Flyout>
             </Button>
-            <!--<controls:TextBoxWithButton Grid.Column="2" x:Name="FilterBox" x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" IsButtonEnabled="False" />-->
+            <!--<controls:TextBoxWithButton Grid.Column="2" x:Name="FilterBox" x:Uid="GroupFilter" ButtonSymbol="&#xE16E;" Text="{Binding Filter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FontSize="18" VerticalContentAlignment="Center" Width="400" Style="{StaticResource TextBoxWithButtonStyle}" SelectionHighlightColor="{StaticResource MainColor}" IsButtonEnabled="False" />-->
             <SearchBox Grid.Column="2" x:Uid="GroupSearch" x:Name="SearchBox" Padding="12" Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}" />
         </Grid>
         <VisualStateManager.VisualStateGroups>

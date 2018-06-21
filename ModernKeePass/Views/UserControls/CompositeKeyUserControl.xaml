@@ -32,7 +32,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" SelectionHighlightColor="{StaticResource MainColor}" >
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="GotFocus">
                     <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="HasPassword" Value="True" />
