@@ -113,6 +113,7 @@ namespace ModernKeePass.ViewModels
         public ICommand SortEntriesCommand { get; }
         public ICommand SortGroupsCommand { get; }
         public ICommand UndoDeleteCommand { get; }
+        public ICommand GoBackCommand { get; set; }
 
         private readonly PwGroup _pwGroup;
         private readonly IDatabaseService _database;

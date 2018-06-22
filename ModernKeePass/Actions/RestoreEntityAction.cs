@@ -1,5 +1,5 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using System.Windows.Input;
+using Windows.UI.Xaml;
 using Microsoft.Xaml.Interactivity;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -19,15 +19,15 @@ namespace ModernKeePass.Actions
         public static readonly DependencyProperty EntityProperty =
             DependencyProperty.Register("Entity", typeof(IPwEntity), typeof(RestoreEntityAction),
                 new PropertyMetadata(null));
-
-        public Frame Frame
+        
+        public ICommand Command
         {
-            get { return (Frame)GetValue(FrameProperty); }
-            set { SetValue(FrameProperty, value); }
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
         }
 
-        public static readonly DependencyProperty FrameProperty =
-            DependencyProperty.Register("Frame", typeof(Frame), typeof(RestoreEntityAction),
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(RestoreEntityAction),
                 new PropertyMetadata(null));
 
 
@@ -38,7 +38,7 @@ namespace ModernKeePass.Actions
             
             ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityRestoredTitle"),
                 resource.GetResourceValue($"{type}Restored"));
-            if (Frame.CanGoBack) Frame.GoBack();
+            Command.Execute(null);
 
             return null;
         }

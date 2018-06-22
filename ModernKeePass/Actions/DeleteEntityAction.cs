@@ -1,5 +1,5 @@
-﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
+﻿using System.Windows.Input;
+using Windows.UI.Xaml;
 using Microsoft.Xaml.Interactivity;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -20,14 +20,14 @@ namespace ModernKeePass.Actions
             DependencyProperty.Register("Entity", typeof(IPwEntity), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
-        public Frame Frame
+        public ICommand Command
         {
-            get { return (Frame)GetValue(FrameProperty); }
-            set { SetValue(FrameProperty, value); }
+            get { return (ICommand)GetValue(CommandProperty); }
+            set { SetValue(CommandProperty, value); }
         }
 
-        public static readonly DependencyProperty FrameProperty =
-            DependencyProperty.Register("Frame", typeof(Frame), typeof(DeleteEntityAction),
+        public static readonly DependencyProperty CommandProperty =
+            DependencyProperty.Register("Command", typeof(ICommand), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
         public object Execute(object sender, object parameter)
@@ -45,7 +45,7 @@ namespace ModernKeePass.Actions
                 {
                     ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
                     Entity.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
-                    if (Frame.CanGoBack) Frame.GoBack();
+                    Command.Execute(null);
                 }, null).GetAwaiter();
 
             return null;

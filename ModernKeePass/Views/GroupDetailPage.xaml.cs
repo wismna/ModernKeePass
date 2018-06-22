@@ -7,7 +7,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
-using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
@@ -57,6 +56,7 @@ namespace ModernKeePass.Views
                 if (vm != null)
                     DataContext = vm;
             }
+            Model.GoBackCommand = NavigationHelper.GoBackCommand;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

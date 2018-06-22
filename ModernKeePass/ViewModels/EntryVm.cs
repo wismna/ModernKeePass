@@ -163,6 +163,7 @@ namespace ModernKeePass.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand GeneratePasswordCommand { get; }
         public ICommand UndoDeleteCommand { get; }
+        public ICommand GoBackCommand { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

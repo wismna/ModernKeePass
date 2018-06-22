@@ -2,7 +2,6 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
-using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page Détail de l'élément, consultez la page http://go.microsoft.com/fwlink/?LinkId=234232
@@ -28,7 +27,7 @@ namespace ModernKeePass.Views
             InitializeComponent();
             NavigationHelper = new NavigationHelper(this);
         }
-
+        
         #region Inscription de NavigationHelper
 
         /// Les méthodes fournies dans cette section sont utilisées simplement pour permettre
@@ -45,6 +44,7 @@ namespace ModernKeePass.Views
             NavigationHelper.OnNavigatedTo(e);
             if (!(e.Parameter is EntryVm)) return;
             DataContext = (EntryVm)e.Parameter;
+            Model.GoBackCommand = NavigationHelper.GoBackCommand;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
