@@ -71,30 +71,28 @@ namespace ModernKeePass.Views
         private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
-            GroupVm group;
             switch (listView?.SelectedIndex)
             {
                 case -1:
                     return;
                 default:
-                    group = listView?.SelectedItem as GroupVm;
+                    var group = listView?.SelectedItem as GroupVm;
+                    Frame.Navigate(typeof(GroupDetailPage), group);
                     break;
             }
-            Frame.Navigate(typeof(GroupDetailPage), group);
         }
         
         private void entries_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            EntryVm entry;
             switch (GridView.SelectedIndex)
             {
                 case -1:
                     return;
                 default:
-                    entry = GridView.SelectedItem as EntryVm;
+                    var entry = GridView.SelectedItem as EntryVm;
+                    Frame.Navigate(typeof(EntryDetailPage), entry);
                     break;
             }
-            Frame.Navigate(typeof(EntryDetailPage), entry);
         }
         
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)

@@ -25,7 +25,7 @@ namespace ModernKeePass.Actions
             }
             catch (Exception ex)
             {
-                MessageDialogHelper.ShowErrorDialog(ex).Wait();
+                MessageDialogHelper.ShowErrorDialog(ex).GetAwaiter();
                 return false;
             }
         }

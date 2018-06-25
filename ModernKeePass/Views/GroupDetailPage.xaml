@@ -239,6 +239,7 @@
                     x:Name="TitleTextBox"
                     Text="{Binding Name, Mode=TwoWay}" 
                     Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+                    SelectionHighlightColor="{StaticResource MainColor}"
                     Background="Transparent"
                     IsHitTestVisible="{Binding IsEditMode}" 
                     BorderThickness="0" 
