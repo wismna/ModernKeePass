@@ -149,9 +149,9 @@
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
                                         <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
-                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap"/>
-                                        <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
-                                        <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" MaxHeight="60" />
+                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" />
+                                        <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
+                                        <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                     </StackPanel>
                                     <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
                                         <SymbolIcon Symbol="More" />

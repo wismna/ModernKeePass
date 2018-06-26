@@ -1,5 +1,6 @@
 Ajout de la fonctionnalite d'historique des entrees
 L'application utilise la couleur de theme de Windows en tant que couleur principale
+Il est desormais possible de changer la couleur de fond et de texte des entrees
 Ameliorations de design
 Corrections de bugs
 Version de la KeePassLib passe a 2.39.1

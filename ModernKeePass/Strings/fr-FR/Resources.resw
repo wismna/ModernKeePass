@@ -396,4 +396,10 @@
   <data name="ToastCopyUrl.Message" xml:space="preserve">
     <value>URL copié avec succès !</value>
   </data>
+  <data name="EntryBackgroundColor.Text" xml:space="preserve">
+    <value>Couleur d'arrière plan</value>
+  </data>
+  <data name="EntryForegroundColor.Text" xml:space="preserve">
+    <value>Couleur du texte</value>
+  </data>
 </root>

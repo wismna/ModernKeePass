@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Input;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
@@ -16,8 +17,6 @@ namespace ModernKeePass.ViewModels
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
-        public System.Drawing.Color? BackgroundColor => _pwEntry?.BackgroundColor;
-        public System.Drawing.Color? ForegroundColor => _pwEntry?.ForegroundColor;
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
@@ -157,6 +156,24 @@ namespace ModernKeePass.ViewModels
                 history.Push(this);
 
                 return history;
+            }
+        }
+
+
+        public Color? BackgroundColor
+        {
+            get { return _pwEntry?.BackgroundColor; }
+            set
+            {
+                if (value != null) _pwEntry.BackgroundColor = (Color) value;
+            }
+        }
+        public Color? ForegroundColor
+        {
+            get { return _pwEntry?.ForegroundColor; }
+            set
+            {
+                if (value != null) _pwEntry.ForegroundColor = (Color)value;
             }
         }
 

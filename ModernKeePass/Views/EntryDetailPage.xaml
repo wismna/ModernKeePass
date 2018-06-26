@@ -20,6 +20,7 @@
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
         <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter" />
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+        <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -371,9 +372,9 @@
             </Setter>
         </Style>
     </Page.Resources>
-    <!--<Page.DataContext>
+    <Page.DataContext>
         <viewModels:EntryVm />
-    </Page.DataContext>-->
+    </Page.DataContext>
     <Page.BottomAppBar>
         <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
             <CommandBar.SecondaryCommands>
@@ -489,8 +490,23 @@
                     </SymbolIcon>
                     <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" Style="{StaticResource MainColorDatePicker}" />
-                    <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
-                </StackPanel>
+                        <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="250" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Uid="EntryBackgroundColor" Grid.Column="0" Grid.Row="0" />
+                    <userControls:ColorPickerUserControl Grid.Column="0" Grid.Row="1" SelectedColor="{Binding BackgroundColor, Converter={StaticResource ColorToBrushConverter}, Mode=TwoWay}" />
+                    <TextBlock x:Uid="EntryForegroundColor" Grid.Column="1" Grid.Row="0" />
+                    <userControls:ColorPickerUserControl Grid.Column="1" Grid.Row="1" SelectedColor="{Binding ForegroundColor, Converter={StaticResource ColorToBrushConverter}, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </Grid>
