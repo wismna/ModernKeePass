@@ -77,10 +77,53 @@ namespace ModernKeePass.Converters
             var symbol = (Symbol) value;
             switch (symbol)
             {
-                case Symbol.Delete:
-                    return PwIcon.TrashBin;
-                default:
-                    return PwIcon.Folder;
+                case Symbol.Delete: return (int)PwIcon.TrashBin;
+                case Symbol.Edit: return (int) PwIcon.Pen;
+                case Symbol.Save: return (int) PwIcon.Disk;
+                case Symbol.Cancel: return (int) PwIcon.Expired;
+                case Symbol.Accept: return (int) PwIcon.Checked;
+                case Symbol.Home: return (int) PwIcon.Home;
+                case Symbol.Camera: return (int) PwIcon.Digicam;
+                case Symbol.Setting: return (int) PwIcon.Configuration;
+                case Symbol.Mail: return (int) PwIcon.EMail;
+                case Symbol.Find: return (int) PwIcon.EMailSearch;
+                case Symbol.Help: return (int) PwIcon.Info;
+                case Symbol.Clock: return (int) PwIcon.Clock;
+                case Symbol.Crop: return (int) PwIcon.Archive;
+                case Symbol.World: return (int) PwIcon.World;
+                case Symbol.Flag: return (int) PwIcon.PaperFlag;
+                case Symbol.PreviewLink: return (int) PwIcon.Certificate;
+                case Symbol.Document: return (int) PwIcon.Notepad;
+                case Symbol.ProtectedDocument: return (int) PwIcon.PaperLocked;
+                case Symbol.ContactInfo: return (int) PwIcon.UserCommunication;
+                case Symbol.ViewAll: return (int) PwIcon.Parts;
+                case Symbol.Rotate: return (int) PwIcon.CDRom;
+                case Symbol.List: return (int) PwIcon.List;
+                case Symbol.Shop: return (int) PwIcon.Money;
+                case Symbol.BrowsePhotos: return (int) PwIcon.Thumbnail;
+                case Symbol.Caption: return (int) PwIcon.Monitor;
+                case Symbol.Repair: return (int) PwIcon.Tool;
+                case Symbol.Page2: return (int) PwIcon.PaperNew;
+                case Symbol.Paste: return (int) PwIcon.ClipboardReady;
+                case Symbol.Important: return (int) PwIcon.Warning;
+                case Symbol.SlideShow: return (int) PwIcon.Console;
+                case Symbol.MapDrive: return (int) PwIcon.NetworkServer;
+                case Symbol.ContactPresence: return (int) PwIcon.UserKey;
+                case Symbol.Contact2: return (int) PwIcon.Identity;
+                case Symbol.Folder: return (int) PwIcon.Folder;
+                case Symbol.View: return (int) PwIcon.IRCommunication;
+                case Symbol.Permissions: return (int) PwIcon.Key;
+                case Symbol.Map: return (int) PwIcon.MarkedDirectory;
+                case Symbol.CellPhone: return (int) PwIcon.BlackBerry;
+                case Symbol.OutlineStar: return (int) PwIcon.Star;
+                case Symbol.Calculator: return (int) PwIcon.Count;
+                case Symbol.Library: return (int) PwIcon.Book;
+                case Symbol.SyncFolder: return (int) PwIcon.PaperReady;
+                case Symbol.GoToStart: return (int) PwIcon.Screen;
+                case Symbol.ZeroBars: return (int) PwIcon.Energy;
+                case Symbol.FourBars: return (int) PwIcon.EnergyCareful;
+                case Symbol.Scan: return (int) PwIcon.Scanner;
+                default: return (int) PwIcon.Key;
             }
         }
     }

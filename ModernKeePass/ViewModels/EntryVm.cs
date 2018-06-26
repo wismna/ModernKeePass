@@ -88,9 +88,11 @@ namespace ModernKeePass.ViewModels
         {
             get
             {
+                if (HasExpired) return (int) PwIcon.Expired;
                 if (_pwEntry?.IconId != null) return (int) _pwEntry?.IconId;
                 return -1;
             }
+            set { _pwEntry.IconId = (PwIcon)value; }
         }
 
         public DateTimeOffset ExpiryDate

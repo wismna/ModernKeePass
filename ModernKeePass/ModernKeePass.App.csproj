@@ -236,6 +236,9 @@
     <Compile Include="Views\UserControls\HamburgerMenuUserControl.xaml.cs">
       <DependentUpon>HamburgerMenuUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\SymbolPickerUserControl.xaml.cs">
+      <DependentUpon>SymbolPickerUserControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -364,6 +367,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Views\UserControls\HamburgerMenuUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\SymbolPickerUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

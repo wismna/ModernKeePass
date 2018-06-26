@@ -1168,4 +1168,67 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!-- Custom style for Windows.UI.Xaml.Controls.TimePicker -->
+    <Style TargetType="TimePicker" x:Name="MainColorTimePicker">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="Foreground" Value="{ThemeResource TimePickerForegroundThemeBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TimePicker">
+                    <Border x:Name="LayoutRoot"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter x:Name="HeaderContentPresenter"
+                                Foreground="{ThemeResource TimePickerHeaderForegroundThemeBrush}"
+                                Margin="{ThemeResource TimePickerHeaderThemeMargin}"
+                                FlowDirection="{TemplateBinding FlowDirection}"
+                                Content="{TemplateBinding Header}"
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                FontWeight="{ThemeResource TimePickerHeaderThemeFontWeight}" />
+                            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                <Border x:Name="FirstPickerHost" Margin="{ThemeResource TimePickerFirstHostThemeMargin}">
+                                    <ComboBox x:Name="HourPicker"
+                                        MinWidth="{ThemeResource TimePickerSelectorThemeMinWidth}"
+                                        FontWeight="{TemplateBinding FontWeight}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        FontFamily="{TemplateBinding FontFamily}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
+                                </Border>
+                                <Border x:Name="SecondPickerHost">
+                                    <ComboBox x:Name="MinutePicker" 
+                                        MinWidth="{ThemeResource TimePickerSelectorThemeMinWidth}"
+                                        FontWeight="{TemplateBinding FontWeight}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        FontFamily="{TemplateBinding FontFamily}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
+                                </Border>
+                                <Border x:Name="ThirdPickerHost" Margin="{ThemeResource TimePickerThirdHostThemeMargin}">
+                                    <ComboBox x:Name="PeriodPicker" 
+                                        MinWidth="{ThemeResource TimePickerSelectorThemeMinWidth}"
+                                        FontWeight="{TemplateBinding FontWeight}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        FontFamily="{TemplateBinding FontFamily}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        ItemContainerStyle="{StaticResource MainColorComboBoxItem}" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

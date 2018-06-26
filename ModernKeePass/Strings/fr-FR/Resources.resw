@@ -402,4 +402,10 @@
   <data name="EntryForegroundColor.Text" xml:space="preserve">
     <value>Couleur du texte</value>
   </data>
+  <data name="EntrySymbol.Text" xml:space="preserve">
+    <value>Icône</value>
+  </data>
+  <data name="AddEntryTooltip.Content" xml:space="preserve">
+    <value>Créer une nouvelle entrée</value>
+  </data>
 </root>

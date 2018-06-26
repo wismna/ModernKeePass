@@ -21,6 +21,7 @@
         <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter" />
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
+        <converters:IntToSymbolConverter x:Key="IntToSymbolConverter" />
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -490,7 +491,7 @@
                     </SymbolIcon>
                     <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" Style="{StaticResource MainColorDatePicker}" />
-                        <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}"/>
+                        <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}" Style="{StaticResource MainColorTimePicker}" />
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -507,6 +508,8 @@
                     <userControls:ColorPickerUserControl Grid.Column="0" Grid.Row="1" SelectedColor="{Binding BackgroundColor, Converter={StaticResource ColorToBrushConverter}, Mode=TwoWay}" />
                     <TextBlock x:Uid="EntryForegroundColor" Grid.Column="1" Grid.Row="0" />
                     <userControls:ColorPickerUserControl Grid.Column="1" Grid.Row="1" SelectedColor="{Binding ForegroundColor, Converter={StaticResource ColorToBrushConverter}, Mode=TwoWay}" />
+                    <TextBlock x:Uid="EntrySymbol" Grid.Column="2" Grid.Row="0" />
+                    <userControls:SymbolPickerUserControl Grid.Column="2" Grid.Row="1" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" />
                 </Grid>
             </StackPanel>
         </Grid>

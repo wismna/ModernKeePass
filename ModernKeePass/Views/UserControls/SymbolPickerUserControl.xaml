@@ -1,16 +1,15 @@
 ﻿<UserControl x:Name="UserControl"
-    x:Class="ModernKeePass.Views.UserControls.ColorPickerUserControl"
+    x:Class="ModernKeePass.Views.UserControls.SymbolPickerUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <ComboBox x:Name="ComboBox" ItemsSource="{Binding Colors, ElementName=UserControl}" SelectionChanged="Selector_OnSelectionChanged" Loaded="ComboBox_Loaded" ItemContainerStyle="{StaticResource MainColorComboBoxItem}">
+    <ComboBox x:Name="ComboBox" ItemsSource="{Binding Symbols, ElementName=UserControl}" SelectedItem="{Binding SelectedSymbol, ElementName=UserControl, Mode=TwoWay}" Loaded="ComboBox_OnLoaded" ItemContainerStyle="{StaticResource MainColorComboBoxItem}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">
-                    <TextBlock Width="100" Text="{Binding ColorName}" Margin="0,0,10,0" />
-                    <Rectangle Width="100" Fill="{Binding ColorBrush}" />
+                    <SymbolIcon Symbol="{Binding}" />
                 </StackPanel>
             </DataTemplate>
         </ComboBox.ItemTemplate>

@@ -45,7 +45,6 @@ namespace ModernKeePass.Views.UserControls
                     ColorBrush = new SolidColorBrush((Windows.UI.Color)propertyInfo.GetValue(null, null))
                 });
             }
-            ComboBox.Loaded += ComboBox_Loaded;
         }
 
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)

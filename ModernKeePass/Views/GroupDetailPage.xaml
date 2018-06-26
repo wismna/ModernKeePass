@@ -106,116 +106,135 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <userControls:HamburgerMenuUserControl x:Uid="GroupsLeftListView" ItemsSource="{Binding Groups}" SelectionChanged="groups_SelectionChanged" ButtonClicked="CreateGroup_ButtonClick" ResizeTarget="{Binding ElementName=LeftListViewColumn}" IsButtonVisible="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
-            <TextBlock Grid.Column="1" x:Uid="ReorderEntriesLabel" Margin="20,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
-            <HyperlinkButton Grid.Column="1" VerticalAlignment="Top" Margin="40,10,0,0" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Add"></SymbolIcon>
-                    <TextBlock x:Uid="GroupCreateEntry" VerticalAlignment="Center" Margin="10,0,0,0" />
-                </StackPanel>
-            </HyperlinkButton>
-            <SemanticZoom Grid.Column="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" Margin="20,60,0,0" ScrollViewer.HorizontalScrollBarVisibility="Visible">
-                <SemanticZoom.ZoomedInView>
-                    <!-- Horizontal scrolling grid -->
-                    <GridView
-                        x:Name="GridView"
-                        ItemsSource="{Binding Source={StaticResource EntriesViewSource}}"
-                        AutomationProperties.AutomationId="ItemGridView"
-                        AutomationProperties.Name="Entries"
-                        TabIndex="1"
-                        SelectionChanged="entries_SelectionChanged"
-                        IsSynchronizedWithCurrentItem="False" 
-                        BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
-                        AllowDrop="True"
-                        CanReorderItems="True" 
-                        CanDragItems="True"
-                        DragItemsStarting="GridView_DragItemsStarting">
-                        <interactivity:Interaction.Behaviors>
-                            <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                                <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
-                            </core:DataTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Height="110" Width="480" x:Name="EntryGrid">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColor}, Converter={StaticResource ColorToBrushConverter}}">
-                                        <Viewbox MaxHeight="50" Width="100">
-                                            <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Foreground="{StaticResource TextColor}" />
-                                        </Viewbox>
-                                    </Border>
-                                    <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
-                                        <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
-                                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" />
-                                        <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
-                                        <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" x:Uid="ReorderEntriesLabel" Margin="10,10,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
+                <!--<TextBlock Grid.Column="1" Grid.Row="0" x:Uid="EntrySymbol" Margin="40,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />-->
+                <userControls:SymbolPickerUserControl Grid.Column="1" Grid.Row="0" Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"></userControls:SymbolPickerUserControl>
+                <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Click="CreateEntry_ButtonClick" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="Add">
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Uid="AddEntryTooltip" />
+                            </ToolTipService.ToolTip>
+                        </SymbolIcon>
+                        <TextBlock x:Name="AddEntryTextBlock" x:Uid="GroupCreateEntry" VerticalAlignment="Center" Margin="10,0,0,0" />
+                    </StackPanel>
+                </HyperlinkButton>
+            
+                <SemanticZoom Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+                    <SemanticZoom.ZoomedInView>
+                        <!-- Horizontal scrolling grid -->
+                        <GridView
+                            x:Name="GridView"
+                            ItemsSource="{Binding Source={StaticResource EntriesViewSource}}"
+                            AutomationProperties.AutomationId="ItemGridView"
+                            AutomationProperties.Name="Entries"
+                            TabIndex="1"
+                            SelectionChanged="entries_SelectionChanged"
+                            IsSynchronizedWithCurrentItem="False" 
+                            BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
+                            AllowDrop="True"
+                            CanReorderItems="True" 
+                            CanDragItems="True"
+                            DragItemsStarting="GridView_DragItemsStarting">
+                            <interactivity:Interaction.Behaviors>
+                                <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
+                                    <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
+                                </core:DataTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid Height="110" Width="480" x:Name="EntryGrid">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColor}, Converter={StaticResource ColorToBrushConverter}}">
+                                            <Viewbox MaxHeight="50" Width="100">
+                                                <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Foreground="{StaticResource TextColor}" />
+                                            </Viewbox>
+                                        </Border>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
+                                            <TextBlock x:Name="NameTextBlock" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}"/>
+                                            <TextBlock Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="NoWrap" />
+                                            <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
+                                            <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
+                                        </StackPanel>
+                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
+                                            <SymbolIcon Symbol="More" />
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem x:Uid="EntryItemCopyLogin">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="Click">
+                                                                <actions:ClipboardAction Text="{Binding UserName}" />
+                                                                <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Name}" />
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="Click">
+                                                                <actions:ClipboardAction Text="{Binding Password}" />
+                                                                <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Name}" />
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                    </MenuFlyoutItem>
+                                                    <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
+                                                        <interactivity:Interaction.Behaviors>
+                                                            <core:EventTriggerBehavior EventName="Click">
+                                                                <actions:NavigateToUrlAction Url="{Binding Url}" />
+                                                                <actions:ToastAction x:Uid="ToastCopyUrl" Title="{Binding Name}" />
+                                                            </core:EventTriggerBehavior>
+                                                        </interactivity:Interaction.Behaviors>
+                                                    </MenuFlyoutItem>
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                        </Button>
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </SemanticZoom.ZoomedInView>
+                    <SemanticZoom.ZoomedOutView>
+                        <GridView
+                            ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
+                            SelectionChanged="groups_SelectionChanged"
+                            SelectionMode="None"
+                            IsSynchronizedWithCurrentItem="False">
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Width="100" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                                     </StackPanel>
-                                    <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
-                                        <SymbolIcon Symbol="More" />
-                                        <Button.Flyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem x:Uid="EntryItemCopyLogin">
-                                                    <interactivity:Interaction.Behaviors>
-                                                        <core:EventTriggerBehavior EventName="Click">
-                                                            <actions:ClipboardAction Text="{Binding UserName}" />
-                                                            <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Name}" />
-                                                        </core:EventTriggerBehavior>
-                                                    </interactivity:Interaction.Behaviors>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
-                                                    <interactivity:Interaction.Behaviors>
-                                                        <core:EventTriggerBehavior EventName="Click">
-                                                            <actions:ClipboardAction Text="{Binding Password}" />
-                                                            <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Name}" />
-                                                        </core:EventTriggerBehavior>
-                                                    </interactivity:Interaction.Behaviors>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutItem x:Uid="EntryItemCopyUrl">
-                                                    <interactivity:Interaction.Behaviors>
-                                                        <core:EventTriggerBehavior EventName="Click">
-                                                            <actions:NavigateToUrlAction Url="{Binding Url}" />
-                                                            <actions:ToastAction x:Uid="ToastCopyUrl" Title="{Binding Name}" />
-                                                        </core:EventTriggerBehavior>
-                                                    </interactivity:Interaction.Behaviors>
-                                                </MenuFlyoutItem>
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <GridView
-                        ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
-                        SelectionChanged="groups_SelectionChanged"
-                        SelectionMode="None"
-                        IsSynchronizedWithCurrentItem="False">
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Width="100" Text="{Binding Name}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                        <GridView.GroupStyle>
-                            <GroupStyle HidesIfEmpty="True">
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Grid Background="LightGray" HorizontalAlignment="Left">
-                                            <TextBlock Text="{Binding Key}" Width="40" Margin="30" Foreground="Black" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </GridView.GroupStyle>
-                    </GridView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                            <GridView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <Grid Background="LightGray" HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Key}" Width="40" Margin="30" Foreground="Black" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </GridView.GroupStyle>
+                        </GridView>
+                    </SemanticZoom.ZoomedOutView>
+                </SemanticZoom>
+
+            </Grid>
         </Grid>
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
@@ -299,6 +318,9 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Large">
@@ -307,6 +329,9 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
