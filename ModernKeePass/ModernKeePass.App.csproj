@@ -239,6 +239,9 @@
     <Compile Include="Views\UserControls\SymbolPickerUserControl.xaml.cs">
       <DependentUpon>SymbolPickerUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\TopMenuUserControl.xaml.cs">
+      <DependentUpon>TopMenuUserControl.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -371,6 +374,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\UserControls\SymbolPickerUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\TopMenuUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

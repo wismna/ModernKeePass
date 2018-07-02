@@ -408,4 +408,16 @@
   <data name="AddEntryTooltip.Content" xml:space="preserve">
     <value>Créer une nouvelle entrée</value>
   </data>
+  <data name="HamburgerMenuHomeLabel.Text" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="HamburgerMenuHomeTooltip.Content" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="HamburgerMenuSettingsLabel.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="HamburgerMenuSettingsTooltip.Content" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
 </root>
