@@ -139,6 +139,7 @@
                             AutomationProperties.AutomationId="ItemGridView"
                             AutomationProperties.Name="Entries"
                             TabIndex="1"
+                            Margin="10,0,0,0"
                             SelectionChanged="entries_SelectionChanged"
                             IsSynchronizedWithCurrentItem="False" 
                             BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
@@ -170,7 +171,7 @@
                                             <TextBlock Text="{Binding UserName}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                             <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                         </StackPanel>
-                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{Binding BackgroundColor, ConverterParameter={StaticResource AppBarBackgroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" VerticalAlignment="Bottom">
+                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{StaticResource AppBarBackgroundThemeBrush}" VerticalAlignment="Bottom">
                                             <SymbolIcon Symbol="More" />
                                             <Button.Flyout>
                                                 <MenuFlyout>
