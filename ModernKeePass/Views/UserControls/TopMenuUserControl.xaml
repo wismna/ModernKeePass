@@ -4,32 +4,44 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:ModernKeePass.Converters"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <Button x:Name="RestoreButton" x:Uid="TopMenuRestoreButton" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding ShowRestoreButton, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Undo" />
+        <Button x:Name="RestoreButton" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+            <SymbolIcon Symbol="Undo">
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="TopMenuRestoreButton" />
+                </ToolTipService.ToolTip>
+            </SymbolIcon>
         </Button>
-        <Button x:Name="SaveButton" x:Uid="TopMenuSaveButton" Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Save" />
+        <Button x:Name="SaveButton" Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+            <SymbolIcon Symbol="Save">
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="TopMenuSaveButton" />
+                </ToolTipService.ToolTip>
+            </SymbolIcon>
         </Button>
-        <Button x:Name="EditButton" x:Uid="TopMenuEditButton" Command="{Binding EditCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Edit" />
+        <Button x:Name="EditButton" Command="{Binding EditCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+            <SymbolIcon Symbol="Edit">
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="TopMenuEditButton" />
+                </ToolTipService.ToolTip>
+            </SymbolIcon>
         </Button>
-        <Button x:Name="DeleteButton" x:Uid="TopMenuDeleteButton" Command="{Binding DeleteCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Delete" />
+        <Button x:Name="DeleteButton" Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding EnableDeleteButton, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+            <SymbolIcon Symbol="Delete">
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="TopMenuDeleteButton" />
+                </ToolTipService.ToolTip>
+            </SymbolIcon>
         </Button>
-        <Button x:Name="MoreButton" x:Uid="TopMenuMoreButton" Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+        <Button x:Name="MoreButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem x:Uid="TopMenuRestoreButton" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding ShowRestoreButton, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    <MenuFlyoutItem x:Uid="TopMenuSaveButton" Command="{Binding SaveCommand, ElementName=UserControl}"/>
-                    <MenuFlyoutItem x:Uid="TopMenuEditButton" Command="{Binding EditCommand, ElementName=UserControl}" />
-                    <MenuFlyoutItem  x:Uid="TopMenuDeleteButton" Command="{Binding DeleteCommand, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuEditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding EnableDeleteButton, ElementName=UserControl}" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>

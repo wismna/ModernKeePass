@@ -10,18 +10,14 @@ namespace ModernKeePass.Views.UserControls
         public string VisualState
         {
             get { return (string)GetValue(VisualStateProperty); }
-            set
-            {
-                SetValue(VisualStateProperty, value);
-                VisualStateManager.GoToState(this, value, true);
-            }
+            set { SetValue(VisualStateProperty, value); }
         }
         public static readonly DependencyProperty VisualStateProperty =
             DependencyProperty.Register(
                 "VisualState",
                 typeof(string),
                 typeof(TopMenuUserControl),
-                new PropertyMetadata("Large", (o, args) => { }));
+                new PropertyMetadata("None", (o, args) => { }));
         
         public ICommand SaveCommand
         {
@@ -71,18 +67,41 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
         
-        public bool ShowRestoreButton
+        public Visibility RestoreButtonVisibility
         {
-            get { return (bool)GetValue(ShowRestoreButtonProperty); }
-            set { SetValue(ShowRestoreButtonProperty, value); }
+            get { return (Visibility)GetValue(RestoreButtonVisibilityProperty); }
+            set { SetValue(RestoreButtonVisibilityProperty, value); }
         }
-        public static readonly DependencyProperty ShowRestoreButtonProperty =
+        public static readonly DependencyProperty RestoreButtonVisibilityProperty =
             DependencyProperty.Register(
-                "ShowRestoreButton",
-                typeof(bool),
+                "RestoreButtonVisibility",
+                typeof(Visibility),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
+        public Visibility DeleteButtonVisibility
+        {
+            get { return (Visibility)GetValue(DeleteButtonVisibilityProperty); }
+            set { SetValue(DeleteButtonVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty DeleteButtonVisibilityProperty =
+            DependencyProperty.Register(
+                "DeleteButtonVisibility",
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+
+        public bool EnableDeleteButton
+        {
+            get { return (bool)GetValue(EnableDeleteButtonProperty); }
+            set { SetValue(EnableDeleteButtonProperty, value); }
+        }
+        public static readonly DependencyProperty EnableDeleteButtonProperty =
+            DependencyProperty.Register(
+                "EnableDeleteButton",
+                typeof(bool),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(true, (o, args) => { }));
 
         public TopMenuUserControl()
         {

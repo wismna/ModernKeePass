@@ -277,7 +277,11 @@
                 </TextBox>
                 <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </StackPanel>
-            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2" ShowRestoreButton="{Binding ShowRestore}" />
+            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2" 
+                RestoreButtonVisibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                VisualState="Large" 
+                EnableDeleteButton="{Binding IsNotRoot}" />
             <Button Grid.Column="3" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Find" />
                 <Button.Flyout>

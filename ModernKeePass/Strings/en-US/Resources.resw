@@ -420,4 +420,31 @@
   <data name="HamburgerMenuSettingsTooltip.Content" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="TopMenuDeleteButton.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TopMenuDeleteFlyout.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TopMenuEditButton.Content" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TopMenuEditFlyout.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TopMenuMoreButton.Content" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="TopMenuRestoreButton.Content" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="TopMenuRestoreFlyout.Text" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="TopMenuSaveButton.Content" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TopMenuSaveFlyout.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
 </root>
