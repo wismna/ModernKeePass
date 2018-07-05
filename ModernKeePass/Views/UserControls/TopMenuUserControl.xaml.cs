@@ -7,18 +7,6 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class TopMenuUserControl
     {
-        public string VisualState
-        {
-            get { return (string)GetValue(VisualStateProperty); }
-            set { SetValue(VisualStateProperty, value); }
-        }
-        public static readonly DependencyProperty VisualStateProperty =
-            DependencyProperty.Register(
-                "VisualState",
-                typeof(string),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata("None", (o, args) => { }));
-        
         public ICommand SaveCommand
         {
             get { return (ICommand)GetValue(SaveCommandProperty); }
@@ -91,21 +79,79 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
-        public bool EnableDeleteButton
+        public Visibility MoreButtonVisibility
         {
-            get { return (bool)GetValue(EnableDeleteButtonProperty); }
-            set { SetValue(EnableDeleteButtonProperty, value); }
+            get { return (Visibility)GetValue(MoreButtonVisibilityProperty); }
+            set { SetValue(MoreButtonVisibilityProperty, value); }
         }
-        public static readonly DependencyProperty EnableDeleteButtonProperty =
+        public static readonly DependencyProperty MoreButtonVisibilityProperty =
             DependencyProperty.Register(
-                "EnableDeleteButton",
+                "MoreButtonVisibility",
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+
+        public Visibility OverflowButtonsVisibility
+        {
+            get { return (Visibility)GetValue(OverflowButtonsVisibilityProperty); }
+            set { SetValue(OverflowButtonsVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty OverflowButtonsVisibilityProperty =
+            DependencyProperty.Register(
+                "OverflowButtonsVisibility",
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+
+        public bool IsDeleteButtonEnabled
+        {
+            get { return (bool)GetValue(IsDeleteButtonEnabledProperty); }
+            set { SetValue(IsDeleteButtonEnabledProperty, value); }
+        }
+        public static readonly DependencyProperty IsDeleteButtonEnabledProperty =
+            DependencyProperty.Register(
+                "IsDeleteButtonEnabled",
                 typeof(bool),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(true, (o, args) => { }));
 
+        public bool IsEditButtonChecked
+        {
+            get { return (bool)GetValue(IsEditButtonCheckedProperty); }
+            set { SetValue(IsEditButtonCheckedProperty, value); }
+        }
+        public static readonly DependencyProperty IsEditButtonCheckedProperty =
+            DependencyProperty.Register(
+                "IsEditButtonChecked",
+                typeof(bool),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+        
+        public event EditButtonClickEventHandler EditButtonClick;
+        public delegate void EditButtonClickEventHandler(object sender, RoutedEventArgs e);
+        public event DeleteButtonClickEventHandler DeleteButtonClick;
+        public delegate void DeleteButtonClickEventHandler(object sender, RoutedEventArgs e);
+        public event RestoreButtonClickEventHandler RestoreButtonClick;
+        public delegate void RestoreButtonClickEventHandler(object sender, RoutedEventArgs e);
+
         public TopMenuUserControl()
         {
             InitializeComponent();
+        }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+            EditButtonClick?.Invoke(sender, e);
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteButtonClick?.Invoke(sender, e);
+        }
+
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreButtonClick?.Invoke(sender, e);
         }
     }
 }

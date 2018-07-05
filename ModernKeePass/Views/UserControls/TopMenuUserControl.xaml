@@ -6,86 +6,46 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
-        <Button x:Name="RestoreButton" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Undo">
-                <ToolTipService.ToolTip>
-                    <ToolTip x:Uid="TopMenuRestoreButton" />
-                </ToolTipService.ToolTip>
-            </SymbolIcon>
-        </Button>
-        <Button x:Name="SaveButton" Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Save">
-                <ToolTipService.ToolTip>
-                    <ToolTip x:Uid="TopMenuSaveButton" />
-                </ToolTipService.ToolTip>
-            </SymbolIcon>
-        </Button>
-        <Button x:Name="EditButton" Command="{Binding EditCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Edit">
-                <ToolTipService.ToolTip>
-                    <ToolTip x:Uid="TopMenuEditButton" />
-                </ToolTipService.ToolTip>
-            </SymbolIcon>
-        </Button>
-        <Button x:Name="DeleteButton" Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding EnableDeleteButton, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
-            <SymbolIcon Symbol="Delete">
-                <ToolTipService.ToolTip>
-                    <ToolTip x:Uid="TopMenuDeleteButton" />
-                </ToolTipService.ToolTip>
-            </SymbolIcon>
-        </Button>
-        <Button x:Name="MoreButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+        <StackPanel Orientation="Horizontal" Visibility="{Binding OverflowButtonsVisibility, ElementName=UserControl}">
+            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Undo">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuRestoreButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+            <Button Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Save">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuSaveButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" Style="{StaticResource NoBorderToggleButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Edit">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuEditButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </ToggleButton>
+            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource NoBorderButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Delete">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuDeleteButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+        </StackPanel>
+        <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="TopMenuEditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding EnableDeleteButton, ElementName=UserControl}" />
+                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
+                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="MinimizeMenuGroup">
-                <VisualState x:Name="Small">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SaveButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="EditButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RestoreButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Large">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SaveButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="EditButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RestoreButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
     </StackPanel>
 </UserControl>

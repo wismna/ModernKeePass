@@ -280,8 +280,19 @@
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2" 
                 RestoreButtonVisibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" 
                 DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
-                VisualState="Large" 
-                EnableDeleteButton="{Binding IsNotRoot}" />
+                IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
+                IsDeleteButtonEnabled="{Binding IsNotRoot}"
+                SaveCommand="{Binding SaveCommand}"
+                RestoreCommand="{Binding UndoDeleteCommand}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="DeleteButtonClick">
+                        <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                    <core:EventTriggerBehavior EventName="RestoreButtonClick">
+                        <actions:RestoreEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </userControls:TopMenuUserControl>
             <Button Grid.Column="3" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Find" />
                 <Button.Flyout>
@@ -317,8 +328,11 @@
             <VisualStateGroup x:Name="TopMenuGroup">
                 <VisualState x:Name="Small">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="VisualState">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Small"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
@@ -333,8 +347,11 @@
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="VisualState">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Large"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
