@@ -153,5 +153,15 @@ namespace ModernKeePass.Views.UserControls
         {
             RestoreButtonClick?.Invoke(sender, e);
         }
+
+        private void FlyoutBase_OnOpening(object sender, object e)
+        {
+            DeleteFlyout.IsEnabled = IsDeleteButtonEnabled;
+            DeleteFlyout.Visibility = DeleteButtonVisibility;
+
+            EditFlyout.IsChecked = IsEditButtonChecked;
+
+            RestoreFlyout.Visibility = RestoreButtonVisibility;
+        }
     }
 }

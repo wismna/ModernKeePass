@@ -39,11 +39,11 @@
         <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                <MenuFlyout Opening="FlyoutBase_OnOpening">
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
-                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
-                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />
+                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
+                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>
