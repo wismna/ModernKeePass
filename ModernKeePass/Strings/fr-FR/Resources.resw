@@ -450,4 +450,10 @@
   <data name="TopMenuSortButton.Content" xml:space="preserve">
     <value>Trier</value>
   </data>
+  <data name="TopMenuSortEntriesFlyout.Text" xml:space="preserve">
+    <value>Trier les entrées</value>
+  </data>
+  <data name="TopMenuSortGroupsFlyout.Text" xml:space="preserve">
+    <value>Trier les groupes</value>
+  </data>
 </root>

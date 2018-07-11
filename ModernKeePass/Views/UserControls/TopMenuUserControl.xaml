@@ -21,13 +21,6 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </Button>
-            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" Style="{StaticResource NoBorderToggleButtonStyle}" Height="50">
-                <SymbolIcon Symbol="Edit">
-                    <ToolTipService.ToolTip>
-                        <ToolTip x:Uid="TopMenuEditButton" />
-                    </ToolTipService.ToolTip>
-                </SymbolIcon>
-            </ToggleButton>
             <Button Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Sort">
                     <ToolTipService.ToolTip>
@@ -35,12 +28,19 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
                 <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="AppBarSortEntries" Command="{Binding SortEntriesCommand, ElementName=UserControl}" />
-                        <MenuFlyoutItem x:Uid="AppBarSortGroups" Command="{Binding SortGroupsCommand, ElementName=UserControl}" />
+                    <MenuFlyout Opening="SortFlyout_OnOpening">
+                        <MenuFlyoutItem x:Uid="AppBarSortEntries" x:Name="SortEntriesButtonFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" />
+                        <MenuFlyoutItem x:Uid="AppBarSortGroups" x:Name="SortGroupsButtonFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" />
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
+            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" Style="{StaticResource NoBorderToggleButtonStyle}" Height="50">
+                <SymbolIcon Symbol="Edit">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuEditButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </ToggleButton>
             <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource NoBorderButtonStyle}" Height="50">
                 <SymbolIcon Symbol="Delete">
                     <ToolTipService.ToolTip>
@@ -52,13 +52,13 @@
         <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Height="50">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
-                <MenuFlyout Opening="FlyoutBase_OnOpening">
+                <MenuFlyout Opening="OverflowFlyout_OnOpening">
                     <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" IsEnabled="{Binding IsRestoreButtonEnabled,ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
                     <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
                     <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="AppBarSortEntries" x:Name="SortEntriesFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="AppBarSortGroups" x:Name="SortGroupsFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortEntriesFlyout" x:Name="SortEntriesFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortGroupsFlyout" x:Name="SortGroupsFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>

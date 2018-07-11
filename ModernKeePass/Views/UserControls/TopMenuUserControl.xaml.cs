@@ -209,7 +209,7 @@ namespace ModernKeePass.Views.UserControls
             RestoreButtonClick?.Invoke(sender, e);
         }
 
-        private void FlyoutBase_OnOpening(object sender, object e)
+        private void OverflowFlyout_OnOpening(object sender, object e)
         {
             DeleteFlyout.IsEnabled = IsDeleteButtonEnabled;
             DeleteFlyout.Visibility = DeleteButtonVisibility;
@@ -221,6 +221,14 @@ namespace ModernKeePass.Views.UserControls
 
             SortEntriesFlyout.Visibility = SortButtonVisibility;
             SortGroupsFlyout.Visibility = SortButtonVisibility;
+            SortEntriesFlyout.Command = SortEntriesCommand;
+            SortGroupsFlyout.Command = SortGroupsCommand;
+        }
+
+        private void SortFlyout_OnOpening(object sender, object e)
+        {
+            SortEntriesButtonFlyout.Command = SortEntriesCommand;
+            SortGroupsButtonFlyout.Command = SortGroupsCommand;
         }
     }
 }
