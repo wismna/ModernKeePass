@@ -23,62 +23,6 @@
     <Page.DataContext>
         <viewModels:GroupVm />
     </Page.DataContext>
-    <Page.BottomAppBar>
-        <CommandBar x:Name="CommandBar" VerticalAlignment="Center">
-            <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Home" x:Uid="AppBarHome">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="Click">
-                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.MainPage" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </AppBarButton>
-                <AppBarButton Icon="Save" x:Uid="AppBarSave" Command="{Binding SaveCommand}">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="Click">
-                            <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </AppBarButton>
-                <AppBarButton Icon="Setting" x:Uid="AppBarSettings">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="Click">
-                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.SettingsPage" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </AppBarButton>
-            </CommandBar.SecondaryCommands>
-            <AppBarButton Icon="Sort" x:Uid="AppBarSort" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem x:Uid="AppBarSortEntries" Command="{Binding SortEntriesCommand}" />
-                        <MenuFlyoutItem x:Uid="AppBarSortGroups" Command="{Binding SortGroupsCommand}" />
-                    </MenuFlyout>
-                </Button.Flyout>
-            </AppBarButton>
-            <AppBarToggleButton Icon="Edit" x:Uid="AppBarEdit" IsChecked="{Binding IsEditMode, Mode=TwoWay}">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=CommandBar}" PropertyName="IsOpen" Value="False" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </AppBarToggleButton>
-            <AppBarButton Icon="Undo" x:Uid="AppBarRestore" Visibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}" Command="{Binding UndoDeleteCommand}">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <actions:RestoreEntityAction Entity="{Binding}" Command="{Binding GoBackCommand}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </AppBarButton>
-            <AppBarButton Icon="Delete" x:Uid="AppBarDelete" IsEnabled="{Binding IsNotRoot}" Visibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding GoBackCommand}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </AppBarButton>
-        </CommandBar>
-    </Page.BottomAppBar>
     <Grid>
         <Grid.Resources>
             <CollectionViewSource
@@ -283,6 +227,7 @@
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 IsDeleteButtonEnabled="{Binding IsNotRoot}"
+                IsRestoreButtonEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}"
                 SaveCommand="{Binding SaveCommand}"
                 RestoreCommand="{Binding UndoDeleteCommand}"
                 SortEntriesCommand="{Binding SortEntriesCommand}"
