@@ -246,9 +246,6 @@
                                 Content="{TemplateBinding ButtonSymbol}"
                                 IsEnabled="{TemplateBinding IsButtonEnabled}"
                                 VerticalAlignment="Stretch">
-                            <Button.Flyout>
-                                <Flyout Content="{TemplateBinding ButtonFlyout}" />
-                            </Button.Flyout>
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{TemplateBinding ButtonTooltip}" />
                             </ToolTipService.ToolTip>

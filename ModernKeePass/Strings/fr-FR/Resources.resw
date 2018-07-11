@@ -447,4 +447,7 @@
   <data name="TopMenuSaveFlyout.Text" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
+  <data name="TopMenuSortButton.Content" xml:space="preserve">
+    <value>Trier</value>
+  </data>
 </root>

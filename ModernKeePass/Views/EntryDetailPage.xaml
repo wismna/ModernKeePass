@@ -454,6 +454,7 @@
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="ButtonClick">
                             <actions:ClipboardAction Text="{Binding UserName}" />
+                            <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Name}" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </local:TextBoxWithButton>
@@ -463,6 +464,7 @@
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="ButtonClick">
                             <actions:ClipboardAction Text="{Binding Password}" />
+                            <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Name}" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </local:TextBoxWithButton>
@@ -518,6 +520,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
@@ -552,20 +555,48 @@
                 </TextBox>
                 <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </StackPanel>
+            <userControls:TopMenuUserControl 
+                x:Name="TopMenu" Grid.Column="2" 
+                RestoreButtonVisibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
+                SaveCommand="{Binding SaveCommand}"
+                RestoreCommand="{Binding UndoDeleteCommand}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="DeleteButtonClick">
+                        <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                    <core:EventTriggerBehavior EventName="RestoreButtonClick">
+                        <actions:RestoreEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </userControls:TopMenuUserControl>
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
+                <VisualState x:Name="Small">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Horizontal"/>
                         </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Small">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

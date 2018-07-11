@@ -51,14 +51,14 @@ namespace ModernKeePass.ViewModels
         public string Name
         {
             get { return GetEntryValue(PwDefs.TitleField); }
-            set { SetEntryValue(PwDefs.TitleField, value); }
+            set { SetEntryValue(PwDefs.TitleField, new ProtectedString(true, value)); }
         }
 
 
         public string UserName
         {
             get { return GetEntryValue(PwDefs.UserNameField); }
-            set { SetEntryValue(PwDefs.UserNameField, value); }
+            set { SetEntryValue(PwDefs.UserNameField, new ProtectedString(true, value)); }
         }
 
         public string Password
@@ -66,7 +66,7 @@ namespace ModernKeePass.ViewModels
             get { return GetEntryValue(PwDefs.PasswordField); }
             set
             {
-                SetEntryValue(PwDefs.PasswordField, value);
+                SetEntryValue(PwDefs.PasswordField, new ProtectedString(true, value));
                 NotifyPropertyChanged("Password");
                 NotifyPropertyChanged("PasswordComplexityIndicator");
             }
@@ -75,13 +75,13 @@ namespace ModernKeePass.ViewModels
         public string Url
         {
             get { return GetEntryValue(PwDefs.UrlField); }
-            set { SetEntryValue(PwDefs.UrlField, value); }
+            set { SetEntryValue(PwDefs.UrlField, new ProtectedString(true, value)); }
         }
 
         public string Notes
         {
             get { return GetEntryValue(PwDefs.NotesField); }
-            set { SetEntryValue(PwDefs.NotesField, value); }
+            set { SetEntryValue(PwDefs.NotesField, new ProtectedString(true, value)); }
         }
 
         public int IconId
@@ -239,7 +239,7 @@ namespace ModernKeePass.ViewModels
             ProtectedString password;
             PwGenerator.Generate(out password, pwProfile, null, new CustomPwGeneratorPool());
 
-            _pwEntry?.Strings.Set(PwDefs.PasswordField, password);
+            SetEntryValue(PwDefs.PasswordField, password);
             NotifyPropertyChanged("Password");
             NotifyPropertyChanged("IsRevealPasswordEnabled");
             NotifyPropertyChanged("PasswordComplexityIndicator");
@@ -291,14 +291,14 @@ namespace ModernKeePass.ViewModels
             return _pwEntry?.Strings.GetSafe(key).ReadString();
         }
         
-        private void SetEntryValue(string key, string newValue)
+        private void SetEntryValue(string key, ProtectedString newValue)
         {
             if (!_isDirty)
             {
                 _pwEntry.Touch(true);
                 _pwEntry?.CreateBackup(null);
             }
-            _pwEntry?.Strings.Set(key, new ProtectedString(true, newValue));
+            _pwEntry?.Strings.Set(key, newValue);
             _isDirty = true;
         }
     }

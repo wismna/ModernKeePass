@@ -43,19 +43,7 @@ namespace ModernKeePass.Controls
                 typeof(bool),
                 typeof(TextBoxWithButton),
                 new PropertyMetadata(true, (o, args) => { }));
-
-        public FlyoutBase ButtonFlyout
-        {
-            get { return (FlyoutBase)GetValue(ButtonFlyoutProperty); }
-            set { SetValue(ButtonFlyoutProperty, value); }
-        }
-        public static readonly DependencyProperty ButtonFlyoutProperty =
-            DependencyProperty.Register(
-                "ButtonFlyout",
-                typeof(FlyoutBase),
-                typeof(TextBoxWithButton),
-                new PropertyMetadata(null, (o, args) => { }));
-
+        
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
