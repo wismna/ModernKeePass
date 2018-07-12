@@ -462,4 +462,7 @@
   <data name="ToastUpdateDatabase.Title" xml:space="preserve">
     <value>Clé maître</value>
   </data>
+  <data name="EntryTitle.PlaceholderText" xml:space="preserve">
+    <value>Nom de la nouvelle entrée...</value>
+  </data>
 </root>

@@ -459,10 +459,6 @@
                                 <TextBlock x:Uid="EntryForegroundColor" />
                                 <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Converter={StaticResource ColorToBrushConverter}, Mode=TwoWay}" />
                             </StackPanel>
-                            <StackPanel Width="100" HorizontalAlignment="Left">
-                                <TextBlock x:Uid="EntrySymbol" />
-                                <userControls:SymbolPickerUserControl SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" />
-                            </StackPanel>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -485,8 +481,22 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <StackPanel Grid.Column="1" >
-                <TextBox  
+            <Grid Grid.Column="1" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="20" />
+                </Grid.RowDefinitions>
+                <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" />
+                </Viewbox>
+                <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />
+                </Viewbox>
+                <TextBox Grid.Column="1" Grid.Row="0"
                     x:Name="TitleTextBox"
                     Text="{Binding Name, Mode=TwoWay}" 
                     Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
@@ -496,18 +506,18 @@
                     IsEnabled="{Binding IsSelected}"
                     BorderThickness="0" 
                     FontSize="20"
-                    FontWeight="SemiBold"
+                    FontWeight="Light"
                     TextWrapping="NoWrap" 
-                    VerticalAlignment="Center" 
-                    PlaceholderText="New entry name...">
+                    VerticalAlignment="Center"
+                    x:Uid="EntryTitle">
                     <interactivity:Interaction.Behaviors>
                         <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
                             <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <userControls:BreadCrumbUserControl ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
-            </StackPanel>
+                <userControls:BreadCrumbUserControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
+            </Grid>
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2" 
                 RestoreButtonVisibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 

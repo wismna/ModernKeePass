@@ -136,7 +136,7 @@ namespace ModernKeePass.Views
 
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);
+            VisualStateManager.GoToState(this, e.NewSize.Width < 800 ? "Small" : "Large", true);
         }
 
         #endregion
