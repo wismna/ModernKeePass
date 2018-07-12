@@ -456,4 +456,10 @@
   <data name="TopMenuSortGroupsFlyout.Text" xml:space="preserve">
     <value>Sort groups</value>
   </data>
+  <data name="ToastUpdateDatabase.Message" xml:space="preserve">
+    <value>Database successfully updated</value>
+  </data>
+  <data name="ToastUpdateDatabase.Title" xml:space="preserve">
+    <value>Composite Key</value>
+  </data>
 </root>

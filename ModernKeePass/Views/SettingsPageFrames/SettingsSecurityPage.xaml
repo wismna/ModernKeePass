@@ -5,6 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:ModernKeePass.Actions"
     mc:Ignorable="d">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -14,6 +17,12 @@
             <Run x:Uid="SettingsSecurityDesc2" FontWeight="SemiBold" />
             <Run x:Uid="SettingsSecurityDesc3" />
         </TextBlock>
-        <userControls:CompositeKeyUserControl Margin="0,20,0,0" UpdateKey="True" x:Uid="SettingsSecurityUpdateButton" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
+        <userControls:CompositeKeyUserControl Margin="0,20,0,0" UpdateKey="True" x:Uid="SettingsSecurityUpdateButton">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="ValidationChecked">
+                    <actions:ToastAction x:Uid="ToastUpdateDatabase" />
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </userControls:CompositeKeyUserControl>
     </StackPanel>
 </Page>

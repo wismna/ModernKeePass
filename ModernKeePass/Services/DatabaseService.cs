@@ -186,7 +186,9 @@ namespace ModernKeePass.Services
 
         public void UpdateCompositeKey(CompositeKey newCompositeKey)
         {
-            if (newCompositeKey != null) _compositeKey = newCompositeKey;
+            if (newCompositeKey == null) return;
+            _compositeKey = newCompositeKey;
+            _pwDatabase.MasterKey = newCompositeKey;
         }
         
         private void CreateSampleData()
