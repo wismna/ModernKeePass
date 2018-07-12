@@ -25,7 +25,7 @@
         <ListView.Resources>
             <DataTemplate x:Name="IsSpecial">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="3,0,0,0">
+                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>
@@ -35,7 +35,7 @@
             </DataTemplate>
             <DataTemplate x:Name="IsNormal">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="3,0,0,0">
+                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>
@@ -59,7 +59,7 @@
                                 <core:ChangePropertyAction PropertyName="Width" Value="Auto" TargetObject="{Binding ResizeTarget, ElementName=UserControl}"/>
                             </core:EventTriggerBehavior>
                             <core:EventTriggerBehavior EventName="Unchecked">
-                                <core:ChangePropertyAction PropertyName="Width" Value="50" TargetObject="{Binding ResizeTarget, ElementName=UserControl}"/>
+                                <core:ChangePropertyAction PropertyName="Width" Value="{StaticResource MenuSize}" TargetObject="{Binding ResizeTarget, ElementName=UserControl}"/>
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </ToggleButton>
@@ -71,8 +71,8 @@
             <DataTemplate>
                 <StackPanel Orientation="Vertical">
                     <Border BorderBrush="White" BorderThickness="0,0,0,1" />
-                    <Button Padding="0" Height="50" Margin="0" Visibility="{Binding IsButtonVisible, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Click="ButtonBase_OnClick">
-                        <StackPanel Orientation="Horizontal" Margin="13,0,5,0">
+                    <Button Padding="0" Height="{StaticResource MenuSize}" Margin="0" Visibility="{Binding IsButtonVisible, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Click="ButtonBase_OnClick">
+                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                             <SymbolIcon Symbol="Add">
                                 <ToolTipService.ToolTip>
                                     <ToolTip Content="{Binding ButtonLabel, ElementName=UserControl}" />
@@ -81,8 +81,8 @@
                             <TextBlock Text="{Binding ButtonLabel, ElementName=UserControl}" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
                         </StackPanel>
                     </Button>
-                    <Button Padding="0" Height="50" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0">
-                        <StackPanel Orientation="Horizontal" Margin="13,0,5,0">
+                    <Button Padding="0" Height="{StaticResource MenuSize}" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0">
+                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                             <SymbolIcon Symbol="Home">
                                 <ToolTipService.ToolTip>
                                     <ToolTip x:Uid="HamburgerMenuHomeTooltip" />
@@ -96,8 +96,8 @@
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </Button>
-                    <Button Padding="0" Height="50" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0">
-                        <StackPanel Orientation="Horizontal" Margin="13,0,5,0">
+                    <Button Padding="0" Height="{StaticResource MenuSize}" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0">
+                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                             <SymbolIcon Symbol="Setting">
                                 <ToolTipService.ToolTip>
                                     <ToolTip x:Uid="HamburgerMenuSettingsTooltip" />

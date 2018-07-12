@@ -51,7 +51,7 @@ namespace ModernKeePass.Converters
                 case PwIcon.EMailSearch: return Symbol.Find;
                 case PwIcon.PaperFlag: return Symbol.Flag;
                 case PwIcon.TrashBin: return Symbol.Delete;
-                case PwIcon.Expired: return Symbol.Cancel;
+                case PwIcon.Expired: return Symbol.ReportHacked;
                 case PwIcon.Info: return Symbol.Help;
                 case PwIcon.Folder:
                 case PwIcon.FolderOpen:
