@@ -396,7 +396,7 @@
                                          Style="{StaticResource SearchTextBoxStyle}"
                                          TextWrapping="NoWrap"
                                          VerticalAlignment="Stretch"
-                                         Margin="0,5,0,5" />
+                                         Margin="0,5,0,0" />
                                 <Button x:Name="SearchButton"
                                             AutomationProperties.AccessibilityView="Raw"
                                             Background="Transparent"
