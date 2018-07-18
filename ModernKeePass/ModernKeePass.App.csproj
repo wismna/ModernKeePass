@@ -15,8 +15,6 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>ModernKeePass_StoreKey.pfx</PackageCertificateKeyFile>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
     <PackageCertificateThumbprint>ED3AA34F46D03498F989901C5DB2742B65D72F60</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
@@ -433,7 +431,6 @@
   <ItemGroup>
     <Content Include="appMetadata\en-us\baselisting\description.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Entry.txt" />
-    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Filter.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Group.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.New.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Open.txt" />
@@ -441,7 +438,6 @@
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Semantic.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\description.Settings.txt" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Entry.png" />
-    <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Filter.png" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Group.png" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\New.png" />
     <Content Include="appMetadata\en-us\baselisting\images\Screenshot\Open.png" />
@@ -454,7 +450,6 @@
     <Content Include="appMetadata\en-us\baselisting\websiteUrl.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\description.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Entry.txt" />
-    <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Filter.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Group.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.New.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Open.txt" />
@@ -462,7 +457,6 @@
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Semantic.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\description.Settings.txt" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\Entry.png" />
-    <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\Filter.png" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\Group.png" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\New.png" />
     <Content Include="appMetadata\fr-fr\baselisting\images\Screenshot\Open.png" />
