@@ -25,7 +25,7 @@
                                         <DoubleAnimation Storyboard.TargetName="PointerOverBorder"
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0"
-                                                         To="1" />
+                                                         To="0.5" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectedEarmark"
                                                                        Storyboard.TargetProperty="Fill">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ListViewItemSelectedPointerOverBackgroundThemeBrush}" />
