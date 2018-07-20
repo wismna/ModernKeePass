@@ -210,9 +210,6 @@
   <data name="GroupCreateEntry.Text" xml:space="preserve">
     <value>Create new entry</value>
   </data>
-  <data name="GroupFilter.PlaceholderText" xml:space="preserve">
-    <value>Filter...</value>
-  </data>
   <data name="GroupSearch.PlaceholderText" xml:space="preserve">
     <value>Search...</value>
   </data>
@@ -464,5 +461,11 @@
   </data>
   <data name="EntryTitle.PlaceholderText" xml:space="preserve">
     <value>New entry name...</value>
+  </data>
+  <data name="SearchButtonLabel.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchButtonTooltip.Content" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>

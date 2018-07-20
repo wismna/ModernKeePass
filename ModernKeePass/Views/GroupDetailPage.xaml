@@ -254,19 +254,30 @@
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>
             <Button Grid.Column="3" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
-                <SymbolIcon Symbol="Find" />
-                <Button.Flyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="Padding" Value="0" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <SearchBox x:Uid="GroupSearch" Width="350" Padding="12" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" FontSize="18" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}" />
-                    </Flyout>
-                </Button.Flyout>
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Find" />
+                    <TextBlock x:Uid="SearchButtonLabel" x:Name="SearchButtonLabel" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0" />
+                </StackPanel>
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="SearchButtonTooltip" />
+                </ToolTipService.ToolTip>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Visible" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Collapsed" />
+                        <!-- TODO: make this work -->
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=SearchBox}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
             </Button>
-            <SearchBox Grid.Column="3" x:Uid="GroupSearch" x:Name="SearchBox" Padding="12" Width="350" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}" />
+            <SearchBox Grid.Column="3" x:Uid="GroupSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="LostFocus">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Collapsed" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Visible" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </SearchBox>
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DragDropGroup">
@@ -294,13 +305,10 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -313,13 +321,10 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
