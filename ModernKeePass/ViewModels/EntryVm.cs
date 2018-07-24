@@ -92,19 +92,33 @@ namespace ModernKeePass.ViewModels
                 if (_pwEntry?.IconId != null) return (int) _pwEntry?.IconId;
                 return -1;
             }
-            set { _pwEntry.IconId = (PwIcon)value; }
+            set
+            {
+                HandleBackup();
+                _pwEntry.IconId = (PwIcon)value;
+            }
         }
 
         public DateTimeOffset ExpiryDate
         {
             get { return new DateTimeOffset(_pwEntry.ExpiryTime.Date); }
-            set { if (HasExpirationDate) _pwEntry.ExpiryTime = value.DateTime; }
+            set
+            {
+                if (!HasExpirationDate) return;
+                HandleBackup();
+                _pwEntry.ExpiryTime = value.DateTime;
+            }
         }
 
         public TimeSpan ExpiryTime
         {
             get { return _pwEntry.ExpiryTime.TimeOfDay; }
-            set { if (HasExpirationDate) _pwEntry.ExpiryTime = _pwEntry.ExpiryTime.Date.Add(value); }
+            set
+            {
+                if (!HasExpirationDate) return;
+                HandleBackup();
+                _pwEntry.ExpiryTime = _pwEntry.ExpiryTime.Date.Add(value);
+            }
         }
 
         public bool IsEditMode
@@ -170,6 +184,7 @@ namespace ModernKeePass.ViewModels
                 if (value != null) _pwEntry.BackgroundColor = (Color) value;
             }
         }
+
         public Color? ForegroundColor
         {
             get { return _pwEntry?.ForegroundColor; }
@@ -286,6 +301,14 @@ namespace ModernKeePass.ViewModels
             return IsSelected ? _resource.GetResourceValue("EntryCurrent") : _pwEntry.LastModificationTime.ToString("g");
         }
 
+        private void HandleBackup()
+        {
+            if (_isDirty) return;
+            _pwEntry?.Touch(true);
+            _pwEntry?.CreateBackup(null);
+            _isDirty = true;
+        }
+
         private string GetEntryValue(string key)
         {
             return _pwEntry?.Strings.GetSafe(key).ReadString();
@@ -293,13 +316,8 @@ namespace ModernKeePass.ViewModels
         
         private void SetEntryValue(string key, ProtectedString newValue)
         {
-            if (!_isDirty)
-            {
-                _pwEntry.Touch(true);
-                _pwEntry?.CreateBackup(null);
-            }
+            HandleBackup();
             _pwEntry?.Strings.Set(key, newValue);
-            _isDirty = true;
         }
     }
 }

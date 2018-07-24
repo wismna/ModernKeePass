@@ -1,3 +1,4 @@
 Amelioration de la recherche
+Changer l'icone d'une entree cree un historique 
 Changer la couleur de d'accentuation de Windows pendant que l'app tourne change la couleur de celle-ci
 Correction de crash lors du lancement avec certaines versions de Windows

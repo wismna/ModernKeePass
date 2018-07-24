@@ -70,7 +70,7 @@ namespace ModernKeePass.Views
                 default:
                     var entry = listView?.SelectedItem as EntryVm;
                     StackPanel.DataContext = entry;
-                    TitleTextBox.DataContext = entry;
+                    TopGrid.DataContext = entry;
                     break;
             }
         }
