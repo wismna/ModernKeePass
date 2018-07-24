@@ -30,7 +30,11 @@ namespace ModernKeePass
         /// </summary>
         public App()
         {
+#if DEBUG
             HockeyClient.Current.Configure("2fe83672887b4910b9de93a4398d0f8f");
+#else
+			HockeyClient.Current.Configure("9eb5fbb79b484fbd8daf04635e975c84");
+#endif
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
