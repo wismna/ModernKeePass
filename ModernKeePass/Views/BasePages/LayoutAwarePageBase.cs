@@ -16,7 +16,7 @@ namespace ModernKeePass.Views.BasePages
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
 
-        public virtual ListView ListView { get; set; }
+        public ListView ListView { get; set; }
         public virtual CollectionViewSource ListViewSource { get; set; }
         public virtual IHasSelectableObject Model { get; set; }
 
@@ -29,7 +29,7 @@ namespace ModernKeePass.Views.BasePages
 
             // Setup the logical page navigation components that allow
             // the page to only show one pane at a time.
-            NavigationHelper.GoBackCommand = new RelayCommand(() => GoBack(), () => CanGoBack());
+            NavigationHelper.GoBackCommand = new RelayCommand(GoBack, CanGoBack);
 
             // Start listening for Window size changes 
             // to change from showing two panes to showing a single pane

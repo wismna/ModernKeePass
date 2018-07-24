@@ -27,7 +27,7 @@
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
             <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}" />
             <Setter Property="Background" Value="{ThemeResource TextBoxBackgroundThemeBrush}" />
-            <Setter Property="SelectionHighlightColor" Value="{ThemeResource MainColor}" />
+            <Setter Property="SelectionHighlightColor" Value="{StaticResource MainColor}" />
             <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderThemeBrush}" />
             <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -118,7 +118,7 @@
                                                                 <Storyboard>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
                                                                                                Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColor}" />
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MainColor}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
                                                                                                Storyboard.TargetProperty="BorderBrush">
@@ -348,7 +348,7 @@
                                                 <Run x:Uid="PasswordGeneratorLength" />
                                                 <Run Text="{Binding PasswordLength}" />
                                             </TextBlock>
-                                            <Slider Value="{Binding PasswordLength, Mode=TwoWay}" Margin="0,-10,0,-20" />
+                                            <Slider Value="{Binding PasswordLength, Mode=TwoWay}" Margin="0,-10,0,-20" Style="{StaticResource MainColorSlider}"/>
                                             <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorUpper" />
                                             <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorLower" />
                                             <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorDigits" />

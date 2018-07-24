@@ -1,2 +1,3 @@
 Improved search box
-Corrected startup crash
+Changing Windows accent color while application is still running changes main color
+Corrected startup crash on some versions of Windows
