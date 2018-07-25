@@ -519,7 +519,7 @@
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2" 
                 RestoreButtonVisibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 IsRestoreButtonEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}"
                 SaveCommand="{Binding SaveCommand}"

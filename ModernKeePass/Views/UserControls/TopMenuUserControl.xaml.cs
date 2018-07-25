@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -175,12 +176,9 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
         
-        public event EditButtonClickEventHandler EditButtonClick;
-        public delegate void EditButtonClickEventHandler(object sender, RoutedEventArgs e);
-        public event DeleteButtonClickEventHandler DeleteButtonClick;
-        public delegate void DeleteButtonClickEventHandler(object sender, RoutedEventArgs e);
-        public event RestoreButtonClickEventHandler RestoreButtonClick;
-        public delegate void RestoreButtonClickEventHandler(object sender, RoutedEventArgs e);
+        public event EventHandler<RoutedEventArgs> EditButtonClick;
+        public event EventHandler<RoutedEventArgs> DeleteButtonClick;
+        public event EventHandler<RoutedEventArgs> RestoreButtonClick;
 
         public TopMenuUserControl()
         {

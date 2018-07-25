@@ -1,4 +1,4 @@
 Improved search box
 Changing entry icon creates a new history entry
-Changing Windows accent color while application is still running changes main color
 Corrected startup crash on some versions of Windows
+Entry delete button now shows up correctly
