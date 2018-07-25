@@ -1,8 +1,0 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <x:Double x:Key="MenuSize">60</x:Double>
-    <GridLength x:Key="MenuGridLength">60</GridLength>
-    <SolidColorBrush x:Key="MainColor" Color="{ThemeResource SystemAccentColor}" />
-    <SolidColorBrush x:Key="TextColor" Color="{ThemeResource SystemColorHighlightTextColor}" />
-</ResourceDictionary>

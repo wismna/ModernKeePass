@@ -6,7 +6,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ResourceDictionaries/Globals.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/TextBoxWithButtonStyle.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/HamburgerButtonStyle.xaml" />
                 <ResourceDictionary Source="ResourceDictionaries/ListViewLeftIndicatorStyle.xaml" />

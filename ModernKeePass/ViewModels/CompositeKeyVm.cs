@@ -125,6 +125,7 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
+                OnPropertyChanged("IsValid");
                 Database.Open(databaseFile, CreateCompositeKey(), createNew);
                 await Task.Run(() => RootGroup = Database.RootGroup);
                 return true;
@@ -145,6 +146,7 @@ namespace ModernKeePass.ViewModels
             finally
             {
                 _isOpening = false;
+                OnPropertyChanged("IsValid");
             }
             return false;
         }

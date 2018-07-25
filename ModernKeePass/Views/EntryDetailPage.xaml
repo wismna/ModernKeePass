@@ -525,6 +525,9 @@
                 SaveCommand="{Binding SaveCommand}"
                 RestoreCommand="{Binding UndoDeleteCommand}">
                 <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="EditButtonClick">
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
+                    </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="DeleteButtonClick">
                         <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
