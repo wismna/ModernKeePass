@@ -9,7 +9,7 @@
         <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}" />
         <Setter Property="Background" Value="{ThemeResource TextBoxBackgroundThemeBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderThemeBrush}" />
-        <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextSelectionHighlightColorThemeBrush}" />
+        <Setter Property="SelectionHighlightColor" Value="{ThemeResource MainColor}" />
         <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -62,7 +62,7 @@
                                                                 </ObjectAnimationUsingKeyFrames>
                                                             </Storyboard>
                                                         </VisualState>
-                                                        <!--<VisualState x:Name="Disabled">
+                                                        <VisualState x:Name="Disabled">
                                                             <Storyboard>
                                                                 <DoubleAnimation Storyboard.TargetName="BackgroundElement"
                                                                                  Storyboard.TargetProperty="Opacity"
@@ -73,7 +73,7 @@
                                                                                  To="0"
                                                                                  Duration="0" />
                                                             </Storyboard>
-                                                        </VisualState>-->
+                                                        </VisualState>
                                                     </VisualStateGroup>
                                                 </VisualStateManager.VisualStateGroups>
                                                 <Border x:Name="BorderElement"
@@ -194,24 +194,22 @@
                                 Grid.Row="1"
                                 Background="{TemplateBinding Background}"
                                 Margin="{TemplateBinding BorderThickness}"
-                                Grid.ColumnSpan="2"
-                                Grid.RowSpan="1"/>
+                                Grid.ColumnSpan="2" />
                         <Border x:Name="BorderElement"
                                 Grid.Row="1"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                Grid.ColumnSpan="2"
-                                Grid.RowSpan="1"/>
+                                Grid.ColumnSpan="2" Grid.Column="0" />
                         <ContentPresenter x:Name="HeaderContentPresenter"
                                           Grid.Row="0"
                                           Foreground="{ThemeResource TextBoxForegroundHeaderThemeBrush}"
                                           Margin="0,4,0,4"
-                                          Grid.ColumnSpan="2"
+                                          Grid.ColumnSpan="2" Grid.Column="0"
                                           Content="{TemplateBinding Header}"
                                           ContentTemplate="{TemplateBinding HeaderTemplate}"
                                           FontWeight="Semilight" />
                         <ScrollViewer x:Name="ContentElement"
-                                      Grid.Row="1"
+                                      Grid.Row="1" Grid.Column="0"
                                       HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
                                       HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                       VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
@@ -232,7 +230,7 @@
                                       Padding="{TemplateBinding Padding}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       IsTabStop="False"
-                                      Grid.ColumnSpan="2"
+                                      Grid.ColumnSpan="2" Grid.Column="0"
                                       Content="{TemplateBinding PlaceholderText}" 
                                       IsHitTestVisible="False"/>
                         <Button x:Name="ActionButton"

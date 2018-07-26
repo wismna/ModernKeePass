@@ -357,7 +357,7 @@
                                             <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpace" />
                                             <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpecial" />
                                             <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorBrackets" />
-                                            <TextBlock  x:Uid="PasswordGeneratorAlso" Margin="0,5,0,0"/>
+                                            <TextBlock x:Uid="PasswordGeneratorAlso" Margin="0,5,0,0"/>
                                             <TextBox Text="{Binding CustomChars, Mode=TwoWay}" />
                                             <Button x:Uid="PasswordGeneratorButton" Command="{Binding GeneratePasswordCommand}" />
                                         </StackPanel>
@@ -398,13 +398,21 @@
                         <StackPanel.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Margin" Value="0,20,0,0"/>
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="TextWrapping" Value="Wrap"/>
                             </Style>
                             <Style TargetType="CheckBox">
                                 <Setter Property="Margin" Value="0,20,0,0"/>
+                                <Setter Property="FontSize" Value="18"/>
+                            </Style>
+                            <Style BasedOn="{StaticResource TextBoxWithButtonStyle}" TargetType="local:TextBoxWithButton" x:Key="EntryTextBoxWithButtonStyle">
+                                <Setter Property="Width" Value="350"/>
+                                <Setter Property="Height" Value="32"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
                             </Style>
                         </StackPanel.Resources>
-                        <TextBlock x:Uid="EntryLogin" TextWrapping="Wrap" FontSize="18" />
-                        <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding UserName, Mode=TwoWay}" Width="350" Height="32" Style="{StaticResource TextBoxWithButtonStyle}" SelectionHighlightColor="{StaticResource MainColor}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy" IsEnabled="{Binding IsSelected}">
+                        <TextBlock x:Uid="EntryLogin" />
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />
@@ -412,9 +420,9 @@
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
-                        <TextBlock x:Uid="EntryPassword" TextWrapping="Wrap" FontSize="18" />
+                        <TextBlock x:Uid="EntryPassword" />
                         <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" IsEnabled="{Binding IsSelected}" />
-                        <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Password, Mode=TwoWay}" Width="350" Height="32" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" SelectionHighlightColor="{StaticResource MainColor}" ButtonSymbol="&#xE16F;" ButtonTooltip="Copy" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding Password}" />
@@ -425,16 +433,16 @@
                         <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
                         <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
                         <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-                        <local:TextBoxWithButton HorizontalAlignment="Left" Text="{Binding Url, Mode=TwoWay}" Height="32" Width="350" MaxLength="256" Style="{StaticResource TextBoxWithButtonStyle}" SelectionHighlightColor="{StaticResource MainColor}" ButtonSymbol="&#xE111;" ButtonTooltip="Navigate to URL" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" MaxLength="256" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsSelected}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:NavigateToUrlAction Url="{Binding Url}" />
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
-                        <TextBlock x:Uid="EntryNotes" TextWrapping="Wrap" FontSize="18" />
+                        <TextBlock x:Uid="EntryNotes" />
                         <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" IsEnabled="{Binding IsSelected}" />
-                        <CheckBox x:Uid="EntryExpirationDate" FontSize="18" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsSelected}" />
+                        <CheckBox x:Uid="EntryExpirationDate" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsSelected}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />

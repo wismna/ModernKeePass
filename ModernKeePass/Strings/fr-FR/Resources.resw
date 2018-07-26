@@ -468,4 +468,13 @@
   <data name="SearchButtonTooltip.Content" xml:space="preserve">
     <value>Rechercher</value>
   </data>
+  <data name="LoginTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Copier le login</value>
+  </data>
+  <data name="PasswordTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Copier le mot de passe</value>
+  </data>
+  <data name="UrlTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Naviguer vers l'URL</value>
+  </data>
 </root>
