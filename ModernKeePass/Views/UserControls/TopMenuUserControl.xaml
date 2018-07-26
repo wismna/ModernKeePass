@@ -5,23 +5,34 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource NoBorderButtonStyle}" TargetType="Button" x:Key="MenuButtonStyle" >
+            <Setter Property="Padding" Value="25,0,25,0" />
+            <Setter Property="Background" Value="{ThemeResource ToggleButtonBackgroundThemeBrush}" />
+            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+        </Style>
+        <Style BasedOn="{StaticResource NoBorderToggleButtonStyle}" TargetType="ToggleButton" x:Key="MenuToggleButtonStyle" >
+            <Setter Property="Padding" Value="25,0,25,0" />
+            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+        </Style>
+    </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Horizontal" Visibility="{Binding OverflowButtonsVisibility, ElementName=UserControl}">
-            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsRestoreButtonEnabled,ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsRestoreButtonEnabled,ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Undo">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuRestoreButton" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </Button>
-            <Button Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+            <Button Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Save">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuSaveButton" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </Button>
-            <Button Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+            <Button Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Sort">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuSortButton" />
@@ -34,14 +45,14 @@
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
-            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Checked="EditButton_Click" Style="{StaticResource NoBorderToggleButtonStyle}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Checked="EditButton_Click" Style="{StaticResource MenuToggleButtonStyle}">
                 <SymbolIcon Symbol="Edit">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuEditButton" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </ToggleButton>
-            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Delete">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuDeleteButton" />
@@ -49,7 +60,7 @@
                 </SymbolIcon>
             </Button>
         </StackPanel>
-        <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
+        <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">
