@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Interfaces;
@@ -99,15 +100,13 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public event SelectionChangedEventHandler SelectionChanged;
-        public delegate void SelectionChangedEventHandler(object sender, SelectionChangedEventArgs e);
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectionChanged?.Invoke(sender, e);
         }
 
-        public event ButtonClickedEventHandler ButtonClicked;
-        public delegate void ButtonClickedEventHandler(object sender, RoutedEventArgs e);
+        public event EventHandler<RoutedEventArgs> ButtonClicked;
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             ButtonClicked?.Invoke(sender, e);

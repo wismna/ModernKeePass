@@ -76,10 +76,8 @@ namespace ModernKeePass.Views.UserControls
             InitializeComponent();
         }
 
-        public event PasswordCheckingEventHandler ValidationChecking;
-        public delegate void PasswordCheckingEventHandler(object sender, EventArgs e);
-        public event PasswordCheckedEventHandler ValidationChecked;
-        public delegate void PasswordCheckedEventHandler(object sender, PasswordEventArgs e);
+        public event EventHandler ValidationChecking;
+        public event EventHandler<PasswordEventArgs> ValidationChecked;
 
         private async void OpenButton_OnClick(object sender, RoutedEventArgs e)
         {
