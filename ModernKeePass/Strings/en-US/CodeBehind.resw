@@ -135,48 +135,6 @@
   <data name="CompositeKeyUpdated" xml:space="preserve">
     <value>Database composite key updated.</value>
   </data>
-  <data name="DonateAlreadyPurchasedMessage" xml:space="preserve">
-    <value>Your product has already been purchased.</value>
-  </data>
-  <data name="DonateAlreadyPurchasedTitle" xml:space="preserve">
-    <value>Purchase</value>
-  </data>
-  <data name="DonateNothingToFulfillMessage" xml:space="preserve">
-    <value>No purchased product to fulfill</value>
-  </data>
-  <data name="DonateNothingToFulfillTitle" xml:space="preserve">
-    <value>Fulfillment</value>
-  </data>
-  <data name="DonateNotPurchasedMessage" xml:space="preserve">
-    <value>The purchase failed because we haven't confirmed fulfillment of a previous purchase.</value>
-  </data>
-  <data name="DonateNotPurchasedTitle" xml:space="preserve">
-    <value>Purchase</value>
-  </data>
-  <data name="DonatePurchasePendingMessage" xml:space="preserve">
-    <value>The purchase is pending so we cannot fulfill the product.</value>
-  </data>
-  <data name="DonatePurchasePendingTitle" xml:space="preserve">
-    <value>Purchase</value>
-  </data>
-  <data name="DonatePurchaseRevertedMessage" xml:space="preserve">
-    <value>Your purchase has been reverted.</value>
-  </data>
-  <data name="DonatePurchaseRevertedTitle" xml:space="preserve">
-    <value>Purchase</value>
-  </data>
-  <data name="DonateServerErrorMessage" xml:space="preserve">
-    <value>Impossible to contact the Windows Store, there was an error when fulfilling.</value>
-  </data>
-  <data name="DonateServerErrorTitle" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="DonateSucceededMessage" xml:space="preserve">
-    <value>Your donation was successful.</value>
-  </data>
-  <data name="DonateSucceededTitle" xml:space="preserve">
-    <value>Thank you!</value>
-  </data>
   <data name="EntityDeleteActionButton" xml:space="preserve">
     <value>Delete</value>
   </data>

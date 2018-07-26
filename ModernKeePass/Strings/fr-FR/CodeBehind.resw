@@ -135,48 +135,6 @@
   <data name="CompositeKeyUpdated" xml:space="preserve">
     <value>Clé composite de la base de données mise à jour.</value>
   </data>
-  <data name="DonateAlreadyPurchasedMessage" xml:space="preserve">
-    <value>Vous avez déjà acheté ce produit.</value>
-  </data>
-  <data name="DonateAlreadyPurchasedTitle" xml:space="preserve">
-    <value>Achat</value>
-  </data>
-  <data name="DonateNothingToFulfillMessage" xml:space="preserve">
-    <value>Il n'y a aucun produit acheté à valider.</value>
-  </data>
-  <data name="DonateNothingToFulfillTitle" xml:space="preserve">
-    <value>Validation</value>
-  </data>
-  <data name="DonateNotPurchasedMessage" xml:space="preserve">
-    <value>L'achat a échoué parce que nous n'avons pas pu valider un achat précédent.</value>
-  </data>
-  <data name="DonateNotPurchasedTitle" xml:space="preserve">
-    <value>Achat</value>
-  </data>
-  <data name="DonatePurchasePendingMessage" xml:space="preserve">
-    <value>Un achat est en cours donc nous ne pouvons le valider.</value>
-  </data>
-  <data name="DonatePurchasePendingTitle" xml:space="preserve">
-    <value>Achat</value>
-  </data>
-  <data name="DonatePurchaseRevertedMessage" xml:space="preserve">
-    <value>Votre achat a été annulé.</value>
-  </data>
-  <data name="DonatePurchaseRevertedTitle" xml:space="preserve">
-    <value>Achat</value>
-  </data>
-  <data name="DonateServerErrorMessage" xml:space="preserve">
-    <value>Impossible de contacter le Windows Store, l'achat n'a pas été réalisé.</value>
-  </data>
-  <data name="DonateServerErrorTitle" xml:space="preserve">
-    <value>Erreur</value>
-  </data>
-  <data name="DonateSucceededMessage" xml:space="preserve">
-    <value>Votre don a été enregistré.</value>
-  </data>
-  <data name="DonateSucceededTitle" xml:space="preserve">
-    <value>Merci!</value>
-  </data>
   <data name="EntityDeleteActionButton" xml:space="preserve">
     <value>Supprimer</value>
   </data>

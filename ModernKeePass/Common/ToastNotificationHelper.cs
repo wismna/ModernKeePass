@@ -11,16 +11,16 @@ namespace ModernKeePass.Common
     {
         public static void ShowMovedToast(IPwEntity entity, string action, string text)
         {
-            var entityType = entity is GroupVm ? "Group" : "Entry";
             var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");
-            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{action} {entityType} {entity.Name}"));
+            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{action} {entity.Name}"));
             toastElements[1].AppendChild(notificationXml.CreateTextNode(text));
             var toastNode = notificationXml.SelectSingleNode("/toast");
 
+            // This is useful only for Windows 10 UWP
             var launch = new JsonObject
             {
-                {"entityType", JsonValue.CreateStringValue(entityType)},
+                {"entityType", JsonValue.CreateStringValue(entity.GetType().Name)},
                 {"entityId", JsonValue.CreateStringValue(entity.Id)}
             };
             ((XmlElement)toastNode)?.SetAttribute("launch", launch.Stringify());
