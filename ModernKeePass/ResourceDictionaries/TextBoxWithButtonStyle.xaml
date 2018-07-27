@@ -82,16 +82,14 @@
                                                 <Border x:Name="BackgroundElement"
                                                         Background="{ThemeResource TextBoxButtonBackgroundThemeBrush}"
                                                         Margin="{TemplateBinding BorderThickness}">
-                                                <TextBlock x:Name="GlyphElement"
-                                                    Foreground="{ThemeResource TextBoxButtonForegroundThemeBrush}"
-                                                    Padding="4,0,4,0"
-                                                    VerticalAlignment="Center"
-                                                    HorizontalAlignment="Center"
-                                                    FontStyle="Normal"
-                                                    Text="{TemplateBinding Content}"
-                                                    FontSize="{TemplateBinding FontSize}"
-                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                    AutomationProperties.AccessibilityView="Raw"/>
+                                                    <TextBlock x:Name="GlyphElement"
+                                                               Foreground="{ThemeResource TextBoxButtonForegroundThemeBrush}"
+                                                               VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center"
+                                                               FontStyle="Normal"
+                                                               Text="{TemplateBinding Content}"
+                                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                               AutomationProperties.AccessibilityView="Raw"/>
                                                 </Border>
                                             </Grid>
                                         </ControlTemplate>
@@ -143,7 +141,7 @@
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0"
                                                          To="{ThemeResource TextControlPointerOverBorderThemeOpacity}" />
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -155,7 +153,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -169,7 +167,7 @@
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -217,7 +215,6 @@
                                       IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
                                       IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
                                       IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Margin="{TemplateBinding BorderThickness}"
                                       Padding="{TemplateBinding Padding}"
                                       IsTabStop="False"
@@ -228,12 +225,11 @@
                                       Foreground="{ThemeResource TextBoxPlaceholderTextThemeBrush}"
                                       Margin="{TemplateBinding BorderThickness}"
                                       Padding="{TemplateBinding Padding}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                       IsTabStop="False"
                                       Grid.ColumnSpan="2" Grid.Column="0"
                                       Content="{TemplateBinding PlaceholderText}" 
                                       IsHitTestVisible="False"/>
-                        <Button x:Name="ActionButton"
+                        <Button x:Name="DeleteButton"
                                 Grid.Row="1"
                                 Style="{StaticResource ActionButtonStyle}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
