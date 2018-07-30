@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -6,6 +8,8 @@ namespace ModernKeePass.Controls
 {
     public class TextBoxWithButton : TextBox
     {
+        public event EventHandler<RoutedEventArgs> ButtonClick;
+
         public string ButtonSymbol
         {
             get { return (string)GetValue(ButtonSymbolProperty); }
@@ -17,7 +21,6 @@ namespace ModernKeePass.Controls
                 typeof(string),
                 typeof(TextBoxWithButton),
                 new PropertyMetadata("&#xE107;", (o, args) => { }));
-        public event EventHandler<RoutedEventArgs> ButtonClick;
 
         public string ButtonTooltip
         {

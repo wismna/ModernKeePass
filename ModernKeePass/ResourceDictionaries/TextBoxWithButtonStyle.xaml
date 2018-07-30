@@ -87,6 +87,7 @@
                                                                VerticalAlignment="Center"
                                                                HorizontalAlignment="Center"
                                                                FontStyle="Normal"
+                                                               Padding="4,0,4,0"
                                                                Text="{TemplateBinding Content}"
                                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                                AutomationProperties.AccessibilityView="Raw"/>
@@ -141,7 +142,7 @@
                                                          Storyboard.TargetProperty="Opacity"
                                                          Duration="0"
                                                          To="{ThemeResource TextControlPointerOverBorderThemeOpacity}" />
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -153,7 +154,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -167,7 +168,7 @@
                             <VisualStateGroup x:Name="ButtonStates">
                                 <VisualState x:Name="ButtonVisible">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton"
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton"
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0">
                                                 <DiscreteObjectKeyFrame.Value>
@@ -229,7 +230,7 @@
                                       Grid.ColumnSpan="2" Grid.Column="0"
                                       Content="{TemplateBinding PlaceholderText}" 
                                       IsHitTestVisible="False"/>
-                        <Button x:Name="DeleteButton"
+                        <Button x:Name="ActionButton"
                                 Grid.Row="1"
                                 Style="{StaticResource ActionButtonStyle}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
