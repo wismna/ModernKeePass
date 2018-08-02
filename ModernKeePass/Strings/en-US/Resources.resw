@@ -477,4 +477,10 @@
   <data name="UrlTextBox.ButtonTooltip" xml:space="preserve">
     <value>Navigate to URL</value>
   </data>
+  <data name="RestoreEntryCommand.Message" xml:space="preserve">
+    <value>Entry restored to its original position</value>
+  </data>
+  <data name="RestoreGroupCommand.Message" xml:space="preserve">
+    <value>Group restored to its original position</value>
+  </data>
 </root>

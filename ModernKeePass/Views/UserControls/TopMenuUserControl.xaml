@@ -18,7 +18,7 @@
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Horizontal" Visibility="{Binding OverflowButtonsVisibility, ElementName=UserControl}">
-            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsRestoreButtonEnabled,ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource MenuButtonStyle}">
+            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Undo">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuRestoreButton" />
@@ -64,7 +64,7 @@
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">
-                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" IsEnabled="{Binding IsRestoreButtonEnabled,ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
                     <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
                     <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />

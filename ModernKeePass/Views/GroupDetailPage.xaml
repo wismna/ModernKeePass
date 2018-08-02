@@ -239,7 +239,6 @@
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 IsDeleteButtonEnabled="{Binding IsNotRoot}"
-                IsRestoreButtonEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}"
                 SaveCommand="{Binding SaveCommand}"
                 RestoreCommand="{Binding UndoDeleteCommand}"
                 SortEntriesCommand="{Binding SortEntriesCommand}"
@@ -252,7 +251,8 @@
                         <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="RestoreButtonClick">
-                        <actions:RestoreEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                        <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                        <actions:ToastAction x:Uid="RestoreGroupCommand" Title="{Binding Name}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>

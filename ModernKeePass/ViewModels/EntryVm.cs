@@ -228,7 +228,7 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(() => _database.Save());
             GeneratePasswordCommand = new RelayCommand(GeneratePassword);
-            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup));
+            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
         }
         
         public void GeneratePassword()

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Windows.Input;
 using Windows.UI.Xaml;
+using ModernKeePass.Common;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -8,75 +8,75 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class TopMenuUserControl
     {
-        public ICommand SaveCommand
+        public RelayCommand SaveCommand
         {
-            get { return (ICommand)GetValue(SaveCommandProperty); }
+            get { return (RelayCommand)GetValue(SaveCommandProperty); }
             set { SetValue(SaveCommandProperty, value); }
         }
         public static readonly DependencyProperty SaveCommandProperty =
             DependencyProperty.Register(
                 "SaveCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public ICommand EditCommand
+        public RelayCommand EditCommand
         {
-            get { return (ICommand)GetValue(EditCommandProperty); }
+            get { return (RelayCommand)GetValue(EditCommandProperty); }
             set { SetValue(EditCommandProperty, value); }
         }
         public static readonly DependencyProperty EditCommandProperty =
             DependencyProperty.Register(
                 "EditCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public ICommand DeleteCommand
+        public RelayCommand DeleteCommand
         {
-            get { return (ICommand)GetValue(DeleteCommandProperty); }
+            get { return (RelayCommand)GetValue(DeleteCommandProperty); }
             set { SetValue(DeleteCommandProperty, value); }
         }
         public static readonly DependencyProperty DeleteCommandProperty =
             DependencyProperty.Register(
                 "DeleteCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public ICommand RestoreCommand
+        public RelayCommand RestoreCommand
         {
-            get { return (ICommand)GetValue(RestoreCommandProperty); }
+            get { return (RelayCommand)GetValue(RestoreCommandProperty); }
             set { SetValue(RestoreCommandProperty, value); }
         }
         public static readonly DependencyProperty RestoreCommandProperty =
             DependencyProperty.Register(
                 "RestoreCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public ICommand SortEntriesCommand
+        public RelayCommand SortEntriesCommand
         {
-            get { return (ICommand)GetValue(SortEntriesCommandProperty); }
+            get { return (RelayCommand)GetValue(SortEntriesCommandProperty); }
             set { SetValue(SortEntriesCommandProperty, value); }
         }
         public static readonly DependencyProperty SortEntriesCommandProperty =
             DependencyProperty.Register(
                 "SortEntriesCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
         
-        public ICommand SortGroupsCommand
+        public RelayCommand SortGroupsCommand
         {
-            get { return (ICommand)GetValue(SortGroupsCommandProperty); }
+            get { return (RelayCommand)GetValue(SortGroupsCommandProperty); }
             set { SetValue(SortGroupsCommandProperty, value); }
         }
         public static readonly DependencyProperty SortGroupsCommandProperty =
             DependencyProperty.Register(
                 "SortGroupsCommand",
-                typeof(ICommand),
+                typeof(RelayCommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
@@ -138,7 +138,7 @@ namespace ModernKeePass.Views.UserControls
                 "SortButtonVisibility",
                 typeof(Visibility),
                 typeof(TopMenuUserControl),
-                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
+                new PropertyMetadata(Visibility.Visible, (o, args) => { }));
 
         public bool IsDeleteButtonEnabled
         {
@@ -160,18 +160,6 @@ namespace ModernKeePass.Views.UserControls
         public static readonly DependencyProperty IsEditButtonCheckedProperty =
             DependencyProperty.Register(
                 "IsEditButtonChecked",
-                typeof(bool),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(false, (o, args) => { }));
-
-        public bool IsRestoreButtonEnabled
-        {
-            get { return (bool)GetValue(IsRestoreButtonEnabledProperty); }
-            set { SetValue(IsRestoreButtonEnabledProperty, value); }
-        }
-        public static readonly DependencyProperty IsRestoreButtonEnabledProperty =
-            DependencyProperty.Register(
-                "IsRestoreButtonEnabled",
                 typeof(bool),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
@@ -213,8 +201,7 @@ namespace ModernKeePass.Views.UserControls
             DeleteFlyout.Visibility = DeleteButtonVisibility;
 
             EditFlyout.IsChecked = IsEditButtonChecked;
-
-            RestoreFlyout.IsEnabled = IsRestoreButtonEnabled;
+            
             RestoreFlyout.Visibility = RestoreButtonVisibility;
 
             SortEntriesFlyout.Visibility = SortButtonVisibility;

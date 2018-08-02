@@ -110,7 +110,6 @@
     <Compile Include="Actions\ClipboardAction.cs" />
     <Compile Include="Actions\DeleteEntityAction.cs" />
     <Compile Include="Actions\NavigateToUrlAction.cs" />
-    <Compile Include="Actions\RestoreEntityAction.cs" />
     <Compile Include="Actions\SetupFocusAction.cs" />
     <Compile Include="Actions\ToastAction.cs" />
     <Compile Include="App.xaml.cs">
@@ -149,6 +148,9 @@
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
+    <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
+      <DependentUpon>ImportExportPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsDatabasePage.xaml.cs">
       <DependentUpon>SettingsDatabasePage.xaml</DependentUpon>
     </Compile>
@@ -266,6 +268,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Views\MainPageFrames\ImportExportPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SettingsPageFrames\SettingsSavePage.xaml">
       <SubType>Designer</SubType>

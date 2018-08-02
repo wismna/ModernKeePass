@@ -529,7 +529,6 @@
                 RestoreButtonVisibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
                 DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
-                IsRestoreButtonEnabled="{Binding PreviousGroup, Converter={StaticResource NullToBooleanConverter}}"
                 SaveCommand="{Binding SaveCommand}"
                 RestoreCommand="{Binding UndoDeleteCommand}">
                 <interactivity:Interaction.Behaviors>
@@ -540,7 +539,8 @@
                         <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="RestoreButtonClick">
-                        <actions:RestoreEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                        <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
+                        <actions:ToastAction x:Uid="RestoreEntryCommand" Title="{Binding Name}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>

@@ -84,7 +84,12 @@ namespace ModernKeePass.ViewModels
         public bool IsEditMode
         {
             get { return _isEditMode; }
-            set { SetProperty(ref _isEditMode, value); }
+            set
+            {
+                SetProperty(ref _isEditMode, value);
+                ((RelayCommand)SortEntriesCommand).RaiseCanExecuteChanged();
+                ((RelayCommand)SortGroupsCommand).RaiseCanExecuteChanged();
+            }
         }
 
         public bool IsMenuClosed
@@ -136,10 +141,10 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(() => _database.Save());
             SortEntriesCommand = new RelayCommand(async () =>
-                await SortEntriesAsync().ConfigureAwait(false));
+                await SortEntriesAsync().ConfigureAwait(false), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () =>
-                await SortGroupsAsync().ConfigureAwait(false));
-            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup));
+                await SortGroupsAsync().ConfigureAwait(false), () => IsEditMode);
+            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
 
             if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _database.RecycleBin = this;
             Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
@@ -186,6 +191,7 @@ namespace ModernKeePass.ViewModels
             if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
                 _database.CreateRecycleBin(recycleBinTitle);
             Move(_database.RecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
+            ((RelayCommand)UndoDeleteCommand).RaiseCanExecuteChanged();
         }
 
         public void UndoDelete()
