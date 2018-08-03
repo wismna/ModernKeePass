@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Windows.Input;
 using Windows.UI.Xaml;
-using ModernKeePass.Common;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -8,75 +8,75 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class TopMenuUserControl
     {
-        public RelayCommand SaveCommand
+        public ICommand SaveCommand
         {
-            get { return (RelayCommand)GetValue(SaveCommandProperty); }
+            get { return (ICommand)GetValue(SaveCommandProperty); }
             set { SetValue(SaveCommandProperty, value); }
         }
         public static readonly DependencyProperty SaveCommandProperty =
             DependencyProperty.Register(
                 "SaveCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public RelayCommand EditCommand
+        public ICommand EditCommand
         {
-            get { return (RelayCommand)GetValue(EditCommandProperty); }
+            get { return (ICommand)GetValue(EditCommandProperty); }
             set { SetValue(EditCommandProperty, value); }
         }
         public static readonly DependencyProperty EditCommandProperty =
             DependencyProperty.Register(
                 "EditCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public RelayCommand DeleteCommand
+        public ICommand DeleteCommand
         {
-            get { return (RelayCommand)GetValue(DeleteCommandProperty); }
+            get { return (ICommand)GetValue(DeleteCommandProperty); }
             set { SetValue(DeleteCommandProperty, value); }
         }
         public static readonly DependencyProperty DeleteCommandProperty =
             DependencyProperty.Register(
                 "DeleteCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public RelayCommand RestoreCommand
+        public ICommand RestoreCommand
         {
-            get { return (RelayCommand)GetValue(RestoreCommandProperty); }
+            get { return (ICommand)GetValue(RestoreCommandProperty); }
             set { SetValue(RestoreCommandProperty, value); }
         }
         public static readonly DependencyProperty RestoreCommandProperty =
             DependencyProperty.Register(
                 "RestoreCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public RelayCommand SortEntriesCommand
+        public ICommand SortEntriesCommand
         {
-            get { return (RelayCommand)GetValue(SortEntriesCommandProperty); }
+            get { return (ICommand)GetValue(SortEntriesCommandProperty); }
             set { SetValue(SortEntriesCommandProperty, value); }
         }
         public static readonly DependencyProperty SortEntriesCommandProperty =
             DependencyProperty.Register(
                 "SortEntriesCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
         
-        public RelayCommand SortGroupsCommand
+        public ICommand SortGroupsCommand
         {
-            get { return (RelayCommand)GetValue(SortGroupsCommandProperty); }
+            get { return (ICommand)GetValue(SortGroupsCommandProperty); }
             set { SetValue(SortGroupsCommandProperty, value); }
         }
         public static readonly DependencyProperty SortGroupsCommandProperty =
             DependencyProperty.Register(
                 "SortGroupsCommand",
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 

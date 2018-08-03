@@ -56,7 +56,6 @@ namespace ModernKeePass.Views
                 if (vm != null)
                     DataContext = vm;
             }
-            Model.GoBackCommand = NavigationHelper.GoBackCommand;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
