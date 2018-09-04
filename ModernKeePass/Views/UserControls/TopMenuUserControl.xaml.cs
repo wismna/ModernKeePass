@@ -138,7 +138,7 @@ namespace ModernKeePass.Views.UserControls
                 "SortButtonVisibility",
                 typeof(Visibility),
                 typeof(TopMenuUserControl),
-                new PropertyMetadata(Visibility.Visible, (o, args) => { }));
+                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
         public bool IsDeleteButtonEnabled
         {
