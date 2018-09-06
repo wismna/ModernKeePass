@@ -26,7 +26,7 @@
             <x:Double x:Key="HamburgerMenuSize">300</x:Double>
             <DataTemplate x:Name="IsSpecial">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="7,15,0,15">
+                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>
@@ -36,7 +36,7 @@
             </DataTemplate>
             <DataTemplate x:Name="IsNormal">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Margin="7,15,0,15">
+                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>

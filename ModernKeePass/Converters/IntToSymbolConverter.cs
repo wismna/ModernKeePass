@@ -75,6 +75,7 @@ namespace ModernKeePass.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             var symbol = (Symbol) value;
+            var defaultIcon = (int?) parameter ?? -1;
             switch (symbol)
             {
                 case Symbol.Delete: return (int)PwIcon.TrashBin;
@@ -123,7 +124,7 @@ namespace ModernKeePass.Converters
                 case Symbol.ZeroBars: return (int) PwIcon.Energy;
                 case Symbol.FourBars: return (int) PwIcon.EnergyCareful;
                 case Symbol.Scan: return (int) PwIcon.Scanner;
-                default: return (int) PwIcon.Key;
+                default: return defaultIcon;
             }
         }
     }

@@ -19,7 +19,6 @@
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
         <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter" />
-        <converters:NullToBooleanConverter x:Key="NullToBooleanConverter" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
         <converters:IntToSymbolConverter x:Key="IntToSymbolConverter" />
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
@@ -499,7 +498,7 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" />
+                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=0, Mode=TwoWay}" />
                 </Viewbox>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />
