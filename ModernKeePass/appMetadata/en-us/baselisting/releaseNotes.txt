@@ -2,3 +2,4 @@ Improved search box
 Changing entry icon creates a new history entry
 Corrected startup crash on some versions of Windows
 Entry delete button now shows up correctly
+List of icons now only displays valid values

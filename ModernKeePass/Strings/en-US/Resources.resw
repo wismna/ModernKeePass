@@ -483,4 +483,7 @@
   <data name="RestoreGroupCommand.Message" xml:space="preserve">
     <value>Group restored to its original position</value>
   </data>
+  <data name="NewImportCheckbox.Content" xml:space="preserve">
+    <value>Import existing data</value>
+  </data>
 </root>

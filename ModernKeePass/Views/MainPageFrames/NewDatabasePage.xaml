@@ -16,20 +16,26 @@
     <Page.DataContext>
         <viewModels:NewVm />
     </Page.DataContext>
-    
+
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <HyperlinkButton x:Uid="NewCreateButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="NewCreateDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFile="{Binding DatabaseFile}">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="ValidationChecked">
-                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </userControls:CompositeKeyUserControl>
+                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFile="{Binding DatabaseFile}" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
+            </StackPanel>
+        </Border>
+        <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" IsChecked="{Binding IsImportChecked}" />
+        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=CheckBox}">
+            <StackPanel Margin="25,0,25,0">
+                <HyperlinkButton Content="Select file..." Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
+                <StackPanel>
+                    <TextBlock Text="Format" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />
+                    <ComboBox Style="{StaticResource MainColorComboBox}" SelectedItem="{Binding ImportFormat}">
+                        <ComboBoxItem>CSV</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
             </StackPanel>
         </Border>
     </StackPanel>
