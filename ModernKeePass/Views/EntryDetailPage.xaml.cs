@@ -57,6 +57,7 @@ namespace ModernKeePass.Views
         private void EntryDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 700 ? "Small" : "Large", true);
+            VisualStateManager.GoToState(TopMenu, e.NewSize.Width < 800 ? "Collapsed" : "Overflowed", true);
         }
 
         private void HamburgerMenuUserControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -104,7 +104,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
-        public Visibility MoreButtonVisibility
+        /*public Visibility MoreButtonVisibility
         {
             get { return (Visibility)GetValue(MoreButtonVisibilityProperty); }
             set { SetValue(MoreButtonVisibilityProperty, value); }
@@ -126,8 +126,8 @@ namespace ModernKeePass.Views.UserControls
                 "OverflowButtonsVisibility",
                 typeof(Visibility),
                 typeof(TopMenuUserControl),
-                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
-
+                new PropertyMetadata(Visibility.Visible, (o, args) => { }));
+        */
         public Visibility SortButtonVisibility
         {
             get { return (Visibility)GetValue(SortButtonVisibilityProperty); }
@@ -167,7 +167,7 @@ namespace ModernKeePass.Views.UserControls
         public event EventHandler<RoutedEventArgs> EditButtonClick;
         public event EventHandler<RoutedEventArgs> DeleteButtonClick;
         public event EventHandler<RoutedEventArgs> RestoreButtonClick;
-
+        
         public TopMenuUserControl()
         {
             InitializeComponent();

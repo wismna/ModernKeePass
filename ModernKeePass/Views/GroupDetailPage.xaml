@@ -233,7 +233,7 @@
                 </TextBox>
                 <userControls:BreadCrumbUserControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </Grid>
-            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2" 
+            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 RestoreButtonVisibility="{Binding ShowRestore, Converter={StaticResource BooleanToVisibilityConverter}}" 
                 DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -302,12 +302,6 @@
             <VisualStateGroup x:Name="TopMenuGroup">
                 <VisualState x:Name="Small">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -318,12 +312,6 @@
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>

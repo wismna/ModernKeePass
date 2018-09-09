@@ -136,6 +136,7 @@ namespace ModernKeePass.Views
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             VisualStateManager.GoToState(this, e.NewSize.Width < 800 ? "Small" : "Large", true);
+            VisualStateManager.GoToState(TopMenu, e.NewSize.Width < 800 ? "Collapsed" : "Overflowed", true);
         }
 
         #endregion

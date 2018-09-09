@@ -17,7 +17,31 @@
         </Style>
     </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <StackPanel Orientation="Horizontal" Visibility="{Binding OverflowButtonsVisibility, ElementName=UserControl}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisibilityStates">
+                <VisualState x:Name="Overflowed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowButtons" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Collapsed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowButtons" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <StackPanel x:Name="OverflowButtons" Orientation="Horizontal">
             <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Undo">
                     <ToolTipService.ToolTip>
@@ -60,7 +84,7 @@
                 </SymbolIcon>
             </Button>
         </StackPanel>
-        <Button Visibility="{Binding MoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
+        <Button x:Name="MoreButton" Style="{StaticResource MenuButtonStyle}">
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">

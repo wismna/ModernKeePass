@@ -552,12 +552,6 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="EditDesign" Storyboard.TargetProperty="Orientation">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Vertical"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -567,12 +561,6 @@
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ExpirationDatePanel" Storyboard.TargetProperty="Orientation">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Horizontal"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="OverflowButtonsVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TopMenu" Storyboard.TargetProperty="MoreButtonVisibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="EditDesign" Storyboard.TargetProperty="Orientation">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Horizontal"/>
