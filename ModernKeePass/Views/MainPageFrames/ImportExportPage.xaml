@@ -23,7 +23,9 @@
         <HyperlinkButton Grid.Column="0" Grid.Row="1" Content="Select file..." Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
         <StackPanel Grid.Column="1" Grid.Row="1" >
             <TextBlock Text="Format" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />
-            <ComboBox Style="{StaticResource MainColorComboBox}" />
+            <ComboBox Style="{StaticResource MainColorComboBox}">
+                <ComboBoxItem>CSV</ComboBoxItem>
+            </ComboBox>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="1" >
             <TextBlock Text="Import into..." Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />

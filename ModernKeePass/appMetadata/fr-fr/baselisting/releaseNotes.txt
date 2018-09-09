@@ -2,3 +2,4 @@ Amelioration de la recherche
 Changer l'icone d'une entree cree un historique
 Correction de crash lors du lancement avec certaines versions de Windows
 Le bouton de suppression d'une entree apparait bien desormais
+La liste des icones n'affiche desormais que des valeurs valables

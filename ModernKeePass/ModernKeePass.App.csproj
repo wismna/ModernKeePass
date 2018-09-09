@@ -117,10 +117,13 @@
     </Compile>
     <Compile Include="Converters\IntToSymbolConverter.cs" />
     <Compile Include="Exceptions\NavigationException.cs" />
+    <Compile Include="Interfaces\IFormat.cs" />
+    <Compile Include="Interfaces\IImportService.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
     <Compile Include="Interfaces\IRecentService.cs" />
     <Compile Include="Interfaces\IRecentItem.cs" />
     <Compile Include="Interfaces\IResourceService.cs" />
+    <Compile Include="Services\ImportService.cs" />
     <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />

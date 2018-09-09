@@ -105,7 +105,7 @@
                                         </Grid.ColumnDefinitions>
                                         <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColor}, Converter={StaticResource ColorToBrushConverter}}">
                                             <Viewbox MaxHeight="50" Width="100">
-                                                <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Foreground="{StaticResource TextColor}" />
+                                                <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=0}" Foreground="{StaticResource TextColor}" />
                                             </Viewbox>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
@@ -207,7 +207,7 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, Mode=TwoWay}" />
+                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=48, Mode=TwoWay}" />
                 </Viewbox>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />

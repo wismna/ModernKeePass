@@ -46,7 +46,7 @@ namespace ModernKeePassApp.Test.Mock
         {
             _compositeKey = newCompositeKey;
         }
-
+        
         public void CreateRecycleBin(string title)
         {
             throw new NotImplementedException();
