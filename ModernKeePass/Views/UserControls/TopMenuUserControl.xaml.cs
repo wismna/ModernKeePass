@@ -103,31 +103,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(Visibility),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
-
-        /*public Visibility MoreButtonVisibility
-        {
-            get { return (Visibility)GetValue(MoreButtonVisibilityProperty); }
-            set { SetValue(MoreButtonVisibilityProperty, value); }
-        }
-        public static readonly DependencyProperty MoreButtonVisibilityProperty =
-            DependencyProperty.Register(
-                "MoreButtonVisibility",
-                typeof(Visibility),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
-
-        public Visibility OverflowButtonsVisibility
-        {
-            get { return (Visibility)GetValue(OverflowButtonsVisibilityProperty); }
-            set { SetValue(OverflowButtonsVisibilityProperty, value); }
-        }
-        public static readonly DependencyProperty OverflowButtonsVisibilityProperty =
-            DependencyProperty.Register(
-                "OverflowButtonsVisibility",
-                typeof(Visibility),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(Visibility.Visible, (o, args) => { }));
-        */
+        
         public Visibility SortButtonVisibility
         {
             get { return (Visibility)GetValue(SortButtonVisibilityProperty); }
