@@ -1,5 +1,7 @@
-﻿using Windows.Storage;
+﻿using System;
+using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using ModernKeePass.Converters;
 using ModernKeePass.Interfaces;
 using ModernKeePassLib;
 
@@ -23,14 +25,16 @@ namespace ModernKeePass.ViewModels
 
         private void CreateSampleData(IDatabaseService database)
         {
+            var converter = new IntToSymbolConverter();
+
             var bankingGroup = database.RootGroup.AddNewGroup("Banking");
-            bankingGroup.IconId = (int) Symbol.Calculator;
+            bankingGroup.IconId = (int)converter.ConvertBack(Symbol.Calculator, null, null, string.Empty);
 
             var emailGroup = database.RootGroup.AddNewGroup("Email");
-            emailGroup.IconId = (int) Symbol.Mail;
+            emailGroup.IconId = (int)converter.ConvertBack(Symbol.Mail, null, null, string.Empty);
 
             var internetGroup = database.RootGroup.AddNewGroup("Internet");
-            internetGroup.IconId = (int) Symbol.World;
+            internetGroup.IconId = (int)converter.ConvertBack(Symbol.World, null, null, string.Empty);
 
             var sample1 = database.RootGroup.AddNewEntry();
             sample1.Name = "Sample Entry";

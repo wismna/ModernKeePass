@@ -117,6 +117,8 @@
     </Compile>
     <Compile Include="Converters\IntToSymbolConverter.cs" />
     <Compile Include="Exceptions\NavigationException.cs" />
+    <Compile Include="ImportFormats\CsvImportFormat.cs" />
+    <Compile Include="ImportFormats\NullImportFormat.cs" />
     <Compile Include="Interfaces\IFormat.cs" />
     <Compile Include="Interfaces\IImportService.cs" />
     <Compile Include="Interfaces\IProxyInvocationHandler.cs" />

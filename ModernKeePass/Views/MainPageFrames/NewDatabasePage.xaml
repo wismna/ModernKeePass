@@ -32,7 +32,7 @@
                 <HyperlinkButton Content="Select file..." Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
                 <StackPanel>
                     <TextBlock Text="Format" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />
-                    <ComboBox Style="{StaticResource MainColorComboBox}" SelectedItem="{Binding ImportFormat}">
+                    <ComboBox Style="{StaticResource MainColorComboBox}" SelectionChanged="Selector_OnSelectionChanged">
                         <ComboBoxItem>CSV</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>

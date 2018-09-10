@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Events;
+using ModernKeePass.ImportFormats;
 using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
@@ -15,11 +18,19 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class NewDatabasePage
     {
+        private Frame _mainFrame;
+
         public NewVm Model => (NewVm)DataContext;
 
         public NewDatabasePage()
         {
             InitializeComponent();
+        }
+        
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            _mainFrame = e.Parameter as Frame;
         }
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
@@ -52,8 +63,23 @@ namespace ModernKeePass.Views
 
         private void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
         {
-            Model.PopulateInitialData(DatabaseService.Instance, new SettingsService());
-            Frame.Navigate(typeof(GroupDetailPage));
+            Model.PopulateInitialData(DatabaseService.Instance, new SettingsService(), new ImportService());
+
+            _mainFrame.Navigate(typeof(GroupDetailPage));
+        }
+
+        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            switch (comboBox?.SelectedIndex)
+            {
+                case 0:
+                    Model.ImportFormat = new CsvImportFormat();
+                    break;
+                default:
+                    Model.ImportFormat = new NullImportFormat();
+                    break;
+            }
         }
     }
 }

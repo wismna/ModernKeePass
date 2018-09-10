@@ -204,7 +204,7 @@ namespace ModernKeePass.ViewModels
         private readonly IDatabaseService _database;
         private readonly IResourceService _resource;
         private bool _isEditMode;
-        private bool _isDirty;
+        private bool _isDirty = true;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isVisible = true;
