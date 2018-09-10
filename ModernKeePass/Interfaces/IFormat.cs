@@ -1,9 +1,11 @@
-﻿using Windows.Storage;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Storage;
 
 namespace ModernKeePass.Interfaces
 {
     public interface IFormat
     {
-        IPwEntity Import(IStorageFile source);
+        Task<List<Dictionary<string, string>>> Import(IStorageFile source);
     }
 }

@@ -1,23 +1,24 @@
-﻿using ModernKeePass.Interfaces;
+﻿using System.Threading.Tasks;
 using Windows.Storage;
+using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Services
 {
     public class ImportService : IImportService<IFormat>
     {
-        public void Import(IFormat format, IStorageFile source, IDatabaseService databaseService)
+        public async Task Import(IFormat format, IStorageFile source, GroupVm group)
         {
-            var entities = (GroupVm)format.Import(source);
+            var data = await format.Import(source);
 
-            foreach (var entry in entities.Entries)
+            foreach (var entity in data)
             {
-                databaseService.RootGroup.Entries.Add(entry);
-            }
-
-            foreach (var subGroup in entities.Groups)
-            {
-                databaseService.RootGroup.Groups.Add(subGroup);
+                var entry = group.AddNewEntry();
+                entry.Name = entity["0"];
+                entry.UserName = entity["1"];
+                entry.Password = entity["2"];
+                if (entity.Count > 3) entry.Url = entity["3"];
+                if (entity.Count > 4) entry.Notes = entity["4"];
             }
         }
     }

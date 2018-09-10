@@ -255,4 +255,7 @@
   <data name="ToastSavedMessage" xml:space="preserve">
     <value>Base de données sauvegardée avec succès !</value>
   </data>
+  <data name="NewImportFormatHelpCSV" xml:space="preserve">
+    <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe;URL;Commentaires</value>
+  </data>
 </root>

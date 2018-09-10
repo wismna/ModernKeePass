@@ -486,4 +486,13 @@
   <data name="NewImportCheckbox.Content" xml:space="preserve">
     <value>Importer des données existantes</value>
   </data>
+  <data name="NewImportFile.Content" xml:space="preserve">
+    <value>Sélectionnez un fichier à importer...</value>
+  </data>
+  <data name="NewImportFormat.Text" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="NewImportFormatHelp.Text" xml:space="preserve">
+    <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe:URL;Commentaires</value>
+  </data>
 </root>

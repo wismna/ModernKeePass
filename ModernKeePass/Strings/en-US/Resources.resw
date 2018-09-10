@@ -486,4 +486,10 @@
   <data name="NewImportCheckbox.Content" xml:space="preserve">
     <value>Import existing data</value>
   </data>
+  <data name="NewImportFile.Content" xml:space="preserve">
+    <value>Select a file to import...</value>
+  </data>
+  <data name="NewImportFormat.Text" xml:space="preserve">
+    <value>Format</value>
+  </data>
 </root>

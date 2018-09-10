@@ -6,8 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
     mc:Ignorable="d">
     <Page.Resources>
@@ -18,7 +16,7 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="NewCreateButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="NewCreateButton" Click="CreateDatabaseButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="NewCreateDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
@@ -26,16 +24,28 @@
                 <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFile="{Binding DatabaseFile}" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
             </StackPanel>
         </Border>
-        <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" IsChecked="{Binding IsImportChecked}" />
+        <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" Margin="15,10,0,0" IsChecked="{Binding IsImportChecked, Mode=TwoWay}" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=CheckBox}">
             <StackPanel Margin="25,0,25,0">
-                <HyperlinkButton Content="Select file..." Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
-                <StackPanel>
-                    <TextBlock Text="Format" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />
-                    <ComboBox Style="{StaticResource MainColorComboBox}" SelectionChanged="Selector_OnSelectionChanged">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Uid="NewImportFormat" Margin="0,15,0,10" Style="{StaticResource BodyTextBlockStyle}" />
+                    <ComboBox Style="{StaticResource MainColorComboBox}" Margin="15,15,0,0" SelectionChanged="ImportFormatComboBox_OnSelectionChanged">
                         <ComboBoxItem>CSV</ComboBoxItem>
                     </ComboBox>
+                    <Button Margin="5,10,0,0" Style="{StaticResource TextBlockButtonStyle}">
+                        <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
+                            <SymbolIcon.RenderTransform>
+                                <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
+                            </SymbolIcon.RenderTransform>
+                        </SymbolIcon>
+                        <Button.Flyout>
+                            <Flyout>
+                                <TextBlock Text="{Binding ImportFormatHelp}" TextWrapping="WrapWholeWords" MaxWidth="400" />
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                 </StackPanel>
+                <HyperlinkButton x:Name="ImportFileLink" x:Uid="NewImportFile" Margin="-15,0,0,0" Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
             </StackPanel>
         </Border>
     </StackPanel>

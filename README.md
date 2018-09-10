@@ -8,7 +8,7 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 
 # Features
 - Works on Windows 10, 8.1 and RT
-- Read and write support of KDBX files version 2, 3 and 4
+- Full compatibility with classic KeePass databases: read and write support of KDBX files version 2, 3 and 4
 - Open database with password and key file
 - Create new databases
 - Create new key files
@@ -25,6 +25,7 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 - Change database compression
 - Change database key derivation
 - Displays and change entry colors and icons
+- Import existing CSV data
 
 # Build and Test
 1. Clone the repository
