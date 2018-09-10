@@ -65,7 +65,7 @@ namespace ModernKeePass.Views
         {
             Model.PopulateInitialData(DatabaseService.Instance, new SettingsService(), new ImportService());
 
-            _mainFrame.Navigate(typeof(GroupDetailPage));
+            _mainFrame.Navigate(typeof(GroupDetailPage), DatabaseService.Instance.RootGroup);
         }
 
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
