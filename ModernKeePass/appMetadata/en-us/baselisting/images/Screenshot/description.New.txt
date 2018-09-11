@@ -1,1 +1,1 @@
-Create new databases, with a password and/or with a new or existing key file
+Create new databases, with a password and/or with a new or existing key file, and optionally import existing CSV data.
