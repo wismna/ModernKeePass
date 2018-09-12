@@ -63,9 +63,10 @@ namespace ModernKeePassApp.Test
         {
             var databaseFile = Package.Current.InstalledLocation.GetFileAsync(@"Data\TestDatabase.kdbx")
                 .GetAwaiter().GetResult();
-            var openVm = new OpenVm(databaseFile);
-            Assert.IsTrue(openVm.IsFileSelected);
-            Assert.AreEqual("MockDatabase", openVm.Name);
+            var openVm = new OpenVm();
+            Assert.IsFalse(openVm.IsFileSelected);
+            openVm.OpenFile(databaseFile, new RecentServiceMock());
+            Assert.AreEqual("TestDatabase.kdbx", openVm.Name);
         }
 
         /*[TestMethod]

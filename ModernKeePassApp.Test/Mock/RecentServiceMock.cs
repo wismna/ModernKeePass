@@ -3,21 +3,24 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ModernKeePass.Interfaces;
 using Windows.Storage;
+using System.Collections.Generic;
 
 namespace ModernKeePassApp.Test.Mock
 {
     class RecentServiceMock : IRecentService
     {
+        private Dictionary<string, IStorageItem> _recentItems = new Dictionary<string, IStorageItem>();
+
         public int EntryCount => 0;
 
         public void Add(IStorageItem file, string metadata)
         {
-            throw new NotImplementedException();
+            _recentItems.Add(metadata, file);
         }
 
         public void ClearAll()
         {
-            throw new NotImplementedException();
+            _recentItems.Clear();
         }
 
         public ObservableCollection<IRecentItem> GetAllFiles(bool removeIfNonExistant = true)
@@ -27,7 +30,7 @@ namespace ModernKeePassApp.Test.Mock
 
         public Task<IStorageItem> GetFileAsync(string token)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => _recentItems[token]);
         }
     }
 }

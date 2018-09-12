@@ -12,16 +12,8 @@ namespace ModernKeePass.ViewModels
         public string Name => DatabaseFile?.DisplayName;
 
         public StorageFile DatabaseFile { get; private set; }
-
-        public OpenVm() : this(null) { }
-
-        public OpenVm(StorageFile file)
-        {
-            if (!IsFileSelected) return;
-            OpenFile(file);
-        }
-
-        public void OpenFile(StorageFile file)
+        
+        internal void OpenFile(StorageFile file)
         {
             OpenFile(file, RecentService.Instance);
         }

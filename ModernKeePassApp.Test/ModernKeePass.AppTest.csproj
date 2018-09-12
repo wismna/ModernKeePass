@@ -159,12 +159,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.2.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.2\lib\netstandard1.0\BouncyCastle.Crypto.dll</HintPath>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.3.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.3\lib\netstandard1.0\BouncyCastle.Crypto.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ModernKeePassLib, Version=2.37.0.2000, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.38.2\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+    <Reference Include="ModernKeePassLib, Version=2.39.1.22027, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernKeePassLib.2.39.1\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Splat, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">

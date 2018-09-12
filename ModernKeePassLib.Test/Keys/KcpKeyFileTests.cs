@@ -23,7 +23,7 @@ namespace ModernKeePassLib.Test.Keys
             "\t\t<Data>";
 
         private const string ExpectedFileEnd = "\t</Key>\r\n" +
-                                       "</KeyFile>\r\n";
+                                       "</KeyFile>";
 
         [TestMethod]
         public void TestConstruct()
@@ -70,7 +70,7 @@ namespace ModernKeePassLib.Test.Keys
             {
                 var fileContents = FileIO.ReadTextAsync(file).GetAwaiter().GetResult();
 
-                Assert.AreEqual(fileContents.Length, 187);
+                Assert.AreEqual(185, fileContents.Length);
                 Assert.IsTrue(fileContents.StartsWith(ExpectedFileStart));
                 Assert.IsTrue(fileContents.EndsWith(ExpectedFileEnd));
             }
