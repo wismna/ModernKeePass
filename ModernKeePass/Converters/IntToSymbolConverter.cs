@@ -75,7 +75,7 @@ namespace ModernKeePass.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             var symbol = (Symbol) value;
-            var defaultIcon = (int?) parameter ?? -1;
+            var defaultIcon = parameter != null ? int.Parse(parameter as string) : -1;
             switch (symbol)
             {
                 case Symbol.Delete: return (int)PwIcon.TrashBin;

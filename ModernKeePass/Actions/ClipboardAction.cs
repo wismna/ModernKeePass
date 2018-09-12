@@ -17,6 +17,7 @@ namespace ModernKeePass.Actions
 
         public object Execute(object sender, object parameter)
         {
+            if (string.IsNullOrEmpty(Text)) return null;
             var dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
             dataPackage.SetText(Text);
             Clipboard.SetContent(dataPackage);
