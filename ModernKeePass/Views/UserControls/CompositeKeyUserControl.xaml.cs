@@ -132,13 +132,12 @@ namespace ModernKeePass.Views.UserControls
 
         private async void KeyFileButton_Click(object sender, RoutedEventArgs e)
         {
-            var picker =
-                new FileOpenPicker
-                {
-                    ViewMode = PickerViewMode.List,
-                    SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-                };
-            picker.FileTypeFilter.Add(".key");
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            picker.FileTypeFilter.Add("*");
 
             // Application now has read/write access to the picked file
             var file = await picker.PickSingleFileAsync();
