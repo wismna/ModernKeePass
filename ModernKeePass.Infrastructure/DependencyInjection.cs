@@ -1,25 +1,27 @@
-﻿using Autofac;
+﻿using System.Reflection;
 using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Infrastructure.KeePass;
 using ModernKeePass.Infrastructure.UWP;
 
 namespace ModernKeePass.Infrastructure
 {
-    public class DependencyInjection: Module
+    public static class DependencyInjection
     {
-        protected override void Load(ContainerBuilder builder)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            builder.RegisterType<KeePassDatabaseClient>().As<IDatabaseProxy>().SingleInstance();
-            builder.RegisterType<KeePassPasswordClient>().As<IPasswordProxy>().SingleInstance();
-            builder.RegisterType<KeePassCryptographyClient>().As<ICryptographyClient>();
-            builder.RegisterType<UwpSettingsClient>().As<ISettingsProxy>();
-            builder.RegisterType<UwpResourceClient>().As<IResourceProxy>();
-            builder.RegisterType<UwpRecentFilesClient>().As<IRecentProxy>();
-            builder.RegisterType<StorageFileClient>().As<IFileProxy>();
+            var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
+            services.AddAutoMapper(assembly);
 
-            // Register Automapper profiles
-            builder.RegisterType<EntryMappingProfile>().As<Profile>();
+            services.AddSingleton(typeof(IDatabaseProxy), typeof(KeePassDatabaseClient));
+            services.AddTransient(typeof(ICryptographyClient), typeof(KeePassCryptographyClient));
+            services.AddTransient(typeof(IPasswordProxy), typeof(KeePassPasswordClient));
+            services.AddTransient(typeof(IResourceProxy), typeof(UwpResourceClient));
+            services.AddTransient(typeof(ISettingsProxy), typeof(UwpSettingsClient));
+            services.AddTransient(typeof(IRecentProxy), typeof(UwpRecentFilesClient));
+            services.AddTransient(typeof(IFileProxy), typeof(StorageFileClient));
+            return services;
         }
     }
 }

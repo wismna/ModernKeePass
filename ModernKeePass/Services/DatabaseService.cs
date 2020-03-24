@@ -3,7 +3,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Microsoft.HockeyApp;
-using ModernKeePass.Exceptions;
+using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Interfaces;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
@@ -122,9 +122,9 @@ namespace ModernKeePass.Services
             }
         }
         
-        public void ReOpen()
+        public async Task ReOpen()
         {
-            Open(_databaseFile, _compositeKey);
+            await Open(_databaseFile, _compositeKey);
         }
 
         /// <summary>

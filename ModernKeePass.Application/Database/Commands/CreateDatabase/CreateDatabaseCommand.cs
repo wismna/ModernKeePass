@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
@@ -16,7 +15,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
         public FileInfo FileInfo { get; set; }
         public Credentials Credentials { get; set; }
 
-        public class CreateDatabaseCommandHandler : IRequestHandler<CreateDatabaseCommand, DatabaseVm>
+        public class CreateDatabaseCommandHandler : IAsyncRequestHandler<CreateDatabaseCommand, DatabaseVm>
         {
             private readonly IDatabaseProxy _database;
             private readonly IMediator _mediator;
@@ -29,9 +28,9 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                 _mapper = mapper;
             }
 
-            public async Task<DatabaseVm> Handle(CreateDatabaseCommand message, CancellationToken cancellationToken)
+            public async Task<DatabaseVm> Handle(CreateDatabaseCommand message)
             {
-                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery(), cancellationToken);
+                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
                 if (isDatabaseOpen) throw new DatabaseOpenException();
 
                 var database = await _database.Create(message.FileInfo, message.Credentials);
@@ -43,6 +42,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                 };
                 return databaseVm;
             }
+
         }
     }
 }

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependencyInjection.cs" />
+    <Compile Include="InfrastructureModule.cs" />
     <Compile Include="File\CsvImportFormat.cs" />
     <Compile Include="KeePass\EntryMappingProfile.cs" />
     <Compile Include="KeePass\IconMapper.cs" />
@@ -54,19 +55,20 @@
     <Compile Include="UWP\UwpSettingsClient.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModernKeePass.Application\ModernKeePass.Application.csproj">
+    <ProjectReference Include="..\ModernKeePass.Application\Application.csproj">
       <Project>{42353562-5e43-459c-8e3e-2f21e575261d}</Project>
-      <Name>ModernKeePass.Application</Name>
+      <Name>Application</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ModernKeePass.Domain\ModernKeePass.Domain.csproj">
+    <ProjectReference Include="..\ModernKeePass.Domain\Domain.csproj">
       <Project>{9a0759f1-9069-4841-99e3-3bec44e17356}</Project>
-      <Name>ModernKeePass.Domain</Name>
+      <Name>Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Libs\Windows.winmd</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

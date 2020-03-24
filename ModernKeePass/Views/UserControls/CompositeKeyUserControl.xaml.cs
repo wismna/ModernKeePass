@@ -85,7 +85,7 @@ namespace ModernKeePass.Views.UserControls
 
             if (UpdateKey)
             {
-                Model.UpdateKey();
+                await Model.UpdateKey();
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
             }
             else
@@ -157,7 +157,7 @@ namespace ModernKeePass.Views.UserControls
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
             
-            Model.CreateKeyFile(file);
+            await Model.CreateKeyFile(file);
         }
 
         private async Task OpenDatabase(IResourceService resource)

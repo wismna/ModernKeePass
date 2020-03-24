@@ -7,6 +7,7 @@ namespace ModernKeePass.Application.Common.Interfaces
     public interface IDatabaseProxy
     {
         bool IsOpen { get; }
+        string Name { get; }
         GroupEntity RecycleBin { get; set; }
         BaseEntity Cipher { get; set; }
         BaseEntity KeyDerivation { get; set; }

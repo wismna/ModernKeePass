@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 
 namespace ModernKeePass.Application.Database.Queries.IsDatabaseOpen
@@ -15,10 +13,12 @@ namespace ModernKeePass.Application.Database.Queries.IsDatabaseOpen
             {
                 _databaseProxy = databaseProxy;
             }
-            public Task<bool> Handle(IsDatabaseOpenQuery request, CancellationToken cancellationToken)
+
+            public bool Handle(IsDatabaseOpenQuery message)
             {
-                return Task.FromResult(_databaseProxy.IsOpen);
+                return _databaseProxy.IsOpen;
             }
+
         }
     }
 }

@@ -5,13 +5,22 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
+using ModernKeePass.Application;
+using ModernKeePass.Application.Database.Commands.CloseDatabase;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
-using ModernKeePass.Exceptions;
+using ModernKeePass.Domain.Dtos;
+using ModernKeePass.Domain.Exceptions;
+using ModernKeePass.Infrastructure;
 using ModernKeePass.Services;
 using ModernKeePass.Views;
 
@@ -24,6 +33,10 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
+        public IServiceProvider Services { get; }
+
+        private IMediator _mediator;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -39,6 +52,13 @@ namespace ModernKeePass
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
+
+            // Setup DI
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddApplication();
+            serviceCollection.AddInfrastructure();
+            Services = serviceCollection.BuildServiceProvider();
+            _mediator = Services.GetService<IMediator>();
         }
 
         #region Event Handlers
@@ -52,8 +72,7 @@ namespace ModernKeePass
                 exception.InnerException != null
                     ? exception.InnerException
                     : exception;
-
-            var database = DatabaseService.Instance;
+            
             var resource = new ResourcesService();
             if (realException is SaveException)
             {
@@ -64,6 +83,7 @@ namespace ModernKeePass
                     resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
                     async command =>
                     {
+                        var database = await _mediator.Send(new GetDatabaseQuery());
                         var savePicker = new FileSavePicker
                         {
                             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
@@ -73,7 +93,16 @@ namespace ModernKeePass
                             new List<string> {".kdbx"});
 
                         var file = await savePicker.PickSaveFileAsync();
-                        if (file != null) database.Save(file);
+                        if (file != null)
+                        {
+                            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                            var fileInfo = new FileInfo
+                            {
+                                Name = file.DisplayName,
+                                Path = token
+                            };
+                            await _mediator.Send(new SaveDatabaseCommand { FileInfo = fileInfo });
+                        }
                     }, null);
             }
         }
@@ -136,14 +165,13 @@ namespace ModernKeePass
             Window.Current.Activate();
         }
 
-        private void OnResuming(object sender, object e)
+        private async void OnResuming(object sender, object e)
         {
             var currentFrame = Window.Current.Content as Frame;
-            var database = DatabaseService.Instance;
 
             try
             {
-                database.ReOpen();
+                var database = await _mediator.Send(new GetDatabaseQuery());
 #if DEBUG
                 ToastNotificationHelper.ShowGenericToast(database.Name, "Database reopened (changes were saved)");
 #endif
@@ -177,11 +205,14 @@ namespace ModernKeePass
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            var database = DatabaseService.Instance;
             try
             {
-                if (SettingsService.Instance.GetSetting("SaveSuspend", true)) database.Save();
-                database.Close(false);
+                var database = await _mediator.Send(new GetDatabaseQuery());
+                if (SettingsService.Instance.GetSetting("SaveSuspend", true))
+                {
+                    await _mediator.Send(new SaveDatabaseCommand());
+                }
+                await _mediator.Send(new CloseDatabaseCommand());
             }
             catch (Exception exception)
             {

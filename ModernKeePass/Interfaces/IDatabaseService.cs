@@ -20,7 +20,7 @@ namespace ModernKeePass.Interfaces
         bool HasChanged { get; set; }
 
         Task Open(StorageFile databaseFile, CompositeKey key, bool createNew = false);
-        void ReOpen();
+        Task ReOpen();
         void Save();
         Task Save(StorageFile file);
         void CreateRecycleBin(string title);

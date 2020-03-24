@@ -1,9 +1,11 @@
 ﻿{
   "supports": {},
   "dependencies": {
+    "AutoMapper": "6.1.1",
+    "AutoMapper.Extensions.Microsoft.DependencyInjection": "2.0.1",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "ModernKeePassLib": "2.44.1",
-    "NETStandard.Library": "1.6.1"
+    "NETStandard.Library": "2.0.3"
   },
   "frameworks": {
     "netstandard1.2": {}

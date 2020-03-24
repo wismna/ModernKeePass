@@ -26,6 +26,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         private CompositeKey _compositeKey;
 
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
+        public string Name => _pwDatabase?.Name;
 
         public GroupEntity RecycleBin { get; set; }
 
@@ -40,7 +41,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                     Name = cipher.DisplayName
                 };
             }
-            set => _pwDatabase.DataCipherUuid = BuildIdFromString(value.Id);
+            set { _pwDatabase.DataCipherUuid = BuildIdFromString(value.Id); }
         }
 
         public BaseEntity KeyDerivation
@@ -53,15 +54,18 @@ namespace ModernKeePass.Infrastructure.KeePass
                     Id = keyDerivation.Uuid.ToHexString(),
                     Name = keyDerivation.Name
                 };
-            } 
-            set => _pwDatabase.KdfParameters = KdfPool.Engines
-                .FirstOrDefault(e => e.Uuid.Equals(BuildIdFromString(value.Name)))?.GetDefaultParameters();
+            }
+            set
+            {
+                _pwDatabase.KdfParameters = KdfPool.Engines
+                    .FirstOrDefault(e => e.Uuid.Equals(BuildIdFromString(value.Name)))?.GetDefaultParameters();
+            }
         }
 
         public string Compression
         {
-            get => _pwDatabase.Compression.ToString("G");
-            set => _pwDatabase.Compression = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value);
+            get { return _pwDatabase.Compression.ToString("G"); }
+            set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
 
         public KeePassDatabaseClient(ISettingsProxy settings, IFileProxy fileService, IMapper mapper)

@@ -9,7 +9,7 @@ namespace ModernKeePass.Infrastructure.UWP
     {
         private readonly IPropertySet _values = ApplicationData.Current.LocalSettings.Values;
         
-        public T GetSetting<T>(string property, T defaultValue = default)
+        public T GetSetting<T>(string property, T defaultValue = default(T))
         {
             try
             {

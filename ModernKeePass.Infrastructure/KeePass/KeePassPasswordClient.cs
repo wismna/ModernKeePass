@@ -3,6 +3,7 @@ using ModernKeePass.Domain.Dtos;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Cryptography.PasswordGenerator;
 using ModernKeePassLib.Keys;
+using ModernKeePassLib.Security;
 
 namespace ModernKeePass.Infrastructure.KeePass
 {
@@ -28,7 +29,8 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             pwProfile.CharSet.Add(options.CustomChars);
 
-            PwGenerator.Generate(out var password, pwProfile, null, new CustomPwGeneratorPool());
+            ProtectedString password;
+            PwGenerator.Generate(out password, pwProfile, null, new CustomPwGeneratorPool());
 
             return password.ReadString();
         }

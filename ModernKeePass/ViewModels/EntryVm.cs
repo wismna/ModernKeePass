@@ -242,7 +242,7 @@ namespace ModernKeePass.ViewModels
             if (UpperCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.UpperCase);
             if (LowerCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.LowerCase);
             if (DigitsPatternSelected) pwProfile.CharSet.Add(PwCharSet.Digits);
-            if (SpecialPatternSelected) pwProfile.CharSet.Add(PwCharSet.SpecialChars);
+            if (SpecialPatternSelected) pwProfile.CharSet.Add(PwCharSet.Special);
             if (MinusPatternSelected) pwProfile.CharSet.Add('-');
             if (UnderscorePatternSelected) pwProfile.CharSet.Add('_');
             if (SpacePatternSelected) pwProfile.CharSet.Add(' ');

@@ -39,6 +39,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationModule.cs" />
     <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
@@ -52,16 +53,18 @@
     <Compile Include="Common\Interfaces\ISelectableModel.cs" />
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
-    <Content Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Common\Mappings\MappingProfile.cs" />
     <Compile Include="Common\Mappings\MappingProfiles.cs" />
     <Compile Include="Database\Commands\CloseDatabase\CloseDatabaseCommand.cs" />
     <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseCommand.cs" />
     <Compile Include="Database\Commands\SaveDatabase\SaveDatabaseCommand.cs" />
     <Compile Include="Database\Models\DatabaseVm.cs" />
     <Compile Include="Database\Models\MainVm.cs" />
+    <Compile Include="Database\Queries\GetDatabase\GetDatabaseQuery.cs" />
     <Compile Include="Database\Queries\IsDatabaseOpen\IsDatabaseOpenQuery.cs" />
     <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQuery.cs" />
     <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQueryValidator.cs" />
+    <Compile Include="DependencyInjection.cs" />
     <Compile Include="Entry\Models\EntryVm.cs" />
     <Compile Include="Group\Models\GroupVm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,9 +91,9 @@
     <Folder Include="Settings\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ModernKeePass.Domain\ModernKeePass.Domain.csproj">
+    <ProjectReference Include="..\ModernKeePass.Domain\Domain.csproj">
       <Project>{9a0759f1-9069-4841-99e3-3bec44e17356}</Project>
-      <Name>ModernKeePass.Domain</Name>
+      <Name>Domain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

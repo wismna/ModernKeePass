@@ -17,6 +17,7 @@ namespace ModernKeePass.Infrastructure.KeePass
 
         private void FromDtoToModel()
         {
+            Uri url;
             CreateMap<PwEntry, EntryEntity>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Uuid.ToHexString()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.TitleField)))
@@ -24,7 +25,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.PasswordField)))
                 .ForMember(dest => dest.Url, opt =>
                 {
-                    opt.PreCondition(src => Uri.TryCreate(GetEntryValue(src, PwDefs.UrlField), UriKind.Absolute, out _));
+                    opt.PreCondition(src => Uri.TryCreate(GetEntryValue(src, PwDefs.UrlField), UriKind.Absolute, out url));
                     opt.MapFrom(src => new Uri(GetEntryValue(src, PwDefs.UrlField)));
                 })
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.NotesField)))

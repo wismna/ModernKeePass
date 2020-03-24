@@ -9,20 +9,20 @@ namespace ModernKeePass.Application.Common.Mappings
     {
         public MappingProfile()
         {
-            ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
+            ApplyMappingsFromAssembly(typeof(MappingProfile).GetTypeInfo().Assembly);
         }
 
         private void ApplyMappingsFromAssembly(Assembly assembly)
         {
-            var types = assembly.GetExportedTypes()
-                .Where(t => t.GetInterfaces().Any(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
+            var types = assembly.ExportedTypes
+                .Where(t => t.GetTypeInfo().ImplementedInterfaces.Any(i =>
+                    i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
                 .ToList();
 
             foreach (var type in types)
             {
                 var instance = Activator.CreateInstance(type);
-                var methodInfo = type.GetMethod("Mapping");
+                var methodInfo = type.GetTypeInfo().GetDeclaredMethod("Mapping");
                 methodInfo?.Invoke(instance, new object[] { this });
             }
         }

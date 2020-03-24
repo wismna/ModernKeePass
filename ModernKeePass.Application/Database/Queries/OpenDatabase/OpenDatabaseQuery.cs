@@ -16,7 +16,7 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
         public FileInfo FileInfo { get; set; }
         public Credentials Credentials { get; set; }
 
-        public class OpenDatabaseQueryHandler : IRequestHandler<OpenDatabaseQuery, DatabaseVm>
+        public class OpenDatabaseQueryHandler : IAsyncRequestHandler<OpenDatabaseQuery, DatabaseVm>
         {
             private readonly IMapper _mapper;
             private readonly IMediator _mediator;
@@ -29,9 +29,9 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                 _databaseProxy = databaseProxy;
             }
 
-            public async Task<DatabaseVm> Handle(OpenDatabaseQuery request, CancellationToken cancellationToken)
+            public async Task<DatabaseVm> Handle(OpenDatabaseQuery request)
             {
-                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery(), cancellationToken);
+                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
                 if (isDatabaseOpen) throw new DatabaseOpenException();
 
                 var database = await _databaseProxy.Open(request.FileInfo, request.Credentials);

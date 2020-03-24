@@ -2,11 +2,15 @@
   "supports": {},
   "dependencies": {
     "Autofac": "4.9.4",
-    "AutoMapper": "6.2.2",
+    "Autofac.Extensions.DependencyInjection": "4.4.0",
+    "AutoMapper": "6.1.1",
+    "AutoMapper.Extensions.Microsoft.DependencyInjection": "2.0.1",
     "FluentValidation": "8.6.2",
-    "MediatR": "4.0.0",
+    "MediatR": "3.0.1",
+    "MediatR.Extensions.Microsoft.DependencyInjection": "2.0.0",
+    "Microsoft.Extensions.DependencyInjection": "1.1.1",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "1.6.1",
+    "NETStandard.Library": "2.0.3",
     "Splat": "3.0.0"
   },
   "frameworks": {

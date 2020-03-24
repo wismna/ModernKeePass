@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass.App", "ModernKeePass\ModernKeePass.App.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win81App", "ModernKeePass\Win81App.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass.AppTest", "ModernKeePassApp.Test\ModernKeePass.AppTest.csproj", "{7E80F5E7-724A-4668-9333-B10F5D75C6D0}"
 EndProject
@@ -20,11 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B30588B-07B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "presentation", "presentation", "{C7DB9A6F-77A8-4FE5-83CB-9C11F7100647}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass.Application", "ModernKeePass.Application\ModernKeePass.Application.csproj", "{42353562-5E43-459C-8E3E-2F21E575261D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "ModernKeePass.Application\Application.csproj", "{42353562-5E43-459C-8E3E-2F21E575261D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass.Domain", "ModernKeePass.Domain\ModernKeePass.Domain.csproj", "{9A0759F1-9069-4841-99E3-3BEC44E17356}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "ModernKeePass.Domain\Domain.csproj", "{9A0759F1-9069-4841-99E3-3BEC44E17356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernKeePass.Infrastructure", "ModernKeePass.Infrastructure\ModernKeePass.Infrastructure.csproj", "{09577E4C-4899-45B9-BF80-1803D617CCAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "ModernKeePass.Infrastructure\Infrastructure.csproj", "{09577E4C-4899-45B9-BF80-1803D617CCAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
