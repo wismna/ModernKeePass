@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using System.Threading;
 using System.Threading.Tasks;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.IsDatabaseOpen;

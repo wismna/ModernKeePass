@@ -133,7 +133,7 @@
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Services\DatabaseService.cs" />
+    <Content Include="Services\DatabaseService.cs" />
     <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="Common\MessageDialogHelper.cs" />
     <Compile Include="Common\NavigationHelper.cs" />

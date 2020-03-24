@@ -3,6 +3,8 @@ using System.Linq;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using MediatR;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -46,12 +48,12 @@ namespace ModernKeePass.ViewModels
         public MainVm() {}
 
         internal MainVm(Frame referenceFrame, Frame destinationFrame, StorageFile databaseFile = null) : this(referenceFrame, destinationFrame,
-            DatabaseService.Instance, new ResourcesService(), RecentService.Instance, databaseFile)
+            App.Mediator, new ResourcesService(), RecentService.Instance, databaseFile)
         { }
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame, IDatabaseService database, IResourceService resource, IRecentService recent, StorageFile databaseFile = null)
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IMediator mediator, IResourceService resource, IRecentService recent, StorageFile databaseFile = null)
         {
-            var isDatabaseOpen = database != null && database.IsOpen;
+            var database = mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
@@ -79,8 +81,8 @@ namespace ModernKeePass.ViewModels
                     Destination = destinationFrame,
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Save,
-                    IsSelected = isDatabaseOpen,
-                    IsEnabled = isDatabaseOpen
+                    IsSelected = database.IsOpen,
+                    IsEnabled = database.IsOpen
                 },
                 new MainMenuItemVm
                 {
@@ -89,9 +91,7 @@ namespace ModernKeePass.ViewModels
                     Destination = destinationFrame,
                     Parameter = referenceFrame,
                     SymbolIcon = Symbol.Copy,
-                    IsSelected =
-                        (database == null || !database.IsOpen) &&
-                        recent.EntryCount > 0,
+                    IsSelected = !database.IsOpen && recent.EntryCount > 0,
                     IsEnabled = recent.EntryCount > 0
                 },
                 new MainMenuItemVm
@@ -120,7 +120,7 @@ namespace ModernKeePass.ViewModels
             SelectedItem = mainMenuItems.FirstOrDefault(m => m.IsSelected);
 
             // Add currently opened database to the menu
-            if (database != null && database.IsOpen)
+            if (database.IsOpen)
                 mainMenuItems.Add(new MainMenuItemVm
                 {
                     Title = database.Name,

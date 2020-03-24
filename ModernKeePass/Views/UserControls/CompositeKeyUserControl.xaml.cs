@@ -6,6 +6,10 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
+using MediatR;
+using ModernKeePass.Application.Database.Commands.CloseDatabase;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.Extensions;
@@ -19,6 +23,7 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class CompositeKeyUserControl
     {
+        private readonly IMediator _mediator;
         public CompositeKeyVm Model => Grid.DataContext as CompositeKeyVm;
 
         public bool CreateNew
@@ -71,8 +76,12 @@ namespace ModernKeePass.Views.UserControls
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
-        public CompositeKeyUserControl()
+        public CompositeKeyUserControl(): this(App.Mediator)
+        { }
+
+        public CompositeKeyUserControl(IMediator mediator)
         {
+            _mediator = mediator;
             InitializeComponent();
         }
 
@@ -90,7 +99,7 @@ namespace ModernKeePass.Views.UserControls
             }
             else
             {
-                var database = DatabaseService.Instance;
+                var database = await _mediator.Send(new GetDatabaseQuery());
                 var resource = new ResourcesService();
                 if (database.IsOpen)
                 {
@@ -100,16 +109,16 @@ namespace ModernKeePass.Views.UserControls
                         resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
                         async command =>
                         {
-                            database.Save();
+                            await _mediator.Send(new SaveDatabaseCommand());
                             ToastNotificationHelper.ShowGenericToast(
                                 database.Name,
                                 resource.GetResourceValue("ToastSavedMessage"));
-                            database.Close(false);
+                            await _mediator.Send(new CloseDatabaseCommand());
                             await OpenDatabase(resource);
                         },
                         async command =>
                         {
-                            database.Close(false);
+                            await _mediator.Send(new CloseDatabaseCommand());
                             await OpenDatabase(resource);
                         });
                 }

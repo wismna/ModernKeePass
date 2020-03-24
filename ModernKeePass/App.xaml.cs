@@ -35,7 +35,7 @@ namespace ModernKeePass
     {
         public IServiceProvider Services { get; }
 
-        private IMediator _mediator;
+        public static IMediator Mediator { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -58,7 +58,7 @@ namespace ModernKeePass
             serviceCollection.AddApplication();
             serviceCollection.AddInfrastructure();
             Services = serviceCollection.BuildServiceProvider();
-            _mediator = Services.GetService<IMediator>();
+            Mediator = Services.GetService<IMediator>();
         }
 
         #region Event Handlers
@@ -83,7 +83,7 @@ namespace ModernKeePass
                     resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
                     async command =>
                     {
-                        var database = await _mediator.Send(new GetDatabaseQuery());
+                        var database = await Mediator.Send(new GetDatabaseQuery());
                         var savePicker = new FileSavePicker
                         {
                             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
@@ -101,7 +101,7 @@ namespace ModernKeePass
                                 Name = file.DisplayName,
                                 Path = token
                             };
-                            await _mediator.Send(new SaveDatabaseCommand { FileInfo = fileInfo });
+                            await Mediator.Send(new SaveDatabaseCommand { FileInfo = fileInfo });
                         }
                     }, null);
             }
@@ -171,7 +171,7 @@ namespace ModernKeePass
 
             try
             {
-                var database = await _mediator.Send(new GetDatabaseQuery());
+                var database = await Mediator.Send(new GetDatabaseQuery());
 #if DEBUG
                 ToastNotificationHelper.ShowGenericToast(database.Name, "Database reopened (changes were saved)");
 #endif
@@ -207,12 +207,12 @@ namespace ModernKeePass
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                var database = await _mediator.Send(new GetDatabaseQuery());
+                var database = await Mediator.Send(new GetDatabaseQuery());
                 if (SettingsService.Instance.GetSetting("SaveSuspend", true))
                 {
-                    await _mediator.Send(new SaveDatabaseCommand());
+                    await Mediator.Send(new SaveDatabaseCommand());
                 }
-                await _mediator.Send(new CloseDatabaseCommand());
+                await Mediator.Send(new CloseDatabaseCommand());
             }
             catch (Exception exception)
             {

@@ -58,6 +58,7 @@
     <Compile Include="Database\Commands\CloseDatabase\CloseDatabaseCommand.cs" />
     <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseCommand.cs" />
     <Compile Include="Database\Commands\SaveDatabase\SaveDatabaseCommand.cs" />
+    <Compile Include="Database\Commands\UpdateCredentials\UpdateCredentialsCommand.cs" />
     <Compile Include="Database\Models\DatabaseVm.cs" />
     <Compile Include="Database\Models\MainVm.cs" />
     <Compile Include="Database\Queries\GetDatabase\GetDatabaseQuery.cs" />

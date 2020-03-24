@@ -25,11 +25,37 @@ namespace ModernKeePass.Infrastructure.KeePass
         private string _fileAccessToken;
         private CompositeKey _compositeKey;
 
+        // Main information
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
         public string Name => _pwDatabase?.Name;
+        public GroupEntity RootGroup { get; set; }
 
-        public GroupEntity RecycleBin { get; set; }
+        // Settings
+        public GroupEntity RecycleBin 
+        {
+            get 
+            {
+                if (_pwDatabase.RecycleBinEnabled)
+                {
+                    var pwGroup = _pwDatabase.RootGroup.FindGroup(_pwDatabase.RecycleBinUuid, true);
+                    var group = new GroupEntity
+                    {
+                        Id = pwGroup.Uuid.ToHexString(),
+                        Name = pwGroup.Name,
+                        Icon = IconMapper.MapPwIconToIcon(pwGroup.IconId),
+                        Entries = pwGroup.Entries.Select(e => _mapper.Map<EntryEntity>(e)).ToList(),
+                        SubGroups = pwGroup.Groups.Select(BuildHierarchy).ToList()
+                    };
+                    return group;
+                }
 
+                return null;
+            }
+            set
+            {
+
+            }
+        }
         public BaseEntity Cipher
         {
             get
@@ -88,6 +114,7 @@ namespace ModernKeePass.Infrastructure.KeePass
 
                 return new DatabaseEntity
                 {
+                    Name = _pwDatabase.Name,
                     RootGroupEntity = BuildHierarchy(_pwDatabase.RootGroup)
                 };
             }

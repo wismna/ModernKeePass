@@ -3,12 +3,16 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
+using MediatR;
+using ModernKeePass.Application.Database.Commands.UpdateCredentials;
+using ModernKeePass.Application.Database.Queries.OpenDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePassLib.Cryptography;
 using ModernKeePassLib.Keys;
-using ModernKeePassLib.Serialization;
 
 namespace ModernKeePass.ViewModels
 {
@@ -21,9 +25,7 @@ namespace ModernKeePass.ViewModels
             Warning = 3,
             Success = 5
         }
-
-        public IDatabaseService Database { get; set; }
-
+        
         public bool HasPassword
         {
             get { return _hasPassword; }
@@ -110,15 +112,16 @@ namespace ModernKeePass.ViewModels
         private StatusTypes _statusType;
         private StorageFile _keyFile;
         private string _keyFileText;
+        private readonly IMediator _mediator;
         private readonly IResourceService _resource;
 
-        public CompositeKeyVm() : this(DatabaseService.Instance, new ResourcesService()) { }
+        public CompositeKeyVm() : this(App.Mediator, new ResourcesService()) { }
 
-        public CompositeKeyVm(IDatabaseService database, IResourceService resource)
+        public CompositeKeyVm(IMediator mediator, IResourceService resource)
         {
+            _mediator = mediator;
             _resource = resource;
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
-            Database = database;
         }
 
         public async Task<bool> OpenDatabase(StorageFile databaseFile, bool createNew)
@@ -126,9 +129,15 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
-                OnPropertyChanged("IsValid");
-                await Database.Open(databaseFile, await CreateCompositeKey(), createNew);
-                await Task.Run(() => RootGroup = Database.RootGroup);
+                OnPropertyChanged("IsValid");;
+                var fileInfo = new FileInfo
+                {
+                    Name = databaseFile.DisplayName,
+                    Path = StorageApplicationPermissions.FutureAccessList.Add(databaseFile)
+                };
+
+                var database = await _mediator.Send(new OpenDatabaseQuery { FileInfo = fileInfo, Credentials = CreateCredentials()});
+                await Task.Run(() => RootGroup = new GroupVm(database.RootGroup));
                 return true;
             }
             catch (ArgumentException)
@@ -154,7 +163,8 @@ namespace ModernKeePass.ViewModels
 
         public async Task UpdateKey()
         {
-           Database.UpdateCompositeKey(await CreateCompositeKey());
+            //Database.UpdateCompositeKey(await CreateCompositeKey());
+            await _mediator.Send(new UpdateCredentialsCommand {Credentials = CreateCredentials()});
             UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 
@@ -172,17 +182,14 @@ namespace ModernKeePass.ViewModels
             StatusType = (int)type;
         }
 
-        private async Task<CompositeKey> CreateCompositeKey()
+        private Credentials CreateCredentials()
         {
-            var compositeKey = new CompositeKey();
-            if (HasPassword) compositeKey.AddUserKey(new KcpPassword(Password));
-            if (HasKeyFile && KeyFile != null)
+            var credentials = new Credentials
             {
-                var fileContents = await FileIO.ReadBufferAsync(KeyFile);
-                compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromByteArray(fileContents.ToArray())));
-            }
-            if (HasUserAccount) compositeKey.AddUserKey(new KcpUserAccount());
-            return compositeKey;
+                Password = HasPassword ? Password: null,
+                KeyFilePath = HasKeyFile && KeyFile != null ? StorageApplicationPermissions.FutureAccessList.Add(KeyFile) : null
+            };
+            return credentials;
         }
     }
 }
