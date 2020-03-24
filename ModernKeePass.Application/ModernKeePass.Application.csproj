@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{42353562-5E43-459C-8E3E-2F21E575261D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ModernKeePass.Application</RootNamespace>
+    <AssemblyName>ModernKeePass.Application</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- A reference to the entire .NET Framework is automatically included -->
+    <None Include="project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
+    <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
+    <Compile Include="Common\Interfaces\IFileProxy.cs" />
+    <Compile Include="Common\Interfaces\IHasSelectableObject.cs" />
+    <Compile Include="Common\Interfaces\IImportFormat.cs" />
+    <Compile Include="Common\Interfaces\IIsEnabled.cs" />
+    <Compile Include="Common\Interfaces\IPasswordProxy.cs" />
+    <Compile Include="Common\Interfaces\IProxyInvocationHandler.cs" />
+    <Compile Include="Common\Interfaces\IRecentProxy.cs" />
+    <Compile Include="Common\Interfaces\IResourceProxy.cs" />
+    <Compile Include="Common\Interfaces\ISelectableModel.cs" />
+    <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
+    <Compile Include="Common\Mappings\IMapFrom.cs" />
+    <Content Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Common\Mappings\MappingProfiles.cs" />
+    <Compile Include="Database\Commands\CloseDatabase\CloseDatabaseCommand.cs" />
+    <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseCommand.cs" />
+    <Compile Include="Database\Commands\SaveDatabase\SaveDatabaseCommand.cs" />
+    <Compile Include="Database\Models\DatabaseVm.cs" />
+    <Compile Include="Database\Models\MainVm.cs" />
+    <Compile Include="Database\Queries\IsDatabaseOpen\IsDatabaseOpenQuery.cs" />
+    <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQuery.cs" />
+    <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQueryValidator.cs" />
+    <Compile Include="Entry\Models\EntryVm.cs" />
+    <Compile Include="Group\Models\GroupVm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Services\CryptographyService.cs" />
+    <Content Include="Services\DatabaseService.cs" />
+    <Content Include="Services\FileService.cs" />
+    <Content Include="Services\ImportService.cs" />
+    <Content Include="Services\RecentService.cs" />
+    <Content Include="Services\ResourceService.cs" />
+    <Content Include="Services\SecurityService.cs" />
+    <Content Include="Services\SettingsService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Entry\Commands\UpdateEntry\" />
+    <Folder Include="Entry\Queries\" />
+    <Folder Include="Group\Commands\CreateEntry\" />
+    <Folder Include="Group\Commands\CreateGroup\" />
+    <Folder Include="Group\Commands\DeleteEntry\" />
+    <Folder Include="Group\Commands\DeleteGroup\" />
+    <Folder Include="Group\Commands\UpdateGroup\" />
+    <Folder Include="Group\Queries\" />
+    <Folder Include="Resources\Commands\" />
+    <Folder Include="Resources\Queries\" />
+    <Folder Include="Settings\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ModernKeePass.Domain\ModernKeePass.Domain.csproj">
+      <Project>{9a0759f1-9069-4841-99e3-3bec44e17356}</Project>
+      <Name>ModernKeePass.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

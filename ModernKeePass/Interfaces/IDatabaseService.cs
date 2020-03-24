@@ -1,4 +1,5 @@
-﻿using Windows.Storage;
+﻿using System.Threading.Tasks;
+using Windows.Storage;
 using ModernKeePass.ViewModels;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -18,10 +19,10 @@ namespace ModernKeePass.Interfaces
         bool IsOpen { get; }
         bool HasChanged { get; set; }
 
-        void Open(StorageFile databaseFile, CompositeKey key, bool createNew = false);
+        Task Open(StorageFile databaseFile, CompositeKey key, bool createNew = false);
         void ReOpen();
         void Save();
-        void Save(StorageFile file);
+        Task Save(StorageFile file);
         void CreateRecycleBin(string title);
         void AddDeletedItem(PwUuid id);
         void Close(bool releaseFile = true);

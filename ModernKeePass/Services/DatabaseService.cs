@@ -1,4 +1,6 @@
 using System;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Storage;
 using Microsoft.HockeyApp;
 using ModernKeePass.Exceptions;
@@ -80,7 +82,7 @@ namespace ModernKeePass.Services
         /// <param name="key">The database composite key</param>
         /// <param name="createNew">True to create a new database before opening it</param>
         /// <returns>An error message, if any</returns>
-        public void Open(StorageFile databaseFile, CompositeKey key, bool createNew = false)
+        public async Task Open(StorageFile databaseFile, CompositeKey key, bool createNew = false)
         {
             try
             {
@@ -94,7 +96,8 @@ namespace ModernKeePass.Services
                 }
                 
                 _compositeKey = key;
-                var ioConnection = IOConnectionInfo.FromFile(databaseFile);
+                var fileContents = await FileIO.ReadBufferAsync(databaseFile);
+                var ioConnection = IOConnectionInfo.FromByteArray(fileContents.ToArray());
                 if (createNew)
                 {
                     _pwDatabase.New(ioConnection, key);
@@ -144,13 +147,14 @@ namespace ModernKeePass.Services
         /// Save the current database to another file and open it
         /// </summary>
         /// <param name="file">The new database file</param>
-        public void Save(StorageFile file)
+        public async Task Save(StorageFile file)
         {
             var oldFile = _databaseFile;
             _databaseFile = file;
             try
             {
-                _pwDatabase.SaveAs(IOConnectionInfo.FromFile(_databaseFile), true, new NullStatusLogger());
+                var fileContents = await FileIO.ReadBufferAsync(file);
+                _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(fileContents.ToArray()), true, new NullStatusLogger());
             }
             catch
             {

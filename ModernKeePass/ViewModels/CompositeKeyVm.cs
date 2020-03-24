@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -126,7 +127,7 @@ namespace ModernKeePass.ViewModels
             {
                 _isOpening = true;
                 OnPropertyChanged("IsValid");
-                Database.Open(databaseFile, CreateCompositeKey(), createNew);
+                await Database.Open(databaseFile, await CreateCompositeKey(), createNew);
                 await Task.Run(() => RootGroup = Database.RootGroup);
                 return true;
             }
@@ -151,16 +152,17 @@ namespace ModernKeePass.ViewModels
             return false;
         }
 
-        public void UpdateKey()
+        public async Task UpdateKey()
         {
-            Database.UpdateCompositeKey(CreateCompositeKey());
+           Database.UpdateCompositeKey(await CreateCompositeKey());
             UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 
-        public void CreateKeyFile(StorageFile file)
+        public async Task CreateKeyFile(StorageFile file)
         {
             // TODO: implement entropy generator
-            KcpKeyFile.Create(file, null);
+            var fileContents = await FileIO.ReadBufferAsync(file);
+            KcpKeyFile.Create(fileContents.ToArray());
             KeyFile = file;
         }
 
@@ -170,11 +172,15 @@ namespace ModernKeePass.ViewModels
             StatusType = (int)type;
         }
 
-        private CompositeKey CreateCompositeKey()
+        private async Task<CompositeKey> CreateCompositeKey()
         {
             var compositeKey = new CompositeKey();
             if (HasPassword) compositeKey.AddUserKey(new KcpPassword(Password));
-            if (HasKeyFile && KeyFile != null) compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromFile(KeyFile)));
+            if (HasKeyFile && KeyFile != null)
+            {
+                var fileContents = await FileIO.ReadBufferAsync(KeyFile);
+                compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromByteArray(fileContents.ToArray())));
+            }
             if (HasUserAccount) compositeKey.AddUserKey(new KcpUserAccount());
             return compositeKey;
         }
