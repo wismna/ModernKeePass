@@ -537,6 +537,20 @@
     <Content Include="Assets\Wide310x150Logo.scale-180.png" />
     <Content Include="Assets\Wide310x150Logo.scale-80.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ModernKeePass.Application\ModernKeePass.Application.csproj">
+      <Project>{42353562-5e43-459c-8e3e-2f21e575261d}</Project>
+      <Name>ModernKeePass.Application</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModernKeePass.Domain\ModernKeePass.Domain.csproj">
+      <Project>{9a0759f1-9069-4841-99e3-3bec44e17356}</Project>
+      <Name>ModernKeePass.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ModernKeePass.Infrastructure\ModernKeePass.Infrastructure.csproj">
+      <Project>{09577e4c-4899-45b9-bf80-1803d617ccae}</Project>
+      <Name>ModernKeePass.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
