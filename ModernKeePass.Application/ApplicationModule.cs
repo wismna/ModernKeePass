@@ -12,7 +12,7 @@ namespace ModernKeePass.Application
         protected override void Load(ContainerBuilder builder)
         {
             // Register Automapper profiles
-            builder.RegisterType<MappingProfiles>().As<Profile>();
+            builder.RegisterType<MappingProfile>().As<Profile>();
 
             // Register Mediatr
             builder

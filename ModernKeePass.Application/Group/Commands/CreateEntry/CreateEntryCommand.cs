@@ -1,8 +1,6 @@
-﻿using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Queries.IsDatabaseOpen;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
@@ -13,23 +11,20 @@ namespace ModernKeePass.Application.Group.Commands.CreateEntry
     {
         public GroupVm ParentGroup { get; set; }
 
-        public class CreateEntryCommandHandler : IAsyncRequestHandler<CreateEntryCommand, EntryVm>
+        public class CreateEntryCommandHandler : IRequestHandler<CreateEntryCommand, EntryVm>
         {
             private readonly IDatabaseProxy _database;
-            private readonly IMediator _mediator;
             private readonly IMapper _mapper;
 
-            public CreateEntryCommandHandler(IDatabaseProxy database, IMediator mediator, IMapper mapper)
+            public CreateEntryCommandHandler(IDatabaseProxy database, IMapper mapper)
             {
                 _database = database;
-                _mediator = mediator;
                 _mapper = mapper;
             }
 
-            public async Task<EntryVm> Handle(CreateEntryCommand message)
+            public EntryVm Handle(CreateEntryCommand message)
             {
-                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
-                if (!isDatabaseOpen) throw new DatabaseClosedException();
+                if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 var entry = _database.CreateEntry(message.ParentGroup.Id);
                 var entryVm = _mapper.Map<EntryVm>(entry);

@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using MediatR;
+﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Queries.IsDatabaseOpen;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
 
@@ -11,21 +9,18 @@ namespace ModernKeePass.Application.Group.Commands.SortEntries
     {
         public GroupVm Group { get; set; }
 
-        public class SortEntriesCommandHandler : IAsyncRequestHandler<SortEntriesCommand>
+        public class SortEntriesCommandHandler : IRequestHandler<SortEntriesCommand>
         {
             private readonly IDatabaseProxy _database;
-            private readonly IMediator _mediator;
 
-            public SortEntriesCommandHandler(IDatabaseProxy database, IMediator mediator)
+            public SortEntriesCommandHandler(IDatabaseProxy database)
             {
                 _database = database;
-                _mediator = mediator;
             }
 
-            public async Task Handle(SortEntriesCommand message)
+            public void Handle(SortEntriesCommand message)
             {
-                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
-                if (!isDatabaseOpen) throw new DatabaseClosedException();
+                if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 _database.SortEntries(message.Group.Id);
             }

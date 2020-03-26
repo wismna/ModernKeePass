@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Queries.IsDatabaseOpen;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
@@ -16,18 +15,15 @@ namespace ModernKeePass.Application.Group.Commands.AddEntry
         public class AddEntryCommandHandler : IAsyncRequestHandler<AddEntryCommand>
         {
             private readonly IDatabaseProxy _database;
-            private readonly IMediator _mediator;
 
-            public AddEntryCommandHandler(IDatabaseProxy database, IMediator mediator)
+            public AddEntryCommandHandler(IDatabaseProxy database)
             {
                 _database = database;
-                _mediator = mediator;
             }
 
             public async Task Handle(AddEntryCommand message)
             {
-                var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
-                if (!isDatabaseOpen) throw new DatabaseClosedException();
+                if (!_database.IsOpen) throw new DatabaseClosedException();
                 /*var entryEntity = new EntryEntity
                 {
                     Id = message.Entry.Id,

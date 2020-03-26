@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace ModernKeePass.Application.Database.Queries.OpenDatabase
+namespace ModernKeePass.Application.Database.Commands.CreateDatabase
 {
-    public class OpenDatabaseQueryValidator : AbstractValidator<OpenDatabaseQuery>
+    public class CreateDatabaseQueryValidator : AbstractValidator<CreateDatabaseCommand>
     {
-        public OpenDatabaseQueryValidator()
+        public CreateDatabaseQueryValidator()
         {
             RuleFor(v => v.FilePath)
                 .NotNull()
