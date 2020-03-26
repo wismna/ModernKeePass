@@ -75,18 +75,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
-        public IEnumerable<IPwEntity> ItemsSource
+        public IEnumerable<IVmEntity> ItemsSource
         {
-            get { return (IEnumerable<IPwEntity>)GetValue(ItemsSourceProperty); }
+            get { return (IEnumerable<IVmEntity>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 "ItemsSource",
-                typeof(IEnumerable<IPwEntity>),
+                typeof(IEnumerable<IVmEntity>),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(new List<IPwEntity>(), (o, args) => { }));
+                new PropertyMetadata(new List<IVmEntity>(), (o, args) => { }));
 
         public object SelectedItem
         {

@@ -192,7 +192,7 @@
     <Compile Include="Converters\TextToWidthConverter.cs" />
     <Compile Include="Events\PasswordEventArgs.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
-    <Compile Include="Interfaces\IPwEntity.cs" />
+    <Compile Include="Interfaces\IVmEntity.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

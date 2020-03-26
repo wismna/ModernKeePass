@@ -8,22 +8,34 @@ namespace ModernKeePass.Application.Common.Interfaces
     {
         bool IsOpen { get; }
         string Name { get; }
-        GroupEntity RecycleBin { get; set; }
-        BaseEntity Cipher { get; set; }
-        BaseEntity KeyDerivation { get; set; }
-        string Compression { get; set; }
+        GroupEntity RootGroup { get; }
 
-        Task<DatabaseEntity> Open(FileInfo fileInfo, Credentials credentials);
-        Task<DatabaseEntity> Create(FileInfo fileInfo, Credentials credentials);
+        string RecycleBinId { get; set; }
+        string CipherId { get; set; }
+        string KeyDerivationId { get; set; }
+        string Compression { get; set; }
+        bool IsRecycleBinEnabled { get; }
+
+        Task<GroupEntity> Open(FileInfo fileInfo, Credentials credentials);
+        Task<GroupEntity> ReOpen();
+        Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials);
         Task SaveDatabase();
         Task SaveDatabase(FileInfo FileInfo);
         Task UpdateCredentials(Credentials credentials);
         void CloseDatabase();
-        Task AddEntry(GroupEntity parentGroup, EntryEntity entity);
-        Task AddGroup(GroupEntity parentGroup, GroupEntity entity);
-        Task UpdateEntry(EntryEntity entity);
-        Task UpdateGroup(GroupEntity entity);
-        Task DeleteEntry(EntryEntity entity);
-        Task DeleteGroup(GroupEntity entity);
+
+        Task AddEntry(string parentGroupId, string entryId);
+        Task AddGroup(string parentGroupId, string groupId);
+        Task UpdateEntry(string entryId);
+        Task UpdateGroup(string groupId);
+        Task RemoveEntry(string parentGroupId, string entryId);
+        Task RemoveGroup(string parentGroupId, string groupId);
+        EntryEntity CreateEntry(string parentGroupId);
+        GroupEntity CreateGroup(string parentGroupId, string nameId, bool isRecycleBin = false);
+        Task DeleteEntry(string entryId);
+        Task DeleteGroup(string groupId);
+
+        void SortEntries(string groupId);
+        void SortSubGroups(string groupId);
     }
 }

@@ -99,7 +99,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _keyFileText, value); }
         }
 
-        public GroupVm RootGroup { get; set; }
+        public Application.Group.Models.GroupVm RootGroup { get; set; }
 
         public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
         
@@ -129,7 +129,7 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
-                OnPropertyChanged("IsValid");;
+                OnPropertyChanged("IsValid");
                 var fileInfo = new FileInfo
                 {
                     Name = databaseFile.DisplayName,
@@ -137,7 +137,7 @@ namespace ModernKeePass.ViewModels
                 };
 
                 var database = await _mediator.Send(new OpenDatabaseQuery { FileInfo = fileInfo, Credentials = CreateCredentials()});
-                await Task.Run(() => RootGroup = new GroupVm(database.RootGroup));
+                await Task.Run(() => RootGroup = database.RootGroup);
                 return true;
             }
             catch (ArgumentException)

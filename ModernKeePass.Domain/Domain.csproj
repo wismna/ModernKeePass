@@ -44,7 +44,6 @@
     <Compile Include="Dtos\FileInfo.cs" />
     <Compile Include="Dtos\PasswordGenerationOptions.cs" />
     <Compile Include="Entities\BaseEntity.cs" />
-    <Compile Include="Entities\DatabaseEntity.cs" />
     <Compile Include="Entities\EntryEntity.cs" />
     <Compile Include="Entities\GroupEntity.cs" />
     <Compile Include="Enums\CredentialStatusTypes.cs" />
@@ -54,8 +53,10 @@
     <Compile Include="Exceptions\DatabaseOpenException.cs" />
     <Compile Include="Exceptions\NavigationException.cs" />
     <Compile Include="Exceptions\SaveException.cs" />
+    <Compile Include="Interfaces\IDateTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

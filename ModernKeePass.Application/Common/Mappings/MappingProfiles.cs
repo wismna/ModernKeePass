@@ -9,7 +9,6 @@ namespace ModernKeePass.Application.Common.Mappings
     {
         public void ApplyMappings()
         {
-            new DatabaseVm().Mapping(this);
             new EntryVm().Mapping(this);
             new GroupVm().Mapping(this);
         }

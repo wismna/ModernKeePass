@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Drawing;
+using System.Linq;
 using AutoMapper;
 using ModernKeePass.Application.Common.Mappings;
 using ModernKeePass.Application.Entry.Models;
@@ -13,8 +13,6 @@ namespace ModernKeePass.Application.Group.Models
         public string Id { get; set; }
         public string Title { get; set; }
         public Icon Icon { get; set; }
-        public Color ForegroundColor { get; set; }
-        public Color BackgroundColor { get; set; }
         public List<GroupVm> SubGroups { get; set; } = new List<GroupVm>();
         public List<EntryVm> Entries { get; set; } = new List<EntryVm>();
 
@@ -24,9 +22,7 @@ namespace ModernKeePass.Application.Group.Models
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon))
-                .ForMember(d => d.ForegroundColor, opts => opts.MapFrom(s => s.ForegroundColor))
-                .ForMember(d => d.BackgroundColor, opts => opts.MapFrom(s => s.BackgroundColor))
-                .ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries))
+                .ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries.OrderBy(e => e.Name)))
                 .ForMember(d => d.SubGroups, opts => opts.MapFrom(s => s.SubGroups));
         }
     }

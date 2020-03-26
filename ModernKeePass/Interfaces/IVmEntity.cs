@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Interfaces
 {
-    public interface IPwEntity
+    public interface IVmEntity
     {
         GroupVm ParentGroup { get; }
         GroupVm PreviousGroup { get; }
         int IconId { get; }
         string Id { get; }
         string Name { get; set; }
-        IEnumerable<IPwEntity> BreadCrumb { get; }
+        IEnumerable<IVmEntity> BreadCrumb { get; }
         bool IsEditMode { get; }
         bool IsRecycleOnDelete { get; }
 
@@ -31,10 +32,10 @@ namespace ModernKeePass.Interfaces
         /// <summary>
         /// Delete from Model
         /// </summary>
-        void CommitDelete();
+        Task CommitDelete();
         /// <summary>
         /// Delete from ViewModel
         /// </summary>
-        void MarkForDelete(string recycleBinTitle);
+        Task MarkForDelete(string recycleBinTitle);
     }
 }

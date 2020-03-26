@@ -9,7 +9,7 @@ namespace ModernKeePass.Common
 {
     public static class ToastNotificationHelper
     {
-        public static void ShowMovedToast(IPwEntity entity, string action, string text)
+        public static void ShowMovedToast(IVmEntity entity, string action, string text)
         {
             var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");

@@ -10,14 +10,14 @@ namespace ModernKeePass.Actions
 {
     public class DeleteEntityAction : DependencyObject, IAction
     {
-        public IPwEntity Entity
+        public IVmEntity Entity
         {
-            get { return (IPwEntity)GetValue(EntityProperty); }
+            get { return (IVmEntity)GetValue(EntityProperty); }
             set { SetValue(EntityProperty, value); }
         }
 
         public static readonly DependencyProperty EntityProperty =
-            DependencyProperty.Register("Entity", typeof(IPwEntity), typeof(DeleteEntityAction),
+            DependencyProperty.Register("Entity", typeof(IVmEntity), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
         public ICommand Command

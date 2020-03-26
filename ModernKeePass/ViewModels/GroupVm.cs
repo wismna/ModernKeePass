@@ -5,14 +5,17 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using MediatR;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupVm : NotifyPropertyChangedBase, IPwEntity, ISelectableModel
+    public class GroupVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
@@ -40,23 +43,22 @@ namespace ModernKeePass.ViewModels
 
         public ObservableCollection<GroupVm> Groups { get; set; } = new ObservableCollection<GroupVm>();
         
-        public PwUuid IdUuid => _pwGroup?.Uuid;
-        public string Id => IdUuid?.ToHexString();
+        public string Id => _group.Id;
         public bool IsNotRoot => ParentGroup != null;
         
         public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
 
-        public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !IsSelected && !ParentGroup.IsSelected;
+        public bool IsRecycleOnDelete => IsRecycleBinEnabled().GetAwaiter().GetResult() && !IsSelected && !ParentGroup.IsSelected;
         
         /// <summary>
         /// Is the Group the database Recycle Bin?
         /// </summary>
         public bool IsSelected
         {
-            get { return _database != null && _database.RecycleBinEnabled && _database.RecycleBin?.Id == Id; }
+            get { return IsRecycleBinEnabled().GetAwaiter().GetResult() && _database.RecycleBin?.Id == Id; }
             set
             {
-                if (value && _pwGroup != null) _database.RecycleBin = this;
+                if (value && _group != null) _database.RecycleBin = this;
             }
         }
 
@@ -67,18 +69,18 @@ namespace ModernKeePass.ViewModels
 
         public string Name
         {
-            get { return _pwGroup == null ? string.Empty : _pwGroup.Name; }
-            set { _pwGroup.Name = value; }
+            get { return _group == null ? string.Empty : _group.Title; }
+            set { _group.Title = value; }
         }
 
         public int IconId
         {
             get
             {
-                if (_pwGroup?.IconId != null) return (int) _pwGroup?.IconId;
+                if (_group?.Icon != null) return (int) _group?.Icon;
                 return -1;
             }
-            set { _pwGroup.IconId = (PwIcon)value; }
+            set { _group.Icon = (Icon)value; }
         }
         
         public bool IsEditMode
@@ -98,7 +100,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isMenuClosed, value); }
         }
 
-        public IEnumerable<IPwEntity> BreadCrumb
+        public IEnumerable<IVmEntity> BreadCrumb
         {
             get
             {
@@ -119,36 +121,35 @@ namespace ModernKeePass.ViewModels
         public ICommand SortGroupsCommand { get; }
         public ICommand UndoDeleteCommand { get; }
 
-        private readonly PwGroup _pwGroup;
-        private readonly IDatabaseService _database;
+        private readonly Application.Group.Models.GroupVm _group;
+        private readonly IMediator _mediator;
         private bool _isEditMode;
-        private PwEntry _reorderedEntry;
+        private Application.Entry.Models.EntryVm _reorderedEntry;
         private ObservableCollection<EntryVm> _entries = new ObservableCollection<EntryVm>();
         private bool _isMenuClosed = true;
 
         public GroupVm() {}
         
-        internal GroupVm(PwGroup pwGroup, GroupVm parent, PwUuid recycleBinId = null) : this(pwGroup, parent,
-            DatabaseService.Instance, recycleBinId)
+        internal GroupVm(Application.Group.Models.GroupVm group, GroupVm parent, string recycleBinId = null) : this(group, parent, App.Mediator, recycleBinId)
         { }
 
-        public GroupVm(PwGroup pwGroup, GroupVm parent, IDatabaseService database, PwUuid recycleBinId = null)
+        public GroupVm(Application.Group.Models.GroupVm group, GroupVm parent, IMediator mediator, string recycleBinId = null)
         {
-            _pwGroup = pwGroup;
-            _database = database;
+            _group = group;
+            _mediator = mediator;
             ParentGroup = parent;
 
-            SaveCommand = new RelayCommand(() => _database.Save());
+            SaveCommand = new RelayCommand(async () => await _mediator.Send(new SaveDatabaseCommand()));
             SortEntriesCommand = new RelayCommand(async () =>
                 await SortEntriesAsync().ConfigureAwait(false), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () =>
                 await SortGroupsAsync().ConfigureAwait(false), () => IsEditMode);
             UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
 
-            if (recycleBinId != null && _pwGroup.Uuid.Equals(recycleBinId)) _database.RecycleBin = this;
-            Entries = new ObservableCollection<EntryVm>(pwGroup.Entries.Select(e => new EntryVm(e, this)));
+            if (recycleBinId != null && _group.Id.Equals(recycleBinId)) _database.RecycleBin = this;
+            Entries = new ObservableCollection<EntryVm>(group.Entries.Select(e => new EntryVm(e, this)));
             Entries.CollectionChanged += Entries_CollectionChanged;
-            Groups = new ObservableCollection<GroupVm>(pwGroup.Groups.Select(g => new GroupVm(g, this, recycleBinId)));
+            Groups = new ObservableCollection<GroupVm>(group.SubGroups.Select(g => new GroupVm(g, this, recycleBinId)));
         }
         
         private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -157,12 +158,12 @@ namespace ModernKeePass.ViewModels
             {
                 case NotifyCollectionChangedAction.Remove:
                     var oldIndex = (uint) e.OldStartingIndex;
-                     _reorderedEntry = _pwGroup.Entries.GetAt(oldIndex);
-                    _pwGroup.Entries.RemoveAt(oldIndex);
+                     _reorderedEntry = _group.Entries.GetAt(oldIndex);
+                    _group.Entries.RemoveAt(oldIndex);
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (_reorderedEntry == null) _pwGroup.AddEntry(((EntryVm) e.NewItems[0]).GetPwEntry(), true);
-                    else _pwGroup.Entries.Insert((uint)e.NewStartingIndex, _reorderedEntry);
+                    if (_reorderedEntry == null) _group.AddEntry(((EntryVm) e.NewItems[0]).GetPwEntry(), true);
+                    else _group.Entries.Insert((uint)e.NewStartingIndex, _reorderedEntry);
                     break;
             }
         }
@@ -170,7 +171,7 @@ namespace ModernKeePass.ViewModels
         public GroupVm AddNewGroup(string name = "")
         {
             var pwGroup = new PwGroup(true, true, name, PwIcon.Folder);
-            _pwGroup.AddGroup(pwGroup, true);
+            _group.AddGroup(pwGroup, true);
             var newGroup = new GroupVm(pwGroup, this) {Name = name, IsEditMode = string.IsNullOrEmpty(name)};
             Groups.Add(newGroup);
             return newGroup;
@@ -185,11 +186,12 @@ namespace ModernKeePass.ViewModels
             return newEntry;
         }
 
-        public void MarkForDelete(string recycleBinTitle)
+        public async Task MarkForDelete(string recycleBinTitle)
         {
-            if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
+            var isRecycleBinEnabled = await IsRecycleBinEnabled();
+            if (isRecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
                 _database.CreateRecycleBin(recycleBinTitle);
-            Move(_database.RecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
+            Move(isRecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
             ((RelayCommand)UndoDeleteCommand).RaiseCanExecuteChanged();
         }
 
@@ -202,7 +204,7 @@ namespace ModernKeePass.ViewModels
         {
             PreviousGroup = ParentGroup;
             PreviousGroup.Groups.Remove(this);
-            PreviousGroup._pwGroup.Groups.Remove(_pwGroup);
+            PreviousGroup._group.SubGroups.Remove(_group);
             if (destination == null)
             {
                 _database.AddDeletedItem(IdUuid);
@@ -210,13 +212,13 @@ namespace ModernKeePass.ViewModels
             }
             ParentGroup = destination;
             ParentGroup.Groups.Add(this);
-            ParentGroup._pwGroup.AddGroup(_pwGroup, true);
+            ParentGroup._group.AddGroup(_group, true);
         }
 
-        public void CommitDelete()
+        public async Task CommitDelete()
         {
-            _pwGroup.ParentGroup.Groups.Remove(_pwGroup);
-            if (_database.RecycleBinEnabled && !PreviousGroup.IsSelected) _database.RecycleBin._pwGroup.AddGroup(_pwGroup, true);
+            _group.ParentGroup.Groups.Remove(_group);
+            if (await IsRecycleBinEnabled() && !PreviousGroup.IsSelected) _database.RecycleBin._group.AddGroup(_group, true);
             else _database.AddDeletedItem(IdUuid);
         }
         
@@ -230,7 +232,7 @@ namespace ModernKeePass.ViewModels
             var comparer = new PwEntryComparer(PwDefs.TitleField, true, false);
             try
             {
-                _pwGroup.Entries.Sort(comparer);
+                _group.Entries.Sort(comparer);
                 Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
             }
             catch (Exception e)
@@ -243,8 +245,8 @@ namespace ModernKeePass.ViewModels
         {
             try
             {
-                _pwGroup.SortSubGroups(false);
-                Groups = new ObservableCollection<GroupVm>(Groups.OrderBy(g => g.Name).ThenBy(g => g._pwGroup == null));
+                _group.SortSubGroups(false);
+                Groups = new ObservableCollection<GroupVm>(Groups.OrderBy(g => g.Name).ThenBy(g => g._group == null));
                 OnPropertyChanged("Groups");
             }
             catch (Exception e)
@@ -253,5 +255,10 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        private async Task<bool> IsRecycleBinEnabled()
+        {
+            var database = await _mediator.Send(new GetDatabaseQuery());
+            return database.IsRecycleBinEnabled;
+        }
     }
 }

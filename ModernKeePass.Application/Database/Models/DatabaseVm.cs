@@ -1,21 +1,16 @@
-﻿using AutoMapper;
-using ModernKeePass.Application.Common.Mappings;
-using ModernKeePass.Application.Group.Models;
-using ModernKeePass.Domain.Entities;
+﻿using ModernKeePass.Application.Group.Models;
 
 namespace ModernKeePass.Application.Database.Models
 {
-    public class DatabaseVm: IMapFrom<DatabaseEntity>
+    public class DatabaseVm
     {
         public bool IsOpen { get; set; }
         public string Name { get; set; }
         public GroupVm RootGroup { get; set; }
-
-        public void Mapping(Profile profile)
-        {
-            profile.CreateMap<DatabaseEntity, DatabaseVm>()
-                .ForMember(d => d.Name, opts => opts.MapFrom(s => s.Name))
-                .ForMember(d => d.RootGroup, opts => opts.MapFrom(s => s.RootGroupEntity));
-        }
+        public string RecycleBinId { get; set; }
+        public bool IsRecycleBinEnabled { get; set; }
+        public string Compression { get; set; }
+        public string CipherId { get; set; }
+        public string KeyDerivationId { get; set; }
     }
 }

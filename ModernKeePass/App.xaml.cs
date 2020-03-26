@@ -17,6 +17,7 @@ using ModernKeePass.Application;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Database.Queries.ReOpenDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
@@ -157,9 +158,9 @@ namespace ModernKeePass
                 Window.Current.Content = rootFrame;
             }
 
-            var lauchActivatedEventArgs = e as LaunchActivatedEventArgs;
-            if (lauchActivatedEventArgs != null && rootFrame.Content == null)
-                rootFrame.Navigate(typeof(MainPage), lauchActivatedEventArgs.Arguments);
+            var launchActivatedEventArgs = e as LaunchActivatedEventArgs;
+            if (launchActivatedEventArgs != null && rootFrame.Content == null)
+                rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
 
             // Ensure the current window is active
             Window.Current.Activate();
@@ -171,7 +172,7 @@ namespace ModernKeePass
 
             try
             {
-                var database = await Mediator.Send(new GetDatabaseQuery());
+                var database = await Mediator.Send(new ReOpenDatabaseQuery());
 #if DEBUG
                 ToastNotificationHelper.ShowGenericToast(database.Name, "Database reopened (changes were saved)");
 #endif
@@ -207,7 +208,6 @@ namespace ModernKeePass
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                var database = await Mediator.Send(new GetDatabaseQuery());
                 if (SettingsService.Instance.GetSetting("SaveSuspend", true))
                 {
                     await Mediator.Send(new SaveDatabaseCommand());

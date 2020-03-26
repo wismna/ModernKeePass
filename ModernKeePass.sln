@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win81App", "ModernKeePass\Win81App.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
 EndProject
@@ -25,6 +25,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "ModernKeePass.Domain\Domain.csproj", "{9A0759F1-9069-4841-99E3-3BEC44E17356}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "ModernKeePass.Infrastructure\Infrastructure.csproj", "{09577E4C-4899-45B9-BF80-1803D617CCAE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernKeePass.KeePassDatabaseTests", "ModernKeePass.KeePassDatabaseTests\ModernKeePass.KeePassDatabaseTests.csproj", "{52FEA1EE-2FA7-4862-85FE-CB05893D439E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,6 +136,22 @@ Global
 		{09577E4C-4899-45B9-BF80-1803D617CCAE}.Release|x64.Build.0 = Release|Any CPU
 		{09577E4C-4899-45B9-BF80-1803D617CCAE}.Release|x86.ActiveCfg = Release|Any CPU
 		{09577E4C-4899-45B9-BF80-1803D617CCAE}.Release|x86.Build.0 = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|ARM.Build.0 = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|x64.Build.0 = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Debug|x86.Build.0 = Debug|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|ARM.ActiveCfg = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|ARM.Build.0 = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|x64.ActiveCfg = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|x64.Build.0 = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|x86.ActiveCfg = Release|Any CPU
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -145,6 +163,7 @@ Global
 		{42353562-5E43-459C-8E3E-2F21E575261D} = {0B30588B-07B8-4A88-A268-F58D06EA1627}
 		{9A0759F1-9069-4841-99E3-3BEC44E17356} = {0B30588B-07B8-4A88-A268-F58D06EA1627}
 		{09577E4C-4899-45B9-BF80-1803D617CCAE} = {0B30588B-07B8-4A88-A268-F58D06EA1627}
+		{52FEA1EE-2FA7-4862-85FE-CB05893D439E} = {107C7C00-56F4-41B0-A8CC-0156C46A3650}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0ADC1BC6-B1CA-427D-A97C-3CA40AAB0428}

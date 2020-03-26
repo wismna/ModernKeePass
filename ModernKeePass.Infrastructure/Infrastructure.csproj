@@ -40,10 +40,12 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\MachineDateTime.cs" />
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="InfrastructureModule.cs" />
     <Compile Include="File\CsvImportFormat.cs" />
     <Compile Include="KeePass\EntryMappingProfile.cs" />
+    <Compile Include="KeePass\GroupMappingProfile.cs" />
     <Compile Include="KeePass\IconMapper.cs" />
     <Compile Include="KeePass\KeePassCryptographyClient.cs" />
     <Compile Include="KeePass\KeePassDatabaseClient.cs" />
@@ -71,6 +73,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

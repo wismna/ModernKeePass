@@ -65,8 +65,19 @@
     <Compile Include="Database\Queries\IsDatabaseOpen\IsDatabaseOpenQuery.cs" />
     <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQuery.cs" />
     <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQueryValidator.cs" />
+    <Compile Include="Database\Queries\ReOpenDatabase\ReOpenDatabaseQuery.cs" />
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="Entry\Models\EntryVm.cs" />
+    <Compile Include="Group\Commands\AddEntry\AddEntryCommand.cs" />
+    <Compile Include="Group\Commands\AddGroup\AddGroupCommand.cs" />
+    <Compile Include="Group\Commands\CreateEntry\CreateEntryCommand.cs" />
+    <Compile Include="Group\Commands\CreateGroup\CreateGroupCommand.cs" />
+    <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
+    <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
+    <Compile Include="Group\Commands\RemoveEntry\RemoveEntryCommand.cs" />
+    <Compile Include="Group\Commands\RemoveGroup\RemoveGroupCommand.cs" />
+    <Compile Include="Group\Commands\SortEntries\SortEntriesCommand.cs" />
+    <Compile Include="Group\Commands\SortGroups\SortGroupsCommand.cs" />
     <Compile Include="Group\Models\GroupVm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Services\CryptographyService.cs" />
@@ -79,14 +90,13 @@
     <Content Include="Services\SettingsService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entry\Commands\UpdateEntry\" />
-    <Folder Include="Entry\Queries\" />
-    <Folder Include="Group\Commands\CreateEntry\" />
-    <Folder Include="Group\Commands\CreateGroup\" />
-    <Folder Include="Group\Commands\DeleteEntry\" />
-    <Folder Include="Group\Commands\DeleteGroup\" />
+    <Folder Include="Entry\Commands\SetFieldValue\" />
+    <Folder Include="Entry\Queries\GetEntry\" />
     <Folder Include="Group\Commands\UpdateGroup\" />
-    <Folder Include="Group\Queries\" />
+    <Folder Include="Group\Queries\GetGroup\" />
+    <Folder Include="Parameters\Commands\SetCipher\" />
+    <Folder Include="Parameters\Commands\SetCompression\" />
+    <Folder Include="Parameters\Commands\SetKeyDerivation\" />
     <Folder Include="Resources\Commands\" />
     <Folder Include="Resources\Queries\" />
     <Folder Include="Settings\" />

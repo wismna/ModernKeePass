@@ -13,17 +13,17 @@ namespace ModernKeePass.Views.UserControls
             InitializeComponent();
         }
 
-        public IEnumerable<IPwEntity> ItemsSource
+        public IEnumerable<IVmEntity> ItemsSource
         {
-            get { return (IEnumerable<IPwEntity>)GetValue(ItemsSourceProperty); }
+            get { return (IEnumerable<IVmEntity>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 "ItemsSource",
-                typeof(IEnumerable<IPwEntity>),
+                typeof(IEnumerable<IVmEntity>),
                 typeof(BreadCrumbUserControl),
-                new PropertyMetadata(new Stack<IPwEntity>(), (o, args) => { }));
+                new PropertyMetadata(new Stack<IVmEntity>(), (o, args) => { }));
     }
 }

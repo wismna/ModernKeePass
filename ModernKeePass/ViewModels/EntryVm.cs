@@ -13,7 +13,7 @@ using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : INotifyPropertyChanged, IPwEntity, ISelectableModel
+    public class EntryVm : INotifyPropertyChanged, IVmEntity, ISelectableModel
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
@@ -32,7 +32,7 @@ namespace ModernKeePass.ViewModels
         public PwUuid IdUuid => _pwEntry?.Uuid;
         public string Id => _pwEntry?.Uuid.ToHexString();
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
-        public IEnumerable<IPwEntity> BreadCrumb => new List<IPwEntity>(ParentGroup.BreadCrumb) {ParentGroup};
+        public IEnumerable<IVmEntity> BreadCrumb => new List<IVmEntity>(ParentGroup.BreadCrumb) {ParentGroup};
         /// <summary>
         /// Determines if the Entry is current or from history
         /// </summary>
@@ -160,7 +160,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public IEnumerable<IPwEntity> History
+        public IEnumerable<IVmEntity> History
         {
             get
             {

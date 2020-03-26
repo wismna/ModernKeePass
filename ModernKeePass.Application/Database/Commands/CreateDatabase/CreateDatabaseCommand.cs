@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.IsDatabaseOpen;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Dtos;
@@ -10,12 +9,12 @@ using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Database.Commands.CreateDatabase
 {
-    public class CreateDatabaseCommand : IRequest<DatabaseVm>
+    public class CreateDatabaseCommand : IRequest<GroupVm>
     {
         public FileInfo FileInfo { get; set; }
         public Credentials Credentials { get; set; }
 
-        public class CreateDatabaseCommandHandler : IAsyncRequestHandler<CreateDatabaseCommand, DatabaseVm>
+        public class CreateDatabaseCommandHandler : IAsyncRequestHandler<CreateDatabaseCommand, GroupVm>
         {
             private readonly IDatabaseProxy _database;
             private readonly IMediator _mediator;
@@ -28,19 +27,13 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                 _mapper = mapper;
             }
 
-            public async Task<DatabaseVm> Handle(CreateDatabaseCommand message)
+            public async Task<GroupVm> Handle(CreateDatabaseCommand message)
             {
                 var isDatabaseOpen = await _mediator.Send(new IsDatabaseOpenQuery());
                 if (isDatabaseOpen) throw new DatabaseOpenException();
 
-                var database = await _database.Create(message.FileInfo, message.Credentials);
-                var databaseVm = new DatabaseVm
-                {
-                    IsOpen = true,
-                    Name = database.Name,
-                    RootGroup = _mapper.Map<GroupVm>(database.RootGroupEntity)
-                };
-                return databaseVm;
+                var rootGroup = await _database.Create(message.FileInfo, message.Credentials);
+                return _mapper.Map<GroupVm>(rootGroup);
             }
 
         }
