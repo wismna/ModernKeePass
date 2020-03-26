@@ -26,8 +26,8 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         Task AddEntry(string parentGroupId, string entryId);
         Task AddGroup(string parentGroupId, string groupId);
-        Task UpdateEntry(string entryId);
-        Task UpdateGroup(string groupId);
+        void UpdateEntry(string entryId, string fieldName, string fieldValue);
+        void UpdateGroup(string groupId);
         Task RemoveEntry(string parentGroupId, string entryId);
         Task RemoveGroup(string parentGroupId, string groupId);
         EntryEntity CreateEntry(string parentGroupId);

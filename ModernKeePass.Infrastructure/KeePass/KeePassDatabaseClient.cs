@@ -10,6 +10,7 @@ using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
+using ModernKeePassLib.Security;
 using ModernKeePassLib.Serialization;
 using ModernKeePassLib.Utility;
 
@@ -196,12 +197,15 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public Task UpdateEntry(string entry)
+        public void UpdateEntry(string entryId, string fieldName, string fieldValue)
         {
-            throw new NotImplementedException();
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.Touch(true);
+            pwEntry.CreateBackup(null);
+            pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(true, fieldValue));
         }
 
-        public Task UpdateGroup(string group)
+        public void UpdateGroup(string group)
         {
             throw new NotImplementedException();
         }

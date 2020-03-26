@@ -47,6 +47,7 @@
     <Compile Include="Entities\EntryEntity.cs" />
     <Compile Include="Entities\GroupEntity.cs" />
     <Compile Include="Enums\CredentialStatusTypes.cs" />
+    <Compile Include="Enums\EntryFieldName.cs" />
     <Compile Include="Enums\Icon.cs" />
     <Compile Include="Enums\ImportFormat.cs" />
     <Compile Include="Exceptions\DatabaseClosedException.cs" />

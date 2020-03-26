@@ -44,6 +44,7 @@
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="InfrastructureModule.cs" />
     <Compile Include="File\CsvImportFormat.cs" />
+    <Compile Include="KeePass\EntryFieldMapper.cs" />
     <Compile Include="KeePass\EntryMappingProfile.cs" />
     <Compile Include="KeePass\GroupMappingProfile.cs" />
     <Compile Include="KeePass\IconMapper.cs" />
