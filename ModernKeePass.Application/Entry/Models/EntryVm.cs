@@ -17,7 +17,7 @@ namespace ModernKeePass.Application.Entry.Models
         public string Notes { get; set; }
         public Uri Url { get; set; }
         public Dictionary<string, string> AdditionalFields { get; set; }
-        public IEnumerable<EntryEntity> History { get; set; }
+        public IEnumerable<EntryVm> History { get; set; }
         public Icon Icon { get; set; }
         public Color ForegroundColor { get; set; }
         public Color BackgroundColor { get; set; }

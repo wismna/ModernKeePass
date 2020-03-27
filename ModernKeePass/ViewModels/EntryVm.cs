@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using MediatR;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Entry.Commands.SetFieldValue;
+using ModernKeePass.Application.Group.Commands.DeleteEntry;
+using ModernKeePass.Application.Resources.Queries;
+using ModernKeePass.Application.Security.Commands.GeneratePassword;
+using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
-using ModernKeePassLib;
-using ModernKeePassLib.Cryptography.PasswordGenerator;
-using ModernKeePassLib.Security;
-using ModernKeePassLib.Cryptography;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : INotifyPropertyChanged, IVmEntity, ISelectableModel
+    public class EntryVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
         public GroupVm ParentGroup { get; private set; }
         public GroupVm PreviousGroup { get; private set; }
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
-        public bool HasExpired => HasExpirationDate && _pwEntry.ExpiryTime < DateTime.Now;
-        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
+        public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
+        public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery {Password = Password}).GetAwaiter().GetResult();
         public bool UpperCasePatternSelected { get; set; } = true;
         public bool LowerCasePatternSelected { get; set; } = true;
         public bool DigitsPatternSelected { get; set; } = true;
@@ -29,8 +31,7 @@ namespace ModernKeePass.ViewModels
         public bool SpecialPatternSelected { get; set; }
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
-        public PwUuid IdUuid => _pwEntry?.Uuid;
-        public string Id => _pwEntry?.Uuid.ToHexString();
+        public string Id => _entry.Id;
         public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
         public IEnumerable<IVmEntity> BreadCrumb => new List<IVmEntity>(ParentGroup.BreadCrumb) {ParentGroup};
         /// <summary>
@@ -44,80 +45,73 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _passwordLength = value;
-                NotifyPropertyChanged("PasswordLength");
+                OnPropertyChanged();
             }
         }
 
-        public string Name
+        public string Title
         {
-            get { return GetEntryValue(PwDefs.TitleField); }
-            set { SetEntryValue(PwDefs.TitleField, new ProtectedString(true, value)); }
+            get { return _entry.Title; }
+            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Title), FieldValue = value}); }
         }
 
 
         public string UserName
         {
-            get { return GetEntryValue(PwDefs.UserNameField); }
-            set { SetEntryValue(PwDefs.UserNameField, new ProtectedString(true, value)); }
+            get { return _entry.Username; }
+            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(UserName), FieldValue = value }); }
         }
 
         public string Password
         {
-            get { return GetEntryValue(PwDefs.PasswordField); }
+            get { return _entry.Password; }
             set
             {
-                SetEntryValue(PwDefs.PasswordField, new ProtectedString(true, value));
-                NotifyPropertyChanged("Password");
-                NotifyPropertyChanged("PasswordComplexityIndicator");
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Password), FieldValue = value });
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PasswordComplexityIndicator));
             }
         }
         
         public string Url
         {
-            get { return GetEntryValue(PwDefs.UrlField); }
-            set { SetEntryValue(PwDefs.UrlField, new ProtectedString(true, value)); }
+            get { return _entry.Url.ToString();}
+            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Url), FieldValue = value }); }
         }
 
         public string Notes
         {
-            get { return GetEntryValue(PwDefs.NotesField); }
-            set { SetEntryValue(PwDefs.NotesField, new ProtectedString(true, value)); }
+            get { return _entry.Notes; }
+            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Notes), FieldValue = value }); }
         }
 
-        public int IconId
+        public int Icon
         {
             get
             {
-                if (HasExpired) return (int) PwIcon.Expired;
-                if (_pwEntry?.IconId != null) return (int) _pwEntry?.IconId;
-                return -1;
+                if (HasExpired) return (int)Domain.Enums.Icon.ReportHacked;
+                return (int) _entry.Icon;
             }
-            set
-            {
-                HandleBackup();
-                _pwEntry.IconId = (PwIcon)value;
-            }
+            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Icon), FieldValue = value }); }
         }
 
         public DateTimeOffset ExpiryDate
         {
-            get { return new DateTimeOffset(_pwEntry.ExpiryTime.Date); }
+            get { return _entry.ExpirationDate; }
             set
             {
                 if (!HasExpirationDate) return;
-                HandleBackup();
-                _pwEntry.ExpiryTime = value.DateTime;
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = value.Date });
             }
         }
 
         public TimeSpan ExpiryTime
         {
-            get { return _pwEntry.ExpiryTime.TimeOfDay; }
+            get { return _entry.ExpirationDate.TimeOfDay; }
             set
             {
                 if (!HasExpirationDate) return;
-                HandleBackup();
-                _pwEntry.ExpiryTime = _pwEntry.ExpiryTime.Date.Add(value);
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = ExpiryDate.Date.Add(value) });
             }
         }
 
@@ -127,7 +121,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _isEditMode = value;
-                NotifyPropertyChanged("IsEditMode");
+                OnPropertyChanged();
             }
         }
         
@@ -137,7 +131,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _isVisible = value;
-                NotifyPropertyChanged("IsVisible");
+                OnPropertyChanged();
             }
         }
         
@@ -147,16 +141,16 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _isRevealPassword = value;
-                NotifyPropertyChanged("IsRevealPassword");
+                OnPropertyChanged();
             }
         }
         public bool HasExpirationDate
         {
-            get { return _pwEntry.Expires; }
+            get { return _entry.HasExpirationDate; }
             set
             {
-                _pwEntry.Expires = value;
-                NotifyPropertyChanged("HasExpirationDate");
+                _mediator.Send(new SetFieldValueCommand {EntryId = Id, FieldName = nameof(HasExpirationDate), FieldValue = value});
+                OnPropertyChanged();
             }
         }
 
@@ -165,7 +159,7 @@ namespace ModernKeePass.ViewModels
             get
             {
                 var history = new Stack<EntryVm>();
-                foreach (var historyEntry in _pwEntry.History)
+                foreach (var historyEntry in _entry.History)
                 {
                     history.Push(new EntryVm(historyEntry, ParentGroup) {IsSelected = false});
                 }
@@ -178,89 +172,68 @@ namespace ModernKeePass.ViewModels
 
         public Color? BackgroundColor
         {
-            get { return _pwEntry?.BackgroundColor; }
+            get { return _entry?.BackgroundColor; }
             set
             {
-                if (value != null) _pwEntry.BackgroundColor = (Color) value;
+                if (value != null) _entry.BackgroundColor = (Color) value;
             }
         }
 
         public Color? ForegroundColor
         {
-            get { return _pwEntry?.ForegroundColor; }
+            get { return _entry?.ForegroundColor; }
             set
             {
-                if (value != null) _pwEntry.ForegroundColor = (Color)value;
+                if (value != null) _entry.ForegroundColor = (Color)value;
             }
         }
 
         public ICommand SaveCommand { get; }
         public ICommand GeneratePasswordCommand { get; }
         public ICommand UndoDeleteCommand { get; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private readonly PwEntry _pwEntry;
-        private readonly IDatabaseService _database;
-        private readonly IResourceService _resource;
+        
+        private readonly Application.Entry.Models.EntryVm _entry;
+        private readonly IMediator _mediator;
         private bool _isEditMode;
-        private bool _isDirty = true;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isVisible = true;
-
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
+        
         public EntryVm() { }
         
-        internal EntryVm(PwEntry entry, GroupVm parent) : this(entry, parent, DatabaseService.Instance, new ResourcesService()) { }
+        internal EntryVm(Application.Entry.Models.EntryVm entry, GroupVm parent) : this(entry, parent, App.Mediator) { }
 
-        public EntryVm(PwEntry entry, GroupVm parent, IDatabaseService database, IResourceService resource)
+        public EntryVm(Application.Entry.Models.EntryVm entry, GroupVm parent, IMediator mediator)
         {
-            _database = database;
-            _resource = resource;
-            _pwEntry = entry;
+            _entry = entry;
+            _mediator = mediator;
             ParentGroup = parent;
 
-            SaveCommand = new RelayCommand(() => _database.Save());
-            GeneratePasswordCommand = new RelayCommand(GeneratePassword);
+            SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
+            GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
             UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
         }
         
-        public void GeneratePassword()
+        public async Task GeneratePassword()
         {
-            var pwProfile = new PwProfile
+            Password = await _mediator.Send(new GeneratePasswordCommand
             {
-                GeneratorType = PasswordGeneratorType.CharSet,
-                Length = (uint)PasswordLength,
-                CharSet = new PwCharSet()
-            };
-
-            if (UpperCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.UpperCase);
-            if (LowerCasePatternSelected) pwProfile.CharSet.Add(PwCharSet.LowerCase);
-            if (DigitsPatternSelected) pwProfile.CharSet.Add(PwCharSet.Digits);
-            if (SpecialPatternSelected) pwProfile.CharSet.Add(PwCharSet.Special);
-            if (MinusPatternSelected) pwProfile.CharSet.Add('-');
-            if (UnderscorePatternSelected) pwProfile.CharSet.Add('_');
-            if (SpacePatternSelected) pwProfile.CharSet.Add(' ');
-            if (BracketsPatternSelected) pwProfile.CharSet.Add(PwCharSet.Brackets);
-
-            pwProfile.CharSet.Add(CustomChars);
-
-            ProtectedString password;
-            PwGenerator.Generate(out password, pwProfile, null, new CustomPwGeneratorPool());
-
-            SetEntryValue(PwDefs.PasswordField, password);
-            NotifyPropertyChanged("Password");
-            NotifyPropertyChanged("IsRevealPasswordEnabled");
-            NotifyPropertyChanged("PasswordComplexityIndicator");
+                BracketsPatternSelected = BracketsPatternSelected,
+                CustomChars = CustomChars,
+                DigitsPatternSelected = DigitsPatternSelected,
+                LowerCasePatternSelected = LowerCasePatternSelected,
+                MinusPatternSelected = MinusPatternSelected,
+                PasswordLength = (int)PasswordLength,
+                SpacePatternSelected = SpacePatternSelected,
+                SpecialPatternSelected = SpecialPatternSelected,
+                UnderscorePatternSelected = UnderscorePatternSelected,
+                UpperCasePatternSelected = UpperCasePatternSelected
+            });
+            OnPropertyChanged(nameof(IsRevealPasswordEnabled));
         }
 
         
-        public void MarkForDelete(string recycleBinTitle)
+        public Task MarkForDelete(string recycleBinTitle)
         {
             if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
                 _database.CreateRecycleBin(recycleBinTitle);
@@ -280,43 +253,21 @@ namespace ModernKeePass.ViewModels
             ParentGroup.Entries.Add(this);
         }
         
-        public void CommitDelete()
+        public async Task CommitDelete()
         {
-            _pwEntry.ParentGroup.Entries.Remove(_pwEntry);
-            if (!_database.RecycleBinEnabled || PreviousGroup.IsSelected) _database.AddDeletedItem(IdUuid);
+            await _mediator.Send(new DeleteEntryCommand {Entry = _entry});
         }
         
-        public PwEntry GetPwEntry()
+        public Application.Entry.Models.EntryVm GetEntry()
         {
-            return _pwEntry;
-        }
-        public void Reset()
-        {
-            _isDirty = false;
+            return _entry;
         }
         
         public override string ToString()
         {
-            return IsSelected ? _resource.GetResourceValue("EntryCurrent") : _pwEntry.LastModificationTime.ToString("g");
-        }
-
-        private void HandleBackup()
-        {
-            if (_isDirty) return;
-            _pwEntry?.Touch(true);
-            _pwEntry?.CreateBackup(null);
-            _isDirty = true;
-        }
-
-        private string GetEntryValue(string key)
-        {
-            return _pwEntry?.Strings.GetSafe(key).ReadString();
-        }
-        
-        private void SetEntryValue(string key, ProtectedString newValue)
-        {
-            HandleBackup();
-            _pwEntry?.Strings.Set(key, newValue);
+            return IsSelected ? 
+                _mediator.Send(new GetResourceQuery{Key = "EntryCurrent"}).GetAwaiter().GetResult() : 
+                _entry.ModificationDate.ToString("g");
         }
     }
 }

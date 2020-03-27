@@ -14,7 +14,7 @@ namespace ModernKeePass.Application.Database.Commands.UpdateCredentials
         {
             private readonly IDatabaseProxy _database;
 
-            public UpdateCredentialsCommandHandler(IDatabaseProxy database, IMediator mediator)
+            public UpdateCredentialsCommandHandler(IDatabaseProxy database)
             {
                 _database = database;
             }

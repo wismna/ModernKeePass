@@ -13,7 +13,7 @@ namespace ModernKeePass.Application
             var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
             services.AddAutoMapper(assembly);
             services.AddMediatR(assembly);
-            //services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            //services.AddValidatorsFromAssembly(assembly);
 
             return services;
         }

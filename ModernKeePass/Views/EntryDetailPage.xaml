@@ -415,7 +415,7 @@
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />
-                                    <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Name}" />
+                                    <actions:ToastAction x:Uid="ToastCopyLogin" Title="{Binding Title}" />
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
@@ -425,7 +425,7 @@
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding Password}" />
-                                    <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Name}" />
+                                    <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Title}" />
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
@@ -498,13 +498,13 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=0, Mode=TwoWay}" />
+                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding Icon, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=0, Mode=TwoWay}" />
                 </Viewbox>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />
                 </Viewbox>
                 <TextBox Grid.Column="1" Grid.Row="0"
-                    Text="{Binding Name, Mode=TwoWay}" 
+                    Text="{Binding Title, Mode=TwoWay}" 
                     Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                     Background="Transparent"
                     SelectionHighlightColor="{StaticResource MainColor}"
@@ -539,7 +539,7 @@
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="RestoreButtonClick">
                         <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
-                        <actions:ToastAction x:Uid="RestoreEntryCommand" Title="{Binding Name}" />
+                        <actions:ToastAction x:Uid="RestoreEntryCommand" Title="{Binding Title}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>

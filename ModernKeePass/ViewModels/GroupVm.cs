@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -8,10 +7,17 @@ using System.Windows.Input;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Group.Commands.AddEntry;
+using ModernKeePass.Application.Group.Commands.CreateEntry;
+using ModernKeePass.Application.Group.Commands.CreateGroup;
+using ModernKeePass.Application.Group.Commands.DeleteGroup;
+using ModernKeePass.Application.Group.Commands.InsertEntry;
+using ModernKeePass.Application.Group.Commands.RemoveEntry;
+using ModernKeePass.Application.Group.Commands.SortEntries;
+using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
-using ModernKeePassLib;
 
 namespace ModernKeePass.ViewModels
 {
@@ -63,17 +69,17 @@ namespace ModernKeePass.ViewModels
         }
 
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
-            group e by e.Name.ToUpper().FirstOrDefault() into grp
+            group e by e.Title.ToUpper().FirstOrDefault() into grp
             orderby grp.Key
             select grp;
 
-        public string Name
+        public string Title
         {
             get { return _group == null ? string.Empty : _group.Title; }
             set { _group.Title = value; }
         }
 
-        public int IconId
+        public int Icon
         {
             get
             {
@@ -152,38 +158,44 @@ namespace ModernKeePass.ViewModels
             Groups = new ObservableCollection<GroupVm>(group.SubGroups.Select(g => new GroupVm(g, this, recycleBinId)));
         }
         
-        private void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Remove:
-                    var oldIndex = (uint) e.OldStartingIndex;
-                     _reorderedEntry = _group.Entries.GetAt(oldIndex);
-                    _group.Entries.RemoveAt(oldIndex);
+                    var oldIndex = e.OldStartingIndex;
+                     _reorderedEntry = _group.Entries[oldIndex];
+                    await _mediator.Send(new RemoveEntryCommand {Entry = _reorderedEntry, ParentGroup = _group});
                     break;
                 case NotifyCollectionChangedAction.Add:
-                    if (_reorderedEntry == null) _group.AddEntry(((EntryVm) e.NewItems[0]).GetPwEntry(), true);
-                    else _group.Entries.Insert((uint)e.NewStartingIndex, _reorderedEntry);
+                    if (_reorderedEntry == null)
+                    {
+                        var entry = ((EntryVm) e.NewItems[0]).GetEntry();
+                        await _mediator.Send(new AddEntryCommand {Entry = entry, ParentGroup = _group});
+                    }
+                    else
+                    {
+                        await _mediator.Send(new InsertEntryCommand {Entry = _reorderedEntry, ParentGroup = _group, Index = e.NewStartingIndex});
+                    }
                     break;
             }
         }
         
-        public GroupVm AddNewGroup(string name = "")
+        public async Task<GroupVm> AddNewGroup(string name = "")
         {
-            var pwGroup = new PwGroup(true, true, name, PwIcon.Folder);
-            _group.AddGroup(pwGroup, true);
-            var newGroup = new GroupVm(pwGroup, this) {Name = name, IsEditMode = string.IsNullOrEmpty(name)};
-            Groups.Add(newGroup);
-            return newGroup;
+            var newGroup = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});
+            var newGroupVm = new GroupVm(newGroup, this) {Title = name, IsEditMode = string.IsNullOrEmpty(name)};
+            Groups.Add(newGroupVm);
+            return newGroupVm;
         }
         
-        public EntryVm AddNewEntry()
+        public async Task<EntryVm> AddNewEntry()
         {
-            var pwEntry = new PwEntry(true, true);
-            var newEntry = new EntryVm(pwEntry, this) {IsEditMode = true};
-            newEntry.GeneratePassword();
-            Entries.Add(newEntry);
-            return newEntry;
+            var newEntry = await _mediator.Send(new CreateEntryCommand { ParentGroup = _group });
+            var newEntryVm = new EntryVm(newEntry, this) {IsEditMode = true};
+            await newEntryVm.GeneratePassword();
+            Entries.Add(newEntryVm);
+            return newEntryVm;
         }
 
         public async Task MarkForDelete(string recycleBinTitle)
@@ -217,42 +229,26 @@ namespace ModernKeePass.ViewModels
 
         public async Task CommitDelete()
         {
-            _group.ParentGroup.Groups.Remove(_group);
-            if (await IsRecycleBinEnabled() && !PreviousGroup.IsSelected) _database.RecycleBin._group.AddGroup(_group, true);
-            else _database.AddDeletedItem(IdUuid);
+            await _mediator.Send(new DeleteGroupCommand { Group = _group });
         }
         
         public override string ToString()
         {
-            return Name;
+            return Title;
         }
 
         private async Task SortEntriesAsync()
         {
-            var comparer = new PwEntryComparer(PwDefs.TitleField, true, false);
-            try
-            {
-                _group.Entries.Sort(comparer);
-                Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Name));
-            }
-            catch (Exception e)
-            {
-                await MessageDialogHelper.ShowErrorDialog(e);
-            }
+            await _mediator.Send(new SortEntriesCommand {Group = _group});
+            Entries = new ObservableCollection<EntryVm>(Entries.OrderBy(e => e.Title));
         }
         
         private async Task SortGroupsAsync()
         {
-            try
-            {
-                _group.SortSubGroups(false);
-                Groups = new ObservableCollection<GroupVm>(Groups.OrderBy(g => g.Name).ThenBy(g => g._group == null));
-                OnPropertyChanged("Groups");
-            }
-            catch (Exception e)
-            {
-                await MessageDialogHelper.ShowErrorDialog(e);
-            }
+            await _mediator.Send(new SortGroupsCommand {Group = _group});
+            Groups = new ObservableCollection<GroupVm>(Groups.OrderBy(g => g.Title).ThenBy(g => g._group == null));
+            // TODO: should not be needed
+            OnPropertyChanged(nameof(Groups));
         }
 
         private async Task<bool> IsRecycleBinEnabled()

@@ -8,7 +8,7 @@ namespace ModernKeePass.Application.Entry.Commands.SetFieldValue
     {
         public string EntryId { get; set; }
         public string FieldName { get; set; }
-        public string FieldValue { get; set; }
+        public object FieldValue { get; set; }
 
         public class SetFieldValueCommandHandler : IRequestHandler<SetFieldValueCommand>
         {

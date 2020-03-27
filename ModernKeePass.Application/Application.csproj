@@ -54,6 +54,9 @@
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Cryptography\Commands\SetCipher\SetCipherCommand.cs" />
+    <Compile Include="Cryptography\Commands\SetCompression\SetCompressionCommand.cs" />
+    <Compile Include="Cryptography\Commands\SetKeyDerivation\SetKeyDerivationCommand.cs" />
     <Compile Include="Cryptography\Models\CipherVm.cs" />
     <Compile Include="Cryptography\Models\KeyDerivationVm.cs" />
     <Compile Include="Cryptography\Queries\GetCiphers\GetCiphersQuery.cs" />
@@ -71,6 +74,7 @@
     <Compile Include="Database\Queries\ReOpenDatabase\ReOpenDatabaseQuery.cs" />
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="Entry\Commands\SetFieldValue\SetFieldValueCommand.cs" />
+    <Compile Include="Entry\Commands\SetFieldValue\SetFieldValueCommandValidator.cs" />
     <Compile Include="Entry\Models\EntryVm.cs" />
     <Compile Include="Group\Commands\AddEntry\AddEntryCommand.cs" />
     <Compile Include="Group\Commands\AddGroup\AddGroupCommand.cs" />
@@ -78,6 +82,7 @@
     <Compile Include="Group\Commands\CreateGroup\CreateGroupCommand.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
+    <Compile Include="Group\Commands\InsertEntry\InsertEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveEntry\RemoveEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveGroup\RemoveGroupCommand.cs" />
     <Compile Include="Group\Commands\SortEntries\SortEntriesCommand.cs" />
@@ -102,9 +107,6 @@
     <Folder Include="Entry\Queries\GetEntry\" />
     <Folder Include="Group\Commands\UpdateGroup\" />
     <Folder Include="Group\Queries\GetGroup\" />
-    <Folder Include="Parameters\Commands\SetCipher\" />
-    <Folder Include="Parameters\Commands\SetCompression\" />
-    <Folder Include="Parameters\Commands\SetKeyDerivation\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModernKeePass.Domain\Domain.csproj">

@@ -41,23 +41,23 @@ namespace ModernKeePass.ViewModels
             var converter = new IntToSymbolConverter();
 
             var bankingGroup = group.AddNewGroup("Banking");
-            bankingGroup.IconId = (int)converter.ConvertBack(Symbol.Calculator, null, null, string.Empty);
+            bankingGroup.Icon = (int)converter.ConvertBack(Symbol.Calculator, null, null, string.Empty);
 
             var emailGroup = group.AddNewGroup("Email");
-            emailGroup.IconId = (int)converter.ConvertBack(Symbol.Mail, null, null, string.Empty);
+            emailGroup.Icon = (int)converter.ConvertBack(Symbol.Mail, null, null, string.Empty);
 
             var internetGroup = group.AddNewGroup("Internet");
-            internetGroup.IconId = (int)converter.ConvertBack(Symbol.World, null, null, string.Empty);
+            internetGroup.Icon = (int)converter.ConvertBack(Symbol.World, null, null, string.Empty);
 
             var sample1 = group.AddNewEntry();
-            sample1.Name = "Sample Entry";
+            sample1.Title = "Sample Entry";
             sample1.UserName = "Username";
             sample1.Url = PwDefs.HomepageUrl;
             sample1.Password = "Password";
             sample1.Notes = "You may safely delete this sample";
 
             var sample2 = group.AddNewEntry();
-            sample2.Name = "Sample Entry #2";
+            sample2.Title = "Sample Entry #2";
             sample2.UserName = "Michael321";
             sample2.Url = PwDefs.HelpUrl + "kb/testform.html";
             sample2.Password = "12345";

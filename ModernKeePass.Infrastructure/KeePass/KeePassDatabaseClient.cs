@@ -5,6 +5,7 @@ using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
+using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -45,6 +46,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
             set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value); }
         }
+
         public string CipherId
         {
             get { return _pwDatabase.DataCipherUuid.ToHexString(); }
@@ -168,6 +170,17 @@ namespace ModernKeePass.Infrastructure.KeePass
                 parentPwGroup.AddEntry(pwEntry, true);
             });
         }
+
+        public async Task InsertEntry(string parentGroupId, string entryId, int index)
+        {
+            await Task.Run(() =>
+            {
+                var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
+                var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+                parentPwGroup.Entries.Insert((uint)index, pwEntry);
+            });
+        }
+
         public async Task AddGroup(string parentGroupId, string groupId)
         {
             await Task.Run(() =>
@@ -197,15 +210,34 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public void UpdateEntry(string entryId, string fieldName, string fieldValue)
+        public void UpdateEntry(string entryId, string fieldName, object fieldValue)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
             pwEntry.Touch(true);
             pwEntry.CreateBackup(null);
-            pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(true, fieldValue));
+
+            switch (fieldName)
+            {
+                case EntryFieldName.Title:
+                case EntryFieldName.UserName:
+                case EntryFieldName.Password:
+                case EntryFieldName.Notes:
+                case EntryFieldName.Url:
+                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(true, fieldValue.ToString()));
+                    break;
+                case EntryFieldName.HasExpirationDate:
+                    pwEntry.Expires = (bool)fieldValue;
+                    break;
+                case EntryFieldName.ExpirationDate:
+                    pwEntry.ExpiryTime = (DateTime)fieldValue;
+                    break;
+                case EntryFieldName.Icon:
+                    pwEntry.IconId = IconMapper.MapIconToPwIcon((Icon)fieldValue);
+                    break;
+            }
         }
 
-        public void UpdateGroup(string group)
+        public void UpdateGroup(string groupId)
         {
             throw new NotImplementedException();
         }
@@ -237,7 +269,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 var id = pwEntry.Uuid;
                 pwEntry.ParentGroup.Entries.Remove(pwEntry);
 
-                if (_pwDatabase.RecycleBinEnabled)
+                if (!_pwDatabase.RecycleBinEnabled || pwEntry.ParentGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid))
                 {
                     _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
                 }
@@ -252,7 +284,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 var id = pwGroup.Uuid;
                 pwGroup.ParentGroup.Groups.Remove(pwGroup);
 
-                if (_pwDatabase.RecycleBinEnabled)
+                if (!_pwDatabase.RecycleBinEnabled || pwGroup.ParentGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid))
                 {
                     _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
                 }

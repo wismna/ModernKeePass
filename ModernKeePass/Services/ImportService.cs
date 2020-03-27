@@ -14,7 +14,7 @@ namespace ModernKeePass.Services
             foreach (var entity in data)
             {
                 var entry = group.AddNewEntry();
-                entry.Name = entity["0"];
+                entry.Title = entity["0"];
                 entry.UserName = entity["1"];
                 entry.Password = entity["2"];
                 if (entity.Count > 3) entry.Url = entity["3"];

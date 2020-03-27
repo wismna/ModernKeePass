@@ -13,7 +13,7 @@ namespace ModernKeePass.Common
         {
             var notificationXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
             var toastElements = notificationXml.GetElementsByTagName("text");
-            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{action} {entity.Name}"));
+            toastElements[0].AppendChild(notificationXml.CreateTextNode($"{action} {entity.Title}"));
             toastElements[1].AppendChild(notificationXml.CreateTextNode(text));
             var toastNode = notificationXml.SelectSingleNode("/toast");
 

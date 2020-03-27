@@ -9,9 +9,9 @@ namespace ModernKeePass.Interfaces
     {
         GroupVm ParentGroup { get; }
         GroupVm PreviousGroup { get; }
-        int IconId { get; }
+        int Icon { get; }
         string Id { get; }
-        string Name { get; set; }
+        string Title { get; set; }
         IEnumerable<IVmEntity> BreadCrumb { get; }
         bool IsEditMode { get; }
         bool IsRecycleOnDelete { get; }

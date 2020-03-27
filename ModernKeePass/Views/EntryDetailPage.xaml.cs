@@ -49,7 +49,6 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedFrom(e);
-            Model.Reset();
         }
 
         #endregion
