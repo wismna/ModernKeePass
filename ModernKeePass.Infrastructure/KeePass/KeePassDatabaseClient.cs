@@ -32,6 +32,12 @@ namespace ModernKeePass.Infrastructure.KeePass
         public GroupEntity RootGroup { get; private set; }
 
         // Settings
+        public bool IsRecycleBinEnabled
+        {
+            get { return _pwDatabase.RecycleBinEnabled; }
+            set { _pwDatabase.RecycleBinEnabled = value; }
+        }
+
         public string RecycleBinId 
         {
             get 
@@ -68,9 +74,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             get { return _pwDatabase.Compression.ToString("G"); }
             set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
-
-        public bool IsRecycleBinEnabled => _pwDatabase.RecycleBinEnabled;
-
+        
         public KeePassDatabaseClient(ISettingsProxy settings, IFileProxy fileService, IMapper mapper)
         {
             _settings = settings;
@@ -120,7 +124,6 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             _fileAccessToken = fileInfo.Path;
 
-            // TODO: create sample data depending on settings
             return _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
         }
 
@@ -138,16 +141,16 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
         }
 
-        public async Task SaveDatabase(FileInfo fileInfo)
+        public async Task SaveDatabase(string filePath)
         {
             try
             {
-                var newFileContents = await _fileService.OpenBinaryFile(fileInfo.Path);
+                var newFileContents = await _fileService.OpenBinaryFile(filePath);
                 _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
-                await _fileService.WriteBinaryContentsToFile(fileInfo.Path, _pwDatabase.IOConnectionInfo.Bytes);
+                await _fileService.WriteBinaryContentsToFile(filePath, _pwDatabase.IOConnectionInfo.Bytes);
 
                 _fileService.ReleaseFile(_fileAccessToken);
-                _fileAccessToken = fileInfo.Path;
+                _fileAccessToken = filePath;
             }
             catch (Exception e)
             {

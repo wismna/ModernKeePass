@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Models;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
+using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteEntry;
 using ModernKeePass.Application.Resources.Queries;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
@@ -32,7 +35,7 @@ namespace ModernKeePass.ViewModels
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
         public string Id => _entry.Id;
-        public bool IsRecycleOnDelete => _database.RecycleBinEnabled && !ParentGroup.IsSelected;
+        public bool IsRecycleOnDelete => GetDatabase().IsRecycleBinEnabled && !ParentGroup.IsSelected;
         public IEnumerable<IVmEntity> BreadCrumb => new List<IVmEntity>(ParentGroup.BreadCrumb) {ParentGroup};
         /// <summary>
         /// Determines if the Entry is current or from history
@@ -211,7 +214,7 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
-            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
+            UndoDeleteCommand = new RelayCommand(async () => await Move(PreviousGroup), () => PreviousGroup != null);
         }
         
         public async Task GeneratePassword()
@@ -233,20 +236,21 @@ namespace ModernKeePass.ViewModels
         }
 
         
-        public Task MarkForDelete(string recycleBinTitle)
+        public async Task MarkForDelete(string recycleBinTitle)
         {
-            if (_database.RecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
-                _database.CreateRecycleBin(recycleBinTitle);
-            Move(_database.RecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
+            var database = GetDatabase();
+            if (database.IsRecycleBinEnabled && database.RecycleBinId == null)
+                await _mediator.Send(new CreateGroupCommand { ParentGroup = database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
+            await Move(database.IsRecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
         }
         
-        public void Move(GroupVm destination)
+        public async Task Move(GroupVm destination)
         {
             PreviousGroup = ParentGroup;
             PreviousGroup.Entries.Remove(this);
             if (destination == null)
             {
-                _database.AddDeletedItem(IdUuid);
+                await _mediator.Send(new DeleteEntryCommand { Entry = _entry });
                 return;
             }
             ParentGroup = destination;
@@ -268,6 +272,11 @@ namespace ModernKeePass.ViewModels
             return IsSelected ? 
                 _mediator.Send(new GetResourceQuery{Key = "EntryCurrent"}).GetAwaiter().GetResult() : 
                 _entry.ModificationDate.ToString("g");
+        }
+
+        private DatabaseVm GetDatabase()
+        {
+            return _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         }
     }
 }

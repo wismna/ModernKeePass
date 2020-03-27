@@ -2,7 +2,7 @@
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Exceptions;
 
-namespace ModernKeePass.Application.Cryptography.Commands.SetCompression
+namespace ModernKeePass.Application.Parameters.Commands.SetCompression
 {
     public class SetCompressionCommand : IRequest
     {

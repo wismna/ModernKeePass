@@ -149,7 +149,7 @@
     <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
-    <Compile Include="Interfaces\IDatabaseService.cs" />
+    <Content Include="Interfaces\IDatabaseService.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
@@ -404,10 +404,6 @@
       <HintPath>..\packages\AutoMapper.Extensions.Microsoft.DependencyInjection.2.0.1\lib\netstandard1.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="BouncyCastle.Crypto, Version=1.8.5.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\netstandard1.0\BouncyCastle.Crypto.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="FluentValidation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
       <HintPath>..\packages\FluentValidation.8.6.2\lib\netstandard1.1\FluentValidation.dll</HintPath>
       <Private>True</Private>
@@ -428,6 +424,10 @@
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.1\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Graphics.Canvas, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Win2D.win81.1.21.0\lib\win\Microsoft.Graphics.Canvas.winmd</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.HockeyApp.Core45, Version=4.1.6.1005, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\HockeySDK.Core.4.1.6\lib\portable-net45+win8+wp8+wpa81+win81+uap10.0\Microsoft.HockeyApp.Core45.dll</HintPath>
       <Private>True</Private>
@@ -438,22 +438,6 @@
     </Reference>
     <Reference Include="Microsoft.Toolkit.Uwp.Notifications, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Toolkit.Uwp.Notifications.2.0.0\lib\dotnet\Microsoft.Toolkit.Uwp.Notifications.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ModernKeePassLib, Version=2.44.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.44.1\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SixLabors.Core, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SixLabors.Core.1.0.0-beta0006\lib\netstandard1.1\SixLabors.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SixLabors.ImageSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SixLabors.ImageSharp.1.0.0-beta0005\lib\netstandard1.1\SixLabors.ImageSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Splat, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Splat.3.0.0\lib\netstandard1.1\Splat.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -594,6 +578,13 @@
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="..\packages\Win2D.win81.1.21.0\build\win\Win2D.win81.targets" Condition="Exists('..\packages\Win2D.win81.1.21.0\build\win\Win2D.win81.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Win2D.win81.1.21.0\build\win\Win2D.win81.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.win81.1.21.0\build\win\Win2D.win81.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

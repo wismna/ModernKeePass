@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -7,12 +6,11 @@ using Windows.Storage.AccessCache;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.UpdateCredentials;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
+using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
+using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Common;
-using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
-using ModernKeePassLib.Cryptography;
-using ModernKeePassLib.Keys;
 
 namespace ModernKeePass.ViewModels
 {
@@ -101,8 +99,8 @@ namespace ModernKeePass.ViewModels
 
         public Application.Group.Models.GroupVm RootGroup { get; set; }
 
-        public double PasswordComplexityIndicator => QualityEstimation.EstimatePasswordBits(Password?.ToCharArray());
-        
+        public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery { Password = Password }).GetAwaiter().GetResult();
+
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _hasUserAccount;
@@ -129,15 +127,13 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
-                OnPropertyChanged("IsValid");
-                var fileInfo = new FileInfo
-                {
-                    Name = databaseFile.DisplayName,
-                    Path = StorageApplicationPermissions.FutureAccessList.Add(databaseFile)
-                };
+                OnPropertyChanged(nameof(IsValid));
 
-                var database = await _mediator.Send(new OpenDatabaseQuery { FileInfo = fileInfo, Credentials = CreateCredentials()});
-                await Task.Run(() => RootGroup = database.RootGroup);
+                RootGroup = await _mediator.Send(new OpenDatabaseQuery {
+                    FilePath = StorageApplicationPermissions.FutureAccessList.Add(databaseFile),
+                    KeyFilePath = HasKeyFile && KeyFile != null ? StorageApplicationPermissions.FutureAccessList.Add(KeyFile) : null,
+                    Password = Password = HasPassword ? Password : null,
+                });
                 return true;
             }
             catch (ArgumentException)
@@ -163,16 +159,19 @@ namespace ModernKeePass.ViewModels
 
         public async Task UpdateKey()
         {
-            //Database.UpdateCompositeKey(await CreateCompositeKey());
-            await _mediator.Send(new UpdateCredentialsCommand {Credentials = CreateCredentials()});
+            await _mediator.Send(new UpdateCredentialsCommand
+            {
+                KeyFilePath = HasKeyFile && KeyFile != null ? StorageApplicationPermissions.FutureAccessList.Add(KeyFile) : null,
+                Password = Password = HasPassword ? Password : null,
+            });
             UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
         }
 
         public async Task CreateKeyFile(StorageFile file)
         {
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             // TODO: implement entropy generator
-            var fileContents = await FileIO.ReadBufferAsync(file);
-            KcpKeyFile.Create(fileContents.ToArray());
+            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = token});
             KeyFile = file;
         }
 
@@ -180,16 +179,6 @@ namespace ModernKeePass.ViewModels
         {
             Status = text;
             StatusType = (int)type;
-        }
-
-        private Credentials CreateCredentials()
-        {
-            var credentials = new Credentials
-            {
-                Password = HasPassword ? Password: null,
-                KeyFilePath = HasKeyFile && KeyFile != null ? StorageApplicationPermissions.FutureAccessList.Add(KeyFile) : null
-            };
-            return credentials;
         }
     }
 }

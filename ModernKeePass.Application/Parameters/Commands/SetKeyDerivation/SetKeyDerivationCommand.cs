@@ -2,7 +2,7 @@
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Exceptions;
 
-namespace ModernKeePass.Application.Cryptography.Commands.SetKeyDerivation
+namespace ModernKeePass.Application.Parameters.Commands.SetKeyDerivation
 {
     public class SetKeyDerivationCommand : IRequest
     {

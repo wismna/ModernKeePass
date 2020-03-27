@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
+using MediatR;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Views;
@@ -40,10 +42,11 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVm() : this(DatabaseService.Instance, new ResourcesService()) { }
+        public SettingsVm() : this(App.Mediator, new ResourcesService()) { }
 
-        public SettingsVm(IDatabaseService database, IResourceService resource)
+        public SettingsVm(IMediator mediator, IResourceService resource)
         {
+            var database = mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             var menuItems = new ObservableCollection<ListMenuItemVm>
             {
                 new ListMenuItemVm

@@ -1,28 +1,32 @@
-﻿using Windows.Storage;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
+﻿using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.AccessCache;
+using MediatR;
+using ModernKeePass.Application.Database.Commands.CloseDatabase;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
 
 namespace ModernKeePass.ViewModels
 {
     public class SaveVm
     {
-        private readonly IDatabaseService _database;
-        public SaveVm() : this(DatabaseService.Instance) { }
+        private readonly IMediator _mediator;
+        public SaveVm() : this(App.Mediator) { }
 
-        public SaveVm(IDatabaseService database)
+        public SaveVm(IMediator mediator)
         {
-            _database = database;
+            _mediator = mediator;
         }
 
-        public void Save(bool close = true)
+        public async Task Save(bool close = true)
         {
-            _database.Save();
-            if (close) _database.Close();
+            await _mediator.Send(new SaveDatabaseCommand());
+            if (close) await _mediator.Send(new CloseDatabaseCommand());
         }
 
-        public void Save(StorageFile file)
+        public async Task Save(StorageFile file)
         {
-            _database.Save(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
         }
     }
 }

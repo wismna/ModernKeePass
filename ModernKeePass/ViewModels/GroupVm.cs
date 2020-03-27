@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Group.Commands.AddEntry;
+using ModernKeePass.Application.Group.Commands.AddGroup;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteGroup;
 using ModernKeePass.Application.Group.Commands.InsertEntry;
 using ModernKeePass.Application.Group.Commands.RemoveEntry;
+using ModernKeePass.Application.Group.Commands.RemoveGroup;
 using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Common;
@@ -54,14 +57,18 @@ namespace ModernKeePass.ViewModels
         
         public bool ShowRestore => IsNotRoot && ParentGroup.IsSelected;
 
-        public bool IsRecycleOnDelete => IsRecycleBinEnabled().GetAwaiter().GetResult() && !IsSelected && !ParentGroup.IsSelected;
+        public bool IsRecycleOnDelete => GetDatabase().IsRecycleBinEnabled && !IsSelected && !ParentGroup.IsSelected;
         
         /// <summary>
         /// Is the Group the database Recycle Bin?
         /// </summary>
         public bool IsSelected
         {
-            get { return IsRecycleBinEnabled().GetAwaiter().GetResult() && _database.RecycleBin?.Id == Id; }
+            get
+            {
+                var database = GetDatabase();
+                return database.IsRecycleBinEnabled && database.RecycleBinId == Id;
+            }
             set
             {
                 if (value && _group != null) _database.RecycleBin = this;
@@ -150,7 +157,7 @@ namespace ModernKeePass.ViewModels
                 await SortEntriesAsync().ConfigureAwait(false), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () =>
                 await SortGroupsAsync().ConfigureAwait(false), () => IsEditMode);
-            UndoDeleteCommand = new RelayCommand(() => Move(PreviousGroup), () => PreviousGroup != null);
+            UndoDeleteCommand = new RelayCommand(async () => await Move(PreviousGroup), () => PreviousGroup != null);
 
             if (recycleBinId != null && _group.Id.Equals(recycleBinId)) _database.RecycleBin = this;
             Entries = new ObservableCollection<EntryVm>(group.Entries.Select(e => new EntryVm(e, this)));
@@ -200,31 +207,31 @@ namespace ModernKeePass.ViewModels
 
         public async Task MarkForDelete(string recycleBinTitle)
         {
-            var isRecycleBinEnabled = await IsRecycleBinEnabled();
-            if (isRecycleBinEnabled && _database.RecycleBin?.IdUuid == null)
-                _database.CreateRecycleBin(recycleBinTitle);
-            Move(isRecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
+            var database = GetDatabase();
+            if (database.IsRecycleBinEnabled && database.RecycleBinId == null)
+                await _mediator.Send(new CreateGroupCommand {ParentGroup = database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
+            await Move(database.IsRecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
             ((RelayCommand)UndoDeleteCommand).RaiseCanExecuteChanged();
         }
 
-        public void UndoDelete()
+        public async Task UndoDelete()
         {
-            Move(PreviousGroup);
+            await Move(PreviousGroup);
         }
         
-        public void Move(GroupVm destination)
+        public async Task Move(GroupVm destination)
         {
             PreviousGroup = ParentGroup;
             PreviousGroup.Groups.Remove(this);
-            PreviousGroup._group.SubGroups.Remove(_group);
+            await _mediator.Send(new RemoveGroupCommand {ParentGroup = PreviousGroup._group, Group = _group});
             if (destination == null)
             {
-                _database.AddDeletedItem(IdUuid);
+                await _mediator.Send(new DeleteGroupCommand { Group = _group });
                 return;
             }
             ParentGroup = destination;
             ParentGroup.Groups.Add(this);
-            ParentGroup._group.AddGroup(_group, true);
+            await _mediator.Send(new AddGroupCommand {ParentGroup = ParentGroup._group, Group = _group});
         }
 
         public async Task CommitDelete()
@@ -251,10 +258,9 @@ namespace ModernKeePass.ViewModels
             OnPropertyChanged(nameof(Groups));
         }
 
-        private async Task<bool> IsRecycleBinEnabled()
+        private DatabaseVm GetDatabase()
         {
-            var database = await _mediator.Send(new GetDatabaseQuery());
-            return database.IsRecycleBinEnabled;
+            return _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         }
     }
 }

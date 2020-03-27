@@ -8,7 +8,8 @@ namespace ModernKeePass.Application.Database.Commands.UpdateCredentials
 {
     public class UpdateCredentialsCommand: IRequest
     {
-        public Credentials Credentials { get; set; }
+        public string Password { get; set; }
+        public string KeyFilePath { get; set; }
 
         public class UpdateCredentialsCommandHandler : IAsyncRequestHandler<UpdateCredentialsCommand>
         {
@@ -21,7 +22,14 @@ namespace ModernKeePass.Application.Database.Commands.UpdateCredentials
 
             public async Task Handle(UpdateCredentialsCommand message)
             {
-                if (_database.IsOpen) await _database.UpdateCredentials(message.Credentials);
+                if (_database.IsOpen)
+                {
+                    await _database.UpdateCredentials(new Credentials
+                    {
+                        KeyFilePath = message.KeyFilePath,
+                        Password = message.Password
+                    });
+                }
                 else throw new DatabaseClosedException();
             }
         }

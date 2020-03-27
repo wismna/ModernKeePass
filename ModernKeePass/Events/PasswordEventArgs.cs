@@ -1,5 +1,5 @@
 ﻿using System;
-using ModernKeePass.Application.Group.Models;
+using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Events
 {

@@ -95,7 +95,7 @@ namespace ModernKeePass.Views.UserControls
             if (UpdateKey)
             {
                 await Model.UpdateKey();
-                ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+                ValidationChecked?.Invoke(this, new PasswordEventArgs(new GroupVm(Model.RootGroup, null)));
             }
             else
             {
@@ -175,7 +175,7 @@ namespace ModernKeePass.Views.UserControls
             ButtonLabel = resource.GetResourceValue("CompositeKeyOpening");
             if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(DatabaseFile, CreateNew)))
             {
-                ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroup));
+                ValidationChecked?.Invoke(this, new PasswordEventArgs(new GroupVm(Model.RootGroup, null)));
             }
 
             ButtonLabel = oldLabel;

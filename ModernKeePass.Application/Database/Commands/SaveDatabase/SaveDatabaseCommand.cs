@@ -1,14 +1,13 @@
 ﻿using MediatR;
 using System.Threading.Tasks;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 {
     public class SaveDatabaseCommand : IRequest
     {
-        public FileInfo FileInfo { get; set; }
+        public string FilePath { get; set; }
 
         public class SaveDatabaseCommandHandler : IAsyncRequestHandler<SaveDatabaseCommand>
         {
@@ -23,8 +22,8 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                if (message.FileInfo != null) await _database.SaveDatabase(message.FileInfo);
-                else await _database.SaveDatabase();
+                if (string.IsNullOrEmpty(message.FilePath)) await _database.SaveDatabase();
+                else await _database.SaveDatabase(message.FilePath);
             }
         }
     }

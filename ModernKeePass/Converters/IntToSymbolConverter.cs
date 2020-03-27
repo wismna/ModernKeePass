@@ -1,7 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using ModernKeePassLib;
+using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.Converters
 {
@@ -9,66 +9,59 @@ namespace ModernKeePass.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var icon = (PwIcon) value;
+            var icon = (Icon) value;
             switch (icon)
             {
-                case PwIcon.Key: return Symbol.Permissions;
-                case PwIcon.WorldSocket:
-                case PwIcon.World: return Symbol.World;
-                case PwIcon.Warning: return Symbol.Important;
-                case PwIcon.WorldComputer:
-                case PwIcon.Drive:
-                case PwIcon.DriveWindows:
-                case PwIcon.NetworkServer: return Symbol.MapDrive;
-                case PwIcon.MarkedDirectory: return Symbol.Map;
-                case PwIcon.UserCommunication: return Symbol.ContactInfo;
-                case PwIcon.Parts: return Symbol.ViewAll;
-                case PwIcon.Notepad: return Symbol.Document;
-                case PwIcon.Identity: return Symbol.Contact2;
-                case PwIcon.PaperReady: return Symbol.SyncFolder;
-                case PwIcon.Digicam: return Symbol.Camera;
-                case PwIcon.IRCommunication: return Symbol.View;
-                case PwIcon.Energy: return Symbol.ZeroBars;
-                case PwIcon.Scanner: return Symbol.Scan;
-                case PwIcon.CDRom: return Symbol.Rotate;
-                case PwIcon.Monitor: return Symbol.Caption;
-                case PwIcon.EMailBox:
-                case PwIcon.EMail: return Symbol.Mail;
-                case PwIcon.Configuration: return Symbol.Setting;
-                case PwIcon.ClipboardReady: return Symbol.Paste;
-                case PwIcon.PaperNew: return Symbol.Page2;
-                case PwIcon.Screen: return Symbol.GoToStart;
-                case PwIcon.EnergyCareful: return Symbol.FourBars;
-                case PwIcon.Disk: return Symbol.Save;
-                case PwIcon.Console: return Symbol.SlideShow;
-                case PwIcon.Printer: return Symbol.Scan;
-                case PwIcon.ProgramIcons: return Symbol.GoToStart;
-                case PwIcon.Settings:
-                case PwIcon.Tool: return Symbol.Repair;
-                case PwIcon.Archive: return Symbol.Crop;
-                case PwIcon.Count: return Symbol.Calculator;
-                case PwIcon.Clock: return Symbol.Clock;
-                case PwIcon.EMailSearch: return Symbol.Find;
-                case PwIcon.PaperFlag: return Symbol.Flag;
-                case PwIcon.TrashBin: return Symbol.Delete;
-                case PwIcon.Expired: return Symbol.ReportHacked;
-                case PwIcon.Info: return Symbol.Help;
-                case PwIcon.Folder:
-                case PwIcon.FolderOpen:
-                case PwIcon.FolderPackage: return Symbol.Folder;
-                case PwIcon.PaperLocked: return Symbol.ProtectedDocument;
-                case PwIcon.Checked: return Symbol.Accept;
-                case PwIcon.Pen: return Symbol.Edit;
-                case PwIcon.Thumbnail: return Symbol.BrowsePhotos;
-                case PwIcon.Book: return Symbol.Library;
-                case PwIcon.List: return Symbol.List;
-                case PwIcon.UserKey: return Symbol.ContactPresence;
-                case PwIcon.Home: return Symbol.Home;
-                case PwIcon.Star: return Symbol.OutlineStar;
-                case PwIcon.Money: return Symbol.Shop;
-                case PwIcon.Certificate: return Symbol.PreviewLink;
-                case PwIcon.BlackBerry: return Symbol.CellPhone;
-                default: return Symbol.Stop;
+                case Icon.Delete: return Symbol.Delete;
+                case Icon.Edit: return Symbol.Edit;
+                case Icon.Save: return Symbol.Save;
+                case Icon.Cancel: return Symbol.Cancel;
+                case Icon.Accept: return Symbol.Accept;
+                case Icon.Home: return Symbol.Home;
+                case Icon.Camera: return Symbol.Camera;
+                case Icon.Setting: return Symbol.Setting;
+                case Icon.Mail: return Symbol.Mail;
+                case Icon.Find: return Symbol.Find;
+                case Icon.Help: return Symbol.Help;
+                case Icon.Clock: return Symbol.Clock;
+                case Icon.Crop: return Symbol.Crop;
+                case Icon.World: return Symbol.World;
+                case Icon.Flag: return Symbol.Flag;
+                case Icon.PreviewLink: return Symbol.PreviewLink;
+                case Icon.Document: return Symbol.Document;
+                case Icon.ProtectedDocument: return Symbol.ProtectedDocument;
+                case Icon.ContactInfo: return Symbol.ContactInfo;
+                case Icon.ViewAll: return Symbol.ViewAll;
+                case Icon.Rotate: return Symbol.Rotate;
+                case Icon.List: return Symbol.List;
+                case Icon.Shop: return Symbol.Shop;
+                case Icon.BrowsePhotos: return Symbol.BrowsePhotos;
+                case Icon.Caption: return Symbol.Caption;
+                case Icon.Repair: return Symbol.Repair;
+                case Icon.Page: return Symbol.Page;
+                case Icon.Paste: return Symbol.Paste;
+                case Icon.Important: return Symbol.Important;
+                case Icon.SlideShow: return Symbol.SlideShow;
+                case Icon.MapDrive: return Symbol.MapDrive;
+                case Icon.ContactPresence: return Symbol.ContactPresence;
+                case Icon.Contact: return Symbol.Contact;
+                case Icon.Folder: return Symbol.Folder;
+                case Icon.View: return Symbol.View;
+                case Icon.Permissions: return Symbol.Permissions;
+                case Icon.Map: return Symbol.Map;
+                case Icon.CellPhone: return Symbol.CellPhone;
+                case Icon.OutlineStar: return Symbol.OutlineStar;
+                case Icon.Calculator: return Symbol.Calculator;
+                case Icon.Library: return Symbol.Library;
+                case Icon.SyncFolder: return Symbol.SyncFolder;
+                case Icon.GoToStart: return Symbol.GoToStart;
+                case Icon.ZeroBars: return Symbol.ZeroBars;
+                case Icon.FourBars: return Symbol.FourBars;
+                case Icon.Scan: return Symbol.Scan;
+                case Icon.ReportHacked: return Symbol.ReportHacked;
+                case Icon.Stop: return Symbol.Stop;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -78,52 +71,54 @@ namespace ModernKeePass.Converters
             var defaultIcon = parameter != null ? int.Parse(parameter as string) : -1;
             switch (symbol)
             {
-                case Symbol.Delete: return (int)PwIcon.TrashBin;
-                case Symbol.Edit: return (int) PwIcon.Pen;
-                case Symbol.Save: return (int) PwIcon.Disk;
-                case Symbol.Cancel: return (int) PwIcon.Expired;
-                case Symbol.Accept: return (int) PwIcon.Checked;
-                case Symbol.Home: return (int) PwIcon.Home;
-                case Symbol.Camera: return (int) PwIcon.Digicam;
-                case Symbol.Setting: return (int) PwIcon.Configuration;
-                case Symbol.Mail: return (int) PwIcon.EMail;
-                case Symbol.Find: return (int) PwIcon.EMailSearch;
-                case Symbol.Help: return (int) PwIcon.Info;
-                case Symbol.Clock: return (int) PwIcon.Clock;
-                case Symbol.Crop: return (int) PwIcon.Archive;
-                case Symbol.World: return (int) PwIcon.World;
-                case Symbol.Flag: return (int) PwIcon.PaperFlag;
-                case Symbol.PreviewLink: return (int) PwIcon.Certificate;
-                case Symbol.Document: return (int) PwIcon.Notepad;
-                case Symbol.ProtectedDocument: return (int) PwIcon.PaperLocked;
-                case Symbol.ContactInfo: return (int) PwIcon.UserCommunication;
-                case Symbol.ViewAll: return (int) PwIcon.Parts;
-                case Symbol.Rotate: return (int) PwIcon.CDRom;
-                case Symbol.List: return (int) PwIcon.List;
-                case Symbol.Shop: return (int) PwIcon.Money;
-                case Symbol.BrowsePhotos: return (int) PwIcon.Thumbnail;
-                case Symbol.Caption: return (int) PwIcon.Monitor;
-                case Symbol.Repair: return (int) PwIcon.Tool;
-                case Symbol.Page2: return (int) PwIcon.PaperNew;
-                case Symbol.Paste: return (int) PwIcon.ClipboardReady;
-                case Symbol.Important: return (int) PwIcon.Warning;
-                case Symbol.SlideShow: return (int) PwIcon.Console;
-                case Symbol.MapDrive: return (int) PwIcon.NetworkServer;
-                case Symbol.ContactPresence: return (int) PwIcon.UserKey;
-                case Symbol.Contact2: return (int) PwIcon.Identity;
-                case Symbol.Folder: return (int) PwIcon.Folder;
-                case Symbol.View: return (int) PwIcon.IRCommunication;
-                case Symbol.Permissions: return (int) PwIcon.Key;
-                case Symbol.Map: return (int) PwIcon.MarkedDirectory;
-                case Symbol.CellPhone: return (int) PwIcon.BlackBerry;
-                case Symbol.OutlineStar: return (int) PwIcon.Star;
-                case Symbol.Calculator: return (int) PwIcon.Count;
-                case Symbol.Library: return (int) PwIcon.Book;
-                case Symbol.SyncFolder: return (int) PwIcon.PaperReady;
-                case Symbol.GoToStart: return (int) PwIcon.Screen;
-                case Symbol.ZeroBars: return (int) PwIcon.Energy;
-                case Symbol.FourBars: return (int) PwIcon.EnergyCareful;
-                case Symbol.Scan: return (int) PwIcon.Scanner;
+                case Symbol.Delete: return Icon.Delete;
+                case Symbol.Edit: return Icon.Edit;
+                case Symbol.Save: return Icon.Save;
+                case Symbol.Cancel: return Icon.Cancel;
+                case Symbol.Accept: return Icon.Accept;
+                case Symbol.Home: return Icon.Home;
+                case Symbol.Camera: return Icon.Camera;
+                case Symbol.Setting: return Icon.Setting;
+                case Symbol.Mail: return Icon.Mail;
+                case Symbol.Find: return Icon.Find;
+                case Symbol.Help: return Icon.Help;
+                case Symbol.Clock: return Icon.Clock;
+                case Symbol.Crop: return Icon.Crop;
+                case Symbol.World: return Icon.World;
+                case Symbol.Flag: return Icon.Flag;
+                case Symbol.PreviewLink: return Icon.PreviewLink;
+                case Symbol.Document: return Icon.Document;
+                case Symbol.ProtectedDocument: return Icon.ProtectedDocument;
+                case Symbol.ContactInfo: return Icon.ContactInfo;
+                case Symbol.ViewAll: return Icon.ViewAll;
+                case Symbol.Rotate: return Icon.Rotate;
+                case Symbol.List: return Icon.List;
+                case Symbol.Shop: return Icon.Shop;
+                case Symbol.BrowsePhotos: return Icon.BrowsePhotos;
+                case Symbol.Caption: return Icon.Caption;
+                case Symbol.Repair: return Icon.Repair;
+                case Symbol.Page: return Icon.Page;
+                case Symbol.Paste: return Icon.Paste;
+                case Symbol.Important: return Icon.Important;
+                case Symbol.SlideShow: return Icon.SlideShow;
+                case Symbol.MapDrive: return Icon.MapDrive;
+                case Symbol.ContactPresence: return Icon.ContactPresence;
+                case Symbol.Contact: return Icon.Contact;
+                case Symbol.Folder: return Icon.Folder;
+                case Symbol.View: return Icon.View;
+                case Symbol.Permissions: return Icon.Permissions;
+                case Symbol.Map: return Icon.Map;
+                case Symbol.CellPhone: return Icon.CellPhone;
+                case Symbol.OutlineStar: return Icon.OutlineStar;
+                case Symbol.Calculator: return Icon.Calculator;
+                case Symbol.Library: return Icon.Library;
+                case Symbol.SyncFolder: return Icon.SyncFolder;
+                case Symbol.GoToStart: return Icon.GoToStart;
+                case Symbol.ZeroBars: return Icon.ZeroBars;
+                case Symbol.FourBars: return Icon.FourBars;
+                case Symbol.Scan: return Icon.Scan;
+                case Symbol.ReportHacked: return Icon.ReportHacked;
+                case Symbol.Stop: return Icon.Stop;
                 default: return defaultIcon;
             }
         }

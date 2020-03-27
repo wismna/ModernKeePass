@@ -1,55 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using MediatR;
+using ModernKeePass.Application.Cryptography.Models;
+using ModernKeePass.Application.Cryptography.Queries.GetCiphers;
+using ModernKeePass.Application.Cryptography.Queries.GetCompressions;
+using ModernKeePass.Application.Cryptography.Queries.GetKeyDerivations;
+using ModernKeePass.Application.Database.Models;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Parameters.Commands.SetCipher;
+using ModernKeePass.Application.Parameters.Commands.SetCompression;
+using ModernKeePass.Application.Parameters.Commands.SetHasRecycleBin;
+using ModernKeePass.Application.Parameters.Commands.SetKeyDerivation;
+using ModernKeePass.Application.Parameters.Commands.SetRecycleBin;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
-using ModernKeePassLib;
-using ModernKeePassLib.Cryptography.Cipher;
-using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePass.ViewModels
 {
     // TODO: implement Kdf settings
     public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly IDatabaseService _database;
+        private readonly IMediator _mediator;
+        private readonly DatabaseVm _database;
         private GroupVm _selectedItem;
 
         public bool HasRecycleBin
         {
-            get { return _database.RecycleBinEnabled; }
+            get { return _database.IsRecycleBinEnabled; }
             set
             {
-                _database.RecycleBinEnabled = value;
-                OnPropertyChanged("HasRecycleBin");
+                _mediator.Send(new SetHasRecycleBinCommand {HasRecycleBin = value}).GetAwaiter().GetResult();
+                OnPropertyChanged(nameof(HasRecycleBin));
             }
         }
 
         public bool IsNewRecycleBin
         {
-            get { return _database.RecycleBin == null; }
+            get { return _database.RecycleBinId == null; }
             set
             {
-                if (value) _database.RecycleBin = null;
+                if (value) _mediator.Send(new SetRecycleBinCommand() { RecycleBinId = null }).GetAwaiter().GetResult();
             }
         }
 
         public ObservableCollection<GroupVm> Groups { get; set; }
 
-        public IEnumerable<string> Ciphers
+        public IEnumerable<CipherVm> Ciphers => _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
+        public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
+        public IEnumerable<KeyDerivationVm> KeyDerivations => _mediator.Send(new GetKeyDerivationsQuery()).GetAwaiter().GetResult();
+
+        public CipherVm SelectedCipher
         {
-            get
-            {
-                for (var inx = 0; inx < CipherPool.GlobalPool.EngineCount; inx++)
-                {
-                    yield return CipherPool.GlobalPool[inx].DisplayName;
-                }
-            }
+            get { return Ciphers.FirstOrDefault(c => c.Id == _database.CipherId); }
+            set { _mediator.Send(new SetCipherCommand {CipherId = value.Id}).GetAwaiter().GetResult(); }
         }
 
-        public int CipherIndex
+        public string SelectedCompression
+        {
+            get { return Compressions.FirstOrDefault(c => c == _database.Compression); }
+            set { _mediator.Send(new SetCompressionCommand {Compression = value}).GetAwaiter().GetResult(); }
+        }
+
+        public KeyDerivationVm SelectedKeyDerivation
+        {
+            get { return KeyDerivations.FirstOrDefault(c => c.Id == _database.KeyDerivationId); }
+            set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).GetAwaiter().GetResult(); }
+        }
+
+        /*public int CipherIndex
         {
             get
             {
@@ -60,22 +79,19 @@ namespace ModernKeePass.ViewModels
                 return -1;
             }
             set { _database.DataCipher = CipherPool.GlobalPool[value].CipherUuid; }
-        }
+        }*/
 
-        public IEnumerable<string> Compressions => Enum.GetNames(typeof(PwCompressionAlgorithm)).Take((int)PwCompressionAlgorithm.Count);
 
-        public string CompressionName
+        /*public string CompressionName
         {
-            get { return Enum.GetName(typeof(PwCompressionAlgorithm), _database.CompressionAlgorithm); }
+            get { return _database.}
             set { _database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
-        }
-        public IEnumerable<string> KeyDerivations => KdfPool.Engines.Select(e => e.Name);
-
-        public string KeyDerivationName
+        }*/
+        /*public string KeyDerivationName
         {
             get { return KdfPool.Get(_database.KeyDerivation.KdfUuid).Name; }
             set { _database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
-        }
+        }*/
 
         public ISelectableModel SelectedItem
         {
@@ -97,12 +113,13 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsDatabaseVm() : this(DatabaseService.Instance) { }
+        public SettingsDatabaseVm() : this(App.Mediator) { }
 
-        public SettingsDatabaseVm(IDatabaseService database)
+        public SettingsDatabaseVm(IMediator mediator)
         {
-            _database = database;
-            Groups = _database?.RootGroup.Groups;
+            _mediator = mediator;
+            _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
+            //Groups = _database.RootGroup.SubGroups;
         }
     }
 }

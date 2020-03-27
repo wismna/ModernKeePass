@@ -28,7 +28,7 @@ namespace ModernKeePass.Interfaces
         /// Move a entity to the destination group
         /// </summary>
         /// <param name="destination">The destination to move the entity to</param>
-        void Move(GroupVm destination);
+        Task Move(GroupVm destination);
         /// <summary>
         /// Delete from Model
         /// </summary>

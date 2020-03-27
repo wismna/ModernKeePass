@@ -14,13 +14,13 @@ namespace ModernKeePass.Application.Common.Interfaces
         string CipherId { get; set; }
         string KeyDerivationId { get; set; }
         string Compression { get; set; }
-        bool IsRecycleBinEnabled { get; }
+        bool IsRecycleBinEnabled { get; set; }
 
         Task<GroupEntity> Open(FileInfo fileInfo, Credentials credentials);
         Task<GroupEntity> ReOpen();
         Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials);
         Task SaveDatabase();
-        Task SaveDatabase(FileInfo FileInfo);
+        Task SaveDatabase(string filePath);
         Task UpdateCredentials(Credentials credentials);
         void CloseDatabase();
 

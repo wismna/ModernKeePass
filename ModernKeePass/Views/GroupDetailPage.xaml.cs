@@ -47,7 +47,7 @@ namespace ModernKeePass.Views
         {
             NavigationHelper.OnNavigatedTo(e);
 
-            /*var args = e.Parameter as PasswordEventArgs;
+            var args = e.Parameter as PasswordEventArgs;
             if (args != null)
                 DataContext = args.RootGroup;
             else
@@ -55,9 +55,7 @@ namespace ModernKeePass.Views
                 var vm = e.Parameter as GroupVm;
                 if (vm != null)
                     DataContext = vm;
-            }*/
-            var args = e.Parameter as Application.Group.Models.GroupVm;
-            if (args != null) DataContext = new GroupVm(args);
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

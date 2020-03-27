@@ -2,7 +2,7 @@
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Exceptions;
 
-namespace ModernKeePass.Application.Cryptography.Commands.SetCipher
+namespace ModernKeePass.Application.Parameters.Commands.SetCipher
 {
     public class SetCipherCommand : IRequest
     {
