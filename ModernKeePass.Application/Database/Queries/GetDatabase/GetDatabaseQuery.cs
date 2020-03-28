@@ -27,7 +27,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     Name = _databaseProxy.Name,
                     RootGroup = _mapper.Map<GroupVm>(_databaseProxy.RootGroup),
                     IsRecycleBinEnabled = _databaseProxy.IsRecycleBinEnabled,
-                    RecycleBinId = _databaseProxy.RecycleBinId,
+                    RecycleBin = _mapper.Map<GroupVm>(_databaseProxy.RecycleBin),
                     Compression = _databaseProxy.Compression,
                     CipherId = _databaseProxy.CipherId,
                     KeyDerivationId = _databaseProxy.CipherId

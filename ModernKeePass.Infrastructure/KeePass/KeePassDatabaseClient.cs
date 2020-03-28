@@ -7,6 +7,7 @@ using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Exceptions;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
@@ -22,6 +23,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         private readonly ISettingsProxy _settings;
         private readonly IFileProxy _fileService;
         private readonly IMapper _mapper;
+        private readonly IDateTime _dateTime;
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private string _fileAccessToken;
         private Credentials _credentials;
@@ -38,19 +40,19 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.RecycleBinEnabled = value; }
         }
 
-        public string RecycleBinId 
+        public GroupEntity RecycleBin 
         {
             get 
             {
                 if (_pwDatabase.RecycleBinEnabled)
                 {
                     var pwGroup = _pwDatabase.RootGroup.FindGroup(_pwDatabase.RecycleBinUuid, true);
-                    return pwGroup.Uuid.ToHexString();
+                    return _mapper.Map<GroupEntity>(pwGroup);
                 }
 
                 return null;
             }
-            set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value); }
+            set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value.Id); }
         }
 
         public string CipherId
@@ -74,12 +76,13 @@ namespace ModernKeePass.Infrastructure.KeePass
             get { return _pwDatabase.Compression.ToString("G"); }
             set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
-        
-        public KeePassDatabaseClient(ISettingsProxy settings, IFileProxy fileService, IMapper mapper)
+
+        public KeePassDatabaseClient(ISettingsProxy settings, IFileProxy fileService, IMapper mapper, IDateTime dateTime)
         {
             _settings = settings;
             _fileService = fileService;
             _mapper = mapper;
+            _dateTime = dateTime;
         }
 
         public async Task<GroupEntity> Open(FileInfo fileInfo, Credentials credentials)
@@ -94,7 +97,8 @@ namespace ModernKeePass.Infrastructure.KeePass
                 _credentials = credentials;
                 _fileAccessToken = fileInfo.Path;
 
-                return _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+                RootGroup = _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+                return RootGroup;
             }
             catch (InvalidCompositeKeyException ex)
             {
@@ -124,7 +128,8 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             _fileAccessToken = fileInfo.Path;
 
-            return _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+            RootGroup = _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+            return RootGroup;
         }
 
         public async Task SaveDatabase()
@@ -157,7 +162,13 @@ namespace ModernKeePass.Infrastructure.KeePass
                 throw new SaveException(e);
             }
         }
-        
+
+        public void SetRecycleBin(string id)
+        {
+            _pwDatabase.RecycleBinUuid = BuildIdFromString(id);
+            _pwDatabase.RecycleBinChanged = _dateTime.Now;
+        }
+
         public void CloseDatabase()
         {
             _pwDatabase?.Close();

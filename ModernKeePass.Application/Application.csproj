@@ -43,14 +43,11 @@
     <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
-    <Compile Include="Common\Interfaces\IHasSelectableObject.cs" />
     <Compile Include="Common\Interfaces\IImportFormat.cs" />
-    <Compile Include="Common\Interfaces\IIsEnabled.cs" />
     <Compile Include="Common\Interfaces\IPasswordProxy.cs" />
     <Compile Include="Common\Interfaces\IProxyInvocationHandler.cs" />
     <Compile Include="Common\Interfaces\IRecentProxy.cs" />
     <Compile Include="Common\Interfaces\IResourceProxy.cs" />
-    <Compile Include="Common\Interfaces\ISelectableModel.cs" />
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
@@ -91,18 +88,9 @@
     <Compile Include="Group\Commands\SortGroups\SortGroupsCommand.cs" />
     <Compile Include="Group\Models\GroupVm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Recent\Commands\AddRecent\AddRecentCommand.cs" />
-    <Compile Include="Recent\Commands\ClearAllRecent\ClearAllRecentCommand.cs" />
-    <Compile Include="Recent\Models\RecentVm.cs" />
-    <Compile Include="Recent\Queries\GetAllRecent\GetAllRecentQuery.cs" />
-    <Compile Include="Recent\Queries\GetRecent\GetRecentQuery.cs" />
-    <Compile Include="Recent\Queries\HasRecent\HasRecentQuery.cs" />
-    <Compile Include="Resources\Queries\GetResourceQuery.cs" />
     <Compile Include="Security\Commands\GenerateKeyFile\GenerateKeyFileCommand.cs" />
     <Compile Include="Security\Commands\GeneratePassword\GeneratePasswordCommand.cs" />
     <Compile Include="Security\Queries\EstimatePasswordComplexity\EstimatePasswordComplexityQuery.cs" />
-    <Compile Include="Settings\Commands\PutSettingCommand.cs" />
-    <Compile Include="Settings\Queries\GetSettingQuery.cs" />
     <Content Include="Services\DatabaseService.cs" />
   </ItemGroup>
   <ItemGroup>

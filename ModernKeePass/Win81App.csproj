@@ -149,9 +149,6 @@
     <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
     <Compile Include="Converters\NullToBooleanConverter.cs" />
     <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
-    <Content Include="Interfaces\IDatabaseService.cs" />
-    <Compile Include="Interfaces\IHasSelectableObject.cs" />
-    <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
     <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
       <DependentUpon>ImportExportPage.xaml</DependentUpon>
@@ -191,7 +188,6 @@
     <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />
     <Compile Include="Converters\TextToWidthConverter.cs" />
     <Compile Include="Events\PasswordEventArgs.cs" />
-    <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="Interfaces\IVmEntity.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>

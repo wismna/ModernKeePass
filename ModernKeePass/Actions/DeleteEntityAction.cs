@@ -1,9 +1,9 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Microsoft.Xaml.Interactivity;
-using ModernKeePass.Application.Resources.Queries;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Actions
@@ -32,23 +32,19 @@ namespace ModernKeePass.Actions
 
         public object Execute(object sender, object parameter)
         {
-            var mediator = App.Mediator;
+            var resource = new ResourcesService();
             var type = Entity is GroupVm ? "Group" : "Entry";
-            
+
             var message = Entity.IsRecycleOnDelete
-                ? mediator.Send(new GetResourceQuery { Key = $"{type}RecyclingConfirmation" })
-                : mediator.Send(new GetResourceQuery { Key = $"{type}DeletingConfirmation" });
-            var text = Entity.IsRecycleOnDelete ? 
-                mediator.Send(new GetResourceQuery { Key = $"{type}Recycled" }) : 
-                mediator.Send(new GetResourceQuery { Key = $"{type}Deleted" });
-            MessageDialogHelper.ShowActionDialog(
-                mediator.Send(new GetResourceQuery { Key = "EntityDeleteTitle" }).GetAwaiter().GetResult(), 
-                message.GetAwaiter().GetResult(),
-                mediator.Send(new GetResourceQuery { Key = "EntityDeleteActionButton" }).GetAwaiter().GetResult(),
-                    mediator.Send(new GetResourceQuery { Key = "EntityDeleteCancelButton" }).GetAwaiter().GetResult(), async a =>
+                ? resource.GetResourceValue($"{type}RecyclingConfirmation")
+                : resource.GetResourceValue($"{type}DeletingConfirmation");
+            var text = Entity.IsRecycleOnDelete ? resource.GetResourceValue($"{type}Recycled") : resource.GetResourceValue($"{type}Deleted");
+            MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+                resource.GetResourceValue("EntityDeleteActionButton"),
+                resource.GetResourceValue("EntityDeleteCancelButton"), a =>
                 {
-                    ToastNotificationHelper.ShowMovedToast(Entity, await mediator.Send(new GetResourceQuery { Key = "EntityDeleting" }), await text);
-                    await Entity.MarkForDelete(await mediator.Send(new GetResourceQuery { Key = "RecycleBinTitle"}));
+                    ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
+                    Entity.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
                     Command.Execute(null);
                 }, null).GetAwaiter();
 

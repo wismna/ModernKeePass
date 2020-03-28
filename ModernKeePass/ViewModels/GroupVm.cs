@@ -20,6 +20,7 @@ using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Enums;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels

@@ -7,7 +7,7 @@ namespace ModernKeePass.Application.Database.Models
         public bool IsOpen { get; set; }
         public string Name { get; set; }
         public GroupVm RootGroup { get; set; }
-        public string RecycleBinId { get; set; }
+        public GroupVm RecycleBin { get; set; }
         public bool IsRecycleBinEnabled { get; set; }
         public string Compression { get; set; }
         public string CipherId { get; set; }

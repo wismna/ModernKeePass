@@ -10,18 +10,17 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteEntry;
-using ModernKeePass.Application.Resources.Queries;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class EntryVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
-        public GroupVm ParentGroup { get; private set; }
-        public GroupVm PreviousGroup { get; private set; }
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
         public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery {Password = Password}).GetAwaiter().GetResult();
@@ -35,7 +34,7 @@ namespace ModernKeePass.ViewModels
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
         public string Id => _entry.Id;
-        public bool IsRecycleOnDelete => GetDatabase().IsRecycleBinEnabled && !ParentGroup.IsSelected;
+        public bool IsRecycleOnDelete => _database.IsRecycleBinEnabled && !ParentGroup.IsSelected;
         public IEnumerable<IVmEntity> BreadCrumb => new List<IVmEntity>(ParentGroup.BreadCrumb) {ParentGroup};
         /// <summary>
         /// Determines if the Entry is current or from history
@@ -197,20 +196,23 @@ namespace ModernKeePass.ViewModels
         
         private readonly Application.Entry.Models.EntryVm _entry;
         private readonly IMediator _mediator;
+        private readonly IResourceService _resource;
+        private DatabaseVm _database;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isVisible = true;
-        
+
         public EntryVm() { }
         
-        internal EntryVm(Application.Entry.Models.EntryVm entry, GroupVm parent) : this(entry, parent, App.Mediator) { }
+        internal EntryVm(Application.Entry.Models.EntryVm entry, Application.Group.Models.GroupVm parent) : this(entry, parent, App.Mediator, new ResourcesService()) { }
 
-        public EntryVm(Application.Entry.Models.EntryVm entry, GroupVm parent, IMediator mediator)
+        public EntryVm(Application.Entry.Models.EntryVm entry, Application.Group.Models.GroupVm parent, IMediator mediator, IResourceService resource)
         {
             _entry = entry;
             _mediator = mediator;
-            ParentGroup = parent;
+            _resource = resource;
+            _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
             SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -238,13 +240,12 @@ namespace ModernKeePass.ViewModels
         
         public async Task MarkForDelete(string recycleBinTitle)
         {
-            var database = GetDatabase();
-            if (database.IsRecycleBinEnabled && database.RecycleBinId == null)
-                await _mediator.Send(new CreateGroupCommand { ParentGroup = database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
-            await Move(database.IsRecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
+            if (_database.IsRecycleBinEnabled && _database.RecycleBin == null)
+                await _mediator.Send(new CreateGroupCommand { ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
+            await Move(_database.IsRecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
         }
         
-        public async Task Move(GroupVm destination)
+        public async Task Move(Application.Group.Models.GroupVm destination)
         {
             PreviousGroup = ParentGroup;
             PreviousGroup.Entries.Remove(this);
@@ -270,13 +271,8 @@ namespace ModernKeePass.ViewModels
         public override string ToString()
         {
             return IsSelected ? 
-                _mediator.Send(new GetResourceQuery{Key = "EntryCurrent"}).GetAwaiter().GetResult() : 
+                _resource.GetResourceValue("EntryCurrent") : 
                 _entry.ModificationDate.ToString("g");
-        }
-
-        private DatabaseVm GetDatabase()
-        {
-            return _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         }
     }
 }

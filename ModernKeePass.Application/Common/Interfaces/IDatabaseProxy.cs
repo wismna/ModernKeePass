@@ -10,7 +10,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         string Name { get; }
         GroupEntity RootGroup { get; }
 
-        string RecycleBinId { get; set; }
+        GroupEntity RecycleBin { get; set; }
         string CipherId { get; set; }
         string KeyDerivationId { get; set; }
         string Compression { get; set; }
@@ -21,6 +21,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials);
         Task SaveDatabase();
         Task SaveDatabase(string filePath);
+        void SetRecycleBin(string id);
         Task UpdateCredentials(Credentials credentials);
         void CloseDatabase();
 

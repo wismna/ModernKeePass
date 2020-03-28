@@ -1,4 +1,4 @@
-﻿namespace ModernKeePass.Application.Common.Interfaces
+﻿namespace ModernKeePass.Domain.Interfaces
 {
     public interface ISelectableModel
     {
