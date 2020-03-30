@@ -20,7 +20,6 @@ namespace ModernKeePass.Infrastructure.KeePass
 {
     public class KeePassDatabaseClient: IDatabaseProxy
     {
-        private readonly ISettingsProxy _settings;
         private readonly IFileProxy _fileService;
         private readonly IMapper _mapper;
         private readonly IDateTime _dateTime;
@@ -77,9 +76,8 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
 
-        public KeePassDatabaseClient(ISettingsProxy settings, IFileProxy fileService, IMapper mapper, IDateTime dateTime)
+        public KeePassDatabaseClient(IFileProxy fileService, IMapper mapper, IDateTime dateTime)
         {
-            _settings = settings;
             _fileService = fileService;
             _mapper = mapper;
             _dateTime = dateTime;
@@ -111,17 +109,16 @@ namespace ModernKeePass.Infrastructure.KeePass
             return await Open(new FileInfo {Path = _fileAccessToken}, _credentials);
         }
 
-        public async Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials)
+        public async Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
         {
             var compositeKey = await CreateCompositeKey(credentials);
             var ioConnection = await BuildConnectionInfo(fileInfo);
 
             _pwDatabase.New(ioConnection, compositeKey);
 
-            var fileFormat = _settings.GetSetting<string>("DefaultFileFormat");
-            switch (fileFormat)
+            switch (version)
             {
-                case "4":
+                case DatabaseVersion.V4:
                     _pwDatabase.KdfParameters = KdfPool.Get("Argon2").GetDefaultParameters();
                     break;
             }

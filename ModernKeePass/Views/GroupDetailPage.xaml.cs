@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.ViewModels;
+using EntryVm = ModernKeePass.Application.Entry.Models.EntryVm;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
@@ -46,13 +47,13 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedTo(e);
-
+            
             var args = e.Parameter as PasswordEventArgs;
             if (args != null)
-                DataContext = args.RootGroup;
+                DataContext = new GroupVm(args.RootGroup);
             else
             {
-                var vm = e.Parameter as GroupVm;
+                var vm = e.Parameter as Application.Group.Models.GroupVm;
                 if (vm != null)
                     DataContext = vm;
             }
@@ -75,7 +76,7 @@ namespace ModernKeePass.Views
                 case -1:
                     return;
                 default:
-                    var group = listView?.SelectedItem as GroupVm;
+                    var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
                     Frame.Navigate(typeof(GroupDetailPage), group);
                     break;
             }

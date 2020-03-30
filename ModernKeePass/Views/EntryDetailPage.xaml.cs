@@ -42,8 +42,10 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedTo(e);
-            if (!(e.Parameter is EntryVm)) return;
-            DataContext = (EntryVm)e.Parameter;
+            /*if (!(e.Parameter is EntryVm)) return;
+            DataContext = (EntryVm)e.Parameter;*/
+            var args = e.Parameter as Application.Entry.Models.EntryVm;
+            if (args != null) DataContext = new EntryVm(args);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -67,7 +69,7 @@ namespace ModernKeePass.Views
                 case -1:
                     return;
                 default:
-                    var entry = listView?.SelectedItem as EntryVm;
+                    var entry = listView?.SelectedItem as Application.Entry.Models.EntryVm;
                     StackPanel.DataContext = entry;
                     TopGrid.DataContext = entry;
                     break;

@@ -1,6 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Interfaces;
+using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.Controls
 {

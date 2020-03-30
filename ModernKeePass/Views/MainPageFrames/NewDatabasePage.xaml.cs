@@ -66,12 +66,11 @@ namespace ModernKeePass.Views
 
         private async void ImportFileButton_OnClick(object sender, RoutedEventArgs e)
         {
-            var picker =
-                new FileOpenPicker
-                {
-                    ViewMode = PickerViewMode.List,
-                    SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-                };
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
             if (!string.IsNullOrEmpty(Model.ImportFileExtensionFilter))
                 picker.FileTypeFilter.Add(Model.ImportFileExtensionFilter);
 
@@ -80,10 +79,10 @@ namespace ModernKeePass.Views
             if (Model.ImportFile != null) ImportFileLink.Content = Model.ImportFile.Name;
         }
 
-        private void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
+        private async void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
         {
-            Model.PopulateInitialData(DatabaseService.Instance, new SettingsService(), new ImportService());
-            _mainFrame.Navigate(typeof(GroupDetailPage), DatabaseService.Instance.RootGroup);
+            var rootGroup = await Model.PopulateInitialData();
+            _mainFrame.Navigate(typeof(GroupDetailPage), rootGroup);
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
+using MediatR;
 using Microsoft.Xaml.Interactivity;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -10,6 +12,8 @@ namespace ModernKeePass.Actions
 {
     public class DeleteEntityAction : DependencyObject, IAction
     {
+        private readonly IMediator _mediator;
+
         public IVmEntity Entity
         {
             get { return (IVmEntity)GetValue(EntityProperty); }
@@ -30,15 +34,23 @@ namespace ModernKeePass.Actions
             DependencyProperty.Register("Command", typeof(ICommand), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
+        public DeleteEntityAction() : this(App.Mediator) { }
+
+        public DeleteEntityAction(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         public object Execute(object sender, object parameter)
         {
             var resource = new ResourcesService();
             var type = Entity is GroupVm ? "Group" : "Entry";
+            var isRecycleOnDelete = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult().IsRecycleBinEnabled;
 
-            var message = Entity.IsRecycleOnDelete
+            var message = isRecycleOnDelete
                 ? resource.GetResourceValue($"{type}RecyclingConfirmation")
                 : resource.GetResourceValue($"{type}DeletingConfirmation");
-            var text = Entity.IsRecycleOnDelete ? resource.GetResourceValue($"{type}Recycled") : resource.GetResourceValue($"{type}Deleted");
+            var text = isRecycleOnDelete ? resource.GetResourceValue($"{type}Recycled") : resource.GetResourceValue($"{type}Deleted");
             MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
                 resource.GetResourceValue("EntityDeleteActionButton"),
                 resource.GetResourceValue("EntityDeleteCancelButton"), a =>

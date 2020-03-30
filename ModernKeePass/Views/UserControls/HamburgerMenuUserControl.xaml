@@ -10,7 +10,7 @@
     xmlns:converters="using:ModernKeePass.Converters"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <converters:IntToSymbolConverter x:Key="IntToSymbolConverter"/>
+        <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
     </UserControl.Resources>
     <ListView
         ItemsSource="{Binding ItemsSource, ElementName=UserControl}"
@@ -26,7 +26,7 @@
             <x:Double x:Key="HamburgerMenuSize">300</x:Double>
             <DataTemplate x:Name="IsSpecial">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>
@@ -36,7 +36,7 @@
             </DataTemplate>
             <DataTemplate x:Name="IsNormal">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding IconId, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                         </ToolTipService.ToolTip>

@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Drawing;
 using AutoMapper;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Common.Mappings;
+using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.Application.Entry.Models
 {
-    public class EntryVm: IMapFrom<EntryEntity>
+    public class EntryVm: IEntityVm, IMapFrom<EntryEntity>
     {
+        public GroupVm ParentGroup { get; set; }
         public string Id { get; set; }
         public string Title { get; set; }
         public string Username { get; set; }
@@ -28,6 +31,7 @@ namespace ModernKeePass.Application.Entry.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<EntryEntity, EntryVm>()
+                .ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Username, opts => opts.MapFrom(s => s.UserName))

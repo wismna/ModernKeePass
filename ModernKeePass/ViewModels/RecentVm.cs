@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 

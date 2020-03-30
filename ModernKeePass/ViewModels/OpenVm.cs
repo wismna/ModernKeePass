@@ -7,29 +7,32 @@ namespace ModernKeePass.ViewModels
 {
     public class OpenVm: NotifyPropertyChangedBase
     {
+        private readonly IRecentService _recent;
         public bool IsFileSelected => DatabaseFile != null;
 
         public string Name => DatabaseFile?.DisplayName;
 
         public StorageFile DatabaseFile { get; private set; }
-        
-        internal void OpenFile(StorageFile file)
-        {
-            OpenFile(file, RecentService.Instance);
-        }
 
-        public void OpenFile(StorageFile file, IRecentService recent)
+        public OpenVm(): this(new RecentService()) { }
+
+        public OpenVm(IRecentService recent)
+        {
+            _recent = recent;
+        }
+        
+        public void OpenFile(StorageFile file)
         {
             DatabaseFile = file;
             OnPropertyChanged("Name");
             OnPropertyChanged("IsFileSelected");
             OnPropertyChanged("DatabaseFile");
-            AddToRecentList(file, recent);
+            AddToRecentList(file);
         }
         
-        private void AddToRecentList(StorageFile file, IRecentService recent)
+        private void AddToRecentList(StorageFile file)
         {
-            recent.Add(file, file.DisplayName);
+            _recent.Add(file, file.DisplayName);
         }
     }
 }

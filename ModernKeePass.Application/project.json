@@ -3,7 +3,7 @@
   "dependencies": {
     "Autofac": "4.9.4",
     "Autofac.Extensions.DependencyInjection": "4.4.0",
-    "AutoMapper": "6.1.1",
+    "AutoMapper": "6.0.2",
     "AutoMapper.Extensions.Microsoft.DependencyInjection": "2.0.1",
     "FluentValidation": "8.6.2",
     "MediatR": "3.0.1",

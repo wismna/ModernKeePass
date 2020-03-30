@@ -19,7 +19,6 @@ using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.ReOpenDatabase;
 using ModernKeePass.Common;
-using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Infrastructure;
 using ModernKeePass.Services;
@@ -58,6 +57,7 @@ namespace ModernKeePass
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddApplication();
             serviceCollection.AddInfrastructure();
+            serviceCollection.AddAppAutomapper();
             Services = serviceCollection.BuildServiceProvider();
             Mediator = Services.GetService<IMediator>();
         }
@@ -97,12 +97,7 @@ namespace ModernKeePass
                         if (file != null)
                         {
                             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-                            var fileInfo = new FileInfo
-                            {
-                                Name = file.DisplayName,
-                                Path = token
-                            };
-                            await Mediator.Send(new SaveDatabaseCommand { FileInfo = fileInfo });
+                            await Mediator.Send(new SaveDatabaseCommand { FilePath = token });
                         }
                     }, null);
             }

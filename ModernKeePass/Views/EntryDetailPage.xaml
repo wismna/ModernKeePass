@@ -18,9 +18,8 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
-        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushComplexityConverter" />
+        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroundBrushComplexityConverter" />
         <converters:ColorToBrushConverter x:Key="ColorToBrushConverter" />
-        <converters:IntToSymbolConverter x:Key="IntToSymbolConverter" />
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -429,7 +428,7 @@
                                 </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
-                        <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushComplexityConverter}}" />
+                        <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
                         <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
                         <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
                         <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" MaxLength="256" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsSelected}">
@@ -498,10 +497,10 @@
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding Icon, Converter={StaticResource IntToSymbolConverter}, ConverterParameter=0, Mode=TwoWay}" />
+                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
                 </Viewbox>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IntToSymbolConverter}}" Width="80" Height="40"  />
+                    <SymbolIcon Symbol="{Binding Icon}" Width="80" Height="40"  />
                 </Viewbox>
                 <TextBox Grid.Column="1" Grid.Row="0"
                     Text="{Binding Title, Mode=TwoWay}" 
@@ -525,7 +524,7 @@
             </Grid>
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2" 
-                RestoreButtonVisibility="{Binding ParentGroup.IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                RestoreButtonVisibility="{Binding CanRestore, Converter={StaticResource BooleanToVisibilityConverter}}" 
                 DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 SaveCommand="{Binding SaveCommand}"

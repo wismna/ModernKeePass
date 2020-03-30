@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
+using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.Application.Common.Interfaces
 {
@@ -18,7 +19,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         Task<GroupEntity> Open(FileInfo fileInfo, Credentials credentials);
         Task<GroupEntity> ReOpen();
-        Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials);
+        Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2);
         Task SaveDatabase();
         Task SaveDatabase(string filePath);
         void SetRecycleBin(string id);

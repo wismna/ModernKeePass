@@ -1,20 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ModernKeePass.ViewModels;
+using Windows.UI.Xaml.Controls;
+using ModernKeePass.Application.Group.Models;
 
 namespace ModernKeePass.Interfaces
 {
     public interface IVmEntity
     {
-        GroupVm ParentGroup { get; }
-        GroupVm PreviousGroup { get; }
-        int Icon { get; }
+        Symbol Icon { get; }
         string Id { get; }
         string Title { get; set; }
-        IEnumerable<IVmEntity> BreadCrumb { get; }
+        IEnumerable<GroupVm> BreadCrumb { get; }
         bool IsEditMode { get; }
-        bool IsRecycleOnDelete { get; }
 
         /// <summary>
         /// Save changes to Model

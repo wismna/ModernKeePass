@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Converters;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -28,8 +27,7 @@ namespace ModernKeePass.Views.UserControls
         public SymbolPickerUserControl()
         {
             InitializeComponent();
-            var converter = new IntToSymbolConverter();
-            Symbols = Enum.GetValues(typeof(Symbol)).Cast<Symbol>().Where(s => (int)converter.ConvertBack(s, null, null, string.Empty) != -1);
+            Symbols = Enum.GetValues(typeof(Symbol)).Cast<Symbol>();
         }
 
         private void ComboBox_OnLoaded(object sender, RoutedEventArgs e)

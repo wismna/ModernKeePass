@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Windows.Storage;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 

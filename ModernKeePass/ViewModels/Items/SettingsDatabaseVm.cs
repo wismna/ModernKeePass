@@ -2,10 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using MediatR;
-using ModernKeePass.Application.Cryptography.Models;
-using ModernKeePass.Application.Cryptography.Queries.GetCiphers;
-using ModernKeePass.Application.Cryptography.Queries.GetCompressions;
-using ModernKeePass.Application.Cryptography.Queries.GetKeyDerivations;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Parameters.Commands.SetCipher;
@@ -13,8 +9,12 @@ using ModernKeePass.Application.Parameters.Commands.SetCompression;
 using ModernKeePass.Application.Parameters.Commands.SetHasRecycleBin;
 using ModernKeePass.Application.Parameters.Commands.SetKeyDerivation;
 using ModernKeePass.Application.Parameters.Commands.SetRecycleBin;
+using ModernKeePass.Application.Parameters.Models;
+using ModernKeePass.Application.Parameters.Queries.GetCiphers;
+using ModernKeePass.Application.Parameters.Queries.GetCompressions;
+using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
 using ModernKeePass.Common;
-using ModernKeePass.Interfaces;
+using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
@@ -37,14 +37,14 @@ namespace ModernKeePass.ViewModels
 
         public bool IsNewRecycleBin
         {
-            get { return _database.RecycleBinId == null; }
+            get { return _database.RecycleBin == null; }
             set
             {
-                if (value) _mediator.Send(new SetRecycleBinCommand() { RecycleBinId = null }).GetAwaiter().GetResult();
+                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBin = null }).GetAwaiter().GetResult();
             }
         }
 
-        public ObservableCollection<GroupVm> Groups { get; set; }
+        public ObservableCollection<Application.Group.Models.GroupVm> Groups { get; set; }
 
         public IEnumerable<CipherVm> Ciphers => _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
         public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
@@ -119,7 +119,7 @@ namespace ModernKeePass.ViewModels
         {
             _mediator = mediator;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
-            //Groups = _database.RootGroup.SubGroups;
+            Groups = new ObservableCollection<Application.Group.Models.GroupVm>(_database.RootGroup.SubGroups);
         }
     }
 }

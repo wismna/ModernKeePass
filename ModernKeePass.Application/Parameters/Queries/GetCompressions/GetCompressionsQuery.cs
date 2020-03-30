@@ -3,7 +3,7 @@ using System.Linq;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 
-namespace ModernKeePass.Application.Cryptography.Queries.GetCompressions
+namespace ModernKeePass.Application.Parameters.Queries.GetCompressions
 {
     public class GetCompressionsQuery : IRequest<IEnumerable<string>>
     {

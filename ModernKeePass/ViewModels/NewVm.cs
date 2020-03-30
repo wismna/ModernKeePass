@@ -1,21 +1,20 @@
 ﻿using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.UI.Xaml.Controls;
 using MediatR;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
-using ModernKeePass.Converters;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.ImportFormats;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class NewVm : OpenVm
     {
         private readonly IMediator _mediator;
+        private readonly ISettingsService _settings;
         private string _importFormatHelp;
         public string Password { get; set; }
 
@@ -37,18 +36,19 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public NewVm(): this(App.Mediator) { }
+        public NewVm(): this(App.Mediator, new SettingsService()) { }
 
-        public NewVm(IMediator mediator)
+        public NewVm(IMediator mediator, ISettingsService settings)
         {
             _mediator = mediator;
+            _settings = settings;
         }
 
-        public async Task PopulateInitialData(ISettingsService settings, IImportService<IFormat> importService)
+        public async Task<Application.Group.Models.GroupVm> PopulateInitialData()
         {
             var database = await _mediator.Send(new GetDatabaseQuery());
-            if (settings.GetSetting<bool>("Sample") && !IsImportChecked) await CreateSampleData(database.RootGroup);
-            else if (IsImportChecked && ImportFile != null && ! (ImportFormat is NullImportFormat)) importService.Import(ImportFormat, ImportFile, database.RootGroup);
+            if (_settings.GetSetting<bool>("Sample") && !IsImportChecked) await CreateSampleData(database.RootGroup);
+            return database.RootGroup;
         }
 
         private async Task CreateSampleData(Application.Group.Models.GroupVm group)

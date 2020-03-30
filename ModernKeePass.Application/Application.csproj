@@ -42,6 +42,7 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
+    <Compile Include="Common\Interfaces\IEntityVm.cs" />
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
     <Compile Include="Common\Interfaces\IImportFormat.cs" />
     <Compile Include="Common\Interfaces\IPasswordProxy.cs" />

@@ -1,27 +1,29 @@
 ﻿using System.Collections.Generic;
-using AutoMapper;
+using System.Linq;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Cryptography.Models;
+using ModernKeePass.Application.Parameters.Models;
 
-namespace ModernKeePass.Application.Cryptography.Queries.GetCiphers
+namespace ModernKeePass.Application.Parameters.Queries.GetCiphers
 {
     public class GetCiphersQuery: IRequest<IEnumerable<CipherVm>>
     {
         public class GetCiphersQueryHandler: IRequestHandler<GetCiphersQuery, IEnumerable<CipherVm>>
         {
             private readonly ICryptographyClient _cryptography;
-            private readonly IMapper _mapper;
 
-            public GetCiphersQueryHandler(ICryptographyClient cryptography, IMapper mapper)
+            public GetCiphersQueryHandler(ICryptographyClient cryptography)
             {
                 _cryptography = cryptography;
-                _mapper = mapper;
             }
 
             public IEnumerable<CipherVm> Handle(GetCiphersQuery message)
             {
-                yield return _mapper.Map<CipherVm>(_cryptography.Ciphers);
+                return _cryptography.Ciphers.Select(c => new CipherVm
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                });
             }
         }
     }

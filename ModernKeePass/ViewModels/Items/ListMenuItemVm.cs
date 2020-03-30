@@ -1,6 +1,7 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels

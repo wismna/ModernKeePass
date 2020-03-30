@@ -23,15 +23,18 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
             {
                 var database = new DatabaseVm
                 {
-                    IsOpen = _databaseProxy.IsOpen,
-                    Name = _databaseProxy.Name,
-                    RootGroup = _mapper.Map<GroupVm>(_databaseProxy.RootGroup),
-                    IsRecycleBinEnabled = _databaseProxy.IsRecycleBinEnabled,
-                    RecycleBin = _mapper.Map<GroupVm>(_databaseProxy.RecycleBin),
-                    Compression = _databaseProxy.Compression,
-                    CipherId = _databaseProxy.CipherId,
-                    KeyDerivationId = _databaseProxy.CipherId
+                    IsOpen = _databaseProxy.IsOpen
                 };
+                if (database.IsOpen)
+                {
+                    database.Name = _databaseProxy.Name;
+                    database.RootGroup = _mapper.Map<GroupVm>(_databaseProxy.RootGroup);
+                    database.IsRecycleBinEnabled = _databaseProxy.IsRecycleBinEnabled;
+                    database.RecycleBin = _mapper.Map<GroupVm>(_databaseProxy.RecycleBin);
+                    database.Compression = _databaseProxy.Compression;
+                    database.CipherId = _databaseProxy.CipherId;
+                    database.KeyDerivationId = _databaseProxy.CipherId;
+                }
                 return database;
             }
         }

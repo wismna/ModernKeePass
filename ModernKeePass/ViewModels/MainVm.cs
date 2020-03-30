@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Controls;
 using MediatR;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
 using ModernKeePass.Views;

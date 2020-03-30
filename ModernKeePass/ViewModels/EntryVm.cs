@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.Xaml.Controls;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
+using ModernKeePass.Application.Group.Commands.AddEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteEntry;
+using ModernKeePass.Application.Group.Commands.RemoveEntry;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Common;
@@ -34,8 +37,23 @@ namespace ModernKeePass.ViewModels
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
         public string Id => _entry.Id;
-        public bool IsRecycleOnDelete => _database.IsRecycleBinEnabled && !ParentGroup.IsSelected;
-        public IEnumerable<IVmEntity> BreadCrumb => new List<IVmEntity>(ParentGroup.BreadCrumb) {ParentGroup};
+
+        public IEnumerable<Application.Group.Models.GroupVm> BreadCrumb
+        {
+            get
+            {
+                var groups = new Stack<Application.Group.Models.GroupVm>();
+                var group = _entry.ParentGroup;
+                while (group.ParentGroup != null)
+                {
+                    group = group.ParentGroup;
+                    groups.Push(group);
+                }
+
+                return groups;
+            }
+        }
+
         /// <summary>
         /// Determines if the Entry is current or from history
         /// </summary>
@@ -87,12 +105,12 @@ namespace ModernKeePass.ViewModels
             set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Notes), FieldValue = value }); }
         }
 
-        public int Icon
+        public Symbol Icon
         {
             get
             {
-                if (HasExpired) return (int)Domain.Enums.Icon.ReportHacked;
-                return (int) _entry.Icon;
+                if (HasExpired) return Symbol.ReportHacked;
+                return (Symbol) _entry.Icon;
             }
             set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Icon), FieldValue = value }); }
         }
@@ -156,20 +174,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public IEnumerable<IVmEntity> History
-        {
-            get
-            {
-                var history = new Stack<EntryVm>();
-                foreach (var historyEntry in _entry.History)
-                {
-                    history.Push(new EntryVm(historyEntry, ParentGroup) {IsSelected = false});
-                }
-                history.Push(this);
-
-                return history;
-            }
-        }
+        public IEnumerable<Application.Entry.Models.EntryVm> History => _entry.History;
 
 
         public Color? BackgroundColor
@@ -190,6 +195,8 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public bool CanRestore => _entry.ParentGroup == _database.RecycleBin;
+
         public ICommand SaveCommand { get; }
         public ICommand GeneratePasswordCommand { get; }
         public ICommand UndoDeleteCommand { get; }
@@ -197,7 +204,7 @@ namespace ModernKeePass.ViewModels
         private readonly Application.Entry.Models.EntryVm _entry;
         private readonly IMediator _mediator;
         private readonly IResourceService _resource;
-        private DatabaseVm _database;
+        private readonly DatabaseVm _database;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
@@ -205,18 +212,20 @@ namespace ModernKeePass.ViewModels
 
         public EntryVm() { }
         
-        internal EntryVm(Application.Entry.Models.EntryVm entry, Application.Group.Models.GroupVm parent) : this(entry, parent, App.Mediator, new ResourcesService()) { }
+        internal EntryVm(Application.Entry.Models.EntryVm entry, bool isNewEntry = false) : this(entry, App.Mediator, new ResourcesService(), isNewEntry) { }
 
-        public EntryVm(Application.Entry.Models.EntryVm entry, Application.Group.Models.GroupVm parent, IMediator mediator, IResourceService resource)
+        public EntryVm(Application.Entry.Models.EntryVm entry, IMediator mediator, IResourceService resource, bool isNewEntry = false)
         {
             _entry = entry;
             _mediator = mediator;
             _resource = resource;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
+            _isEditMode = isNewEntry;
+            if (isNewEntry) GeneratePassword().GetAwaiter().GetResult();
 
             SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
-            UndoDeleteCommand = new RelayCommand(async () => await Move(PreviousGroup), () => PreviousGroup != null);
+            UndoDeleteCommand = new RelayCommand(async () => await Move(entry.ParentGroup), () => _entry.ParentGroup != null);
         }
         
         public async Task GeneratePassword()
@@ -242,20 +251,18 @@ namespace ModernKeePass.ViewModels
         {
             if (_database.IsRecycleBinEnabled && _database.RecycleBin == null)
                 await _mediator.Send(new CreateGroupCommand { ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
-            await Move(_database.IsRecycleBinEnabled && !ParentGroup.IsSelected ? _database.RecycleBin : null);
+            await Move(_database.IsRecycleBinEnabled && _entry.ParentGroup == _database.RecycleBin ? _database.RecycleBin : null);
         }
         
         public async Task Move(Application.Group.Models.GroupVm destination)
         {
-            PreviousGroup = ParentGroup;
-            PreviousGroup.Entries.Remove(this);
+            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _entry.ParentGroup, Entry = _entry });
             if (destination == null)
             {
                 await _mediator.Send(new DeleteEntryCommand { Entry = _entry });
                 return;
             }
-            ParentGroup = destination;
-            ParentGroup.Entries.Add(this);
+            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
         }
         
         public async Task CommitDelete()

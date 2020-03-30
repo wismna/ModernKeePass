@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using AutoMapper;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Infrastructure.Common;
@@ -13,9 +11,6 @@ namespace ModernKeePass.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
-            services.AddAutoMapper(assembly);
-
             services.AddSingleton(typeof(IDatabaseProxy), typeof(KeePassDatabaseClient));
             services.AddTransient(typeof(ICryptographyClient), typeof(KeePassCryptographyClient));
             services.AddTransient(typeof(IPasswordProxy), typeof(KeePassPasswordClient));

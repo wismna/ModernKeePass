@@ -5,11 +5,11 @@ using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.Converters
 {
-    public class IntToSymbolConverter : IValueConverter
+    public class IconToSymbolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var icon = (Icon) value;
+            var icon = (Icon)value;
             switch (icon)
             {
                 case Icon.Delete: return Symbol.Delete;
@@ -67,7 +67,7 @@ namespace ModernKeePass.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            var symbol = (Symbol) value;
+            var symbol = (Symbol)value;
             var defaultIcon = parameter != null ? int.Parse(parameter as string) : -1;
             switch (symbol)
             {

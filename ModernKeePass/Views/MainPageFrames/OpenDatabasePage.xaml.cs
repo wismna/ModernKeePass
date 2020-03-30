@@ -33,12 +33,11 @@ namespace ModernKeePass.Views
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            var picker =
-                new FileOpenPicker
-                {
-                    ViewMode = PickerViewMode.List,
-                    SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-                };
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
             picker.FileTypeFilter.Add(".kdbx");
             
             // Application now has read/write access to the picked file
