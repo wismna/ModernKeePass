@@ -13,6 +13,7 @@ namespace ModernKeePass.Application.Entry.Models
     public class EntryVm: IEntityVm, IMapFrom<EntryEntity>
     {
         public GroupVm ParentGroup { get; set; }
+        public List<GroupVm> Breadcrumb { get; } = new List<GroupVm>();
         public string Id { get; set; }
         public string Title { get; set; }
         public string Username { get; set; }
@@ -24,14 +25,19 @@ namespace ModernKeePass.Application.Entry.Models
         public Icon Icon { get; set; }
         public Color ForegroundColor { get; set; }
         public Color BackgroundColor { get; set; }
-        public bool HasExpirationDate { get; internal set; }
-        public DateTimeOffset ExpirationDate { get; internal set; }
-        public DateTimeOffset ModificationDate { get; internal set; }
+        public bool HasExpirationDate { get; set; }
+        public DateTimeOffset ExpirationDate { get; set; }
+        public DateTimeOffset ModificationDate { get; set; }
+
+        public override string ToString()
+        {
+            return ModificationDate.ToString("g");
+        }
 
         public void Mapping(Profile profile)
         {
             profile.CreateMap<EntryEntity, EntryVm>()
-                .ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
+                //.ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Username, opts => opts.MapFrom(s => s.UserName))

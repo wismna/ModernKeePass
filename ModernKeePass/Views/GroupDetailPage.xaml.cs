@@ -55,7 +55,7 @@ namespace ModernKeePass.Views
             {
                 var vm = e.Parameter as Application.Group.Models.GroupVm;
                 if (vm != null)
-                    DataContext = vm;
+                    DataContext = new GroupVm(vm);
             }
         }
 
@@ -103,13 +103,13 @@ namespace ModernKeePass.Views
                 e.DestinationItem.Item = e.SourceItem.Item;
             }
         }
-        private void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
+        private async void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(EntryDetailPage), Model.AddNewEntry());
+            Frame.Navigate(typeof(EntryDetailPage), await Model.AddNewEntry());
         }
-        private void CreateGroup_ButtonClick(object sender, RoutedEventArgs e)
+        private async void CreateGroup_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(GroupDetailPage), Model.AddNewGroup());
+            Frame.Navigate(typeof(GroupDetailPage), await Model.AddNewGroup());
         }
 
         private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)

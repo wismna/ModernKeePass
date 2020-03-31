@@ -16,9 +16,9 @@ using ModernKeePass.Application.Group.Commands.RemoveEntry;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
@@ -38,21 +38,7 @@ namespace ModernKeePass.ViewModels
         public string CustomChars { get; set; } = string.Empty;
         public string Id => _entry.Id;
 
-        public IEnumerable<Application.Group.Models.GroupVm> BreadCrumb
-        {
-            get
-            {
-                var groups = new Stack<Application.Group.Models.GroupVm>();
-                var group = _entry.ParentGroup;
-                while (group.ParentGroup != null)
-                {
-                    group = group.ParentGroup;
-                    groups.Push(group);
-                }
-
-                return groups;
-            }
-        }
+        public IEnumerable<Application.Group.Models.GroupVm> BreadCrumb => _entry.Breadcrumb;
 
         /// <summary>
         /// Determines if the Entry is current or from history
@@ -72,14 +58,21 @@ namespace ModernKeePass.ViewModels
         public string Title
         {
             get { return _entry.Title; }
-            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Title), FieldValue = value}); }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Title), FieldValue = value}).Wait();
+                _entry.Title = value;
+            }
         }
-
 
         public string UserName
         {
             get { return _entry.Username; }
-            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(UserName), FieldValue = value }); }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(UserName), FieldValue = value }).Wait();
+                _entry.Username = value;
+            }
         }
 
         public string Password
@@ -87,7 +80,8 @@ namespace ModernKeePass.ViewModels
             get { return _entry.Password; }
             set
             {
-                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Password), FieldValue = value });
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Password), FieldValue = value }).Wait();
+                _entry.Password = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PasswordComplexityIndicator));
             }
@@ -95,14 +89,22 @@ namespace ModernKeePass.ViewModels
         
         public string Url
         {
-            get { return _entry.Url.ToString();}
-            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Url), FieldValue = value }); }
+            get { return _entry.Url?.ToString(); }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Url), FieldValue = value }).Wait();
+                _entry.Url = new Uri(value);
+            }
         }
 
         public string Notes
         {
             get { return _entry.Notes; }
-            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Notes), FieldValue = value }); }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Notes), FieldValue = value }).Wait();
+                _entry.Notes = value;
+            }
         }
 
         public Symbol Icon
@@ -112,7 +114,11 @@ namespace ModernKeePass.ViewModels
                 if (HasExpired) return Symbol.ReportHacked;
                 return (Symbol) _entry.Icon;
             }
-            set { _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Icon), FieldValue = value }); }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(Icon), FieldValue = value }).Wait();
+                _entry.Icon = (Icon)value;
+            }
         }
 
         public DateTimeOffset ExpiryDate
@@ -121,7 +127,8 @@ namespace ModernKeePass.ViewModels
             set
             {
                 if (!HasExpirationDate) return;
-                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = value.Date });
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = value.Date }).Wait();
+                _entry.ExpirationDate = value.Date;
             }
         }
 
@@ -131,9 +138,48 @@ namespace ModernKeePass.ViewModels
             set
             {
                 if (!HasExpirationDate) return;
-                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = ExpiryDate.Date.Add(value) });
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = "ExpirationDate", FieldValue = ExpiryDate.Date.Add(value) }).Wait();
+                _entry.ExpirationDate = _entry.ExpirationDate.Date.Add(value);
             }
         }
+        
+        public bool HasExpirationDate
+        {
+            get { return _entry.HasExpirationDate; }
+            set
+            {
+                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(HasExpirationDate), FieldValue = value }).Wait();
+                _entry.HasExpirationDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Color? BackgroundColor
+        {
+            get { return _entry?.BackgroundColor; }
+            set
+            {
+                if (value != null)
+                {
+                    _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(BackgroundColor), FieldValue = value }).Wait();
+                    _entry.BackgroundColor = (Color)value;
+                }
+            }
+        }
+
+        public Color? ForegroundColor
+        {
+            get { return _entry?.ForegroundColor; }
+            set
+            {
+                if (value != null)
+                {
+                    _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(ForegroundColor), FieldValue = value }).Wait();
+                    _entry.ForegroundColor = (Color)value;
+                }
+            }
+        }
+        public IEnumerable<Application.Entry.Models.EntryVm> History => _entry.History;
 
         public bool IsEditMode
         {
@@ -164,36 +210,6 @@ namespace ModernKeePass.ViewModels
                 OnPropertyChanged();
             }
         }
-        public bool HasExpirationDate
-        {
-            get { return _entry.HasExpirationDate; }
-            set
-            {
-                _mediator.Send(new SetFieldValueCommand {EntryId = Id, FieldName = nameof(HasExpirationDate), FieldValue = value});
-                OnPropertyChanged();
-            }
-        }
-
-        public IEnumerable<Application.Entry.Models.EntryVm> History => _entry.History;
-
-
-        public Color? BackgroundColor
-        {
-            get { return _entry?.BackgroundColor; }
-            set
-            {
-                if (value != null) _entry.BackgroundColor = (Color) value;
-            }
-        }
-
-        public Color? ForegroundColor
-        {
-            get { return _entry?.ForegroundColor; }
-            set
-            {
-                if (value != null) _entry.ForegroundColor = (Color)value;
-            }
-        }
 
         public bool CanRestore => _entry.ParentGroup == _database.RecycleBin;
 
@@ -203,7 +219,6 @@ namespace ModernKeePass.ViewModels
         
         private readonly Application.Entry.Models.EntryVm _entry;
         private readonly IMediator _mediator;
-        private readonly IResourceService _resource;
         private readonly DatabaseVm _database;
         private bool _isEditMode;
         private bool _isRevealPassword;
@@ -212,13 +227,12 @@ namespace ModernKeePass.ViewModels
 
         public EntryVm() { }
         
-        internal EntryVm(Application.Entry.Models.EntryVm entry, bool isNewEntry = false) : this(entry, App.Mediator, new ResourcesService(), isNewEntry) { }
+        internal EntryVm(Application.Entry.Models.EntryVm entry, bool isNewEntry = false) : this(entry, App.Mediator, isNewEntry) { }
 
-        public EntryVm(Application.Entry.Models.EntryVm entry, IMediator mediator, IResourceService resource, bool isNewEntry = false)
+        public EntryVm(Application.Entry.Models.EntryVm entry, IMediator mediator, bool isNewEntry = false)
         {
             _entry = entry;
             _mediator = mediator;
-            _resource = resource;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             _isEditMode = isNewEntry;
             if (isNewEntry) GeneratePassword().GetAwaiter().GetResult();
@@ -246,7 +260,6 @@ namespace ModernKeePass.ViewModels
             OnPropertyChanged(nameof(IsRevealPasswordEnabled));
         }
 
-        
         public async Task MarkForDelete(string recycleBinTitle)
         {
             if (_database.IsRecycleBinEnabled && _database.RecycleBin == null)
@@ -273,13 +286,6 @@ namespace ModernKeePass.ViewModels
         public Application.Entry.Models.EntryVm GetEntry()
         {
             return _entry;
-        }
-        
-        public override string ToString()
-        {
-            return IsSelected ? 
-                _resource.GetResourceValue("EntryCurrent") : 
-                _entry.ModificationDate.ToString("g");
         }
     }
 }

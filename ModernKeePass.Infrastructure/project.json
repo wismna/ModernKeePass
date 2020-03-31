@@ -1,8 +1,7 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "AutoMapper": "6.0.2",
-    "AutoMapper.Extensions.Microsoft.DependencyInjection": "2.0.1",
+    "AutoMapper": "5.2.0",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "ModernKeePassLib": "2.44.2",
     "NETStandard.Library": "2.0.3"

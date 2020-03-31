@@ -103,21 +103,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isMenuClosed, value); }
         }
 
-        public IEnumerable<Application.Group.Models.GroupVm> BreadCrumb
-        {
-            get
-            {
-                var groups = new Stack<Application.Group.Models.GroupVm>();
-                var group = _group;
-                while (group.ParentGroup != null)
-                {
-                    group = group.ParentGroup;
-                    groups.Push(group);
-                }
-                
-                return groups;
-            }
-        }
+        public IEnumerable<Application.Group.Models.GroupVm> BreadCrumb => _group.Breadcrumb;
 
         public ICommand SaveCommand { get; }
         public ICommand SortEntriesCommand { get; }
@@ -208,11 +194,6 @@ namespace ModernKeePass.ViewModels
         public async Task CommitDelete()
         {
             await _mediator.Send(new DeleteGroupCommand { Group = _group });
-        }
-        
-        public override string ToString()
-        {
-            return Title;
         }
 
         private async Task SortEntriesAsync()

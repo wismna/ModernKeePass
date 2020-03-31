@@ -42,7 +42,6 @@
   <ItemGroup>
     <Compile Include="Common\MachineDateTime.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="InfrastructureModule.cs" />
     <Compile Include="File\CsvImportFormat.cs" />
     <Compile Include="KeePass\EntryFieldMapper.cs" />
     <Compile Include="KeePass\EntryMappingProfile.cs" />

@@ -39,7 +39,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationModule.cs" />
     <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
     <Compile Include="Common\Interfaces\IEntityVm.cs" />

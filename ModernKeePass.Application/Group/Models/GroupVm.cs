@@ -16,10 +16,11 @@ namespace ModernKeePass.Application.Group.Models
         public string Id { get; set; }
         public string Title { get; set; }
         public Icon Icon { get; set; }
+        public List<GroupVm> Breadcrumb { get; } = new List<GroupVm>();
         public List<GroupVm> SubGroups { get; set; }
         public List<EntryVm> Entries { get; set; }
         public bool IsSelected { get; set; }
-
+        
         public override string ToString()
         {
             return Title;
@@ -28,12 +29,12 @@ namespace ModernKeePass.Application.Group.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<GroupEntity, GroupVm>()
-                .ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
+                //.ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
-                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon))
-                .ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries.OrderBy(e => e.Name)))
-                .ForMember(d => d.SubGroups, opts => opts.MapFrom(s => s.SubGroups));
+                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon));
+                //.ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries.OrderBy(e => e.Name)))
+                //.ForMember(d => d.SubGroups, opts => opts.MapFrom(s => s.SubGroups));
         }
 
     }

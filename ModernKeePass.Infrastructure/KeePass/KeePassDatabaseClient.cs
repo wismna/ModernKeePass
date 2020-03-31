@@ -95,7 +95,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 _credentials = credentials;
                 _fileAccessToken = fileInfo.Path;
 
-                RootGroup = _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+                RootGroup = BuildHierarchy(null, _pwDatabase.RootGroup);
                 return RootGroup;
             }
             catch (InvalidCompositeKeyException ex)
@@ -125,7 +125,7 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             _fileAccessToken = fileInfo.Path;
 
-            RootGroup = _mapper.Map<GroupEntity>(_pwDatabase.RootGroup);
+            RootGroup = BuildHierarchy(null, _pwDatabase.RootGroup);
             return RootGroup;
         }
 
@@ -337,7 +337,29 @@ namespace ModernKeePass.Infrastructure.KeePass
             var fileContents = await _fileService.OpenBinaryFile(fileInfo.Path);
             return IOConnectionInfo.FromByteArray(fileContents);
         }
-        
+        private GroupEntity BuildHierarchy(GroupEntity parentGroup, PwGroup pwGroup)
+        {
+            var group = _mapper.Map<GroupEntity>(pwGroup);
+            group.Parent = parentGroup;
+            group.Entries = pwGroup.Entries.Select(e =>
+            {
+                var entry = _mapper.Map<EntryEntity>(e);
+                entry.Parent = group;
+                return entry;
+            }).ToList();
+            group.SubGroups = pwGroup.Groups.Select(g => BuildHierarchy(group, g)).ToList();
+
+            /*var group = new GroupEntity
+            {
+                Id = pwGroup.Uuid.ToHexString(),
+                Name = pwGroup.Name,
+                Icon = IconMapper.MapPwIconToIcon(pwGroup.IconId),
+                Entries = pwGroup.Entries.Select(e => _mapper.Map<EntryEntity>(e)).ToList(),
+                SubGroups = pwGroup.Groups.Select(BuildHierarchy).ToList()
+            };*/
+            return group;
+        }
+
         private PwUuid BuildIdFromString(string id)
         {
             return new PwUuid(MemUtil.HexStringToByteArray(id));

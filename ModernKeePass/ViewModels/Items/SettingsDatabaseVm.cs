@@ -30,7 +30,7 @@ namespace ModernKeePass.ViewModels
             get { return _database.IsRecycleBinEnabled; }
             set
             {
-                _mediator.Send(new SetHasRecycleBinCommand {HasRecycleBin = value}).GetAwaiter().GetResult();
+                _mediator.Send(new SetHasRecycleBinCommand {HasRecycleBin = value}).Wait();
                 OnPropertyChanged(nameof(HasRecycleBin));
             }
         }
@@ -40,7 +40,7 @@ namespace ModernKeePass.ViewModels
             get { return _database.RecycleBin == null; }
             set
             {
-                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBin = null }).GetAwaiter().GetResult();
+                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBin = null }).Wait();
             }
         }
 
@@ -53,19 +53,19 @@ namespace ModernKeePass.ViewModels
         public CipherVm SelectedCipher
         {
             get { return Ciphers.FirstOrDefault(c => c.Id == _database.CipherId); }
-            set { _mediator.Send(new SetCipherCommand {CipherId = value.Id}).GetAwaiter().GetResult(); }
+            set { _mediator.Send(new SetCipherCommand {CipherId = value.Id}).Wait(); }
         }
 
         public string SelectedCompression
         {
             get { return Compressions.FirstOrDefault(c => c == _database.Compression); }
-            set { _mediator.Send(new SetCompressionCommand {Compression = value}).GetAwaiter().GetResult(); }
+            set { _mediator.Send(new SetCompressionCommand {Compression = value}).Wait(); }
         }
 
         public KeyDerivationVm SelectedKeyDerivation
         {
             get { return KeyDerivations.FirstOrDefault(c => c.Id == _database.KeyDerivationId); }
-            set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).GetAwaiter().GetResult(); }
+            set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).Wait(); }
         }
 
         /*public int CipherIndex

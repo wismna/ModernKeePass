@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Services;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Interfaces;
@@ -27,7 +26,7 @@ namespace ModernKeePass.KeePassDatabaseTests
         [SetUp]
         public void SetUp()
         {
-            var settingsService = Substitute.For<ISettingsService>();
+            var dateTime = Substitute.For<IDateTime>();
             var fileProxy = Substitute.For<IFileProxy>();
             fileProxy.OpenBinaryFile(Arg.Any<string>()).Returns(async parameters =>
             {
@@ -42,9 +41,8 @@ namespace ModernKeePass.KeePassDatabaseTests
                 var contents = (byte[]) parameters[1];
                 await stream.WriteAsync(contents, 0, contents.Length);
             });
-            var fileService = new FileService(fileProxy);
             var mapper = new Mapper(new MapperConfiguration(cfg => { cfg.AddProfile(typeof(EntryMappingProfile)); }));
-            _database = new KeePassDatabaseClient(settingsService, fileService, mapper);
+            _database = new KeePassDatabaseClient(fileProxy, mapper, dateTime);
         }
 
         [TearDown]
@@ -57,12 +55,12 @@ namespace ModernKeePass.KeePassDatabaseTests
         [Test]
         public async Task TestOpen()
         {
-            var FileInfo = new FileInfo
+            var fileInfo = new FileInfo
             {
                 Path = Path.Combine(Directory.GetCurrentDirectory(), "Data", "TestDatabase.kdbx")
             };
 
-            var rootGroup = await _database.Open(FileInfo, _credentials);
+            var rootGroup = await _database.Open(fileInfo, _credentials);
             Assert.That(rootGroup.Name, Is.EqualTo("TestDatabase"));
             Assert.That(rootGroup.Entries.Count(), Is.EqualTo(2));
         }
@@ -95,7 +93,7 @@ namespace ModernKeePass.KeePassDatabaseTests
             };
 
             await _database.Open(originalFileInfo, _credentials);
-            await _database.SaveDatabase(_fileInfo);
+            await _database.SaveDatabase(_fileInfo.Path);
             _database.CloseDatabase();
 
             Assert.DoesNotThrowAsync(async () => { await _database.Open(_fileInfo, _credentials); });
@@ -115,8 +113,8 @@ namespace ModernKeePass.KeePassDatabaseTests
             var newGroup = new GroupEntity {Name = "New Group Test"};
 
             var rootGroup = await _database.Open(originalFileInfo, _credentials);
-            await _database.AddEntity(rootGroup, newGroup);
-            await _database.SaveDatabase(_fileInfo);
+            await _database.AddGroup(rootGroup.Id, newGroup.Id);
+            await _database.SaveDatabase(_fileInfo.Path);
             _database.CloseDatabase();
             rootGroup = await _database.Open(_fileInfo, _credentials);
 
@@ -142,8 +140,8 @@ namespace ModernKeePass.KeePassDatabaseTests
             };
 
             var rootGroup = await _database.Open(originalFileInfo, _credentials);
-            await _database.AddEntity(rootGroup, newEntry);
-            await _database.SaveDatabase(_fileInfo);
+            await _database.AddEntry(rootGroup.Id, newEntry.Id);
+            await _database.SaveDatabase(_fileInfo.Path);
             _database.CloseDatabase();
             rootGroup = await _database.Open(_fileInfo, _credentials);
 
