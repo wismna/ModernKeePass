@@ -11,7 +11,6 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Group.Commands.AddEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
-using ModernKeePass.Application.Group.Commands.DeleteEntry;
 using ModernKeePass.Application.Group.Commands.RemoveEntry;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
@@ -266,18 +265,9 @@ namespace ModernKeePass.ViewModels
         public async Task Move(Application.Group.Models.GroupVm destination)
         {
             await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
-            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _entry.ParentGroup, Entry = _entry });
-            if (destination == null)
-            {
-                await _mediator.Send(new DeleteEntryCommand { Entry = _entry });
-            }
+            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _entry.ParentGroup, Entry = _entry, IsDelete = true });
         }
-        
-        public async Task CommitDelete()
-        {
-            await _mediator.Send(new DeleteEntryCommand {Entry = _entry});
-        }
-        
+
         public Application.Entry.Models.EntryVm GetEntry()
         {
             return _entry;

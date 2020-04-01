@@ -6,7 +6,6 @@ namespace ModernKeePass.Domain.Entities
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public GroupEntity ParentGroup { get; set; }
         public string ParentId { get; set; }
         public DateTimeOffset LastModificationDate { get; set; }
     }

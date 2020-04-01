@@ -13,7 +13,6 @@ using ModernKeePass.Application.Group.Commands.AddEntry;
 using ModernKeePass.Application.Group.Commands.AddGroup;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
-using ModernKeePass.Application.Group.Commands.DeleteGroup;
 using ModernKeePass.Application.Group.Commands.InsertEntry;
 using ModernKeePass.Application.Group.Commands.RemoveEntry;
 using ModernKeePass.Application.Group.Commands.RemoveGroup;
@@ -182,16 +181,7 @@ namespace ModernKeePass.ViewModels
         public async Task Move(Application.Group.Models.GroupVm destination)
         {
             await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group});
-            await _mediator.Send(new RemoveGroupCommand {ParentGroup = _group.ParentGroup, Group = _group});
-            if (destination == null)
-            {
-                await _mediator.Send(new DeleteGroupCommand { Group = _group });
-            }
-        }
-
-        public async Task CommitDelete()
-        {
-            await _mediator.Send(new DeleteGroupCommand { Group = _group });
+            await _mediator.Send(new RemoveGroupCommand {ParentGroup = _group.ParentGroup, Group = _group, IsDelete = true });
         }
 
         private async Task SortEntriesAsync()

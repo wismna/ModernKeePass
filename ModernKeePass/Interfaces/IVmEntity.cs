@@ -28,10 +28,6 @@ namespace ModernKeePass.Interfaces
         /// <param name="destination">The destination to move the entity to</param>
         Task Move(GroupVm destination);
         /// <summary>
-        /// Delete from Model
-        /// </summary>
-        Task CommitDelete();
-        /// <summary>
         /// Delete from ViewModel
         /// </summary>
         Task MarkForDelete(string recycleBinTitle);

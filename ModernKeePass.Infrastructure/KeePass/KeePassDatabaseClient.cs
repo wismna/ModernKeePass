@@ -30,7 +30,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         // Main information
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
         public string Name => _pwDatabase?.Name;
-        public GroupEntity RootGroup { get; private set; }
+        public string RootGroupId => _pwDatabase?.RootGroup.Uuid.ToHexString();
 
         // Settings
         public bool IsRecycleBinEnabled
@@ -39,19 +39,18 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.RecycleBinEnabled = value; }
         }
 
-        public GroupEntity RecycleBin 
+        public string RecycleBinId 
         {
             get 
             {
                 if (_pwDatabase.RecycleBinEnabled)
                 {
-                    var pwGroup = _pwDatabase.RootGroup.FindGroup(_pwDatabase.RecycleBinUuid, true);
-                    return _mapper.Map<GroupEntity>(pwGroup);
+                    return _pwDatabase.RecycleBinUuid.ToHexString();
                 }
 
                 return null;
             }
-            set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value.Id); }
+            set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value); }
         }
 
         public string CipherId
@@ -83,7 +82,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             _dateTime = dateTime;
         }
 
-        public async Task<GroupEntity> Open(FileInfo fileInfo, Credentials credentials)
+        public async Task Open(FileInfo fileInfo, Credentials credentials)
         {
             try
             {
@@ -94,9 +93,6 @@ namespace ModernKeePass.Infrastructure.KeePass
 
                 _credentials = credentials;
                 _fileAccessToken = fileInfo.Path;
-
-                RootGroup = BuildHierarchy(null, _pwDatabase.RootGroup);
-                return RootGroup;
             }
             catch (InvalidCompositeKeyException ex)
             {
@@ -104,12 +100,12 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
         }
 
-        public async Task<GroupEntity> ReOpen()
+        public async Task ReOpen()
         {
-            return await Open(new FileInfo {Path = _fileAccessToken}, _credentials);
+            await Open(new FileInfo {Path = _fileAccessToken}, _credentials);
         }
 
-        public async Task<GroupEntity> Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
+        public async Task Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
         {
             var compositeKey = await CreateCompositeKey(credentials);
             var ioConnection = await BuildConnectionInfo(fileInfo);
@@ -124,9 +120,6 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
 
             _fileAccessToken = fileInfo.Path;
-
-            RootGroup = BuildHierarchy(null, _pwDatabase.RootGroup);
-            return RootGroup;
         }
 
         public async Task SaveDatabase()
@@ -201,23 +194,33 @@ namespace ModernKeePass.Infrastructure.KeePass
                 parentPwGroup.Groups.Add(pwGroup);
             });
         }
-        public async Task RemoveEntry(string parentGroupId, string entryId)
+        public async Task RemoveEntry(string parentGroupId, string entryId, bool isToBeDeleted)
         {
             await Task.Run(() =>
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwEntry = parentPwGroup.FindEntry(BuildIdFromString(entryId), false);
                 parentPwGroup.Entries.Remove(pwEntry);
+
+                if (isToBeDeleted && (!_pwDatabase.RecycleBinEnabled || parentPwGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid)))
+                {
+                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(pwEntry.Uuid, _dateTime.Now));
+                }
             });
         }
 
-        public async Task RemoveGroup(string parentGroupId, string groupId)
+        public async Task RemoveGroup(string parentGroupId, string groupId, bool isToBeDeleted)
         {
             await Task.Run(() =>
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwGroup = parentPwGroup.FindGroup(BuildIdFromString(groupId), false);
                 parentPwGroup.Groups.Remove(pwGroup);
+
+                if (isToBeDeleted && (!_pwDatabase.RecycleBinEnabled || parentPwGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid)))
+                {
+                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(pwGroup.Uuid, _dateTime.Now));
+                }
             });
         }
 
@@ -272,36 +275,6 @@ namespace ModernKeePass.Infrastructure.KeePass
             return _mapper.Map<GroupEntity>(pwGroup);
         }
 
-        public async Task DeleteEntry(string entryId)
-        {
-            await Task.Run(() =>
-            {
-                var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
-                var id = pwEntry.Uuid;
-                pwEntry.ParentGroup.Entries.Remove(pwEntry);
-
-                if (!_pwDatabase.RecycleBinEnabled || pwEntry.ParentGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid))
-                {
-                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
-                }
-            });
-        }
-
-        public async Task DeleteGroup(string groupId)
-        {
-            await Task.Run(() =>
-            {
-                var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
-                var id = pwGroup.Uuid;
-                pwGroup.ParentGroup.Groups.Remove(pwGroup);
-
-                if (!_pwDatabase.RecycleBinEnabled || pwGroup.ParentGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid))
-                {
-                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(id, DateTime.UtcNow));
-                }
-            });
-        }
-
         public void SortEntries(string groupId)
         {
             var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
@@ -313,6 +286,18 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
             pwGroup.SortSubGroups(false);
+        }
+
+        public EntryEntity GetEntry(string id)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(id), true);
+            return _mapper.Map<EntryEntity>(pwEntry);
+        }
+
+        public GroupEntity GetGroup(string id)
+        {
+            var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(id), true);
+            return _mapper.Map<GroupEntity>(pwGroup);
         }
 
         public async Task UpdateCredentials(Credentials credentials)
@@ -336,28 +321,6 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             var fileContents = await _fileService.OpenBinaryFile(fileInfo.Path);
             return IOConnectionInfo.FromByteArray(fileContents);
-        }
-        private GroupEntity BuildHierarchy(GroupEntity parentGroup, PwGroup pwGroup)
-        {
-            var group = _mapper.Map<GroupEntity>(pwGroup);
-            group.ParentGroup = parentGroup;
-            group.Entries = pwGroup.Entries.Select(e =>
-            {
-                var entry = _mapper.Map<EntryEntity>(e);
-                entry.ParentGroup = group;
-                return entry;
-            }).ToList();
-            group.SubGroups = pwGroup.Groups.Select(g => BuildHierarchy(group, g)).ToList();
-
-            /*var group = new GroupEntity
-            {
-                Id = pwGroup.Uuid.ToHexString(),
-                Name = pwGroup.Name,
-                Icon = IconMapper.MapPwIconToIcon(pwGroup.IconId),
-                Entries = pwGroup.Entries.Select(e => _mapper.Map<EntryEntity>(e)).ToList(),
-                SubGroups = pwGroup.Groups.Select(BuildHierarchy).ToList()
-            };*/
-            return group;
         }
 
         private PwUuid BuildIdFromString(string id)

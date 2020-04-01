@@ -10,6 +10,7 @@ namespace ModernKeePass.Application.Group.Commands.RemoveGroup
     {
         public GroupVm ParentGroup { get; set; }
         public GroupVm Group { get; set; }
+        public bool IsDelete { get; set; }
 
         public class RemoveGroupCommandHandler : IAsyncRequestHandler<RemoveGroupCommand>
         {
@@ -24,7 +25,7 @@ namespace ModernKeePass.Application.Group.Commands.RemoveGroup
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                await _database.RemoveGroup(message.ParentGroup.Id, message.Group.Id);
+                await _database.RemoveGroup(message.ParentGroup.Id, message.Group.Id, message.IsDelete);
                 message.ParentGroup.SubGroups.Remove(message.Group);
             }
         }

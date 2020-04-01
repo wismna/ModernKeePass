@@ -1,38 +1,31 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Threading.Tasks;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Entry.Models;
-using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Dtos;
-using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Database.Queries.OpenDatabase
 {
-    public class OpenDatabaseQuery: IRequest<GroupVm>
+    public class OpenDatabaseQuery: IRequest
     {
         public string FilePath { get; set; }
         public string Password { get; set; }
         public string KeyFilePath { get; set; }
 
-        public class OpenDatabaseQueryHandler : IAsyncRequestHandler<OpenDatabaseQuery, GroupVm>
+        public class OpenDatabaseQueryHandler : IAsyncRequestHandler<OpenDatabaseQuery>
         {
-            private readonly IMapper _mapper;
             private readonly IDatabaseProxy _database;
 
-            public OpenDatabaseQueryHandler(IMapper mapper, IDatabaseProxy database)
+            public OpenDatabaseQueryHandler(IDatabaseProxy database)
             {
-                _mapper = mapper;
                 _database = database;
             }
 
-            public async Task<GroupVm> Handle(OpenDatabaseQuery request)
+            public async Task Handle(OpenDatabaseQuery request)
             {
                 if (_database.IsOpen) throw new DatabaseOpenException();
 
-                var rootGroup = await _database.Open(
+                await _database.Open(
                     new FileInfo
                     {
                         Path = request.FilePath
@@ -42,7 +35,6 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                         KeyFilePath = request.KeyFilePath,
                         Password = request.Password
                     });
-                return GroupVm.BuildHierarchy(null, rootGroup, _mapper);
             }
             
         }

@@ -51,6 +51,8 @@
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
+    <Compile Include="Group\Queries\GetGroup\GetGroupQuery.cs" />
     <Compile Include="Parameters\Commands\SetCipher\SetCipherCommand.cs" />
     <Compile Include="Parameters\Commands\SetCompression\SetCompressionCommand.cs" />
     <Compile Include="Parameters\Commands\SetHasRecycleBin\SetHasRecycleBinCommand.cs" />
@@ -79,8 +81,6 @@
     <Compile Include="Group\Commands\AddGroup\AddGroupCommand.cs" />
     <Compile Include="Group\Commands\CreateEntry\CreateEntryCommand.cs" />
     <Compile Include="Group\Commands\CreateGroup\CreateGroupCommand.cs" />
-    <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
-    <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
     <Compile Include="Group\Commands\InsertEntry\InsertEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveEntry\RemoveEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveGroup\RemoveGroupCommand.cs" />
@@ -94,9 +94,7 @@
     <Content Include="Services\DatabaseService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Entry\Queries\GetEntry\" />
     <Folder Include="Group\Commands\UpdateGroup\" />
-    <Folder Include="Group\Queries\GetGroup\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ModernKeePass.Domain\Domain.csproj">

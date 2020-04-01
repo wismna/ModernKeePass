@@ -19,7 +19,6 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             Uri url;
             CreateMap<PwEntry, EntryEntity>()
-                .ForMember(dest => dest.ParentGroup, opt => opt.Ignore())
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentGroup.Uuid.ToHexString()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Uuid.ToHexString()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.TitleField)))
@@ -27,7 +26,8 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.PasswordField)))
                 .ForMember(dest => dest.Url, opt =>
                 {
-                    opt.PreCondition(src => Uri.TryCreate(GetEntryValue(src, PwDefs.UrlField), UriKind.Absolute, out url));
+                    opt.PreCondition(src =>
+                        Uri.TryCreate(GetEntryValue(src, PwDefs.UrlField), UriKind.Absolute, out url));
                     opt.MapFrom(src => new Uri(GetEntryValue(src, PwDefs.UrlField)));
                 })
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.NotesField)))
@@ -37,8 +37,11 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(dest => dest.HasExpirationDate, opt => opt.MapFrom(src => src.Expires))
                 .ForMember(dest => dest.Icon, opt => opt.MapFrom(src => IconMapper.MapPwIconToIcon(src.IconId)))
                 .ForMember(dest => dest.AdditionalFields, opt => opt.MapFrom(src =>
-                    src.Strings.Where(s => !PwDefs.GetStandardFields().Contains(s.Key)).ToDictionary(s => s.Key, s => GetEntryValue(src, s.Key))))
-                .ForMember(dest => dest.LastModificationDate, opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)));
+                    src.Strings.Where(s => !PwDefs.GetStandardFields().Contains(s.Key))
+                        .ToDictionary(s => s.Key, s => GetEntryValue(src, s.Key))))
+                .ForMember(dest => dest.LastModificationDate,
+                    opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)))
+                .MaxDepth(1);
         }
 
         private void FromModelToDto()
