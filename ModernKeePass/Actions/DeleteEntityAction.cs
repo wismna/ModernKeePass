@@ -44,7 +44,7 @@ namespace ModernKeePass.Actions
         public object Execute(object sender, object parameter)
         {
             var resource = new ResourcesService();
-            var type = Entity is GroupVm ? "Group" : "Entry";
+            var type = Entity is GroupDetailVm ? "Group" : "Entry";
             var isRecycleOnDelete = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult().IsRecycleBinEnabled;
 
             var message = isRecycleOnDelete

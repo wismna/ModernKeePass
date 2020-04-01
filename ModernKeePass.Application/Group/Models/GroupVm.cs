@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
@@ -29,13 +30,34 @@ namespace ModernKeePass.Application.Group.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<GroupEntity, GroupVm>()
-                //.ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
+                .ForMember(d => d.ParentGroup, opts => opts.Ignore())
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
-                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon));
-                //.ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries.OrderBy(e => e.Name)))
-                //.ForMember(d => d.SubGroups, opts => opts.MapFrom(s => s.SubGroups));
+                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon))
+                .ForMember(d => d.Entries, opts => opts.Ignore())
+                .ForMember(d => d.SubGroups, opts => opts.Ignore());
         }
 
+        internal static GroupVm BuildHierarchy(GroupVm parentGroup, GroupEntity groupEntity, IMapper mapper)
+        {
+            var groupVm = mapper.Map<GroupVm>(groupEntity);
+            groupVm.ParentGroup = parentGroup;
+            if (parentGroup != null)
+            {
+                groupVm.Breadcrumb.AddRange(parentGroup.Breadcrumb);
+                groupVm.Breadcrumb.Add(parentGroup);
+            }
+            groupVm.Entries = groupEntity.Entries.Select(e =>
+            {
+                var entry = mapper.Map<EntryVm>(e);
+                entry.ParentGroup = groupVm;
+                entry.Breadcrumb.AddRange(groupVm.Breadcrumb);
+                entry.Breadcrumb.Add(groupVm);
+                return entry;
+            }).OrderBy(e => e.Title).ToList();
+            groupVm.SubGroups = groupEntity.SubGroups.Select(g => BuildHierarchy(groupVm, g, mapper)).ToList();
+
+            return groupVm;
+        }
     }
 }

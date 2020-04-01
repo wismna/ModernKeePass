@@ -26,7 +26,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
+    public class GroupDetailVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
         public ObservableCollection<Application.Entry.Models.EntryVm> Entries => new ObservableCollection<Application.Entry.Models.EntryVm>(_group.Entries);
 
@@ -47,7 +47,6 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        
         public bool IsNotRoot => _database.RootGroup != _group;
         
         public bool ShowRestore => IsNotRoot && _database.RecycleBin != _group;
@@ -117,12 +116,12 @@ namespace ModernKeePass.ViewModels
         private Application.Entry.Models.EntryVm _reorderedEntry;
         private bool _isMenuClosed = true;
 
-        public GroupVm() {}
+        public GroupDetailVm() {}
         
-        internal GroupVm(Application.Group.Models.GroupVm group) : this(group, App.Mediator)
+        internal GroupDetailVm(Application.Group.Models.GroupVm group) : this(group, App.Mediator)
         { }
 
-        public GroupVm(Application.Group.Models.GroupVm group, IMediator mediator, bool isEditMode = false)
+        public GroupDetailVm(Application.Group.Models.GroupVm group, IMediator mediator, bool isEditMode = false)
         {
             _group = group;
             _mediator = mediator;
@@ -151,7 +150,7 @@ namespace ModernKeePass.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     if (_reorderedEntry == null)
                     {
-                        var entry = ((EntryVm) e.NewItems[0]).GetEntry();
+                        var entry = ((EntryDetailVm) e.NewItems[0]).GetEntry();
                         await _mediator.Send(new AddEntryCommand {Entry = entry, ParentGroup = _group});
                     }
                     else
@@ -175,20 +174,19 @@ namespace ModernKeePass.ViewModels
         public async Task MarkForDelete(string recycleBinTitle)
         {
             if (_database.IsRecycleBinEnabled && _database.RecycleBin == null)
-                await _mediator.Send(new CreateGroupCommand {ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
+                _database.RecycleBin = await _mediator.Send(new CreateGroupCommand {ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
             await Move(_database.IsRecycleBinEnabled && !IsSelected ? _database.RecycleBin : null);
             ((RelayCommand)UndoDeleteCommand).RaiseCanExecuteChanged();
         }
         
         public async Task Move(Application.Group.Models.GroupVm destination)
         {
+            await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group});
             await _mediator.Send(new RemoveGroupCommand {ParentGroup = _group.ParentGroup, Group = _group});
             if (destination == null)
             {
                 await _mediator.Send(new DeleteGroupCommand { Group = _group });
-                return;
             }
-            await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group});
         }
 
         public async Task CommitDelete()

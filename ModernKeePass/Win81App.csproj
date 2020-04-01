@@ -224,8 +224,8 @@
       <DependentUpon>SaveDatabasePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\EntryVm.cs" />
-    <Compile Include="ViewModels\GroupVm.cs" />
+    <Compile Include="ViewModels\EntryDetailVm.cs" />
+    <Compile Include="ViewModels\GroupDetailVm.cs" />
     <Compile Include="ViewModels\Items\SettingsNewVm.cs" />
     <Compile Include="ViewModels\SettingsVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />

@@ -25,7 +25,7 @@ namespace ModernKeePass.Views
         /// process lifetime management
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
-        public GroupVm Model => (GroupVm)DataContext;
+        public GroupDetailVm Model => (GroupDetailVm)DataContext;
 
         public GroupDetailPage()
         {
@@ -50,12 +50,12 @@ namespace ModernKeePass.Views
             
             var args = e.Parameter as PasswordEventArgs;
             if (args != null)
-                DataContext = new GroupVm(args.RootGroup);
+                DataContext = new GroupDetailVm(args.RootGroup);
             else
             {
                 var vm = e.Parameter as Application.Group.Models.GroupVm;
                 if (vm != null)
-                    DataContext = new GroupVm(vm);
+                    DataContext = new GroupDetailVm(vm);
             }
         }
 

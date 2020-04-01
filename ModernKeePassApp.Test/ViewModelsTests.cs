@@ -116,7 +116,7 @@ namespace ModernKeePassApp.Test
         public void TestEntryVm()
         {
             var database = new DatabaseServiceMock();
-            var entryVm = new EntryVm(new PwEntry(true, true), new GroupVm(), database, _resource)
+            var entryVm = new EntryDetailVm(new PwEntry(true, true), new GroupDetailVm(), database, _resource)
             {
                 Title = "Test",
                 UserName = "login",
@@ -128,7 +128,7 @@ namespace ModernKeePassApp.Test
         public void TestGroupVm()
         {
             var database = new DatabaseServiceMock();
-            var entryVm = new GroupVm(new PwGroup(true, true), new GroupVm(), database)
+            var entryVm = new GroupDetailVm(new PwGroup(true, true), new GroupDetailVm(), database)
             {
                 Title = "Test"
             };

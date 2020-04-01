@@ -372,7 +372,7 @@
         </Style>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:EntryVm />
+        <viewModels:EntryDetailVm />
     </Page.DataContext>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
@@ -410,7 +410,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" LostFocus="Username_OnLostFocus" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />

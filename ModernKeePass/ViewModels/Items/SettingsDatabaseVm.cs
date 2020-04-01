@@ -23,7 +23,7 @@ namespace ModernKeePass.ViewModels
     {
         private readonly IMediator _mediator;
         private readonly DatabaseVm _database;
-        private GroupVm _selectedItem;
+        private GroupDetailVm _selectedItem;
 
         public bool HasRecycleBin
         {
@@ -104,7 +104,7 @@ namespace ModernKeePass.ViewModels
                     _selectedItem.IsSelected = false;
                 }
 
-                SetProperty(ref _selectedItem, (GroupVm)value);
+                SetProperty(ref _selectedItem, (GroupDetailVm)value);
 
                 if (_selectedItem != null)
                 {

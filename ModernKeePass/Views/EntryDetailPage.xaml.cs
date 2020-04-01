@@ -14,7 +14,7 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class EntryDetailPage
     {
-        public EntryVm Model => (EntryVm) DataContext;
+        public EntryDetailVm Model => (EntryDetailVm) DataContext;
 
         /// <summary>
         /// NavigationHelper est utilisé sur chaque page pour faciliter la navigation et 
@@ -45,7 +45,7 @@ namespace ModernKeePass.Views
             /*if (!(e.Parameter is EntryVm)) return;
             DataContext = (EntryVm)e.Parameter;*/
             var args = e.Parameter as Application.Entry.Models.EntryVm;
-            if (args != null) DataContext = new EntryVm(args);
+            if (args != null) DataContext = new EntryDetailVm(args);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -74,6 +74,11 @@ namespace ModernKeePass.Views
                     TopGrid.DataContext = entry;
                     break;
             }
+        }
+
+        private async void Username_OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            await Model.SetFieldValue(nameof(Model.UserName), ((TextBox) sender).Text);
         }
     }
 }

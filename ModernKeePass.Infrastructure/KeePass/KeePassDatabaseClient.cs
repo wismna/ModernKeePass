@@ -340,11 +340,11 @@ namespace ModernKeePass.Infrastructure.KeePass
         private GroupEntity BuildHierarchy(GroupEntity parentGroup, PwGroup pwGroup)
         {
             var group = _mapper.Map<GroupEntity>(pwGroup);
-            group.Parent = parentGroup;
+            group.ParentGroup = parentGroup;
             group.Entries = pwGroup.Entries.Select(e =>
             {
                 var entry = _mapper.Map<EntryEntity>(e);
-                entry.Parent = group;
+                entry.ParentGroup = group;
                 return entry;
             }).ToList();
             group.SubGroups = pwGroup.Groups.Select(g => BuildHierarchy(group, g)).ToList();

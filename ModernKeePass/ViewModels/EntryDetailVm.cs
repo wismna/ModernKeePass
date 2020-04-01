@@ -22,7 +22,7 @@ using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
+    public class EntryDetailVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
@@ -68,11 +68,7 @@ namespace ModernKeePass.ViewModels
         public string UserName
         {
             get { return _entry.Username; }
-            set
-            {
-                _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = nameof(UserName), FieldValue = value }).Wait();
-                _entry.Username = value;
-            }
+            set { _entry.Username = value; }
         }
 
         public string Password
@@ -225,11 +221,11 @@ namespace ModernKeePass.ViewModels
         private double _passwordLength = 25;
         private bool _isVisible = true;
 
-        public EntryVm() { }
+        public EntryDetailVm() { }
         
-        internal EntryVm(Application.Entry.Models.EntryVm entry, bool isNewEntry = false) : this(entry, App.Mediator, isNewEntry) { }
+        internal EntryDetailVm(Application.Entry.Models.EntryVm entry, bool isNewEntry = false) : this(entry, App.Mediator, isNewEntry) { }
 
-        public EntryVm(Application.Entry.Models.EntryVm entry, IMediator mediator, bool isNewEntry = false)
+        public EntryDetailVm(Application.Entry.Models.EntryVm entry, IMediator mediator, bool isNewEntry = false)
         {
             _entry = entry;
             _mediator = mediator;
@@ -263,19 +259,18 @@ namespace ModernKeePass.ViewModels
         public async Task MarkForDelete(string recycleBinTitle)
         {
             if (_database.IsRecycleBinEnabled && _database.RecycleBin == null)
-                await _mediator.Send(new CreateGroupCommand { ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
-            await Move(_database.IsRecycleBinEnabled && _entry.ParentGroup == _database.RecycleBin ? _database.RecycleBin : null);
+                _database.RecycleBin = await _mediator.Send(new CreateGroupCommand { ParentGroup = _database.RootGroup, IsRecycleBin = true, Name = recycleBinTitle});
+            await Move(_database.IsRecycleBinEnabled && _entry.ParentGroup != _database.RecycleBin ? _database.RecycleBin : null);
         }
         
         public async Task Move(Application.Group.Models.GroupVm destination)
         {
+            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
             await _mediator.Send(new RemoveEntryCommand { ParentGroup = _entry.ParentGroup, Entry = _entry });
             if (destination == null)
             {
                 await _mediator.Send(new DeleteEntryCommand { Entry = _entry });
-                return;
             }
-            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
         }
         
         public async Task CommitDelete()
@@ -286,6 +281,11 @@ namespace ModernKeePass.ViewModels
         public Application.Entry.Models.EntryVm GetEntry()
         {
             return _entry;
+        }
+
+        public async Task SetFieldValue(string fieldName, object value)
+        {
+            await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
         }
     }
 }

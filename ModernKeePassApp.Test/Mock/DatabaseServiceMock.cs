@@ -26,11 +26,11 @@ namespace ModernKeePassApp.Test.Mock
 
         public string Name => "MockDatabase";
 
-        public GroupVm RecycleBin { get; set; }
+        public GroupDetailVm RecycleBin { get; set; }
 
         public bool RecycleBinEnabled { get; set; }
 
-        public GroupVm RootGroup { get; set; }
+        public GroupDetailVm RootGroup { get; set; }
         
         public void AddDeletedItem(PwUuid id)
         {

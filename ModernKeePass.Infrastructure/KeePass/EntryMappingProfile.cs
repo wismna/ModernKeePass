@@ -19,6 +19,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             Uri url;
             CreateMap<PwEntry, EntryEntity>()
+                .ForMember(dest => dest.ParentGroup, opt => opt.Ignore())
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentGroup.Uuid.ToHexString()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Uuid.ToHexString()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.TitleField)))

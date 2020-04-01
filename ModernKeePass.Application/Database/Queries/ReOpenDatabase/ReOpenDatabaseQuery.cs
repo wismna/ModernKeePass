@@ -25,7 +25,7 @@ namespace ModernKeePass.Application.Database.Queries.ReOpenDatabase
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 var rootGroup = await _database.ReOpen();
-                return _mapper.Map<GroupVm>(rootGroup);
+                return GroupVm.BuildHierarchy(null, rootGroup, _mapper);
             }
         }
     }

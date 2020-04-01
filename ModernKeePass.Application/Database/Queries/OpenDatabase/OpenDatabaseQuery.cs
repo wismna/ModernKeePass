@@ -42,30 +42,9 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                         KeyFilePath = request.KeyFilePath,
                         Password = request.Password
                     });
-                return BuildHierarchy(null, rootGroup);
+                return GroupVm.BuildHierarchy(null, rootGroup, _mapper);
             }
-
-            private GroupVm BuildHierarchy(GroupVm parentGroup, GroupEntity groupEntity)
-            {
-                var groupVm = _mapper.Map<GroupVm>(groupEntity);
-                groupVm.ParentGroup = parentGroup;
-                if (parentGroup != null)
-                {
-                    groupVm.Breadcrumb.AddRange(parentGroup.Breadcrumb);
-                    groupVm.Breadcrumb.Add(parentGroup);
-                }
-                groupVm.Entries = groupEntity.Entries.Select(e =>
-                {
-                    var entry = _mapper.Map<EntryVm>(e);
-                    entry.ParentGroup = groupVm;
-                    entry.Breadcrumb.AddRange(groupVm.Breadcrumb);
-                    entry.Breadcrumb.Add(groupVm);
-                    return entry;
-                }).OrderBy(e => e.Title).ToList();
-                groupVm.SubGroups = groupEntity.SubGroups.Select(g => BuildHierarchy(groupVm, g)).ToList();
-
-                return groupVm;
-            }
+            
         }
     }
 }

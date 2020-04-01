@@ -28,7 +28,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                 if (database.IsOpen)
                 {
                     database.Name = _databaseProxy.Name;
-                    database.RootGroup = _mapper.Map<GroupVm>(_databaseProxy.RootGroup);
+                    database.RootGroup = GroupVm.BuildHierarchy(null, _databaseProxy.RootGroup, _mapper);
                     database.IsRecycleBinEnabled = _databaseProxy.IsRecycleBinEnabled;
                     database.RecycleBin = _mapper.Map<GroupVm>(_databaseProxy.RecycleBin);
                     database.Compression = _databaseProxy.Compression;

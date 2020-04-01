@@ -37,7 +37,7 @@ namespace ModernKeePass.Application.Entry.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<EntryEntity, EntryVm>()
-                //.ForMember(d => d.ParentGroup, opts => opts.MapFrom(s => s.Parent))
+                .ForMember(d => d.ParentGroup, opts => opts.Ignore())
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Username, opts => opts.MapFrom(s => s.UserName))

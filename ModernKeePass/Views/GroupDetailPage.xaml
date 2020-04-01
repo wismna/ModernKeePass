@@ -19,7 +19,7 @@
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:GroupVm />
+        <viewModels:GroupDetailVm />
     </Page.DataContext>
     <Grid>
         <Grid.Resources>

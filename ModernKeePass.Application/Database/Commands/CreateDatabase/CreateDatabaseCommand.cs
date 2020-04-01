@@ -39,7 +39,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                         KeyFilePath = message.KeyFilePath,
                         Password = message.Password
                     });
-                return _mapper.Map<GroupVm>(rootGroup);
+                return GroupVm.BuildHierarchy(null, rootGroup, _mapper);
             }
 
         }
