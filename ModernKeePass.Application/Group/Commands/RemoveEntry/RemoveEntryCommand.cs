@@ -11,7 +11,6 @@ namespace ModernKeePass.Application.Group.Commands.RemoveEntry
     {
         public GroupVm ParentGroup { get; set; }
         public EntryVm Entry { get; set; }
-        public bool IsDelete { get; set; }
 
         public class RemoveEntryCommandHandler : IAsyncRequestHandler<RemoveEntryCommand>
         {
@@ -26,7 +25,7 @@ namespace ModernKeePass.Application.Group.Commands.RemoveEntry
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                await _database.RemoveEntry(message.ParentGroup.Id, message.Entry.Id, message.IsDelete);
+                await _database.RemoveEntry(message.ParentGroup.Id, message.Entry.Id);
                 message.ParentGroup.Entries.Remove(message.Entry);
             }
         }

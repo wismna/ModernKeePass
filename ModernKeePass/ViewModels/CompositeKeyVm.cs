@@ -5,6 +5,7 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using MediatR;
 using ModernKeePass.Application.Database.Commands.UpdateCredentials;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
 using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
@@ -97,7 +98,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _keyFileText, value); }
         }
 
-        public Application.Group.Models.GroupVm RootGroup { get; set; }
+        public string RootGroupId { get; set; }
 
         public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery { Password = Password }).GetAwaiter().GetResult();
 
@@ -129,11 +130,12 @@ namespace ModernKeePass.ViewModels
                 _isOpening = true;
                 OnPropertyChanged(nameof(IsValid));
 
-                RootGroup = await _mediator.Send(new OpenDatabaseQuery {
+                await _mediator.Send(new OpenDatabaseQuery {
                     FilePath = StorageApplicationPermissions.FutureAccessList.Add(databaseFile),
                     KeyFilePath = HasKeyFile && KeyFile != null ? StorageApplicationPermissions.FutureAccessList.Add(KeyFile) : null,
                     Password = Password = HasPassword ? Password : null,
                 });
+                RootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
                 return true;
             }
             catch (ArgumentException)

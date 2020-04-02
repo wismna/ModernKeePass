@@ -20,6 +20,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             Uri url;
             CreateMap<PwEntry, EntryEntity>()
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentGroup.Uuid.ToHexString()))
+                .ForMember(dest => dest.ParentName, opt => opt.MapFrom(src => src.ParentGroup.Name))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Uuid.ToHexString()))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.TitleField)))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => GetEntryValue(src, PwDefs.UserNameField)))
@@ -39,9 +40,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(dest => dest.AdditionalFields, opt => opt.MapFrom(src =>
                     src.Strings.Where(s => !PwDefs.GetStandardFields().Contains(s.Key))
                         .ToDictionary(s => s.Key, s => GetEntryValue(src, s.Key))))
-                .ForMember(dest => dest.LastModificationDate,
-                    opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)))
-                .MaxDepth(1);
+                .ForMember(dest => dest.LastModificationDate, opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)));
         }
 
         private void FromModelToDto()

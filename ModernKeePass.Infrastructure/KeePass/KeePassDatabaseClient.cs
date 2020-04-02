@@ -194,34 +194,62 @@ namespace ModernKeePass.Infrastructure.KeePass
                 parentPwGroup.Groups.Add(pwGroup);
             });
         }
-        public async Task RemoveEntry(string parentGroupId, string entryId, bool isToBeDeleted)
+        public async Task RemoveEntry(string parentGroupId, string entryId)
         {
             await Task.Run(() =>
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwEntry = parentPwGroup.FindEntry(BuildIdFromString(entryId), false);
                 parentPwGroup.Entries.Remove(pwEntry);
-
-                if (isToBeDeleted && (!_pwDatabase.RecycleBinEnabled || parentPwGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid)))
-                {
-                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(pwEntry.Uuid, _dateTime.Now));
-                }
             });
         }
 
-        public async Task RemoveGroup(string parentGroupId, string groupId, bool isToBeDeleted)
+        public async Task RemoveGroup(string parentGroupId, string groupId)
         {
             await Task.Run(() =>
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwGroup = parentPwGroup.FindGroup(BuildIdFromString(groupId), false);
                 parentPwGroup.Groups.Remove(pwGroup);
-
-                if (isToBeDeleted && (!_pwDatabase.RecycleBinEnabled || parentPwGroup.Uuid.Equals(_pwDatabase.RecycleBinUuid)))
-                {
-                    _pwDatabase.DeletedObjects.Add(new PwDeletedObject(pwGroup.Uuid, _dateTime.Now));
-                }
             });
+        }
+
+        public async Task DeleteEntry(string parentGroupId, string entryId, string recycleBinName)
+        {
+            if (IsRecycleBinEnabled && (string.IsNullOrEmpty(RecycleBinId) || _pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero)))
+            {
+                CreateGroup(RootGroupId, recycleBinName, true);
+            }
+
+            if (!IsRecycleBinEnabled || parentGroupId.Equals(RecycleBinId))
+            {
+                _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(entryId), _dateTime.Now));
+            }
+            else
+            {
+                await AddEntry(RecycleBinId, entryId);
+            }
+
+            await RemoveEntry(parentGroupId, entryId);
+        }
+
+        public async Task DeleteGroup(string parentGroupId, string groupId, string recycleBinName)
+        {
+            if (IsRecycleBinEnabled && (string.IsNullOrEmpty(RecycleBinId) || _pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero)))
+            {
+                CreateGroup(RootGroupId, recycleBinName, true);
+            }
+
+            if (!IsRecycleBinEnabled || parentGroupId.Equals(RecycleBinId))
+            {
+                _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(groupId), _dateTime.Now));
+            }
+            else
+            {
+                await AddEntry(RecycleBinId, groupId);
+            }
+
+            await RemoveGroup(parentGroupId, groupId);
         }
 
         public void UpdateEntry(string entryId, string fieldName, object fieldValue)

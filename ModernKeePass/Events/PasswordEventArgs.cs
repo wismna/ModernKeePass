@@ -1,15 +1,14 @@
 ﻿using System;
-using ModernKeePass.Application.Group.Models;
 
 namespace ModernKeePass.Events
 {
     public class PasswordEventArgs: EventArgs
     {
-        public GroupVm RootGroup { get; set; }
+        public string RootGroupId { get; set; }
 
-        public PasswordEventArgs(GroupVm groupVm)
+        public PasswordEventArgs(string groupId)
         {
-            RootGroup = groupVm;
+            RootGroupId = groupId;
         }
     }
 }

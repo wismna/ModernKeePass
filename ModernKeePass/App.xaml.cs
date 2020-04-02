@@ -167,9 +167,9 @@ namespace ModernKeePass
 
             try
             {
-                var database = await Mediator.Send(new ReOpenDatabaseQuery());
+                await Mediator.Send(new ReOpenDatabaseQuery());
 #if DEBUG
-                ToastNotificationHelper.ShowGenericToast(database.Title, "Database reopened (changes were saved)");
+                ToastNotificationHelper.ShowGenericToast("App resumed", "Database reopened (changes were saved)");
 #endif
             }
             catch (Exception)

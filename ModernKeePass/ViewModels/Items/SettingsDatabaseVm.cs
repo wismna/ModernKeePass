@@ -4,6 +4,8 @@ using System.Linq;
 using MediatR;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Group.Models;
+using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Parameters.Commands.SetCipher;
 using ModernKeePass.Application.Parameters.Commands.SetCompression;
 using ModernKeePass.Application.Parameters.Commands.SetHasRecycleBin;
@@ -37,14 +39,14 @@ namespace ModernKeePass.ViewModels
 
         public bool IsNewRecycleBin
         {
-            get { return _database.RecycleBin == null; }
+            get { return string.IsNullOrEmpty(_database.RecycleBinId); }
             set
             {
                 if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBin = null }).Wait();
             }
         }
 
-        public ObservableCollection<Application.Group.Models.GroupVm> Groups { get; set; }
+        public ObservableCollection<GroupVm> Groups { get; set; }
 
         public IEnumerable<CipherVm> Ciphers => _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
         public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
@@ -119,7 +121,8 @@ namespace ModernKeePass.ViewModels
         {
             _mediator = mediator;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
-            Groups = new ObservableCollection<Application.Group.Models.GroupVm>(_database.RootGroup.SubGroups);
+            var rootGroup = _mediator.Send(new GetGroupQuery { Id = _database.RootGroupId }).GetAwaiter().GetResult();
+            Groups = new ObservableCollection<GroupVm>(rootGroup.SubGroups);
         }
     }
 }

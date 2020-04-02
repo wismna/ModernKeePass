@@ -42,9 +42,7 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedTo(e);
-            /*if (!(e.Parameter is EntryVm)) return;
-            DataContext = (EntryVm)e.Parameter;*/
-            var args = e.Parameter as Application.Entry.Models.EntryVm;
+            var args = e.Parameter as string;
             if (args != null) DataContext = new EntryDetailVm(args);
         }
 

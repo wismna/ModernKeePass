@@ -127,7 +127,7 @@ namespace ModernKeePass.ViewModels
                     Title = database.Name,
                     PageType = typeof(GroupDetailPage),
                     Destination = referenceFrame,
-                    Parameter = database.RootGroup,
+                    Parameter = database.RootGroupId,
                     Group = "Databases",
                     SymbolIcon = Symbol.ProtectedDocument
                 });

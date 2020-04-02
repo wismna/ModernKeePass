@@ -19,7 +19,7 @@
                 <HyperlinkButton Foreground="{StaticResource MainColor}" Content="{Binding Title}" Style="{StaticResource MainColorHyperlinkButton}" FontWeight="Light" FontSize="12" Padding="0">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
-                            <core:NavigateToPageAction Parameter="{Binding}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
+                            <core:NavigateToPageAction Parameter="{Binding Id}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
                         </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </HyperlinkButton>
@@ -32,7 +32,7 @@
                     <HyperlinkButton Foreground="{StaticResource MainColor}" Content="{Binding Title}" Style="{StaticResource MainColorHyperlinkButton}" FontWeight="Light" FontSize="12" Padding="0">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Click">
-                                <core:NavigateToPageAction Parameter="{Binding}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
+                                <core:NavigateToPageAction Parameter="{Binding Id}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </HyperlinkButton>

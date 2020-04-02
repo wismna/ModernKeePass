@@ -10,5 +10,6 @@ namespace ModernKeePass.Application.Common.Interfaces
         Icon Icon { get; set; }
         List<IEntityVm> Breadcrumb { get; }
         string ParentGroupId { get; set; }
+        string ParentGroupName { get; set; }
     }
 }

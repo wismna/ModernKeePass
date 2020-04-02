@@ -50,12 +50,12 @@ namespace ModernKeePass.Views
             
             var args = e.Parameter as PasswordEventArgs;
             if (args != null)
-                DataContext = new GroupDetailVm(args.RootGroup);
+                DataContext = new GroupDetailVm(args.RootGroupId);
             else
             {
-                var vm = e.Parameter as Application.Group.Models.GroupVm;
-                if (vm != null)
-                    DataContext = new GroupDetailVm(vm);
+                var id = e.Parameter as string;
+                if (id != null)
+                    DataContext = new GroupDetailVm(id);
             }
         }
 
@@ -77,7 +77,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
-                    Frame.Navigate(typeof(GroupDetailPage), group);
+                    Frame.Navigate(typeof(GroupDetailPage), group?.Id);
                     break;
             }
         }
@@ -90,7 +90,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var entry = GridView.SelectedItem as EntryVm;
-                    Frame.Navigate(typeof(EntryDetailPage), entry);
+                    Frame.Navigate(typeof(EntryDetailPage), entry?.Id);
                     break;
             }
         }
@@ -124,7 +124,7 @@ namespace ModernKeePass.Views
             var results = Model.SubEntries.Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var result in results)
             {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroup.Title, result.Id, imageUri, string.Empty);
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroupName, result.Id, imageUri, string.Empty);
             }
         }
 

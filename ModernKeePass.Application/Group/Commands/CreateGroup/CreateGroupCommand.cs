@@ -8,7 +8,7 @@ namespace ModernKeePass.Application.Group.Commands.CreateGroup
 {
     public class CreateGroupCommand : IRequest<GroupVm>
     {
-        public string ParentGroupId { get; set; }
+        public GroupVm ParentGroup { get; set; }
         public string Name { get; set; }
         public bool IsRecycleBin { get; set; }
 
@@ -27,8 +27,9 @@ namespace ModernKeePass.Application.Group.Commands.CreateGroup
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                var group = _database.CreateGroup(message.ParentGroupId, message.Name, message.IsRecycleBin);
+                var group = _database.CreateGroup(message.ParentGroup.Id, message.Name, message.IsRecycleBin);
                 var groupVm = _mapper.Map<GroupVm>(group);
+                message.ParentGroup.SubGroups.Add(groupVm);
                 return groupVm;
             }
         }

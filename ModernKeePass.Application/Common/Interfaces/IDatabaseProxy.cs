@@ -30,8 +30,10 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task AddGroup(string parentGroupId, string groupId);
         void UpdateEntry(string entryId, string fieldName, object fieldValue);
         void UpdateGroup(string groupId);
-        Task RemoveEntry(string parentGroupId, string entryId, bool isToBeDeleted);
-        Task RemoveGroup(string parentGroupId, string groupId, bool isToBeDeleted);
+        Task RemoveEntry(string parentGroupId, string entryId);
+        Task RemoveGroup(string parentGroupId, string groupId);
+        Task DeleteEntry(string parentGroupId, string entryId, string recycleBinName);
+        Task DeleteGroup(string parentGroupId, string groupId, string recycleBinName);
         EntryEntity CreateEntry(string parentGroupId);
         GroupEntity CreateGroup(string parentGroupId, string nameId, bool isRecycleBin = false);
         void SortEntries(string groupId);

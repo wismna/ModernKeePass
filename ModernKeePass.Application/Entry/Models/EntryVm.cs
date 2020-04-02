@@ -12,6 +12,7 @@ namespace ModernKeePass.Application.Entry.Models
     public class EntryVm: IEntityVm, IMapFrom<EntryEntity>
     {
         public string ParentGroupId { get; set; }
+        public string ParentGroupName { get; set; }
         public List<IEntityVm> Breadcrumb { get; } = new List<IEntityVm>();
         public string Id { get; set; }
         public string Title { get; set; }
@@ -37,6 +38,7 @@ namespace ModernKeePass.Application.Entry.Models
         {
             profile.CreateMap<EntryEntity, EntryVm>()
                 .ForMember(d => d.ParentGroupId, opts => opts.MapFrom(s => s.ParentId))
+                .ForMember(d => d.ParentGroupName, opts => opts.MapFrom(s => s.ParentName))
                 .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Name))
                 .ForMember(d => d.Username, opts => opts.MapFrom(s => s.UserName))

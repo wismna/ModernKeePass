@@ -5,6 +5,8 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
+using ModernKeePass.Application.Group.Models;
+using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Services;
@@ -44,14 +46,15 @@ namespace ModernKeePass.ViewModels
             _settings = settings;
         }
 
-        public async Task<Application.Group.Models.GroupVm> PopulateInitialData()
+        public async Task<GroupVm> PopulateInitialData()
         {
             var database = await _mediator.Send(new GetDatabaseQuery());
-            if (_settings.GetSetting<bool>("Sample") && !IsImportChecked) await CreateSampleData(database.RootGroup);
-            return database.RootGroup;
+            var rootGroup = await _mediator.Send(new GetGroupQuery {Id = database.RootGroupId});
+            if (_settings.GetSetting<bool>("Sample") && !IsImportChecked) await CreateSampleData(rootGroup);
+            return rootGroup;
         }
 
-        private async Task CreateSampleData(Application.Group.Models.GroupVm group)
+        private async Task CreateSampleData(GroupVm group)
         {
             /*var converter = new IntToSymbolConverter();
 
