@@ -44,11 +44,10 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public ObservableCollection<IEntityVm> Groups { get; set; }
-
-        public IEnumerable<CipherVm> Ciphers => _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
+        public ObservableCollection<IEntityVm> Groups { get; }
+        public ObservableCollection<CipherVm> Ciphers { get; }
         public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
-        public IEnumerable<KeyDerivationVm> KeyDerivations => _mediator.Send(new GetKeyDerivationsQuery()).GetAwaiter().GetResult();
+        public ObservableCollection<KeyDerivationVm> KeyDerivations { get; }
 
         public CipherVm SelectedCipher
         {
@@ -74,53 +73,6 @@ namespace ModernKeePass.ViewModels
             set { _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait(); }
         }
 
-
-
-        /*public int CipherIndex
-        {
-            get
-            {
-                for (var inx = 0; inx < CipherPool.GlobalPool.EngineCount; ++inx)
-                {
-                    if (CipherPool.GlobalPool[inx].CipherUuid.Equals(_database.DataCipher)) return inx;
-                }
-                return -1;
-            }
-            set { _database.DataCipher = CipherPool.GlobalPool[value].CipherUuid; }
-        }*/
-
-
-        /*public string CompressionName
-        {
-            get { return _database.}
-            set { _database.CompressionAlgorithm = (PwCompressionAlgorithm)Enum.Parse(typeof(PwCompressionAlgorithm), value); }
-        }*/
-        /*public string KeyDerivationName
-        {
-            get { return KdfPool.Get(_database.KeyDerivation.KdfUuid).Name; }
-            set { _database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
-        }
-
-        public ISelectableModel SelectedItem
-        {
-            get { return Groups.FirstOrDefault(g => g.IsSelected); }
-            set
-            {
-                if (_selectedItem == value || IsNewRecycleBin) return;
-                if (_selectedItem != null)
-                {
-                    _selectedItem.IsSelected = false;
-                }
-
-                SetProperty(ref _selectedItem, (IEntityVm)value);
-
-                if (_selectedItem != null)
-                {
-                    _selectedItem.IsSelected = true;
-                }
-            }
-        }*/
-
         public SettingsDatabaseVm() : this(App.Mediator) { }
 
         public SettingsDatabaseVm(IMediator mediator)
@@ -129,6 +81,10 @@ namespace ModernKeePass.ViewModels
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             var rootGroup = _mediator.Send(new GetGroupQuery { Id = _database.RootGroupId }).GetAwaiter().GetResult();
             Groups = new ObservableCollection<IEntityVm>(rootGroup.SubGroups);
+            var ciphers = _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
+            Ciphers = new ObservableCollection<CipherVm>(ciphers);
+            var keyDerivations = _mediator.Send(new GetKeyDerivationsQuery()).GetAwaiter().GetResult();
+            KeyDerivations = new ObservableCollection<KeyDerivationVm>(keyDerivations);
         }
     }
 }

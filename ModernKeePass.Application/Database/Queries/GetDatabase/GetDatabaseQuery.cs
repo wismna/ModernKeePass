@@ -33,7 +33,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     database.RecycleBinId = _databaseProxy.RecycleBinId;
                     database.Compression = _databaseProxy.Compression;
                     database.CipherId = _databaseProxy.CipherId;
-                    database.KeyDerivationId = _databaseProxy.CipherId;
+                    database.KeyDerivationId = _databaseProxy.KeyDerivationId;
                 }
                 return database;
             }
