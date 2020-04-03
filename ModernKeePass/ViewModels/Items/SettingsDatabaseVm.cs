@@ -2,9 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using MediatR;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
-using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Parameters.Commands.SetCipher;
 using ModernKeePass.Application.Parameters.Commands.SetCompression;
@@ -16,16 +16,14 @@ using ModernKeePass.Application.Parameters.Queries.GetCiphers;
 using ModernKeePass.Application.Parameters.Queries.GetCompressions;
 using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
 using ModernKeePass.Common;
-using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
     // TODO: implement Kdf settings
-    public class SettingsDatabaseVm: NotifyPropertyChangedBase, IHasSelectableObject
+    public class SettingsDatabaseVm: NotifyPropertyChangedBase
     {
         private readonly IMediator _mediator;
         private readonly DatabaseVm _database;
-        private GroupDetailVm _selectedItem;
 
         public bool HasRecycleBin
         {
@@ -42,11 +40,11 @@ namespace ModernKeePass.ViewModels
             get { return string.IsNullOrEmpty(_database.RecycleBinId); }
             set
             {
-                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBin = null }).Wait();
+                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBinId = null }).Wait();
             }
         }
 
-        public ObservableCollection<GroupVm> Groups { get; set; }
+        public ObservableCollection<IEntityVm> Groups { get; set; }
 
         public IEnumerable<CipherVm> Ciphers => _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
         public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
@@ -69,6 +67,14 @@ namespace ModernKeePass.ViewModels
             get { return KeyDerivations.FirstOrDefault(c => c.Id == _database.KeyDerivationId); }
             set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).Wait(); }
         }
+
+        public IEntityVm SelectedRecycleBin
+        {
+            get { return Groups.FirstOrDefault(g => g.Id == _database.RecycleBinId); }
+            set { _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait(); }
+        }
+
+
 
         /*public int CipherIndex
         {
@@ -93,7 +99,7 @@ namespace ModernKeePass.ViewModels
         {
             get { return KdfPool.Get(_database.KeyDerivation.KdfUuid).Name; }
             set { _database.KeyDerivation = KdfPool.Engines.FirstOrDefault(e => e.Name == value)?.GetDefaultParameters(); } 
-        }*/
+        }
 
         public ISelectableModel SelectedItem
         {
@@ -106,14 +112,14 @@ namespace ModernKeePass.ViewModels
                     _selectedItem.IsSelected = false;
                 }
 
-                SetProperty(ref _selectedItem, (GroupDetailVm)value);
+                SetProperty(ref _selectedItem, (IEntityVm)value);
 
                 if (_selectedItem != null)
                 {
                     _selectedItem.IsSelected = true;
                 }
             }
-        }
+        }*/
 
         public SettingsDatabaseVm() : this(App.Mediator) { }
 
@@ -122,7 +128,7 @@ namespace ModernKeePass.ViewModels
             _mediator = mediator;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             var rootGroup = _mediator.Send(new GetGroupQuery { Id = _database.RootGroupId }).GetAwaiter().GetResult();
-            Groups = new ObservableCollection<GroupVm>(rootGroup.SubGroups);
+            Groups = new ObservableCollection<IEntityVm>(rootGroup.SubGroups);
         }
     }
 }

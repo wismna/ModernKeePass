@@ -46,7 +46,15 @@ namespace ModernKeePass.ViewModels
         /// <summary>
         /// Determines if the Entry is current or from history
         /// </summary>
-        public bool IsSelected { get; set; } = true;
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
 
         public double PasswordLength
         {
@@ -178,7 +186,7 @@ namespace ModernKeePass.ViewModels
                 }
             }
         }
-        public IEnumerable<EntryVm> History => _entry.History;
+        public IEnumerable<EntryVm> History => _history;
 
         public bool IsEditMode
         {
@@ -211,19 +219,21 @@ namespace ModernKeePass.ViewModels
         }
 
         public bool CanRestore => _entry.ParentGroupId == _database.RecycleBinId;
-
+        
         public ICommand SaveCommand { get; }
         public ICommand GeneratePasswordCommand { get; }
         public ICommand UndoDeleteCommand { get; }
         
-        private readonly EntryVm _entry;
-        private readonly GroupVm _parent;
         private readonly IMediator _mediator;
         private readonly DatabaseVm _database;
+        private readonly GroupVm _parent;
+        private readonly IEnumerable<EntryVm> _history;
+        private EntryVm _entry;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isVisible = true;
+        private bool _isSelected;
 
         public EntryDetailVm() { }
         
@@ -235,8 +245,10 @@ namespace ModernKeePass.ViewModels
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             _entry = _mediator.Send(new GetEntryQuery {Id = entryId}).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery {Id = _entry.ParentGroupId}).GetAwaiter().GetResult();
+            _history = _entry.History;
             _isEditMode = isNewEntry;
             if (isNewEntry) GeneratePassword().GetAwaiter().GetResult();
+            IsSelected = true;
 
             SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -271,15 +283,27 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
             await _mediator.Send(new RemoveEntryCommand { ParentGroup = _parent, Entry = _entry });
         }
-
-        public EntryVm GetEntry()
-        {
-            return _entry;
-        }
-
+        
         public async Task SetFieldValue(string fieldName, object value)
         {
             await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
+        }
+
+        internal void SetEntry(EntryVm entry, int index)
+        {
+            _entry = entry;
+            IsSelected = index == 0;
+            /*OnPropertyChanged(nameof(Title));
+            OnPropertyChanged(nameof(UserName));
+            OnPropertyChanged(nameof(Password));
+            OnPropertyChanged(nameof(Url));
+            OnPropertyChanged(nameof(Notes));
+            OnPropertyChanged(nameof(Icon));
+            OnPropertyChanged(nameof(ForegroundColor));
+            OnPropertyChanged(nameof(BackgroundColor));
+            OnPropertyChanged(nameof(HasExpirationDate));
+            OnPropertyChanged(nameof(ExpiryDate));
+            OnPropertyChanged(nameof(ExpiryTime));*/
         }
     }
 }

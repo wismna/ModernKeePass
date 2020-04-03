@@ -8,7 +8,6 @@ namespace ModernKeePass.Application.Common.Interfaces
         string Id { get; set; }
         string Title { get; set; }
         Icon Icon { get; set; }
-        List<IEntityVm> Breadcrumb { get; }
         string ParentGroupId { get; set; }
         string ParentGroupName { get; set; }
     }

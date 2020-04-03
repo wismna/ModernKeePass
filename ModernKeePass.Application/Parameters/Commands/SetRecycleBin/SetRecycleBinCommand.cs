@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Parameters.Commands.SetRecycleBin
 {
     public class SetRecycleBinCommand : IRequest
     {
-        public GroupVm RecycleBin { get; set; }
+        public string RecycleBinId { get; set; }
 
         public class SetRecycleBinCommandHandler : IRequestHandler<SetRecycleBinCommand>
         {
@@ -20,7 +19,7 @@ namespace ModernKeePass.Application.Parameters.Commands.SetRecycleBin
 
             public void Handle(SetRecycleBinCommand message)
             {
-                if (_database.IsOpen) _database.SetRecycleBin(message.RecycleBin.Id);
+                if (_database.IsOpen) _database.SetRecycleBin(message.RecycleBinId);
                 else throw new DatabaseClosedException();
             }
         }

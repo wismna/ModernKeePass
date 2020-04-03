@@ -159,7 +159,7 @@ namespace ModernKeePass.ViewModels
                 case NotifyCollectionChangedAction.Add:
                     if (_reorderedEntry == null)
                     {
-                        var entry = ((EntryDetailVm) e.NewItems[0]).GetEntry();
+                        var entry = (EntryVm) e.NewItems[0];
                         await _mediator.Send(new AddEntryCommand {Entry = entry, ParentGroup = _group});
                     }
                     else

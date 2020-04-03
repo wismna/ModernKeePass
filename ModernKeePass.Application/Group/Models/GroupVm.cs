@@ -16,7 +16,6 @@ namespace ModernKeePass.Application.Group.Models
         public string Id { get; set; }
         public string Title { get; set; }
         public Icon Icon { get; set; }
-        public List<IEntityVm> Breadcrumb { get; } = new List<IEntityVm>();
         public List<GroupVm> SubGroups { get; set; }
         public List<EntryVm> Entries { get; set; }
         public bool IsSelected { get; set; }

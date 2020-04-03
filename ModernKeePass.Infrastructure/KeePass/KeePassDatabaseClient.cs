@@ -191,7 +191,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
-                parentPwGroup.Groups.Add(pwGroup);
+                parentPwGroup.AddGroup(pwGroup, true);
             });
         }
         public async Task RemoveEntry(string parentGroupId, string entryId)
@@ -288,7 +288,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             var pwEntry = new PwEntry(true, true);
             var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
-            parentPwGroup.Entries.Add(pwEntry);
+            parentPwGroup.AddEntry(pwEntry, true);
 
             return _mapper.Map<EntryEntity>(pwEntry);
         }
@@ -297,7 +297,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             var pwGroup = new PwGroup(true, true, name, isRecycleBin? PwIcon.TrashBin : PwIcon.Folder);
             var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
-            parentPwGroup.Groups.Add(pwGroup);
+            parentPwGroup.AddGroup(pwGroup, true);
             if (isRecycleBin) _pwDatabase.RecycleBinUuid = pwGroup.Uuid;
 
             return _mapper.Map<GroupEntity>(pwGroup);

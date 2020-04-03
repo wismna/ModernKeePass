@@ -5,7 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <ComboBox x:Name="ComboBox" ItemsSource="{Binding Colors, ElementName=UserControl}" SelectionChanged="Selector_OnSelectionChanged" Loaded="ComboBox_Loaded" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" Style="{StaticResource MainColorComboBox}">
+    <ComboBox x:Name="ComboBox" 
+              ItemsSource="{Binding Colors, ElementName=UserControl}" 
+              SelectionChanged="Selector_OnSelectionChanged" 
+              Loaded="ComboBox_Loaded" 
+              ItemContainerStyle="{StaticResource MainColorComboBoxItem}" 
+              Style="{StaticResource MainColorComboBox}" 
+              IsEnabled="{Binding IsEnabled, ElementName=UserControl}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal" Margin="0,0,10,0">

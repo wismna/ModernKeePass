@@ -130,8 +130,7 @@ namespace ModernKeePass.Views
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            var entry = Model.SubEntries.FirstOrDefault(e => e.Id == args.Tag);
-            Frame.Navigate(typeof(EntryDetailPage), entry);
+            Frame.Navigate(typeof(EntryDetailPage), args.Tag);
         }
 
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)

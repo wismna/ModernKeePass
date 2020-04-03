@@ -62,14 +62,17 @@ namespace ModernKeePass.Views
         private void HamburgerMenuUserControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;
-            switch (listView?.SelectedIndex)
+            if (listView == null) return;
+            var index = listView.SelectedIndex;
+            switch (index)
             {
                 case -1:
                     return;
                 default:
                     var entry = listView?.SelectedItem as Application.Entry.Models.EntryVm;
-                    StackPanel.DataContext = entry;
-                    TopGrid.DataContext = entry;
+                    Model.SetEntry(entry, index);
+                    /*StackPanel.DataContext = entry;
+                    TopGrid.DataContext = entry;*/
                     break;
             }
         }

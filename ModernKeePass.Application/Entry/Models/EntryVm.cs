@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using AutoMapper;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Common.Mappings;
@@ -13,7 +14,6 @@ namespace ModernKeePass.Application.Entry.Models
     {
         public string ParentGroupId { get; set; }
         public string ParentGroupName { get; set; }
-        public List<IEntityVm> Breadcrumb { get; } = new List<IEntityVm>();
         public string Id { get; set; }
         public string Title { get; set; }
         public string Username { get; set; }
@@ -46,7 +46,7 @@ namespace ModernKeePass.Application.Entry.Models
                 .ForMember(d => d.Url, opts => opts.MapFrom(s => s.Url))
                 .ForMember(d => d.Notes, opts => opts.MapFrom(s => s.Notes))
                 .ForMember(d => d.AdditionalFields, opts => opts.MapFrom(s => s.AdditionalFields))
-                .ForMember(d => d.History, opts => opts.MapFrom(s => s.History))
+                .ForMember(d => d.History, opts => opts.MapFrom(s => s.History.OrderByDescending(h => h.LastModificationDate)))
                 .ForMember(d => d.HasExpirationDate, opts => opts.MapFrom(s => s.HasExpirationDate))
                 .ForMember(d => d.ExpirationDate, opts => opts.MapFrom(s => s.ExpirationDate))
                 .ForMember(d => d.ModificationDate, opts => opts.MapFrom(s => s.LastModificationDate))
