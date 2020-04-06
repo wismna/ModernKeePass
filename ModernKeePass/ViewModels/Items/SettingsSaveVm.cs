@@ -1,16 +1,16 @@
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
     public class SettingsSaveVm
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsProxy _settings;
 
-        public SettingsSaveVm() : this(SettingsService.Instance)
+        public SettingsSaveVm() : this(App.Services.GetService<ISettingsProxy>())
         { }
 
-        public SettingsSaveVm(ISettingsService settings)
+        public SettingsSaveVm(ISettingsProxy settings)
         {
             _settings = settings;
         }

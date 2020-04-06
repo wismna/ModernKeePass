@@ -1,0 +1,148 @@
+﻿<basePages:LayoutAwarePageBase
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="using:ModernKeePass.ViewModels" 
+    xmlns:controls="using:ModernKeePass.Controls" 
+    xmlns:basePages="using:ModernKeePass.Views.BasePages"
+    x:Class="ModernKeePass.Views.MainPage"
+    x:Name="PageRoot"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource 
+            x:Name="MenuItemsSource" 
+            Source="{Binding MainMenuItems}" 
+            IsSourceGrouped="True" />
+    </Page.Resources>
+
+    <Page.Background>
+        <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
+    </Page.Background>
+    <Page.DataContext>
+        <viewModels:MainVm />
+    </Page.DataContext>
+
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource MenuGridLength}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="PrimaryColumn" Width="250" />
+            <ColumnDefinition x:Name="SecondaryColumn" Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Back button and page title -->
+        <Grid x:Name="TitlePanel" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BackButton"
+                    Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
+                    Visibility="Collapsed"
+                    Height="{StaticResource MenuSize}"
+                    AutomationProperties.Name="Back"
+                    AutomationProperties.AutomationId="BackButton"
+                    AutomationProperties.ItemType="Navigation Button"
+                    Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Back" />
+            </Button>
+            <TextBlock x:Name="TitleTextBox" Text="{Binding Name}" Grid.Column="1" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+        </Grid>
+        <controls:ListViewWithDisable 
+            Grid.Column="0"
+            Grid.Row="1"
+            x:Name="MenuListView"
+            SelectionChanged="ListView_SelectionChanged" 
+            Background="{ThemeResource AppBarBackgroundThemeBrush}"
+            ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"
+            SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+            <controls:ListViewWithDisable.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="{Binding SymbolIcon}" />
+                        <TextBlock Text="{Binding Title}" Margin="10,5,0,0" />
+                    </StackPanel>
+                </DataTemplate>
+            </controls:ListViewWithDisable.ItemTemplate>
+            <controls:ListViewWithDisable.GroupStyle>
+                <GroupStyle HidesIfEmpty="True">
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <Grid Background="DarkGray" Margin="20,0,0,0">
+                                <Border Height="1" Width="300" HorizontalAlignment="Stretch"/>
+                            </Grid>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </controls:ListViewWithDisable.GroupStyle>
+        </controls:ListViewWithDisable>
+        <TextBlock x:Name="PageTitleTextBlock" Grid.Column="1" Grid.Row="0" FontSize="24" VerticalAlignment="Center" Margin="10,0,0,0" >
+            <Run Text="{Binding SelectedItem}" />
+        </TextBlock>
+        <Frame x:Name="MenuFrame" Grid.Column="1" Grid.Row="1" Margin="0,10,0,0" />
+
+        <VisualStateManager.VisualStateGroups>
+            <!-- Visual states reflect the application's view state -->
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualState x:Name="PrimaryView" />
+                <VisualState x:Name="SinglePane">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryColumn" Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="*"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryColumn" Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuFrame" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PageTitleTextBlock" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuListView" Storyboard.TargetProperty="Padding">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="120,0,90,60"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <!--
+                    When an item is selected and only one pane is shown the details display requires more extensive changes:
+                     * Hide the master list and the column it was in
+                     * Move item details down a row to make room for the title
+                     * Move the title directly above the details
+                     * Adjust padding for details
+                 -->
+                <VisualState x:Name="SinglePane_Detail">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryColumn" Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MenuListView" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TitlePanel" Storyboard.TargetProperty="(Grid.Column)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="1"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TitleTextBox" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PageTitleTextBlock" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="60,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</basePages:LayoutAwarePageBase>

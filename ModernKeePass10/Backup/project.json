@@ -1,0 +1,24 @@
+﻿{
+  "dependencies": {
+    "HockeySDK.UWP": "4.1.6",
+    "Microsoft.ApplicationInsights": "2.7.2",
+    "Microsoft.ApplicationInsights.PersistenceChannel": "1.2.3",
+    "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "6.1.7",
+    "Microsoft.UI.Xaml": "2.0.180724003-prerelease",
+    "Microsoft.Xaml.Behaviors.Uwp.Managed": "2.0.0",
+    "ModernKeePassLib": "2.39.3",
+    "Portable.BouncyCastle": "1.8.3"
+  },
+  "frameworks": {
+    "uap10.0.17134": {}
+  },
+  "runtimes": {
+    "win10-arm": {},
+    "win10-arm-aot": {},
+    "win10-x86": {},
+    "win10-x86-aot": {},
+    "win10-x64": {},
+    "win10-x64-aot": {}
+  }
+}

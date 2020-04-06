@@ -14,14 +14,15 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
 using ModernKeePass.Application;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.ReOpenDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Infrastructure;
-using ModernKeePass.Services;
 using ModernKeePass.Views;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -33,9 +34,11 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
-        public IServiceProvider Services { get; }
+        private readonly IResourceProxy _resource;
+        private readonly IMediator _mediator;
+        private readonly ISettingsProxy _settings;
 
-        public static IMediator Mediator { get; private set; }
+        public static IServiceProvider Services { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -56,10 +59,15 @@ namespace ModernKeePass
             // Setup DI
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddApplication();
-            serviceCollection.AddInfrastructure();
+            serviceCollection.AddInfrastructureCommon();
+            serviceCollection.AddInfrastructureKeePass();
+            serviceCollection.AddInfrastructureUwp();
             serviceCollection.AddAppAutomapper();
             Services = serviceCollection.BuildServiceProvider();
-            Mediator = Services.GetService<IMediator>();
+
+            _mediator = Services.GetService<IMediator>();
+            _resource = Services.GetService<IResourceProxy>();
+            _settings = Services.GetService<ISettingsProxy>();
         }
 
         #region Event Handlers
@@ -74,30 +82,29 @@ namespace ModernKeePass
                     ? exception.InnerException
                     : exception;
             
-            var resource = new ResourcesService();
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogSaveErrorTitle"),
+                await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     realException.InnerException.Message,
-                    resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
-                    resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
+                    _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
+                    _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
                     async command =>
                     {
-                        var database = await Mediator.Send(new GetDatabaseQuery());
+                        var database = await _mediator.Send(new GetDatabaseQuery());
                         var savePicker = new FileSavePicker
                         {
                             SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
                             SuggestedFileName = $"{database.Name} - copy"
                         };
-                        savePicker.FileTypeChoices.Add(resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
+                        savePicker.FileTypeChoices.Add(_resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
                             new List<string> {".kdbx"});
 
                         var file = await savePicker.PickSaveFileAsync();
                         if (file != null)
                         {
                             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-                            await Mediator.Send(new SaveDatabaseCommand { FilePath = token });
+                            await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
                         }
                     }, null);
             }
@@ -124,7 +131,7 @@ namespace ModernKeePass
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                //DebugSettings.EnableFrameRateCounter = true;
+                DebugSettings.EnableFrameRateCounter = true;
             }
 #endif
 
@@ -167,7 +174,7 @@ namespace ModernKeePass
 
             try
             {
-                await Mediator.Send(new ReOpenDatabaseQuery());
+                await _mediator.Send(new ReOpenDatabaseQuery());
 #if DEBUG
                 ToastNotificationHelper.ShowGenericToast("App resumed", "Database reopened (changes were saved)");
 #endif
@@ -203,11 +210,11 @@ namespace ModernKeePass
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                if (SettingsService.Instance.GetSetting("SaveSuspend", true))
+                if (_settings.GetSetting("SaveSuspend", true))
                 {
-                    await Mediator.Send(new SaveDatabaseCommand());
+                    await _mediator.Send(new SaveDatabaseCommand());
                 }
-                await Mediator.Send(new CloseDatabaseCommand());
+                await _mediator.Send(new CloseDatabaseCommand());
             }
             catch (Exception exception)
             {
@@ -226,7 +233,22 @@ namespace ModernKeePass
             base.OnFileActivated(args);
             var rootFrame = new Frame();
             var file = args.Files[0] as StorageFile;
-            rootFrame.Navigate(typeof(MainPage), file);
+
+            if (file != null)
+            {
+                var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                var fileInfo = new FileInfo
+                {
+                    Path = token,
+                    Name = file.DisplayName
+                };
+                rootFrame.Navigate(typeof(MainPage), fileInfo);
+            }
+            else
+            {
+                rootFrame.Navigate(typeof(MainPage));
+            }
+
             Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }

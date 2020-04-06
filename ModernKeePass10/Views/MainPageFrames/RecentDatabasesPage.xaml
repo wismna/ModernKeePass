@@ -1,0 +1,70 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:userControls="using:ModernKeePass.Views.UserControls"
+    xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
+    x:Class="ModernKeePass.Views.RecentDatabasesPage"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <CollectionViewSource x:Name="RecentItemsSource" Source="{x:Bind ViewModel.RecentItems}" />
+    </Page.Resources>
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <HyperlinkButton Grid.Row="0" 
+                         HorizontalAlignment="Right" 
+                         Style="{StaticResource MainColorHyperlinkButton}" 
+                         Foreground="{StaticResource MainColor}" 
+                         Command="{x:Bind ViewModel.ClearAllCommand}">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Cancel" />
+                <TextBlock x:Uid="RecentClear" VerticalAlignment="Center" Margin="10,0,0,0" />
+            </StackPanel>
+        </HyperlinkButton>
+        <ListView Grid.Row="1" 
+            ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
+            SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+            <ListView.DataContext>
+                <listItems:RecentItemViewModel />
+            </ListView.DataContext>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="listItems:RecentItemViewModel">
+                    <Grid Margin="10,0,10,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Text="{x:Bind Name}" Padding="5,0,0,0" />
+                        <!--<TextBlock Grid.Row="1" Text="{Binding Path}" Padding="5,0,0,0" FontSize="10" />-->
+                        <userControls:CredentialsUserControl Grid.Row="2" 
+                                                             x:Name="DatabaseUserControl" 
+                                                             x:Uid="CompositeKeyOpenButton" 
+                                                             HorizontalAlignment="Stretch" 
+                                                             MinWidth="400" 
+                                                             Margin="0,10,0,0" 
+                                                             Visibility="{x:Bind IsSelected}" 
+                                                             DatabaseFilePath="{x:Bind Token}">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="ValidationChecked">
+                                    <!--<core:CallMethodAction TargetObject="{Binding}" MethodName="UpdateAccessTime" />-->
+                                    <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupsPage" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </userControls:CredentialsUserControl>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

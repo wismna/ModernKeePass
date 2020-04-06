@@ -1,0 +1,60 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="ToggleButton" x:Key="HamburgerToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <ContentControl>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
+                                                                        Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="Grid" Background="{StaticResource MainColor}" Margin="0" Width="{StaticResource MenuSize}" Height="{StaticResource MenuSize}">
+                            <Canvas x:Name="HamburgerMenu" HorizontalAlignment="Center" Height="17" UseLayoutRounding="False" VerticalAlignment="Center" Width="28">
+                                <Canvas x:Name="Layer1" Height="17" Canvas.Left="0" Width="28" Margin="0" RenderTransformOrigin="0.5,0.5">
+                                    <Canvas.RenderTransform>
+                                        <CompositeTransform/>
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Projection>
+                                        <PlaneProjection/>
+                                    </Canvas.Projection>
+                                    <Path x:Name="Path" Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                    <Path Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="7"/>
+                                    <Path x:Name="Path1" Data="M0,12.997 L30,12.997" Height="2" Stretch="Fill" StrokeThickness="2" Width="28" Stroke="{ThemeResource DefaultTextForegroundThemeBrush}" StrokeStartLineCap="Square" StrokeEndLineCap="Square" Canvas.Top="14" RenderTransformOrigin="0.5,0.5">
+                                        <Path.RenderTransform>
+                                            <CompositeTransform/>
+                                        </Path.RenderTransform>
+                                    </Path>
+                                </Canvas>
+                            </Canvas>
+                        </Grid>
+                    </ContentControl>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Margin" Value="0" />
+    </Style>
+    <Style x:Key="HeaderTextBoxStyle" TargetType="TextBox">
+        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontWeight" Value="Light"/>
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
+</ResourceDictionary>

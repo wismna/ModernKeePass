@@ -1,6 +1,6 @@
-﻿using Windows.Storage;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -33,7 +33,7 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var file = e.Parameter as StorageFile;
+            var file = e.Parameter as FileInfo;
             DataContext = new MainVm(Frame, MenuFrame, file);
         }
     }

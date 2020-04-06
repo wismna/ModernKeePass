@@ -1,0 +1,1 @@
+Creez de nouvelles bases de donnees, en definissant un mot de passe et/ou un fichier de clef existant ou nouveau, et importez optionellement des donnees existantes d'un fichier CSV

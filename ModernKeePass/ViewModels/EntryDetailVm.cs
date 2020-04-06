@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -22,6 +23,7 @@ using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Application.Group.Models;
+using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels
 {
@@ -49,21 +51,13 @@ namespace ModernKeePass.ViewModels
         public bool IsSelected
         {
             get { return _isSelected; }
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         public double PasswordLength
         {
             get { return _passwordLength; }
-            set
-            {
-                _passwordLength = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _passwordLength, value); }
         }
 
         public string Title
@@ -191,31 +185,19 @@ namespace ModernKeePass.ViewModels
         public bool IsEditMode
         {
             get { return IsSelected && _isEditMode; }
-            set
-            {
-                _isEditMode = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _isEditMode, value); }
         }
         
         public bool IsVisible
         {
             get { return _isVisible; }
-            set
-            {
-                _isVisible = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _isVisible, value); }
         }
         
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }
-            set
-            {
-                _isRevealPassword = value;
-                OnPropertyChanged();
-            }
+            set { SetProperty(ref _isRevealPassword, value); }
         }
 
         public bool CanRestore => _entry.ParentGroupId == _database.RecycleBinId;
@@ -237,7 +219,7 @@ namespace ModernKeePass.ViewModels
 
         public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId, bool isNewEntry = false) : this(entryId, App.Mediator, isNewEntry) { }
+        internal EntryDetailVm(string entryId, bool isNewEntry = false) : this(entryId, App.Services.GetService<IMediator>(), isNewEntry) { }
 
         public EntryDetailVm(string entryId, IMediator mediator, bool isNewEntry = false)
         {

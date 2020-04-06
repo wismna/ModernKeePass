@@ -12,18 +12,34 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
         public class SaveDatabaseCommandHandler : IAsyncRequestHandler<SaveDatabaseCommand>
         {
             private readonly IDatabaseProxy _database;
+            private readonly IFileProxy _file;
 
-            public SaveDatabaseCommandHandler(IDatabaseProxy database)
+            public SaveDatabaseCommandHandler(IDatabaseProxy database, IFileProxy file)
             {
                 _database = database;
+                _file = file;
             }
 
             public async Task Handle(SaveDatabaseCommand message)
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                if (string.IsNullOrEmpty(message.FilePath)) await _database.SaveDatabase();
-                else await _database.SaveDatabase(message.FilePath);
+                byte[] contents;
+                if (string.IsNullOrEmpty(message.FilePath))
+                {
+                    contents = await _database.SaveDatabase();
+                    await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
+                }
+                else
+                {
+                    var newFileContents = await _file.OpenBinaryFile(message.FilePath);
+                    contents = await _database.SaveDatabase(newFileContents);
+                    await _file.WriteBinaryContentsToFile(message.FilePath, contents);
+
+                    _file.ReleaseFile(_database.FileAccessToken);
+                    _database.FileAccessToken = message.FilePath;
+                }
+
             }
         }
     }

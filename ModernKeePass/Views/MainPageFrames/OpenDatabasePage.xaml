@@ -5,7 +5,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Class="ModernKeePass.Views.OpenDatabasePage"
     mc:Ignorable="d">
@@ -24,11 +25,11 @@
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyOpenButton" DatabaseFile="{Binding DatabaseFile}">
+                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyOpenButton" DatabaseFilePath="{Binding Path}">
                     <interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="ValidationChecked">
-                            <Core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
-                        </Core:EventTriggerBehavior>
+                        <core:EventTriggerBehavior EventName="ValidationChecked">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
+                        </core:EventTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </userControls:CompositeKeyUserControl>
             </StackPanel>

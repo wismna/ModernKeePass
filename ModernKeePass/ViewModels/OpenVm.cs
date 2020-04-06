@@ -1,38 +1,38 @@
-﻿using Windows.Storage;
-using ModernKeePass.Common;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Domain.AOP;
+using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
     public class OpenVm: NotifyPropertyChangedBase
     {
-        private readonly IRecentService _recent;
-        public bool IsFileSelected => DatabaseFile != null;
+        private readonly IRecentProxy _recent;
+        public bool IsFileSelected => !string.IsNullOrEmpty(Path);
 
-        public string Name => DatabaseFile?.DisplayName;
+        public string Name { get; private set; }
+        public string Path { get; private set; }
 
-        public StorageFile DatabaseFile { get; private set; }
+        public OpenVm(): this(App.Services.GetService<IRecentProxy>()) { }
 
-        public OpenVm(): this(new RecentService()) { }
-
-        public OpenVm(IRecentService recent)
+        public OpenVm(IRecentProxy recent)
         {
             _recent = recent;
         }
         
-        public void OpenFile(StorageFile file)
+        public async Task OpenFile(FileInfo file)
         {
-            DatabaseFile = file;
-            OnPropertyChanged("Name");
-            OnPropertyChanged("IsFileSelected");
-            OnPropertyChanged("DatabaseFile");
-            AddToRecentList(file);
+            Name = file.Name;
+            Path = file.Path;
+            OnPropertyChanged(nameof(Name));
+            OnPropertyChanged(nameof(IsFileSelected));
+            await AddToRecentList(file);
         }
         
-        private void AddToRecentList(StorageFile file)
+        private async Task AddToRecentList(FileInfo file)
         {
-            _recent.Add(file, file.DisplayName);
+            await _recent.Add(file);
         }
     }
 }

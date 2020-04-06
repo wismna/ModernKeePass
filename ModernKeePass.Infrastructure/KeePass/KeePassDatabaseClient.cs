@@ -18,19 +18,20 @@ using ModernKeePassLib.Utility;
 
 namespace ModernKeePass.Infrastructure.KeePass
 {
-    public class KeePassDatabaseClient: IDatabaseProxy
+    public class KeePassDatabaseClient: IDatabaseProxy, IDisposable
     {
-        private readonly IFileProxy _fileService;
         private readonly IMapper _mapper;
         private readonly IDateTime _dateTime;
         private readonly PwDatabase _pwDatabase = new PwDatabase();
-        private string _fileAccessToken;
         private Credentials _credentials;
+
+        public string ZeroId => PwUuid.Zero.ToHexString();
 
         // Main information
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
         public string Name => _pwDatabase?.Name;
         public string RootGroupId => _pwDatabase?.RootGroup.Uuid.ToHexString();
+        public string FileAccessToken { get; set; }
 
         // Settings
         public bool IsRecycleBinEnabled
@@ -50,7 +51,11 @@ namespace ModernKeePass.Infrastructure.KeePass
 
                 return null;
             }
-            set { _pwDatabase.RecycleBinUuid = BuildIdFromString(value); }
+            set
+            {
+                _pwDatabase.RecycleBinUuid = BuildIdFromString(value);
+                _pwDatabase.RecycleBinChanged = _dateTime.Now;
+            }
         }
 
         public string CipherId
@@ -75,24 +80,25 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
 
-        public KeePassDatabaseClient(IFileProxy fileService, IMapper mapper, IDateTime dateTime)
+        public KeePassDatabaseClient(IMapper mapper, IDateTime dateTime)
         {
-            _fileService = fileService;
             _mapper = mapper;
             _dateTime = dateTime;
         }
 
-        public async Task Open(FileInfo fileInfo, Credentials credentials)
+        public async Task Open(byte[] file, Credentials credentials)
         {
             try
             {
-                var compositeKey = await CreateCompositeKey(credentials);
-                var ioConnection = await BuildConnectionInfo(fileInfo);
+                await Task.Run(() => 
+                { 
+                    var compositeKey = CreateCompositeKey(credentials);
+                    var ioConnection = IOConnectionInfo.FromByteArray(file);
 
-                _pwDatabase.Open(ioConnection, compositeKey, new NullStatusLogger());
+                    _pwDatabase.Open(ioConnection, compositeKey, new NullStatusLogger());
 
-                _credentials = credentials;
-                _fileAccessToken = fileInfo.Path;
+                    _credentials = credentials;
+                });
             }
             catch (InvalidCompositeKeyException ex)
             {
@@ -100,35 +106,45 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
         }
 
-        public async Task ReOpen()
-        {
-            await Open(new FileInfo {Path = _fileAccessToken}, _credentials);
+        public async Task ReOpen(byte[] file)
+        { 
+            await Open(file, _credentials);
         }
 
-        public async Task Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
+        public async Task Create(byte[] file, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
         {
-            var compositeKey = await CreateCompositeKey(credentials);
-            var ioConnection = await BuildConnectionInfo(fileInfo);
-
-            _pwDatabase.New(ioConnection, compositeKey);
-
-            switch (version)
-            {
-                case DatabaseVersion.V4:
-                    _pwDatabase.KdfParameters = KdfPool.Get("Argon2").GetDefaultParameters();
-                    break;
-            }
-
-            _fileAccessToken = fileInfo.Path;
-        }
-
-        public async Task SaveDatabase()
-        {
-            if (!_pwDatabase.IsOpen) return;
             try
             {
-                _pwDatabase.Save(new NullStatusLogger());
-                await _fileService.WriteBinaryContentsToFile(_fileAccessToken, _pwDatabase.IOConnectionInfo.Bytes);
+                await Task.Run(() =>
+                {
+                    var compositeKey = CreateCompositeKey(credentials);
+                    var ioConnection = IOConnectionInfo.FromByteArray(file);
+
+                    _pwDatabase.New(ioConnection, compositeKey);
+
+                    switch (version)
+                    {
+                        case DatabaseVersion.V4:
+                            _pwDatabase.KdfParameters = KdfPool.Get("Argon2").GetDefaultParameters();
+                            break;
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message, ex);
+            }
+        }
+
+        public async Task<byte[]> SaveDatabase()
+        {
+            try
+            {
+                return await Task.Run(() =>
+                {
+                    _pwDatabase.Save(new NullStatusLogger());
+                    return _pwDatabase.IOConnectionInfo.Bytes;
+                });
             }
             catch (Exception e)
             {
@@ -136,33 +152,25 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
         }
 
-        public async Task SaveDatabase(string filePath)
+        public  async Task<byte[]> SaveDatabase(byte[] newFileContents)
         {
             try
             {
-                var newFileContents = await _fileService.OpenBinaryFile(filePath);
-                _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
-                await _fileService.WriteBinaryContentsToFile(filePath, _pwDatabase.IOConnectionInfo.Bytes);
-
-                _fileService.ReleaseFile(_fileAccessToken);
-                _fileAccessToken = filePath;
+                return await Task.Run(() =>
+                {
+                    _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
+                    return _pwDatabase.IOConnectionInfo.Bytes;
+                });
             }
             catch (Exception e)
             {
                 throw new SaveException(e);
             }
         }
-
-        public void SetRecycleBin(string id)
-        {
-            _pwDatabase.RecycleBinUuid = BuildIdFromString(id);
-            _pwDatabase.RecycleBinChanged = _dateTime.Now;
-        }
-
+        
         public void CloseDatabase()
         {
             _pwDatabase?.Close();
-            _fileService.ReleaseFile(_fileAccessToken);
         }
 
         public async Task AddEntry(string parentGroupId, string entryId)
@@ -214,42 +222,9 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public async Task DeleteEntry(string parentGroupId, string entryId, string recycleBinName)
+        public void DeleteEntity(string entityId)
         {
-            if (IsRecycleBinEnabled && (string.IsNullOrEmpty(RecycleBinId) || _pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero)))
-            {
-                CreateGroup(RootGroupId, recycleBinName, true);
-            }
-
-            if (!IsRecycleBinEnabled || parentGroupId.Equals(RecycleBinId))
-            {
-                _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(entryId), _dateTime.Now));
-            }
-            else
-            {
-                await AddEntry(RecycleBinId, entryId);
-            }
-
-            await RemoveEntry(parentGroupId, entryId);
-        }
-
-        public async Task DeleteGroup(string parentGroupId, string groupId, string recycleBinName)
-        {
-            if (IsRecycleBinEnabled && (string.IsNullOrEmpty(RecycleBinId) || _pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero)))
-            {
-                CreateGroup(RootGroupId, recycleBinName, true);
-            }
-
-            if (!IsRecycleBinEnabled || parentGroupId.Equals(RecycleBinId))
-            {
-                _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(groupId), _dateTime.Now));
-            }
-            else
-            {
-                await AddEntry(RecycleBinId, groupId);
-            }
-
-            await RemoveGroup(parentGroupId, groupId);
+            _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(entityId), _dateTime.Now));
         }
 
         public void UpdateEntry(string entryId, string fieldName, object fieldValue)
@@ -328,32 +303,30 @@ namespace ModernKeePass.Infrastructure.KeePass
             return _mapper.Map<GroupEntity>(pwGroup);
         }
 
-        public async Task UpdateCredentials(Credentials credentials)
+        public void UpdateCredentials(Credentials credentials)
         {
-            _pwDatabase.MasterKey = await CreateCompositeKey(credentials);
+            _pwDatabase.MasterKey = CreateCompositeKey(credentials);
         }
 
-        private async Task<CompositeKey> CreateCompositeKey(Credentials credentials)
+        private CompositeKey CreateCompositeKey(Credentials credentials)
         {
             var compositeKey = new CompositeKey();
             if (!string.IsNullOrEmpty(credentials.Password)) compositeKey.AddUserKey(new KcpPassword(credentials.Password));
-            if (!string.IsNullOrEmpty(credentials.KeyFilePath))
+            if (credentials.KeyFileContents != null)
             {
-                var kcpFileContents = await _fileService.OpenBinaryFile(credentials.KeyFilePath);
-                compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromByteArray(kcpFileContents)));
+                compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromByteArray(credentials.KeyFileContents)));
             }
             return compositeKey;
         }
-
-        private async Task<IOConnectionInfo> BuildConnectionInfo(FileInfo fileInfo)
-        {
-            var fileContents = await _fileService.OpenBinaryFile(fileInfo.Path);
-            return IOConnectionInfo.FromByteArray(fileContents);
-        }
-
+        
         private PwUuid BuildIdFromString(string id)
         {
             return new PwUuid(MemUtil.HexStringToByteArray(id));
+        }
+
+        public void Dispose()
+        {
+            if (IsOpen) CloseDatabase();
         }
     }
 }

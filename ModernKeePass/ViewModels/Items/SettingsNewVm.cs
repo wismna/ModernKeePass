@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
     public class SettingsNewVm
     {
-        private readonly ISettingsService _settings;
+        private readonly ISettingsProxy _settings;
 
-        public SettingsNewVm() : this(SettingsService.Instance)
+        public SettingsNewVm() : this(App.Services.GetService<ISettingsProxy>())
         { }
 
-        public SettingsNewVm(ISettingsService settings)
+        public SettingsNewVm(ISettingsProxy settings)
         {
             _settings = settings;
         }

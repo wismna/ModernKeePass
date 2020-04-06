@@ -5,6 +5,6 @@ namespace ModernKeePass.Application.Common.Interfaces
 {
     public interface IImportFormat
     {
-        Task<List<Dictionary<string, string>>> Import(string path);
+        Task<List<Dictionary<string, string>>> Import(IList<string> fileContents);
     }
 }

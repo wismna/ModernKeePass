@@ -1,14 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.AOP;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels
@@ -48,12 +49,13 @@ namespace ModernKeePass.ViewModels
 
         public MainVm() {}
 
-        internal MainVm(Frame referenceFrame, Frame destinationFrame, StorageFile databaseFile = null) : this(referenceFrame, destinationFrame,
-            App.Mediator, new ResourcesService(), RecentService.Instance, databaseFile)
+        internal MainVm(Frame referenceFrame, Frame destinationFrame, FileInfo databaseFile = null) : this(referenceFrame, destinationFrame,
+            App.Services.GetService<IMediator>(), App.Services.GetService<IRecentProxy>(), databaseFile)
         { }
 
-        public MainVm(Frame referenceFrame, Frame destinationFrame, IMediator mediator, IResourceService resource, IRecentService recent, StorageFile databaseFile = null)
+        public MainVm(Frame referenceFrame, Frame destinationFrame, IMediator mediator, IRecentProxy recent, FileInfo databaseFile = null)
         {
+            var resource = new ResourceHelper();
             var database = mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>

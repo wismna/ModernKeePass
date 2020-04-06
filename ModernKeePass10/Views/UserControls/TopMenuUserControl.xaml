@@ -1,0 +1,101 @@
+﻿<UserControl x:Name="UserControl"
+    x:Class="ModernKeePass.Views.UserControls.TopMenuUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource NoBorderButtonStyle}" TargetType="Button" x:Key="MenuButtonStyle" >
+            <Setter Property="Padding" Value="25,0,25,0" />
+            <Setter Property="Background" Value="{ThemeResource ToggleButtonBackgroundThemeBrush}" />
+            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+        </Style>
+        <Style BasedOn="{StaticResource NoBorderToggleButtonStyle}" TargetType="ToggleButton" x:Key="MenuToggleButtonStyle" >
+            <Setter Property="Padding" Value="25,0,25,0" />
+            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel Orientation="Horizontal">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisibilityStates">
+                <VisualState x:Name="Overflowed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowButtons" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Collapsed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverflowButtons" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <StackPanel x:Name="OverflowButtons" Orientation="Horizontal">
+            <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Click="RestoreButton_Click" Style="{StaticResource MenuButtonStyle}">
+                <SymbolIcon Symbol="Undo">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuRestoreButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+            <Button Command="{Binding SaveCommand, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
+                <SymbolIcon Symbol="Save">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuSaveButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+            <Button Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
+                <SymbolIcon Symbol="Sort">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuSortButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+                <Button.Flyout>
+                    <MenuFlyout Opening="SortFlyout_OnOpening">
+                        <MenuFlyoutItem x:Uid="AppBarSortEntries" x:Name="SortEntriesButtonFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" />
+                        <MenuFlyoutItem x:Uid="AppBarSortGroups" x:Name="SortGroupsButtonFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <ToggleButton Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Checked="EditButton_Click" Style="{StaticResource MenuToggleButtonStyle}">
+                <SymbolIcon Symbol="Edit">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuEditButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </ToggleButton>
+            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource MenuButtonStyle}">
+                <SymbolIcon Symbol="Delete">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Uid="TopMenuDeleteButton" />
+                    </ToolTipService.ToolTip>
+                </SymbolIcon>
+            </Button>
+        </StackPanel>
+        <Button x:Name="MoreButton" Style="{StaticResource MenuButtonStyle}">
+            <SymbolIcon Symbol="More" />
+            <Button.Flyout>
+                <MenuFlyout Opening="OverflowFlyout_OnOpening">
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Click="RestoreButton_Click" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
+                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
+                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" Click="DeleteButton_Click" Visibility="{Binding DeleteButtonVisibility, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortEntriesFlyout" x:Name="SortEntriesFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortGroupsFlyout" x:Name="SortGroupsFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                </MenuFlyout>
+            </Button.Flyout>
+        </Button>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,6 @@
+En avez-vous assez d'essayer de retenir des quantites de mots de passe ? Etes-vous soucieux que le fait d'utiliser le meme mot de passe partout vous rend vulnerable ?
+ModernKeePass est un gestionnaire de mots de passe gratuit, libre, facile a utiliser mais neanmoins sur, base sur la technologie certifiee et repandue KeePass 2.x et compatible avec celui-ci.
+Vous pouvez stocker ou generer vos mots de passe dans une base de donnees chiffree, qui peut etre placee n'importe ou (ordinateur personnel/tablette, cloud, cle USB...)
+
+Bien que la securite informatique soit tres importante, cette application essaie de rester simple a utiliser et a comprendre. Vos suggestions sont les bienvenues !
+Fonctionne sur Windows 10, 8.1 et RT.

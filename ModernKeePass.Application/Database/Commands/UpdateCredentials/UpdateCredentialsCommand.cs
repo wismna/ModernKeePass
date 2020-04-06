@@ -14,23 +14,22 @@ namespace ModernKeePass.Application.Database.Commands.UpdateCredentials
         public class UpdateCredentialsCommandHandler : IAsyncRequestHandler<UpdateCredentialsCommand>
         {
             private readonly IDatabaseProxy _database;
+            private readonly IFileProxy _file;
 
-            public UpdateCredentialsCommandHandler(IDatabaseProxy database)
+            public UpdateCredentialsCommandHandler(IDatabaseProxy database, IFileProxy file)
             {
                 _database = database;
+                _file = file;
             }
 
             public async Task Handle(UpdateCredentialsCommand message)
             {
-                if (_database.IsOpen)
+                if (!_database.IsOpen) throw new DatabaseClosedException();
+                _database.UpdateCredentials(new Credentials
                 {
-                    await _database.UpdateCredentials(new Credentials
-                    {
-                        KeyFilePath = message.KeyFilePath,
-                        Password = message.Password
-                    });
-                }
-                else throw new DatabaseClosedException();
+                    KeyFileContents = await _file.OpenBinaryFile(message.KeyFilePath),
+                    Password = message.Password
+                });
             }
         }
     }

@@ -11,7 +11,7 @@
     mc:Ignorable="d" >
     <UserControl.Resources>
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter"/>
-        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroungBrushConverter"/>
+        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroundBrushConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:DiscreteIntToSolidColorBrushConverter x:Key="DiscreteIntToSolidColorBrushConverter"/>
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
@@ -42,7 +42,7 @@
         <ProgressBar Grid.Row="0" Grid.Column="1" 
                      Maximum="128" VerticalAlignment="Bottom" 
                      Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}"
-                     Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroungBrushConverter}}" 
+                     Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushConverter}}" 
                      Visibility="{Binding ShowComplexityIndicator, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" />
         <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" Content="{Binding KeyFileText}" IsEnabled="{Binding HasKeyFile}" Click="KeyFileButton_Click" Style="{StaticResource MainColorHyperlinkButton}" />

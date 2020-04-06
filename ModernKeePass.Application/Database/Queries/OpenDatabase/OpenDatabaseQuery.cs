@@ -15,26 +15,25 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
         public class OpenDatabaseQueryHandler : IAsyncRequestHandler<OpenDatabaseQuery>
         {
             private readonly IDatabaseProxy _database;
+            private readonly IFileProxy _file;
 
-            public OpenDatabaseQueryHandler(IDatabaseProxy database)
+            public OpenDatabaseQueryHandler(IDatabaseProxy database, IFileProxy file)
             {
                 _database = database;
+                _file = file;
             }
 
             public async Task Handle(OpenDatabaseQuery request)
             {
                 if (_database.IsOpen) throw new DatabaseOpenException();
 
-                await _database.Open(
-                    new FileInfo
+                var file = await _file.OpenBinaryFile(request.FilePath);
+                await _database.Open(file, new Credentials
                     {
-                        Path = request.FilePath
-                    }, 
-                    new Credentials
-                    {
-                        KeyFilePath = request.KeyFilePath,
+                        KeyFileContents = await _file.OpenBinaryFile(request.KeyFilePath),
                         Password = request.Password
                     });
+                _database.FileAccessToken = request.FilePath;
             }
             
         }

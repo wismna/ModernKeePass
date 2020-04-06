@@ -15,26 +15,26 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
         public class CreateDatabaseCommandHandler : IAsyncRequestHandler<CreateDatabaseCommand>
         {
             private readonly IDatabaseProxy _database;
+            private readonly IFileProxy _file;
 
-            public CreateDatabaseCommandHandler(IDatabaseProxy database)
+            public CreateDatabaseCommandHandler(IDatabaseProxy database, IFileProxy file)
             {
                 _database = database;
+                _file = file;
             }
 
             public async Task Handle(CreateDatabaseCommand message)
             {
                 if (_database.IsOpen) throw new DatabaseOpenException();
 
-                await _database.Create(
-                    new FileInfo
-                    {
-                        Path = message.FilePath
-                    },
+                var file = await _file.OpenBinaryFile(message.FilePath);
+                await _database.Create(file,
                     new Credentials
                     {
-                        KeyFilePath = message.KeyFilePath,
+                        KeyFileContents = await _file.OpenBinaryFile(message.KeyFilePath),
                         Password = message.Password
                     });
+                _database.FileAccessToken = message.FilePath;
             }
 
         }

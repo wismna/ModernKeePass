@@ -1,0 +1,558 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutCredits1.Text" xml:space="preserve">
+    <value>Dominik Reichl pour l'application KeePass et le format de fichier</value>
+  </data>
+  <data name="AboutCredits2.Text" xml:space="preserve">
+    <value>David Lechner pour son adaptation PCL de la blibliothèque KeePass et ses tests associés</value>
+  </data>
+  <data name="AboutCreditsLabel.Text" xml:space="preserve">
+    <value>Crédits</value>
+  </data>
+  <data name="AboutDesc.Text" xml:space="preserve">
+    <value>Un gestionnaire de mot de passes moderne pour le Windows Store</value>
+  </data>
+  <data name="AboutHomepage.Text" xml:space="preserve">
+    <value>Page d'accueil :</value>
+  </data>
+  <data name="AppBarDelete.Label" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="AppBarEdit.Label" xml:space="preserve">
+    <value>Editer</value>
+  </data>
+  <data name="AppBarHome.Label" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="AppBarRestore.Label" xml:space="preserve">
+    <value>Restaurer</value>
+  </data>
+  <data name="AppBarSave.Label" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="AppBarSettings.Label" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="AppBarSort.Label" xml:space="preserve">
+    <value>Trier</value>
+  </data>
+  <data name="AppBarSortEntries.Text" xml:space="preserve">
+    <value>Entrées</value>
+  </data>
+  <data name="AppBarSortGroups.Text" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="DonateButton.Content" xml:space="preserve">
+    <value>Donner</value>
+  </data>
+  <data name="DonateDesc.Text" xml:space="preserve">
+    <value>Vous aimez cette app? Pourquoi ne pas faire un petit don afin de m'encourager et d'éviter le recours aux publicités :) ?</value>
+  </data>
+  <data name="EntryExpirationDate.Content" xml:space="preserve">
+    <value>Date d'expiration</value>
+  </data>
+  <data name="EntryExpirationTooltip.Content" xml:space="preserve">
+    <value>Le mot de passe a expiré</value>
+  </data>
+  <data name="EntryItemCopyLogin.Text" xml:space="preserve">
+    <value>Copier le login</value>
+  </data>
+  <data name="EntryItemCopyPassword.Text" xml:space="preserve">
+    <value>Copier le mot de passe</value>
+  </data>
+  <data name="EntryItemCopyUrl.Text" xml:space="preserve">
+    <value>Naviguer vers l'URL</value>
+  </data>
+  <data name="EntryLogin.Text" xml:space="preserve">
+    <value>Nom d'utilisateur ou login</value>
+  </data>
+  <data name="EntryNotes.Text" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="EntryPassword.Text" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="EntryShowPassword.Content" xml:space="preserve">
+    <value>Afficher le mot de passe</value>
+  </data>
+  <data name="GroupCreateEntry.Text" xml:space="preserve">
+    <value>Créer une nouvelle entrée</value>
+  </data>
+  <data name="GroupSearch.PlaceholderText" xml:space="preserve">
+    <value>Rechercher...</value>
+  </data>
+  <data name="GroupTitle.PlaceholderText" xml:space="preserve">
+    <value>Nom du nouveau groupe...</value>
+  </data>
+  <data name="NewCreateButton.Content" xml:space="preserve">
+    <value>Créer une nouvelle...</value>
+  </data>
+  <data name="NewCreateDesc.Text" xml:space="preserve">
+    <value>Créer une nouvelle base de données de mots de passe à l'endroit de votre choix.</value>
+  </data>
+  <data name="OpenBrowseButton.Content" xml:space="preserve">
+    <value>Parcourir les fichiers...</value>
+  </data>
+  <data name="OpenBrowseDesc.Text" xml:space="preserve">
+    <value>Ouvrir une base de données de mots de passe existante sur votre PC.</value>
+  </data>
+  <data name="OpenUrlButton.Content" xml:space="preserve">
+    <value>Depuis une URL...</value>
+  </data>
+  <data name="OpenUrlDesc.Text" xml:space="preserve">
+    <value>Ouvrir une base de données de mots de passe depuis Internet (pas encore implementé).</value>
+  </data>
+  <data name="PasswordGeneratorAlso.Text" xml:space="preserve">
+    <value>Ajouter aussi ces caractères :</value>
+  </data>
+  <data name="PasswordGeneratorBrackets.Content" xml:space="preserve">
+    <value>Parenthèses ([], {}, (), ...)</value>
+  </data>
+  <data name="PasswordGeneratorButton.Content" xml:space="preserve">
+    <value>Générer</value>
+  </data>
+  <data name="PasswordGeneratorDigits.Content" xml:space="preserve">
+    <value>Chiffres (0, 1, 2, ...)</value>
+  </data>
+  <data name="PasswordGeneratorLength.Text" xml:space="preserve">
+    <value>Longueur de mot de passe :</value>
+  </data>
+  <data name="PasswordGeneratorLower.Content" xml:space="preserve">
+    <value>Minuscules (a, b, c, ...)</value>
+  </data>
+  <data name="PasswordGeneratorMinus.Content" xml:space="preserve">
+    <value>Moins (-)</value>
+  </data>
+  <data name="PasswordGeneratorSpace.Content" xml:space="preserve">
+    <value>Espace ( )</value>
+  </data>
+  <data name="PasswordGeneratorSpecial.Content" xml:space="preserve">
+    <value>Spéciaux (!, $, %, ...)</value>
+  </data>
+  <data name="PasswordGeneratorTooltip.Content" xml:space="preserve">
+    <value>Générer le mot de passe</value>
+  </data>
+  <data name="PasswordGeneratorUnderscore.Content" xml:space="preserve">
+    <value>Underscore (_)</value>
+  </data>
+  <data name="PasswordGeneratorUpper.Content" xml:space="preserve">
+    <value>Majuscules (A, B, C, ...)</value>
+  </data>
+  <data name="RecentClear.Text" xml:space="preserve">
+    <value>Supprimer tout</value>
+  </data>
+  <data name="ReorderEntriesLabel.Text" xml:space="preserve">
+    <value>Glissez-déposez les entrées pour les réorganiser</value>
+  </data>
+  <data name="SaveAsButton.Content" xml:space="preserve">
+    <value>Sauvegarder sous...</value>
+  </data>
+  <data name="SaveAsDesc.Text" xml:space="preserve">
+    <value>Cela va sauvegarder la base de données dans un nouveau fichier et l'ouvrir.</value>
+  </data>
+  <data name="SaveButton.Content" xml:space="preserve">
+    <value>Sauvegarder et fermer</value>
+  </data>
+  <data name="SaveDesc.Text" xml:space="preserve">
+    <value>Cela va sauvegarder et fermer la base de données.</value>
+  </data>
+  <data name="SettingsDatabaseCompression.Text" xml:space="preserve">
+    <value>Algorithme de compression</value>
+  </data>
+  <data name="SettingsDatabaseEncryption.Text" xml:space="preserve">
+    <value>Algorithme de chiffrement</value>
+  </data>
+  <data name="SettingsDatabaseKdf.Text" xml:space="preserve">
+    <value>Algorithme de dérivation de clé</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.Header" xml:space="preserve">
+    <value>Corbeille</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.OffContent" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBin.OnContent" xml:space="preserve">
+    <value>Activé</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBinCreate.Content" xml:space="preserve">
+    <value>Créer un nouveau groupe</value>
+  </data>
+  <data name="SettingsDatabaseRecycleBinExisting.Content" xml:space="preserve">
+    <value>Utiliser un groupe existant</value>
+  </data>
+  <data name="SettingsNewDatabaseDesc.Text" xml:space="preserve">
+    <value>Ici, vous pouvez changer certains options lors de la création d'une nouvelle base de données</value>
+  </data>
+  <data name="SettingsNewDatabaseKdf.Text" xml:space="preserve">
+    <value>Version de fichier KDBX</value>
+  </data>
+  <data name="SettingsNewDatabaseKdfMoreInfo.Text" xml:space="preserve">
+    <value>Le plus élévé est le mieux, mais vous pourriez rencontrer des problèmes de compatibilité avec des application plus anciennes</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.Header" xml:space="preserve">
+    <value>Créer des données d'exemple</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.OffContent" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="SettingsNewDatabaseSample.OnContent" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspend.OffContent" xml:space="preserve">
+    <value>Ne pas sauvegarder</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspend.OnContent" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
+    <value>Ce paramètre est généralement recommandé. Si vous l'activez, la base de données sera sauvegardée automatiquement lors de la suspension et de la fermeture. Cependant, si votre base de données est très volumineuse, il se peut que Windows estime que cela prend trop de temps et tue l'application.</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendTitle.Text" xml:space="preserve">
+    <value>Sauvegarder automatiquement lors de la suspension ?</value>
+  </data>
+  <data name="SettingsSecurityDesc1.Text" xml:space="preserve">
+    <value>Ici, vous pouvez changer le mot de passe maître, le fichier de clé, ou les deux. Cliquez simplement sur</value>
+  </data>
+  <data name="SettingsSecurityDesc2.Text" xml:space="preserve">
+    <value>Mettre à jour la clé maître</value>
+  </data>
+  <data name="SettingsSecurityDesc3.Text" xml:space="preserve">
+    <value>quand vous avez fini. Retenez bien le mot de passe que vous utilisez !</value>
+  </data>
+  <data name="SettingsSecurityTitle.Text" xml:space="preserve">
+    <value>Changer les options de sécurité de la base de données</value>
+  </data>
+  <data name="SettingsSecurityUpdateButton.ButtonLabel" xml:space="preserve">
+    <value>Mettre à jour la clé maître</value>
+  </data>
+  <data name="SettingsWelcomeDesc.Text" xml:space="preserve">
+    <value>Ici, vous pouvez changer les options de l'application ou de la base de données.</value>
+  </data>
+  <data name="SettingsWelcomeHowto.Text" xml:space="preserve">
+    <value>Choisissez un élément dans le menu de gauche.</value>
+  </data>
+  <data name="SettingsWelcomeTitle.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="WelcomeNew.Text" xml:space="preserve">
+    <value>Pour créer une nouvelle base de données de mots de passe, c'est ici.</value>
+  </data>
+  <data name="WelcomeOpen.Text" xml:space="preserve">
+    <value>Pour ouvrir une base de données existante, c'est ici.</value>
+  </data>
+  <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="ToastCopyLogin.Message" xml:space="preserve">
+    <value>Login copié dans le presse-papiers</value>
+  </data>
+  <data name="ToastCopyPassword.Message" xml:space="preserve">
+    <value>Mot de passe copié dans le presse-papiers</value>
+  </data>
+  <data name="ToastCopyUrl.Message" xml:space="preserve">
+    <value>URL copié dans le presse-papiers</value>
+  </data>
+  <data name="EntryBackgroundColor.Text" xml:space="preserve">
+    <value>Couleur d'arrière plan</value>
+  </data>
+  <data name="EntryForegroundColor.Text" xml:space="preserve">
+    <value>Couleur du texte</value>
+  </data>
+  <data name="EntrySymbol.Text" xml:space="preserve">
+    <value>Icône</value>
+  </data>
+  <data name="AddEntryTooltip.Content" xml:space="preserve">
+    <value>Créer une nouvelle entrée</value>
+  </data>
+  <data name="HamburgerMenuHomeLabel.Text" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="HamburgerMenuHomeTooltip.Content" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="HamburgerMenuSettingsLabel.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="HamburgerMenuSettingsTooltip.Content" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="TopMenuDeleteButton.Content" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="TopMenuDeleteFlyout.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="TopMenuEditButton.Content" xml:space="preserve">
+    <value>Editer</value>
+  </data>
+  <data name="TopMenuEditFlyout.Text" xml:space="preserve">
+    <value>Editer</value>
+  </data>
+  <data name="TopMenuMoreButton.Content" xml:space="preserve">
+    <value>Plus</value>
+  </data>
+  <data name="TopMenuRestoreButton.Content" xml:space="preserve">
+    <value>Restaurer</value>
+  </data>
+  <data name="TopMenuRestoreFlyout.Text" xml:space="preserve">
+    <value>Restaurer</value>
+  </data>
+  <data name="TopMenuSaveButton.Content" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="TopMenuSaveFlyout.Text" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="TopMenuSortButton.Content" xml:space="preserve">
+    <value>Trier</value>
+  </data>
+  <data name="TopMenuSortEntriesFlyout.Text" xml:space="preserve">
+    <value>Trier les entrées</value>
+  </data>
+  <data name="TopMenuSortGroupsFlyout.Text" xml:space="preserve">
+    <value>Trier les groupes</value>
+  </data>
+  <data name="ToastUpdateDatabase.Message" xml:space="preserve">
+    <value>Base de données mise à jour</value>
+  </data>
+  <data name="ToastUpdateDatabase.Title" xml:space="preserve">
+    <value>Clé maître</value>
+  </data>
+  <data name="EntryTitle.PlaceholderText" xml:space="preserve">
+    <value>Nom de la nouvelle entrée...</value>
+  </data>
+  <data name="SearchButtonLabel.Text" xml:space="preserve">
+    <value>Recherche</value>
+  </data>
+  <data name="SearchButtonTooltip.Content" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="LoginTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Copier le login</value>
+  </data>
+  <data name="PasswordTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Copier le mot de passe</value>
+  </data>
+  <data name="UrlTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Naviguer vers l'URL</value>
+  </data>
+  <data name="RestoreEntryCommand.Message" xml:space="preserve">
+    <value>Entrée replacée à son emplacement d'origine</value>
+  </data>
+  <data name="RestoreGroupCommand.Message" xml:space="preserve">
+    <value>Groupe replacée à son emplacement d'origine</value>
+  </data>
+  <data name="NewImportCheckbox.Content" xml:space="preserve">
+    <value>Importer des données existantes</value>
+  </data>
+  <data name="NewImportFile.Content" xml:space="preserve">
+    <value>Sélectionnez un fichier à importer...</value>
+  </data>
+  <data name="NewImportFormat.Text" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="NewImportFormatHelp.Text" xml:space="preserve">
+    <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe:URL;Commentaires</value>
+  </data>
+  <data name="MainMenuItemAbout.Content" xml:space="preserve">
+    <value>A propos</value>
+  </data>
+  <data name="MainMenuItemDonate.Content" xml:space="preserve">
+    <value>Donation</value>
+  </data>
+  <data name="MainMenuItemNew.Content" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="MainMenuItemOpen.Content" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+  <data name="MainMenuItemRecent.Content" xml:space="preserve">
+    <value>Récents</value>
+  </data>
+  <data name="MainMenuItemSave.Content" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="MainMenuItemSettings.Content" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="MainPageOpenedDatabasesHeader.Content" xml:space="preserve">
+    <value>Bases de données</value>
+  </data>
+  <data name="SettingsMenu.Header" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="SettingsMenu.PaneTitle" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="SettingsMenuGroupApplication.Content" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="SettingsMenuGroupDatabase.Content" xml:space="preserve">
+    <value>Base de données</value>
+  </data>
+  <data name="SettingsMenuItemGeneral.Content" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="SettingsMenuItemNew.Content" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="SettingsMenuItemSave.Content" xml:space="preserve">
+    <value>Sauvegardes</value>
+  </data>
+  <data name="SettingsMenuItemSecurity.Content" xml:space="preserve">
+    <value>Sécurité</value>
+  </data>
+  <data name="GroupsAddNew.Text" xml:space="preserve">
+    <value>Nouveau groupe</value>
+  </data>
+  <data name="GroupsHeaderLabel.Text" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="AppBarAddEntry.Label" xml:space="preserve">
+    <value>Nouvelle entrée</value>
+  </data>
+  <data name="TopMenuRenameFlyout.Text" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="EntryIcon.Text" xml:space="preserve">
+    <value>Icône</value>
+  </data>
+  <data name="EntryPivotItemAdditional.Header" xml:space="preserve">
+    <value>Additionel</value>
+  </data>
+  <data name="EntryPivotItemSettings.Header" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="EntryPivotItemMain.Header" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="EntryHistoryComboBox.Text" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="EntryPivotItemHistory.Header" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="CredentialsOkButton.Content" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="UpdateCredentialsOkButton.Content" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+</root>

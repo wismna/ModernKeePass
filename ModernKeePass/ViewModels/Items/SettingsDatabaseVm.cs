@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -15,7 +16,7 @@ using ModernKeePass.Application.Parameters.Models;
 using ModernKeePass.Application.Parameters.Queries.GetCiphers;
 using ModernKeePass.Application.Parameters.Queries.GetCompressions;
 using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
-using ModernKeePass.Common;
+using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels
 {
@@ -73,7 +74,7 @@ namespace ModernKeePass.ViewModels
             set { _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait(); }
         }
 
-        public SettingsDatabaseVm() : this(App.Mediator) { }
+        public SettingsDatabaseVm() : this(App.Services.GetService<IMediator>()) { }
 
         public SettingsDatabaseVm(IMediator mediator)
         {

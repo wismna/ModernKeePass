@@ -2,7 +2,6 @@
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
-using ModernKeePass.Application.Group.Models;
 
 namespace ModernKeePass.Application.Database.Queries.GetDatabase
 {

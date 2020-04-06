@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Events;
 using ModernKeePass.Extensions;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
@@ -24,6 +24,7 @@ namespace ModernKeePass.Views.UserControls
     public sealed partial class CompositeKeyUserControl
     {
         private readonly IMediator _mediator;
+        private readonly ResourceHelper _resource;
         public CompositeKeyVm Model => Grid.DataContext as CompositeKeyVm;
 
         public bool CreateNew
@@ -62,26 +63,27 @@ namespace ModernKeePass.Views.UserControls
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata("OK", (o, args) => { }));
 
-        public StorageFile DatabaseFile
+        public string DatabaseFilePath
         {
-            get { return (StorageFile)GetValue(DatabaseFileProperty); }
-            set { SetValue(DatabaseFileProperty, value); }
+            get { return (string)GetValue(DatabaseFilePathProperty); }
+            set { SetValue(DatabaseFilePathProperty, value); }
         }
-        public static readonly DependencyProperty DatabaseFileProperty =
+        public static readonly DependencyProperty DatabaseFilePathProperty =
             DependencyProperty.Register(
-                "DatabaseFile",
-                typeof(StorageFile),
+                "DatabaseFilePath",
+                typeof(string),
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
-        public CompositeKeyUserControl(): this(App.Mediator)
+        public CompositeKeyUserControl(): this(App.Services.GetService<IMediator>())
         { }
 
         public CompositeKeyUserControl(IMediator mediator)
         {
             _mediator = mediator;
+            _resource = new ResourceHelper();
             InitializeComponent();
         }
 
@@ -100,31 +102,30 @@ namespace ModernKeePass.Views.UserControls
             else
             {
                 var database = await _mediator.Send(new GetDatabaseQuery());
-                var resource = new ResourcesService();
                 if (database.IsOpen)
                 {
-                    await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogDBOpenTitle"),
-                        string.Format(resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
-                        resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
-                        resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
+                    await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
+                        string.Format(_resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
+                        _resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
+                        _resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
                         async command =>
                         {
                             await _mediator.Send(new SaveDatabaseCommand());
                             ToastNotificationHelper.ShowGenericToast(
                                 database.Name,
-                                resource.GetResourceValue("ToastSavedMessage"));
+                                _resource.GetResourceValue("ToastSavedMessage"));
                             await _mediator.Send(new CloseDatabaseCommand());
-                            await OpenDatabase(resource);
+                            await OpenDatabase();
                         },
                         async command =>
                         {
                             await _mediator.Send(new CloseDatabaseCommand());
-                            await OpenDatabase(resource);
+                            await OpenDatabase();
                         });
                 }
                 else
                 {
-                    await OpenDatabase(resource);
+                    await OpenDatabase();
                 }
             }
         }
@@ -151,7 +152,9 @@ namespace ModernKeePass.Views.UserControls
             // Application now has read/write access to the picked file
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
-            Model.KeyFile = file;
+
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            Model.KeyFilePath = token;
         }
 
         private async void CreateKeyFileButton_Click(object sender, RoutedEventArgs e)
@@ -166,14 +169,19 @@ namespace ModernKeePass.Views.UserControls
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
             
-            await Model.CreateKeyFile(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            await Model.CreateKeyFile(new FileInfo
+            {
+                Path = token,
+                Name = file.DisplayName
+            });
         }
 
-        private async Task OpenDatabase(IResourceService resource)
+        private async Task OpenDatabase()
         {
             var oldLabel = ButtonLabel;
-            ButtonLabel = resource.GetResourceValue("CompositeKeyOpening");
-            if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(DatabaseFile, CreateNew)))
+            ButtonLabel = _resource.GetResourceValue("CompositeKeyOpening");
+            if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(DatabaseFilePath, CreateNew)))
             {
                 ValidationChecked?.Invoke(this, new PasswordEventArgs(Model.RootGroupId));
             }

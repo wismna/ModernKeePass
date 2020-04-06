@@ -1,11 +1,11 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Interactivity;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Actions
@@ -34,7 +34,7 @@ namespace ModernKeePass.Actions
             DependencyProperty.Register("Command", typeof(ICommand), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
-        public DeleteEntityAction() : this(App.Mediator) { }
+        public DeleteEntityAction() : this(App.Services.GetService<IMediator>()) { }
 
         public DeleteEntityAction(IMediator mediator)
         {
@@ -43,7 +43,7 @@ namespace ModernKeePass.Actions
 
         public object Execute(object sender, object parameter)
         {
-            var resource = new ResourcesService();
+            var resource = new ResourceHelper();
             var type = Entity is GroupDetailVm ? "Group" : "Entry";
             var isRecycleOnDelete = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult().IsRecycleBinEnabled;
 

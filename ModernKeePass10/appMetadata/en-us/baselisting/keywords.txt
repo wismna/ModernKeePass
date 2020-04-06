@@ -1,0 +1,4 @@
+Keepass
+Password
+Password Manager
+KDBX

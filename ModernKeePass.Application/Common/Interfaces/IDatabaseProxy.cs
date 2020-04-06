@@ -7,6 +7,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 {
     public interface IDatabaseProxy
     {
+        string ZeroId { get; }
         bool IsOpen { get; }
         string Name { get; }
         string RootGroupId { get; }
@@ -15,14 +16,14 @@ namespace ModernKeePass.Application.Common.Interfaces
         string KeyDerivationId { get; set; }
         string Compression { get; set; }
         bool IsRecycleBinEnabled { get; set; }
+        string FileAccessToken { get; set; }
 
-        Task Open(FileInfo fileInfo, Credentials credentials);
-        Task ReOpen();
-        Task Create(FileInfo fileInfo, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2);
-        Task SaveDatabase();
-        Task SaveDatabase(string filePath);
-        void SetRecycleBin(string id);
-        Task UpdateCredentials(Credentials credentials);
+        Task Open(byte[] file, Credentials credentials);
+        Task ReOpen(byte[] file);
+        Task Create(byte[] file, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2);
+        Task<byte[]> SaveDatabase();
+        Task<byte[]> SaveDatabase(byte[] newFileContents);
+        void UpdateCredentials(Credentials credentials);
         void CloseDatabase();
 
         Task AddEntry(string parentGroupId, string entryId);
@@ -32,8 +33,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         void UpdateGroup(string groupId);
         Task RemoveEntry(string parentGroupId, string entryId);
         Task RemoveGroup(string parentGroupId, string groupId);
-        Task DeleteEntry(string parentGroupId, string entryId, string recycleBinName);
-        Task DeleteGroup(string parentGroupId, string groupId, string recycleBinName);
+        void DeleteEntity(string entityId);
         EntryEntity CreateEntry(string parentGroupId);
         GroupEntity CreateGroup(string parentGroupId, string nameId, bool isRecycleBin = false);
         void SortEntries(string groupId);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -23,6 +24,7 @@ using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
@@ -122,7 +124,7 @@ namespace ModernKeePass.ViewModels
 
         public GroupDetailVm() {}
         
-        internal GroupDetailVm(string groupId) : this(groupId, App.Mediator)
+        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetService<IMediator>())
         { }
 
         public GroupDetailVm(string groupId, IMediator mediator, bool isEditMode = false)

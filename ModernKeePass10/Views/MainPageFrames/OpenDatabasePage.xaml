@@ -1,0 +1,30 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:userControls="using:ModernKeePass.Views.UserControls"
+    x:Class="ModernKeePass.Views.OpenDatabasePage"
+    mc:Ignorable="d">
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenBrowseDesc" />
+        <!--<HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenUrlDesc" />-->
+        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{x:Bind ViewModel.IsFileSelected, Mode=OneWay}">
+            <StackPanel Margin="25,0,25,0">
+                <TextBlock Text="{x:Bind ViewModel.Name, Mode=OneWay}" />
+                <userControls:CredentialsUserControl x:Uid="CompositeKeyOpenButton" DatabaseFilePath="{x:Bind ViewModel.DatabaseFilePath, Mode=OneWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="ValidationChecked">
+                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupsPage" />
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </userControls:CredentialsUserControl>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</Page>

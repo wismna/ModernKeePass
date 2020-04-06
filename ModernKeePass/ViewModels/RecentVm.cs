@@ -1,19 +1,21 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
     {
-        private readonly IRecentService _recent;
+        private readonly IRecentProxy _recent;
         private ISelectableModel _selectedItem;
-        private ObservableCollection<IRecentItem> _recentItems = new ObservableCollection<IRecentItem>();
+        private ObservableCollection<RecentItemVm> _recentItems;
 
-        public ObservableCollection<IRecentItem> RecentItems
+        public ObservableCollection<RecentItemVm> RecentItems
         {
             get { return _recentItems; }
             set { SetProperty(ref _recentItems, value); }
@@ -39,15 +41,16 @@ namespace ModernKeePass.ViewModels
         
         public ICommand ClearAllCommand { get; }
 
-        public RecentVm() : this (RecentService.Instance)
+        public RecentVm() : this (App.Services.GetService<IRecentProxy>())
         { }
 
-        public RecentVm(IRecentService recent)
+        public RecentVm(IRecentProxy recent)
         {
             _recent = recent;
             ClearAllCommand = new RelayCommand(ClearAll);
 
-            RecentItems = _recent.GetAllFiles();
+            RecentItems = new ObservableCollection<RecentItemVm>(_recent.GetAll().GetAwaiter().GetResult()
+                .Select(r => new RecentItemVm(r)));
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0] as RecentItemVm;
         }

@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CompositeKeyDefaultKeyFile" xml:space="preserve">
+    <value>Choisissez un fichier...</value>
+  </data>
+  <data name="CompositeKeyErrorOpen" xml:space="preserve">
+    <value>Erreur: </value>
+  </data>
+  <data name="CompositeKeyErrorUserKeyFile" xml:space="preserve">
+    <value>- mauvais fichier de clé</value>
+  </data>
+  <data name="CompositeKeyErrorUserPassword" xml:space="preserve">
+    <value>- mot de passe incorrect</value>
+  </data>
+  <data name="CompositeKeyOpening" xml:space="preserve">
+    <value>Ouverture...</value>
+  </data>
+  <data name="CompositeKeyUpdated" xml:space="preserve">
+    <value>Clé composite de la base de données mise à jour.</value>
+  </data>
+  <data name="EntityDeleteActionButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="EntityDeleteCancelButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="EntityDeleteTitle" xml:space="preserve">
+    <value>Attention</value>
+  </data>
+  <data name="EntityDeleting" xml:space="preserve">
+    <value>Suppression</value>
+  </data>
+  <data name="EntityRestoredTitle" xml:space="preserve">
+    <value>Restauré</value>
+  </data>
+  <data name="EntryDeleted" xml:space="preserve">
+    <value>Entrée supprimée définitivement</value>
+  </data>
+  <data name="EntryDeletingConfirmation" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer cette entrée ?</value>
+  </data>
+  <data name="EntryRecycled" xml:space="preserve">
+    <value>Entrée placée dans la Corbeille</value>
+  </data>
+  <data name="EntryRecyclingConfirmation" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir placer cette entrée dans la Corbeille ?</value>
+  </data>
+  <data name="EntryRestored" xml:space="preserve">
+    <value>Entrée replacée dans son groupe d'origine</value>
+  </data>
+  <data name="GroupDeleted" xml:space="preserve">
+    <value>Groupe supprimé définitivement</value>
+  </data>
+  <data name="GroupDeletingConfirmation" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer ce groupe et toutes ses entrées ?</value>
+  </data>
+  <data name="GroupRecycled" xml:space="preserve">
+    <value>Groupe placé dans la Corbeille</value>
+  </data>
+  <data name="GroupRecyclingConfirmation" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir envoyer ce groupe et toutes ses entrées vers la Corbeille ?</value>
+  </data>
+  <data name="GroupRestored" xml:space="preserve">
+    <value>Groupe replacé à sa place originelle</value>
+  </data>
+  <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
+    <value>- compte utilisateur</value>
+  </data>
+  <data name="RecycleBinTitle" xml:space="preserve">
+    <value>Corbeille</value>
+  </data>
+  <data name="EntryCurrent" xml:space="preserve">
+    <value>Courante</value>
+  </data>
+  <data name="MessageDialogDBOpenButtonDiscard" xml:space="preserve">
+    <value>Abandonner</value>
+  </data>
+  <data name="MessageDialogDBOpenButtonSave" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="MessageDialogDBOpenDesc" xml:space="preserve">
+    <value>La base de données {0} est actuellement ouverte. Que souhaitez-vous faire ?</value>
+  </data>
+  <data name="MessageDialogDBOpenTitle" xml:space="preserve">
+    <value>Base de données ouverte</value>
+  </data>
+  <data name="MessageDialogSaveErrorButtonDiscard" xml:space="preserve">
+    <value>Abandonner</value>
+  </data>
+  <data name="MessageDialogSaveErrorButtonSaveAs" xml:space="preserve">
+    <value>Sauvegarder sous</value>
+  </data>
+  <data name="MessageDialogSaveErrorFileTypeDesc" xml:space="preserve">
+    <value>Base de données KeePass 2.x</value>
+  </data>
+  <data name="MessageDialogSaveErrorTitle" xml:space="preserve">
+    <value>Erreur de sauvegarde</value>
+  </data>
+  <data name="ToastSavedMessage" xml:space="preserve">
+    <value>Base de données sauvegardée avec succès !</value>
+  </data>
+  <data name="NewImportFormatHelpCSV" xml:space="preserve">
+    <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe;URL;Commentaires</value>
+  </data>
+</root>

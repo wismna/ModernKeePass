@@ -57,6 +57,7 @@
     <Compile Include="Exceptions\SaveException.cs" />
     <Compile Include="Interfaces\IDateTime.cs" />
     <Compile Include="Interfaces\IHasSelectableObject.cs" />
+    <Compile Include="Interfaces\IImportFormat.cs" />
     <Compile Include="Interfaces\IIsEnabled.cs" />
     <Compile Include="Interfaces\ISelectableModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

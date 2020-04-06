@@ -1,8 +1,9 @@
 ﻿using System;
-using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -21,13 +22,13 @@ namespace ModernKeePass.Views
             InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var file = e.Parameter as StorageFile;
+            var file = e.Parameter as FileInfo;
             if (file != null)
             {
-                Model.OpenFile(file);
+                await Model.OpenFile(file);
             }
         }
 
@@ -43,7 +44,15 @@ namespace ModernKeePass.Views
             // Application now has read/write access to the picked file
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
-            Model.OpenFile(file);
+
+
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var fileInfo = new FileInfo
+            {
+                Path = token,
+                Name = file.DisplayName
+            };
+            await Model.OpenFile(fileInfo);
         }
     }
 }

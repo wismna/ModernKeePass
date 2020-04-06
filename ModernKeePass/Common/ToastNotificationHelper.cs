@@ -3,7 +3,6 @@ using Windows.Data.Json;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
 using ModernKeePass.Interfaces;
-using ModernKeePass.ViewModels;
 
 namespace ModernKeePass.Common
 {

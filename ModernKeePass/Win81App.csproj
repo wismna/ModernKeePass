@@ -117,32 +117,19 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\ResourceHelper.cs" />
     <Compile Include="Converters\IconToSymbolConverter.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="ImportFormats\CsvImportFormat.cs" />
-    <Compile Include="ImportFormats\NullImportFormat.cs" />
-    <Compile Include="Interfaces\IFormat.cs" />
-    <Compile Include="Interfaces\IProxyInvocationHandler.cs" />
-    <Compile Include="Interfaces\IRecentService.cs" />
-    <Compile Include="Interfaces\IRecentItem.cs" />
-    <Compile Include="Interfaces\IResourceService.cs" />
-    <Compile Include="Services\SingletonServiceBase.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
-    <Content Include="Services\DatabaseService.cs" />
-    <Compile Include="Interfaces\ISettingsService.cs" />
     <Compile Include="Common\MessageDialogHelper.cs" />
     <Compile Include="Common\NavigationHelper.cs" />
-    <Compile Include="Common\NotifyPropertyChangedBase.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Services\RecentService.cs" />
-    <Compile Include="Services\ResourcesService.cs" />
-    <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Common\ToastNotificationHelper.cs" />
     <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
     <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />

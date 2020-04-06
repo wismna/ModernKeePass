@@ -1,20 +1,20 @@
 ﻿using System.Threading.Tasks;
-using Windows.Storage;
-using ModernKeePass.Common;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Domain.AOP;
+using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel, IRecentItem
+    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
     {
+        private readonly IRecentProxy _recent;
         private bool _isSelected;
         
-        public StorageFile DatabaseFile { get; }
         public string Token { get; }
         public string Name { get; }
-        public string Path => DatabaseFile?.Path;
+        public string Path => string.Empty;
 
         public bool IsSelected
         {
@@ -22,22 +22,17 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isSelected, value); }
         }
 
-        public RecentItemVm() {}
-        public RecentItemVm(string token, string metadata, IStorageItem file)
+        public RecentItemVm(FileInfo file): this(App.Services.GetService<IRecentProxy>(), file) {}
+        public RecentItemVm(IRecentProxy recent, FileInfo file)
         {
-            Token = token;
-            Name = metadata;
-            DatabaseFile = file as StorageFile;
+            _recent = recent;
+            Token = file.Path;
+            Name = file.Name;
         }
         
-        public void UpdateAccessTime()
+        public async Task UpdateAccessTime()
         {
-            UpdateAccessTime(RecentService.Instance).Wait();
-        }
-
-        public async Task UpdateAccessTime(IRecentService recent)
-        {
-            await recent.GetFileAsync(Token);
+            await _recent.Get(Token);
         }
     }
 }

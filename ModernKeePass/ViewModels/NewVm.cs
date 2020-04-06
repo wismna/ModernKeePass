@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Windows.Storage;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
@@ -8,15 +10,13 @@ using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Interfaces;
-using ModernKeePass.Services;
 
 namespace ModernKeePass.ViewModels
 {
     public class NewVm : OpenVm
     {
         private readonly IMediator _mediator;
-        private readonly ISettingsService _settings;
+        private readonly ISettingsProxy _settings;
         private string _importFormatHelp;
         public string Password { get; set; }
 
@@ -26,7 +26,7 @@ namespace ModernKeePass.ViewModels
 
         public string ImportFileExtensionFilter { get; set; } = "*";
 
-        public IFormat ImportFormat { get; set; }
+        public IImportFormat ImportFormat { get; set; }
 
         public string ImportFormatHelp
         {
@@ -38,9 +38,9 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public NewVm(): this(App.Mediator, new SettingsService()) { }
+        public NewVm(): this(App.Services.GetService<IMediator>(), App.Services.GetService<ISettingsProxy>()) { }
 
-        public NewVm(IMediator mediator, ISettingsService settings)
+        public NewVm(IMediator mediator, ISettingsProxy settings)
         {
             _mediator = mediator;
             _settings = settings;

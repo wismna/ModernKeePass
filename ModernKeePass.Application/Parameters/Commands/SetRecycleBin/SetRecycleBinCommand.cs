@@ -19,7 +19,7 @@ namespace ModernKeePass.Application.Parameters.Commands.SetRecycleBin
 
             public void Handle(SetRecycleBinCommand message)
             {
-                if (_database.IsOpen) _database.SetRecycleBin(message.RecycleBinId);
+                if (_database.IsOpen) _database.RecycleBinId = message.RecycleBinId;
                 else throw new DatabaseClosedException();
             }
         }
