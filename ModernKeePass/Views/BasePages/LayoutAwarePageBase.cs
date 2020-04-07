@@ -57,7 +57,7 @@ namespace ModernKeePass.Views.BasePages
         /// The source of the event; typically <see cref="Common.NavigationHelper"/>
         /// </param>
         /// <param name="e">Event data that provides both the navigation parameter passed to
-        /// <see cref="Frame.Navigate(Type, Object)"/> when this page was initially requested and
+        /// <see cref="Frame.Navigate(Type, object)"/> when this page was initially requested and
         /// a dictionary of state preserved by this page during an earlier
         /// session.  The state will be null the first time a page is visited.</param>
         protected void navigationHelper_LoadState(object sender, LoadStateEventArgs e)

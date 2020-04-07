@@ -33,8 +33,13 @@ namespace ModernKeePass.KeePassDatabaseTests
             var pwEntry = new PwEntry(true, true)
             {
                 ExpiryTime = DateTime.Now,
-                BackgroundColor = Color.White,
-                ForegroundColor = Color.Black
+                ParentGroup =
+                {
+                    Uuid = new PwUuid(true),
+                    Name = "Parent Group"
+                }
+                //BackgroundColor = Color.White,
+                //ForegroundColor = Color.Black
             };
             pwEntry.Strings.Set(PwDefs.TitleField, new ProtectedString(true, "Test"));
             pwEntry.Strings.Set(PwDefs.UserNameField, new ProtectedString(true, "toto"));
@@ -46,8 +51,11 @@ namespace ModernKeePass.KeePassDatabaseTests
             var entry = _mapper.Map<PwEntry, EntryEntity>(pwEntry);
 
             Assert.That(entry.ExpirationDate, Is.Not.EqualTo(default(DateTimeOffset)));
-            Assert.That(entry.BackgroundColor, Is.EqualTo(Color.White));
-            Assert.That(entry.ForegroundColor, Is.EqualTo(Color.Black));
+            //Assert.That(entry.BackgroundColor, Is.EqualTo(Color.White));
+            //Assert.That(entry.ForegroundColor, Is.EqualTo(Color.Black));
+            Assert.That(entry.ParentId, Is.Not.EqualTo(PwUuid.Zero.ToHexString()));
+            Assert.That(entry.ParentName, Is.EqualTo("Parent Group"));
+            Assert.That(entry.UserName, Is.EqualTo("toto"));
             Assert.That(entry.Name, Is.EqualTo("Test"));
             Assert.That(entry.UserName, Is.EqualTo("toto"));
             Assert.That(entry.Password, Is.EqualTo("password"));
@@ -69,8 +77,8 @@ namespace ModernKeePass.KeePassDatabaseTests
                 Url = new Uri("http://google.com"),
                 Notes = "blabla",
                 ExpirationDate = DateTimeOffset.Now,
-                BackgroundColor = Color.White,
-                ForegroundColor = Color.Black,
+                //BackgroundColor = Color.White,
+                //ForegroundColor = Color.Black,
                 AdditionalFields = new Dictionary<string, string> { 
                     {
                         "additional", "custom"
@@ -82,8 +90,8 @@ namespace ModernKeePass.KeePassDatabaseTests
             _mapper.Map(entry, pwEntry);
 
             Assert.That(pwEntry.ExpiryTime, Is.Not.EqualTo(default(DateTime)));
-            Assert.That(pwEntry.BackgroundColor, Is.EqualTo(Color.White));
-            Assert.That(pwEntry.ForegroundColor, Is.EqualTo(Color.Black));
+            //Assert.That(pwEntry.BackgroundColor, Is.EqualTo(Color.White));
+            //Assert.That(pwEntry.ForegroundColor, Is.EqualTo(Color.Black));
             Assert.That(pwEntry.Strings.GetSafe(PwDefs.TitleField).ReadString(), Is.EqualTo("Test"));
             Assert.That(pwEntry.Strings.GetSafe(PwDefs.UserNameField).ReadString(), Is.EqualTo("toto"));
             Assert.That(pwEntry.Strings.GetSafe(PwDefs.PasswordField).ReadString(), Is.EqualTo("password"));

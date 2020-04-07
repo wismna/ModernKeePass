@@ -14,10 +14,9 @@ namespace ModernKeePass.Infrastructure.UWP
 
         public int EntryCount => _mru.Entries.Count;
 
-        public async Task<FileInfo> Get(string token)
+        public async Task<FileInfo> Get(string token, bool updateAccessTime = false)
         {
-            var recentEntry = _mru.Entries.FirstOrDefault(e => e.Token == token);
-            var file = await _mru.GetFileAsync(token);
+            var file = await _mru.GetFileAsync(token, updateAccessTime ? AccessCacheOptions.None : AccessCacheOptions.SuppressAccessTimeUpdate);
             StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
             return new FileInfo
             {

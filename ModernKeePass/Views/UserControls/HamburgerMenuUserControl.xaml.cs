@@ -100,6 +100,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
+        public bool IsOpen
+        {
+            get { return (bool)GetValue(IsOpenProperty); }
+            set { SetValue(IsOpenProperty, value); }
+        }
+        public static readonly DependencyProperty IsOpenProperty =
+            DependencyProperty.Register(
+                "IsOpen",
+                typeof(bool),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {

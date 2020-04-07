@@ -3,6 +3,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Database.Commands.CreateDatabase;
 using ModernKeePass.Application.Database.Commands.UpdateCredentials;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
@@ -110,13 +112,15 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         private readonly IMediator _mediator;
+        private readonly ISettingsProxy _settings;
         private readonly ResourceHelper _resource;
 
-        public CompositeKeyVm() : this(App.Services.GetService<IMediator>()) { }
+        public CompositeKeyVm() : this(App.Services.GetService<IMediator>(), App.Services.GetService<ISettingsProxy>()) { }
 
-        public CompositeKeyVm(IMediator mediator)
+        public CompositeKeyVm(IMediator mediator, ISettingsProxy settings)
         {
             _mediator = mediator;
+            _settings = settings;
             _resource = new ResourceHelper();
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
         }
@@ -127,12 +131,25 @@ namespace ModernKeePass.ViewModels
             {
                 _isOpening = true;
                 OnPropertyChanged(nameof(IsValid));
-
-                await _mediator.Send(new OpenDatabaseQuery {
-                    FilePath = databaseFilePath,
-                    KeyFilePath = HasKeyFile ? KeyFilePath : null,
-                    Password = HasPassword ? Password : null,
-                });
+                if (createNew)
+                {
+                    await _mediator.Send(new CreateDatabaseCommand
+                    {
+                        FilePath = databaseFilePath,
+                        KeyFilePath = HasKeyFile ? KeyFilePath : null,
+                        Password = HasPassword ? Password : null,
+                        Name = "New Database",
+                        CreateSampleData = _settings.GetSetting<bool>("Sample")
+                    });
+                }
+                else
+                {
+                    await _mediator.Send(new OpenDatabaseQuery {
+                        FilePath = databaseFilePath,
+                        KeyFilePath = HasKeyFile ? KeyFilePath : null,
+                        Password = HasPassword ? Password : null,
+                    });
+                }
                 RootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
                 return true;
             }

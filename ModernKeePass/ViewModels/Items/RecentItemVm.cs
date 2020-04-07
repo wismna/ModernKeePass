@@ -50,7 +50,7 @@ namespace ModernKeePass.ViewModels
         // Called from XAML
         public void UpdateAccessTime()
         {
-            _recent.Get(Token).Wait();
+            _recent.Get(Token, true).Wait();
         }
     }
 }

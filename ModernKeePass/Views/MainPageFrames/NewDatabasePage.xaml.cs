@@ -85,11 +85,5 @@ namespace ModernKeePass.Views
             Model.ImportFile = await picker.PickSingleFileAsync();
             if (Model.ImportFile != null) ImportFileLink.Content = Model.ImportFile.Name;
         }
-
-        private async void CompositeKeyUserControl_OnValidationChecked(object sender, PasswordEventArgs e)
-        {
-            var rootGroup = await Model.PopulateInitialData();
-            _mainFrame.Navigate(typeof(GroupDetailPage), rootGroup);
-        }
     }
 }

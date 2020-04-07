@@ -51,7 +51,7 @@
         <ListView.HeaderTemplate>
             <DataTemplate>
                 <StackPanel Orientation="Horizontal">
-                    <ToggleButton Style="{StaticResource HamburgerToggleButton}">
+                    <ToggleButton Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding Path={Binding IsOpen, ElementName=UserControl}}">
                         <ToolTipService.ToolTip>
                             <ToolTip Content="{Binding HeaderLabel, ElementName=UserControl}" />
                         </ToolTipService.ToolTip>

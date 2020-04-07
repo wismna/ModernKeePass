@@ -20,7 +20,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         Task Open(byte[] file, Credentials credentials);
         Task ReOpen(byte[] file);
-        Task Create(byte[] file, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2);
+        Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V2);
         Task<byte[]> SaveDatabase();
         Task<byte[]> SaveDatabase(byte[] newFileContents);
         void UpdateCredentials(Credentials credentials);
@@ -35,7 +35,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task RemoveGroup(string parentGroupId, string groupId);
         void DeleteEntity(string entityId);
         EntryEntity CreateEntry(string parentGroupId);
-        GroupEntity CreateGroup(string parentGroupId, string nameId, bool isRecycleBin = false);
+        GroupEntity CreateGroup(string parentGroupId, string name, bool isRecycleBin = false);
         void SortEntries(string groupId);
         void SortSubGroups(string groupId);
         EntryEntity GetEntry(string id);

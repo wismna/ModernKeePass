@@ -31,6 +31,8 @@ namespace ModernKeePass.Infrastructure.KeePass
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
         public string Name => _pwDatabase?.Name;
         public string RootGroupId => _pwDatabase?.RootGroup.Uuid.ToHexString();
+
+        // TODO: find a correct place for this
         public string FileAccessToken { get; set; }
 
         // Settings
@@ -111,16 +113,18 @@ namespace ModernKeePass.Infrastructure.KeePass
             await Open(file, _credentials);
         }
 
-        public async Task Create(byte[] file, Credentials credentials, DatabaseVersion version = DatabaseVersion.V2)
+        public async Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V2)
         {
             try
             {
                 await Task.Run(() =>
                 {
                     var compositeKey = CreateCompositeKey(credentials);
-                    var ioConnection = IOConnectionInfo.FromByteArray(file);
+                    var ioConnection = IOConnectionInfo.FromByteArray(new byte[] {});
 
                     _pwDatabase.New(ioConnection, compositeKey);
+                    _pwDatabase.Name = name;
+                    _pwDatabase.RootGroup.Name = name;
 
                     switch (version)
                     {
