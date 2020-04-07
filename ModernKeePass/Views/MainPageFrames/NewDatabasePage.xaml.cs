@@ -50,7 +50,8 @@ namespace ModernKeePass.Views
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             var fileInfo = new FileInfo
             {
-                Path = token,
+                Id = token,
+                Path = file.Path,
                 Name = file.DisplayName
             };
             await Model.OpenFile(fileInfo);

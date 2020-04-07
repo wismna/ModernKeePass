@@ -31,7 +31,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                 await _database.Create(file,
                     new Credentials
                     {
-                        KeyFileContents = await _file.OpenBinaryFile(message.KeyFilePath),
+                        KeyFileContents = !string.IsNullOrEmpty(message.KeyFilePath) ? await _file.OpenBinaryFile(message.KeyFilePath) : null,
                         Password = message.Password
                     });
                 _database.FileAccessToken = message.FilePath;

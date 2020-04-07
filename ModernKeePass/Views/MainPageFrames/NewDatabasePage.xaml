@@ -21,7 +21,7 @@
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFilePath="{Binding Path}" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
+                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFilePath="{Binding Token}" ValidationChecked="CompositeKeyUserControl_OnValidationChecked" />
             </StackPanel>
         </Border>
         <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" Margin="15,10,0,0" IsChecked="{Binding IsImportChecked, Mode=TwoWay}" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />

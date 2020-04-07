@@ -172,8 +172,9 @@ namespace ModernKeePass.Views.UserControls
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             await Model.CreateKeyFile(new FileInfo
             {
-                Path = token,
-                Name = file.DisplayName
+                Id = token,
+                Name = file.DisplayName,
+                Path = file.Path
             });
         }
 

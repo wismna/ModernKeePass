@@ -9,10 +9,28 @@ namespace ModernKeePass.ViewModels
     public class OpenVm: NotifyPropertyChangedBase
     {
         private readonly IRecentProxy _recent;
+        private string _name;
+        private string _path;
+        private string _token;
         public bool IsFileSelected => !string.IsNullOrEmpty(Path);
 
-        public string Name { get; private set; }
-        public string Path { get; private set; }
+        public string Token
+        {
+            get { return _token; }
+            set { SetProperty(ref _token, value); }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            private set { SetProperty(ref _name, value); }
+        }
+
+        public string Path  
+        {
+            get { return _path; }
+            private set { SetProperty(ref _path, value); }
+        }
 
         public OpenVm(): this(App.Services.GetService<IRecentProxy>()) { }
 
@@ -23,9 +41,9 @@ namespace ModernKeePass.ViewModels
         
         public async Task OpenFile(FileInfo file)
         {
+            Token = file.Id;
             Name = file.Name;
             Path = file.Path;
-            OnPropertyChanged(nameof(Name));
             OnPropertyChanged(nameof(IsFileSelected));
             await AddToRecentList(file);
         }

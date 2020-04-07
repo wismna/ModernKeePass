@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
@@ -11,10 +10,27 @@ namespace ModernKeePass.ViewModels
     {
         private readonly IRecentProxy _recent;
         private bool _isSelected;
-        
-        public string Token { get; }
-        public string Name { get; }
-        public string Path => string.Empty;
+        private string _name;
+        private string _token;
+        private string _path;
+
+        public string Token
+        {
+            get { return _token; }
+            set { SetProperty(ref _token, value); }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { SetProperty(ref _name, value); }
+        }
+
+        public string Path
+        {
+            get { return _path; }
+            set { SetProperty(ref _path, value); }
+        }
 
         public bool IsSelected
         {
@@ -26,13 +42,15 @@ namespace ModernKeePass.ViewModels
         public RecentItemVm(IRecentProxy recent, FileInfo file)
         {
             _recent = recent;
-            Token = file.Path;
+            Token = file.Id;
             Name = file.Name;
+            Path = file.Path;
         }
         
-        public async Task UpdateAccessTime()
+        // Called from XAML
+        public void UpdateAccessTime()
         {
-            await _recent.Get(Token);
+            _recent.Get(Token).Wait();
         }
     }
 }

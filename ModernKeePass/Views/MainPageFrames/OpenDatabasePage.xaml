@@ -25,7 +25,7 @@
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyOpenButton" DatabaseFilePath="{Binding Path}">
+                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyOpenButton" DatabaseFilePath="{Binding Token}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="ValidationChecked">
                             <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />

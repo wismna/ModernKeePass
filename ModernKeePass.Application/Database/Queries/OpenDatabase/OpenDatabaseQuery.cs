@@ -30,7 +30,7 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                 var file = await _file.OpenBinaryFile(request.FilePath);
                 await _database.Open(file, new Credentials
                     {
-                        KeyFileContents = await _file.OpenBinaryFile(request.KeyFilePath),
+                        KeyFileContents = !string.IsNullOrEmpty(request.KeyFilePath) ? await _file.OpenBinaryFile(request.KeyFilePath): null,
                         Password = request.Password
                     });
                 _database.FileAccessToken = request.FilePath;

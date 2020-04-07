@@ -239,8 +239,9 @@ namespace ModernKeePass
                 var token = StorageApplicationPermissions.FutureAccessList.Add(file);
                 var fileInfo = new FileInfo
                 {
-                    Path = token,
-                    Name = file.DisplayName
+                    Id = token,
+                    Name = file.DisplayName,
+                    Path = file.Path
                 };
                 rootFrame.Navigate(typeof(MainPage), fileInfo);
             }

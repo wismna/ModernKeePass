@@ -52,7 +52,7 @@ namespace ModernKeePass.ViewModels
             RecentItems = new ObservableCollection<RecentItemVm>(_recent.GetAll().GetAwaiter().GetResult()
                 .Select(r => new RecentItemVm(r)));
             if (RecentItems.Count > 0)
-                SelectedItem = RecentItems[0] as RecentItemVm;
+                SelectedItem = RecentItems[0];
         }
 
         private void ClearAll()

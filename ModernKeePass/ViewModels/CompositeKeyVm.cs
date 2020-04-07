@@ -170,7 +170,7 @@ namespace ModernKeePass.ViewModels
         public async Task CreateKeyFile(FileInfo file)
         {
             // TODO: implement entropy generator
-            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = file.Path});
+            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = file.Id});
             KeyFilePath = file.Path;
             KeyFileText = file.Name;
         }

@@ -18,11 +18,12 @@ namespace ModernKeePass.Infrastructure.UWP
         {
             var recentEntry = _mru.Entries.FirstOrDefault(e => e.Token == token);
             var file = await _mru.GetFileAsync(token);
-            StorageApplicationPermissions.FutureAccessList.AddOrReplace(recentEntry.Metadata, file);
+            StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
             return new FileInfo
             {
+                Id = token,
                 Name = file.DisplayName,
-                Path = recentEntry.Metadata
+                Path = file.Path
             };
         }
 
@@ -46,8 +47,8 @@ namespace ModernKeePass.Infrastructure.UWP
 
         public async Task Add(FileInfo recentItem)
         {
-            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(recentItem.Path);
-            _mru.Add(file, recentItem.Path);
+            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(recentItem.Id);
+            _mru.Add(file);
         }
 
         public void ClearAll()
@@ -55,7 +56,7 @@ namespace ModernKeePass.Infrastructure.UWP
             for (var i = _mru.Entries.Count; i > 0; i--)
             {
                 var entry = _mru.Entries[i];
-                StorageApplicationPermissions.FutureAccessList.Remove(entry.Metadata);
+                StorageApplicationPermissions.FutureAccessList.Remove(entry.Token);
                 _mru.Remove(entry.Token);
             }
         }
