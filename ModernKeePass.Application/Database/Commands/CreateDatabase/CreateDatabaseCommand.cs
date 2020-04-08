@@ -39,9 +39,9 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
 
                 if (message.CreateSampleData)
                 {
-                    var bankingGroup = _database.CreateGroup(_database.RootGroupId, "Banking");
-                    var emailGroup = _database.CreateGroup(_database.RootGroupId, "Email");
-                    var internetGroup = _database.CreateGroup(_database.RootGroupId, "Internet");
+                    _database.CreateGroup(_database.RootGroupId, "Banking");
+                    _database.CreateGroup(_database.RootGroupId, "Email");
+                    _database.CreateGroup(_database.RootGroupId, "Internet");
 
                     var sample1 = _database.CreateEntry(_database.RootGroupId);
                     _database.UpdateEntry(sample1.Id, EntryFieldName.Title, "Sample Entry" );

@@ -70,7 +70,7 @@ namespace ModernKeePass.KeePassDatabaseTests
             var path = Path.Combine(Path.GetTempPath(), "NewDatabase.kdbx");
             var newFile = await _fileProxy.OpenBinaryFile(path);
 
-            await _database.Create(newFile, _credentials);
+            await _database.Create(_credentials, "NewDatabase");
             var result = await _database.SaveDatabase();
             await _fileProxy.WriteBinaryContentsToFile(path, result);
             _database.CloseDatabase();

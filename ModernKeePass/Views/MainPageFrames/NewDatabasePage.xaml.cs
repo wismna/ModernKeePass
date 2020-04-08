@@ -4,10 +4,8 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
-using ModernKeePass.Events;
 using ModernKeePass.Infrastructure.File;
 using ModernKeePass.ViewModels;
 
@@ -20,19 +18,11 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class NewDatabasePage
     {
-        private Frame _mainFrame;
-
         public NewVm Model => (NewVm)DataContext;
 
         public NewDatabasePage()
         {
             InitializeComponent();
-        }
-        
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            _mainFrame = e.Parameter as Frame;
         }
 
         private async void CreateDatabaseButton_OnClick(object sender, RoutedEventArgs e)

@@ -6,7 +6,6 @@ using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePassLib;
 using ModernKeePassLib.Cryptography.KeyDerivation;
@@ -126,6 +125,8 @@ namespace ModernKeePass.Infrastructure.KeePass
                     _pwDatabase.Name = name;
                     _pwDatabase.RootGroup.Name = name;
 
+                    _credentials = credentials;
+
                     switch (version)
                     {
                         case DatabaseVersion.V4:
@@ -142,34 +143,20 @@ namespace ModernKeePass.Infrastructure.KeePass
 
         public async Task<byte[]> SaveDatabase()
         {
-            try
+            return await Task.Run(() =>
             {
-                return await Task.Run(() =>
-                {
-                    _pwDatabase.Save(new NullStatusLogger());
-                    return _pwDatabase.IOConnectionInfo.Bytes;
-                });
-            }
-            catch (Exception e)
-            {
-                throw new SaveException(e);
-            }
+                _pwDatabase.Save(new NullStatusLogger());
+                return _pwDatabase.IOConnectionInfo.Bytes;
+            });
         }
 
         public  async Task<byte[]> SaveDatabase(byte[] newFileContents)
         {
-            try
+            return await Task.Run(() =>
             {
-                return await Task.Run(() =>
-                {
-                    _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
-                    return _pwDatabase.IOConnectionInfo.Bytes;
-                });
-            }
-            catch (Exception e)
-            {
-                throw new SaveException(e);
-            }
+                _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
+                return _pwDatabase.IOConnectionInfo.Bytes;
+            });
         }
         
         public void CloseDatabase()

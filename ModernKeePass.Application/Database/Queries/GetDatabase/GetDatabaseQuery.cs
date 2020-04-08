@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
 
@@ -10,15 +9,13 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
         public class GetDatabaseQueryHandler : IRequestHandler<GetDatabaseQuery, DatabaseVm>
         {
             private readonly IDatabaseProxy _databaseProxy;
-            private readonly IMapper _mapper;
 
-            public GetDatabaseQueryHandler(IDatabaseProxy databaseProxy, IMapper mapper)
+            public GetDatabaseQueryHandler(IDatabaseProxy databaseProxy)
             {
                 _databaseProxy = databaseProxy;
-                _mapper = mapper;
             }
             
-            public DatabaseVm Handle(GetDatabaseQuery request)
+            public DatabaseVm Handle(GetDatabaseQuery message)
             {
                 var database = new DatabaseVm
                 {

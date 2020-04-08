@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ModernKeePass.Domain.Enums;
+﻿using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.Application.Common.Interfaces
 {

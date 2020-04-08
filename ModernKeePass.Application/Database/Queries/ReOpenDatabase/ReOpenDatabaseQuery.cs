@@ -18,7 +18,7 @@ namespace ModernKeePass.Application.Database.Queries.ReOpenDatabase
                 _file = file;
             }
 
-            public async Task Handle(ReOpenDatabaseQuery request)
+            public async Task Handle(ReOpenDatabaseQuery message)
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 

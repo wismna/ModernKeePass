@@ -27,7 +27,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         void CloseDatabase();
 
         Task AddEntry(string parentGroupId, string entryId);
-        Task InsertEntry(string parentGroupId, string entryId, int messageIndex);
+        Task InsertEntry(string parentGroupId, string entryId, int index);
         Task AddGroup(string parentGroupId, string groupId);
         void UpdateEntry(string entryId, string fieldName, object fieldValue);
         void UpdateGroup(string groupId);

@@ -23,17 +23,17 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                 _file = file;
             }
 
-            public async Task Handle(OpenDatabaseQuery request)
+            public async Task Handle(OpenDatabaseQuery message)
             {
                 if (_database.IsOpen) throw new DatabaseOpenException();
 
-                var file = await _file.OpenBinaryFile(request.FilePath);
+                var file = await _file.OpenBinaryFile(message.FilePath);
                 await _database.Open(file, new Credentials
                     {
-                        KeyFileContents = !string.IsNullOrEmpty(request.KeyFilePath) ? await _file.OpenBinaryFile(request.KeyFilePath): null,
-                        Password = request.Password
+                        KeyFileContents = !string.IsNullOrEmpty(message.KeyFilePath) ? await _file.OpenBinaryFile(message.KeyFilePath): null,
+                        Password = message.Password
                     });
-                _database.FileAccessToken = request.FilePath;
+                _database.FileAccessToken = message.FilePath;
             }
             
         }

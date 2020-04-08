@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.AccessCache;
 using ModernKeePass.Application.Common.Interfaces;

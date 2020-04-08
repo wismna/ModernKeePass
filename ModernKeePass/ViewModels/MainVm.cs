@@ -74,7 +74,6 @@ namespace ModernKeePass.ViewModels
                     Title = resource.GetResourceValue("MainMenuItemNew"),
                     PageType = typeof(NewDatabasePage),
                     Destination = destinationFrame,
-                    Parameter = referenceFrame,
                     SymbolIcon = Symbol.Add
                 },
                 new MainMenuItemVm

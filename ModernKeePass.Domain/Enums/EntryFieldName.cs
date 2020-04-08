@@ -1,6 +1,6 @@
 ﻿namespace ModernKeePass.Domain.Enums
 {
-    public class EntryFieldName
+    public static class EntryFieldName
     {
         public const string Title = nameof(Title);
         public const string UserName = nameof(UserName);

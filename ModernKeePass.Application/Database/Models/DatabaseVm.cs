@@ -1,6 +1,4 @@
-﻿using ModernKeePass.Application.Group.Models;
-
-namespace ModernKeePass.Application.Database.Models
+﻿namespace ModernKeePass.Application.Database.Models
 {
     public class DatabaseVm
     {
