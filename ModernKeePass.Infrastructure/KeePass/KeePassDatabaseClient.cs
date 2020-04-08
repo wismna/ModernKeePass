@@ -23,6 +23,8 @@ namespace ModernKeePass.Infrastructure.KeePass
         private readonly IDateTime _dateTime;
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private Credentials _credentials;
+        // Flag: Has Dispose already been called?
+        private bool _disposed;
 
         public string ZeroId => PwUuid.Zero.ToHexString();
 
@@ -317,7 +319,22 @@ namespace ModernKeePass.Infrastructure.KeePass
 
         public void Dispose()
         {
-            if (IsOpen) CloseDatabase();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // Protected implementation of Dispose pattern.
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+                return;
+
+            if (disposing)
+            {
+                _pwDatabase.Close();
+            }
+
+            _disposed = true;
         }
     }
 }

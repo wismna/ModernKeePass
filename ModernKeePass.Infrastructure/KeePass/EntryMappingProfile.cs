@@ -3,19 +3,12 @@ using System.Linq;
 using AutoMapper;
 using ModernKeePass.Domain.Entities;
 using ModernKeePassLib;
-using ModernKeePassLib.Security;
 
 namespace ModernKeePass.Infrastructure.KeePass
 {
     public class EntryMappingProfile: Profile
     {
         public EntryMappingProfile()
-        {
-            FromModelToDto();
-            FromDtoToModel();
-        }
-
-        private void FromDtoToModel()
         {
             Uri url;
             CreateMap<PwEntry, EntryEntity>()
@@ -42,40 +35,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                         .ToDictionary(s => s.Key, s => GetEntryValue(src, s.Key))))
                 .ForMember(dest => dest.LastModificationDate, opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)));
         }
-
-        private void FromModelToDto()
-        {
-            CreateMap<EntryEntity, PwEntry>().ConvertUsing<EntryToPwEntryDictionaryConverter>();
-        }
-
+        
         private string GetEntryValue(PwEntry entry, string key) => entry.Strings.GetSafe(key).ReadString();
-    }
-
-    public class EntryToPwEntryDictionaryConverter : ITypeConverter<EntryEntity, PwEntry>
-    {
-        public PwEntry Convert(EntryEntity source, PwEntry destination, ResolutionContext context)
-        {
-            //destination.Uuid = new PwUuid(System.Convert.FromBase64String(source.Id));
-            destination.ExpiryTime = source.ExpirationDate.DateTime;
-            destination.Expires = source.HasExpirationDate;
-            destination.LastModificationTime = source.LastModificationDate.DateTime;
-            destination.BackgroundColor = source.BackgroundColor;
-            destination.ForegroundColor = source.ForegroundColor;
-            destination.IconId = IconMapper.MapIconToPwIcon(source.Icon);
-            SetEntryValue(destination, PwDefs.TitleField, source.Name);
-            SetEntryValue(destination, PwDefs.UserNameField, source.UserName);
-            SetEntryValue(destination, PwDefs.PasswordField, source.Password);
-            SetEntryValue(destination, PwDefs.UrlField, source.Url?.ToString());
-            SetEntryValue(destination, PwDefs.NotesField, source.Notes);
-            foreach (var additionalField in source.AdditionalFields)
-            {
-                SetEntryValue(destination, additionalField.Key, additionalField.Value);
-            }
-            return destination;
-        }
-        private void SetEntryValue(PwEntry entry, string key, string newValue)
-        {
-            if (newValue != null) entry.Strings.Set(key, new ProtectedString(true, newValue));
-        }
     }
 }

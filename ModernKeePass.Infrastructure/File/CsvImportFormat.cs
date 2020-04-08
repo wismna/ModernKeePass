@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using ModernKeePass.Application.Common.Interfaces;
 
 namespace ModernKeePass.Infrastructure.File
@@ -10,7 +9,7 @@ namespace ModernKeePass.Infrastructure.File
         private const char Delimiter = ';';
         private const char LineDelimiter = '\n';
         
-        public async Task<List<Dictionary<string, string>>> Import(IList<string> fileContents)
+        public List<Dictionary<string, string>> Import(IList<string> fileContents)
         {
             var parsedResult = new List<Dictionary<string, string>>();
             foreach (var line in fileContents)

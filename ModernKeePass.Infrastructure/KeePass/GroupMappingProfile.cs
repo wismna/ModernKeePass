@@ -8,12 +8,6 @@ namespace ModernKeePass.Infrastructure.KeePass
     {
         public GroupMappingProfile()
         {
-            FromModelToDto();
-            FromDtoToModel();
-        }
-
-        private void FromDtoToModel()
-        {
             CreateMap<PwGroup, GroupEntity>()
                 .ForMember(d => d.ParentId, opts => opts.MapFrom(s => s.ParentGroup.Uuid.ToHexString()))
                 .ForMember(d => d.ParentName, opts => opts.MapFrom(s => s.ParentGroup.Name))
@@ -24,10 +18,6 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(d => d.Entries, opts => opts.MapFrom(s => s.Entries))
                 .ForMember(d => d.SubGroups, opts => opts.MapFrom(s => s.Groups))
                 .MaxDepth(2);
-        }
-
-        private void FromModelToDto()
-        {
         }
     }
 }
