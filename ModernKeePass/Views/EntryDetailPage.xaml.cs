@@ -71,8 +71,6 @@ namespace ModernKeePass.Views
                 default:
                     var entry = listView?.SelectedItem as Application.Entry.Models.EntryVm;
                     Model.SetEntry(entry, index);
-                    /*StackPanel.DataContext = entry;
-                    TopGrid.DataContext = entry;*/
                     break;
             }
         }

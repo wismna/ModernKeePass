@@ -275,17 +275,6 @@ namespace ModernKeePass.ViewModels
         {
             _entry = entry;
             IsSelected = index == 0;
-            /*OnPropertyChanged(nameof(Title));
-            OnPropertyChanged(nameof(UserName));
-            OnPropertyChanged(nameof(Password));
-            OnPropertyChanged(nameof(Url));
-            OnPropertyChanged(nameof(Notes));
-            OnPropertyChanged(nameof(Icon));
-            OnPropertyChanged(nameof(ForegroundColor));
-            OnPropertyChanged(nameof(BackgroundColor));
-            OnPropertyChanged(nameof(HasExpirationDate));
-            OnPropertyChanged(nameof(ExpiryDate));
-            OnPropertyChanged(nameof(ExpiryTime));*/
         }
     }
 }
