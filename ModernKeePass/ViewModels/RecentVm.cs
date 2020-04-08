@@ -49,8 +49,8 @@ namespace ModernKeePass.ViewModels
             _recent = recent;
             ClearAllCommand = new RelayCommand(ClearAll);
 
-            RecentItems = new ObservableCollection<RecentItemVm>(_recent.GetAll().GetAwaiter().GetResult()
-                .Select(r => new RecentItemVm(r)));
+            var recentItems = _recent.GetAll().GetAwaiter().GetResult().Select(r => new RecentItemVm(r));
+            RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];
         }

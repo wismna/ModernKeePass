@@ -47,7 +47,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             get 
             {
-                if (_pwDatabase.RecycleBinEnabled)
+                if (_pwDatabase.RecycleBinEnabled && !_pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero))
                 {
                     return _pwDatabase.RecycleBinUuid.ToHexString();
                 }
@@ -56,7 +56,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
             set
             {
-                _pwDatabase.RecycleBinUuid = BuildIdFromString(value);
+                _pwDatabase.RecycleBinUuid = value != null ? BuildIdFromString(value) : PwUuid.Zero;
                 _pwDatabase.RecycleBinChanged = _dateTime.Now;
             }
         }
@@ -331,7 +331,7 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             if (disposing)
             {
-                _pwDatabase.Close();
+                _pwDatabase?.Close();
             }
 
             _disposed = true;

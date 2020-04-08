@@ -71,7 +71,10 @@ namespace ModernKeePass.ViewModels
         public IEntityVm SelectedRecycleBin
         {
             get { return Groups.FirstOrDefault(g => g.Id == _database.RecycleBinId); }
-            set { _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait(); }
+            set
+            {
+                if (!IsNewRecycleBin) _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait();
+            }
         }
 
         public SettingsDatabaseVm() : this(App.Services.GetService<IMediator>()) { }

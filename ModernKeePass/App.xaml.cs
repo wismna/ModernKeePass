@@ -47,7 +47,7 @@ namespace ModernKeePass
         public App()
         {
 #if DEBUG
-            HockeyClient.Current.Configure("2fe83672887b4910b9de93a4398d0f8f");
+            HockeyClient.Current.Configure("2fe83672-887b-4910-b9de-93a4398d0f8f");
 #else
 			HockeyClient.Current.Configure("9eb5fbb79b484fbd8daf04635e975c84");
 #endif
@@ -85,6 +85,7 @@ namespace ModernKeePass
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
+                HockeyClient.Current.TrackException(realException.InnerException);
                 await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     realException.InnerException.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
