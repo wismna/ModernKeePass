@@ -101,7 +101,7 @@ namespace ModernKeePass
                         savePicker.FileTypeChoices.Add(_resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
                             new List<string> {".kdbx"});
 
-                        var file = await savePicker.PickSaveFileAsync();
+                        var file = await savePicker.PickSaveFileAsync().AsTask();
                         if (file != null)
                         {
                             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
@@ -213,15 +213,20 @@ namespace ModernKeePass
             {
                 if (_settings.GetSetting("SaveSuspend", true))
                 {
-                    await _mediator.Send(new SaveDatabaseCommand());
+                    await _mediator.Send(new SaveDatabaseCommand()).ConfigureAwait(false);
                 }
-                await _mediator.Send(new CloseDatabaseCommand());
+
+                await _mediator.Send(new CloseDatabaseCommand()).ConfigureAwait(false);
+            }
+            catch (DatabaseClosedException)
+            {
+                // Do nothing on purpose
             }
             catch (Exception exception)
             {
                 ToastNotificationHelper.ShowErrorToast(exception);
             }
-            await SuspensionManager.SaveAsync();
+            await SuspensionManager.SaveAsync().ConfigureAwait(false);
             deferral.Complete();
         }
         

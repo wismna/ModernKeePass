@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage.AccessCache;
 using ModernKeePass.Application.Common.Interfaces;
@@ -10,51 +11,52 @@ namespace ModernKeePass.Infrastructure.UWP
     public class UwpRecentFilesClient: IRecentProxy
     {
         private readonly StorageItemMostRecentlyUsedList _mru = StorageApplicationPermissions.MostRecentlyUsedList;
+        private readonly StorageItemAccessList _fal = StorageApplicationPermissions.FutureAccessList;
 
         public int EntryCount => _mru.Entries.Count;
 
         public async Task<FileInfo> Get(string token, bool updateAccessTime = false)
         {
-            var file = await _mru.GetFileAsync(token, updateAccessTime ? AccessCacheOptions.None : AccessCacheOptions.SuppressAccessTimeUpdate);
-            StorageApplicationPermissions.FutureAccessList.AddOrReplace(token, file);
-            return new FileInfo
+            try
             {
-                Id = token,
-                Name = file.DisplayName,
-                Path = file.Path
-            };
+                var file = await _mru.GetFileAsync(token,
+                    updateAccessTime ? AccessCacheOptions.None : AccessCacheOptions.SuppressAccessTimeUpdate).AsTask().ConfigureAwait(false);
+                _fal.AddOrReplace(token, file);
+                return new FileInfo
+                {
+                    Id = token,
+                    Name = file.DisplayName,
+                    Path = file.Path
+                };
+            }
+            catch (Exception)
+            {
+                _mru.Remove(token);
+                return null;
+            }
         }
 
-        public async Task<IEnumerable<FileInfo>> GetAll()
+        public IEnumerable<FileInfo> GetAll()
         {
-            var result = new List<FileInfo>();
-            foreach (var entry in _mru.Entries)
+            return _mru.Entries.Select(e => new FileInfo
             {
-                try
-                {
-                    var recentItem = await Get(entry.Token);
-                    result.Add(recentItem);
-                }
-                catch (Exception)
-                {
-                    _mru.Remove(entry.Token);
-                }
-            }
-            return result;
+                Id = e.Token,
+                Name = e.Metadata?.Substring(e.Metadata.LastIndexOf("\\", StringComparison.OrdinalIgnoreCase) + 1),
+                Path = e.Metadata
+            });
         }
 
         public async Task Add(FileInfo recentItem)
         {
-            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(recentItem.Id);
-            _mru.Add(file);
+            var file = await _fal.GetFileAsync(recentItem.Id).AsTask();
+            _mru.Add(file, file.Path);
         }
 
         public void ClearAll()
         {
-            for (var i = _mru.Entries.Count; i > 0; i--)
+            foreach (var entry in _mru.Entries)
             {
-                var entry = _mru.Entries[i];
-                StorageApplicationPermissions.FutureAccessList.Remove(entry.Token);
+                if (_fal.ContainsItem(entry.Token)) _fal.Remove(entry.Token);
                 _mru.Remove(entry.Token);
             }
         }

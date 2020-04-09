@@ -77,7 +77,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsDatabaseVm() : this(App.Services.GetService<IMediator>()) { }
+        public SettingsDatabaseVm() : this(App.Services.GetRequiredService<IMediator>()) { }
 
         public SettingsDatabaseVm(IMediator mediator)
         {

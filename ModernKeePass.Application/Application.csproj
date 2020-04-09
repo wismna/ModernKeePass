@@ -119,7 +119,7 @@
     <Compile Include="Group\Commands\AddGroup\AddGroupCommand.cs" />
     <Compile Include="Group\Commands\CreateEntry\CreateEntryCommand.cs" />
     <Compile Include="Group\Commands\CreateGroup\CreateGroupCommand.cs" />
-    <Compile Include="Group\Commands\InsertEntry\InsertEntryCommand.cs" />
+    <Compile Include="Group\Commands\MoveEntry\MoveEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveEntry\RemoveEntryCommand.cs" />
     <Compile Include="Group\Commands\RemoveGroup\RemoveGroupCommand.cs" />
     <Compile Include="Group\Commands\SortEntries\SortEntriesCommand.cs" />

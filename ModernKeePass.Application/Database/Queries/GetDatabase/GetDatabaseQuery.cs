@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
+using ModernKeePass.Domain.Common;
 
 namespace ModernKeePass.Application.Database.Queries.GetDatabase
 {
@@ -26,7 +27,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     database.Name = _databaseProxy.Name;
                     database.RootGroupId = _databaseProxy.RootGroupId;
                     database.IsRecycleBinEnabled = _databaseProxy.IsRecycleBinEnabled;
-                    database.RecycleBinId = _databaseProxy.RecycleBinId;
+                    database.RecycleBinId = _databaseProxy.RecycleBinId == Constants.EmptyId ? null : _databaseProxy.RecycleBinId;
                     database.Compression = _databaseProxy.Compression;
                     database.CipherId = _databaseProxy.CipherId;
                     database.KeyDerivationId = _databaseProxy.KeyDerivationId;

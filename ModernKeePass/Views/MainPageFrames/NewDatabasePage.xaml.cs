@@ -34,7 +34,7 @@ namespace ModernKeePass.Views
             };
             savePicker.FileTypeChoices.Add("KeePass 2.x database", new List<string> { ".kdbx" });
 
-            var file = await savePicker.PickSaveFileAsync();
+            var file = await savePicker.PickSaveFileAsync().AsTask();
             if (file == null) return;
 
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
@@ -72,7 +72,7 @@ namespace ModernKeePass.Views
                 picker.FileTypeFilter.Add(Model.ImportFileExtensionFilter);
 
             // Application now has read/write access to the picked file
-            Model.ImportFile = await picker.PickSingleFileAsync();
+            Model.ImportFile = await picker.PickSingleFileAsync().AsTask();
             if (Model.ImportFile != null) ImportFileLink.Content = Model.ImportFile.Name;
         }
     }

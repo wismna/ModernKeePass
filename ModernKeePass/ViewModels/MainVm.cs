@@ -50,7 +50,7 @@ namespace ModernKeePass.ViewModels
         public MainVm() {}
 
         internal MainVm(Frame referenceFrame, Frame destinationFrame, FileInfo databaseFile = null) : this(referenceFrame, destinationFrame,
-            App.Services.GetService<IMediator>(), App.Services.GetService<IRecentProxy>(), databaseFile)
+            App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<IRecentProxy>(), databaseFile)
         { }
 
         public MainVm(Frame referenceFrame, Frame destinationFrame, IMediator mediator, IRecentProxy recent, FileInfo databaseFile = null)

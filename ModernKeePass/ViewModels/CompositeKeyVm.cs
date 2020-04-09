@@ -115,7 +115,7 @@ namespace ModernKeePass.ViewModels
         private readonly ISettingsProxy _settings;
         private readonly ResourceHelper _resource;
 
-        public CompositeKeyVm() : this(App.Services.GetService<IMediator>(), App.Services.GetService<ISettingsProxy>()) { }
+        public CompositeKeyVm() : this(App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<ISettingsProxy>()) { }
 
         public CompositeKeyVm(IMediator mediator, ISettingsProxy settings)
         {

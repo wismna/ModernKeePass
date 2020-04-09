@@ -15,7 +15,7 @@ namespace ModernKeePass.Common
             messageDialog.Commands.Add(new UICommand(actionButtonText, actionCommand));
             
             // Show the message dialog
-            await messageDialog.ShowAsync();
+            await messageDialog.ShowAsync().AsTask();
         }
         
         public static async Task ShowErrorDialog(Exception exception)
@@ -25,7 +25,7 @@ namespace ModernKeePass.Common
             var messageDialog = CreateBasicDialog(exception.Message, exception.StackTrace, "OK");
             
             // Show the message dialog
-            await messageDialog.ShowAsync();
+            await messageDialog.ShowAsync().AsTask();;
         }
 
         public static async Task ShowNotificationDialog(string title, string message)
@@ -33,7 +33,7 @@ namespace ModernKeePass.Common
             var dialog = CreateBasicDialog(title, message, "OK");
 
             // Show the message dialog
-            await dialog.ShowAsync();
+            await dialog.ShowAsync().AsTask();;
         }
 
         private static MessageDialog CreateBasicDialog(string title, string message, string dismissActionText, UICommandInvokedHandler cancelCommand = null)

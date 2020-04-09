@@ -495,4 +495,10 @@
   <data name="NewImportFormatHelp.Text" xml:space="preserve">
     <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe:URL;Commentaires</value>
   </data>
+  <data name="CloseButton.Content" xml:space="preserve">
+    <value>Fermer sans sauvegarder</value>
+  </data>
+  <data name="CloseDesc.Text" xml:space="preserve">
+    <value>Cela va fermer la base de données ouverte sans sauvegarder les changements.</value>
+  </data>
 </root>

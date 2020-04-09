@@ -32,7 +32,7 @@ namespace ModernKeePass.ViewModels
             private set { SetProperty(ref _path, value); }
         }
 
-        public OpenVm(): this(App.Services.GetService<IRecentProxy>()) { }
+        public OpenVm(): this(App.Services.GetRequiredService<IRecentProxy>()) { }
 
         public OpenVm(IRecentProxy recent)
         {

@@ -38,7 +38,7 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isSelected, value); }
         }
 
-        public RecentItemVm(FileInfo file): this(App.Services.GetService<IRecentProxy>(), file) {}
+        public RecentItemVm(FileInfo file): this(App.Services.GetRequiredService<IRecentProxy>(), file) {}
         public RecentItemVm(IRecentProxy recent, FileInfo file)
         {
             _recent = recent;

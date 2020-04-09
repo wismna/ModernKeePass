@@ -492,4 +492,10 @@
   <data name="NewImportFormat.Text" xml:space="preserve">
     <value>Format</value>
   </data>
+  <data name="CloseButton.Content" xml:space="preserve">
+    <value>Close without saving</value>
+  </data>
+  <data name="CloseDesc.Text" xml:space="preserve">
+    <value>This will close the currently opened database without saving the changes.</value>
+  </data>
 </root>

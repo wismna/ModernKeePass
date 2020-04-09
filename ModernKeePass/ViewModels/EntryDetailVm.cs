@@ -219,7 +219,7 @@ namespace ModernKeePass.ViewModels
 
         public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId, bool isNewEntry = false) : this(entryId, App.Services.GetService<IMediator>(), isNewEntry) { }
+        internal EntryDetailVm(string entryId, bool isNewEntry = false) : this(entryId, App.Services.GetRequiredService<IMediator>(), isNewEntry) { }
 
         public EntryDetailVm(string entryId, IMediator mediator, bool isNewEntry = false)
         {
@@ -232,7 +232,7 @@ namespace ModernKeePass.ViewModels
             if (isNewEntry) GeneratePassword().GetAwaiter().GetResult();
             IsSelected = true;
 
-            SaveCommand = new RelayCommand(() => _mediator.Send(new SaveDatabaseCommand()));
+            SaveCommand = new RelayCommand(async () => await _mediator.Send(new SaveDatabaseCommand()));
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
             UndoDeleteCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
         }

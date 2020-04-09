@@ -45,18 +45,13 @@ namespace ModernKeePass.Infrastructure.KeePass
 
         public string RecycleBinId 
         {
-            get 
+            get
             {
-                if (_pwDatabase.RecycleBinEnabled && !_pwDatabase.RecycleBinUuid.Equals(PwUuid.Zero))
-                {
-                    return _pwDatabase.RecycleBinUuid.ToHexString();
-                }
-
-                return null;
+                return _pwDatabase.RecycleBinUuid.ToHexString();
             }
             set
             {
-                _pwDatabase.RecycleBinUuid = value != null ? BuildIdFromString(value) : PwUuid.Zero;
+                _pwDatabase.RecycleBinUuid = BuildIdFromString(value);
                 _pwDatabase.RecycleBinChanged = _dateTime.Now;
             }
         }
@@ -152,7 +147,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public  async Task<byte[]> SaveDatabase(byte[] newFileContents)
+        public async Task<byte[]> SaveDatabase(byte[] newFileContents)
         {
             return await Task.Run(() =>
             {
@@ -176,12 +171,15 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public async Task InsertEntry(string parentGroupId, string entryId, int index)
+        public async Task MoveEntry(string parentGroupId, string entryId, int index)
         {
             await Task.Run(() =>
             {
                 var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
                 var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+                var currentIndex = (uint)parentPwGroup.Entries.IndexOf(pwEntry);
+
+                parentPwGroup.Entries.RemoveAt(currentIndex);
                 parentPwGroup.Entries.Insert((uint)index, pwEntry);
             });
         }

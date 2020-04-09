@@ -8,7 +8,7 @@ namespace ModernKeePass.Application.Common.Interfaces
     {
         int EntryCount { get; }
         Task<FileInfo> Get(string token, bool updateAccessTime = false);
-        Task<IEnumerable<FileInfo>> GetAll();
+        IEnumerable<FileInfo> GetAll();
         Task Add(FileInfo recentItem);
         void ClearAll();
     }

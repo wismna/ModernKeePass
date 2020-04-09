@@ -15,5 +15,7 @@
         <TextBlock x:Uid="SaveDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
         <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="SaveAsDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
+        <HyperlinkButton x:Uid="CloseButton" Click="CloseButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <TextBlock x:Uid="CloseDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
     </StackPanel>
 </Page>

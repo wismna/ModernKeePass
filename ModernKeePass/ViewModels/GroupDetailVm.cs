@@ -16,8 +16,7 @@ using ModernKeePass.Application.Group.Commands.AddGroup;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteGroup;
-using ModernKeePass.Application.Group.Commands.InsertEntry;
-using ModernKeePass.Application.Group.Commands.RemoveEntry;
+using ModernKeePass.Application.Group.Commands.MoveEntry;
 using ModernKeePass.Application.Group.Commands.RemoveGroup;
 using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
@@ -33,9 +32,9 @@ namespace ModernKeePass.ViewModels
 {
     public class GroupDetailVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
     {
-        public ObservableCollection<EntryVm> Entries => new ObservableCollection<EntryVm>(_group.Entries);
+        public ObservableCollection<EntryVm> Entries { get; }
 
-        public ObservableCollection<GroupVm> Groups => new ObservableCollection<GroupVm>(_group.SubGroups);
+        public ObservableCollection<GroupVm> Groups { get; }
 
         public IEnumerable<EntryVm> SubEntries
         {
@@ -124,7 +123,7 @@ namespace ModernKeePass.ViewModels
 
         public GroupDetailVm() {}
         
-        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetService<IMediator>())
+        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetRequiredService<IMediator>())
         { }
 
         public GroupDetailVm(string groupId, IMediator mediator, bool isEditMode = false)
@@ -141,12 +140,14 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(async () => await _mediator.Send(new SaveDatabaseCommand()));
             SortEntriesCommand = new RelayCommand(async () =>
-                await SortEntriesAsync().ConfigureAwait(false), () => IsEditMode);
+                await SortEntriesAsync(), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () =>
-                await SortGroupsAsync().ConfigureAwait(false), () => IsEditMode);
+                await SortGroupsAsync(), () => IsEditMode);
             UndoDeleteCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
             
+            Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
+            Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
         
         private async void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -156,7 +157,6 @@ namespace ModernKeePass.ViewModels
                 case NotifyCollectionChangedAction.Remove:
                     var oldIndex = e.OldStartingIndex;
                      _reorderedEntry = _group.Entries[oldIndex];
-                    await _mediator.Send(new RemoveEntryCommand {Entry = _reorderedEntry, ParentGroup = _group});
                     break;
                 case NotifyCollectionChangedAction.Add:
                     if (_reorderedEntry == null)
@@ -166,7 +166,7 @@ namespace ModernKeePass.ViewModels
                     }
                     else
                     {
-                        await _mediator.Send(new InsertEntryCommand {Entry = _reorderedEntry, ParentGroup = _group, Index = e.NewStartingIndex});
+                        await _mediator.Send(new MoveEntryCommand {Entry = _reorderedEntry, ParentGroup = _group, Index = e.NewStartingIndex});
                     }
                     break;
             }

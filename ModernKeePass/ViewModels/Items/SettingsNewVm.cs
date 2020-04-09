@@ -8,7 +8,7 @@ namespace ModernKeePass.ViewModels
     {
         private readonly ISettingsProxy _settings;
 
-        public SettingsNewVm() : this(App.Services.GetService<ISettingsProxy>())
+        public SettingsNewVm() : this(App.Services.GetRequiredService<ISettingsProxy>())
         { }
 
         public SettingsNewVm(ISettingsProxy settings)

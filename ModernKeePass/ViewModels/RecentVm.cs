@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
@@ -41,15 +42,15 @@ namespace ModernKeePass.ViewModels
         
         public ICommand ClearAllCommand { get; }
 
-        public RecentVm() : this (App.Services.GetService<IRecentProxy>())
+        public RecentVm() : this (App.Services.GetRequiredService<IRecentProxy>())
         { }
 
         public RecentVm(IRecentProxy recent)
         {
             _recent = recent;
             ClearAllCommand = new RelayCommand(ClearAll);
-
-            var recentItems = _recent.GetAll().GetAwaiter().GetResult().Select(r => new RecentItemVm(r));
+            
+            var recentItems = _recent.GetAll().Select(r => new RecentItemVm(r));
             RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];

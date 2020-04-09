@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Domain.Common;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Parameters.Commands.SetRecycleBin
@@ -19,8 +20,8 @@ namespace ModernKeePass.Application.Parameters.Commands.SetRecycleBin
 
             public void Handle(SetRecycleBinCommand message)
             {
-                if (_database.IsOpen) _database.RecycleBinId = message.RecycleBinId;
-                else throw new DatabaseClosedException();
+                if (!_database.IsOpen) throw new DatabaseClosedException();
+                _database.RecycleBinId = message.RecycleBinId ?? Constants.EmptyId;
             }
         }
     }

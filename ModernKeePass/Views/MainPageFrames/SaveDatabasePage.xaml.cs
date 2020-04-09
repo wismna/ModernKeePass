@@ -43,10 +43,16 @@ namespace ModernKeePass.Views
             };
             savePicker.FileTypeChoices.Add("KeePass 2.x database", new List<string> { ".kdbx" });
 
-            var file = await savePicker.PickSaveFileAsync();
+            var file = await savePicker.PickSaveFileAsync().AsTask();
             if (file == null) return;
             await Model.Save(file);
 
+            _mainFrame.Navigate(typeof(MainPage));
+        }
+
+        private async void CloseButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            await Model.Close();
             _mainFrame.Navigate(typeof(MainPage));
         }
     }

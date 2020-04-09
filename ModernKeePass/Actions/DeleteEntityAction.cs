@@ -34,7 +34,7 @@ namespace ModernKeePass.Actions
             DependencyProperty.Register("Command", typeof(ICommand), typeof(DeleteEntityAction),
                 new PropertyMetadata(null));
 
-        public DeleteEntityAction() : this(App.Services.GetService<IMediator>()) { }
+        public DeleteEntityAction() : this(App.Services.GetRequiredService<IMediator>()) { }
 
         public DeleteEntityAction(IMediator mediator)
         {
@@ -58,7 +58,7 @@ namespace ModernKeePass.Actions
                     ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
                     Entity.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
                     Command.Execute(null);
-                }, null).GetAwaiter();
+                }, null).GetAwaiter().GetResult();
 
             return null;
         }

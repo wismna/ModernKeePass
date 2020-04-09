@@ -77,7 +77,7 @@ namespace ModernKeePass.Views.UserControls
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
-        public CompositeKeyUserControl(): this(App.Services.GetService<IMediator>())
+        public CompositeKeyUserControl(): this(App.Services.GetRequiredService<IMediator>())
         { }
 
         public CompositeKeyUserControl(IMediator mediator)

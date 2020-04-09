@@ -27,7 +27,7 @@ namespace ModernKeePass.Views
             picker.FileTypeFilter.Add(".csv");
 
             // Application now has read/write access to the picked file
-            var file = await picker.PickSingleFileAsync();
+            var file = await picker.PickSingleFileAsync().AsTask();
             if (file == null) return;
             
         }

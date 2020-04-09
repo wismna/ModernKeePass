@@ -43,7 +43,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public SettingsVm() : this(App.Services.GetService<IMediator>()) { }
+        public SettingsVm() : this(App.Services.GetRequiredService<IMediator>()) { }
 
         public SettingsVm(IMediator mediator)
         {

@@ -11,7 +11,7 @@ namespace ModernKeePass.ViewModels
     public class SaveVm
     {
         private readonly IMediator _mediator;
-        public SaveVm() : this(App.Services.GetService<IMediator>()) { }
+        public SaveVm() : this(App.Services.GetRequiredService<IMediator>()) { }
 
         public SaveVm(IMediator mediator)
         {
@@ -21,13 +21,18 @@ namespace ModernKeePass.ViewModels
         public async Task Save(bool close = true)
         {
             await _mediator.Send(new SaveDatabaseCommand());
-            if (close) await _mediator.Send(new CloseDatabaseCommand());
+            if (close) await Close();
         }
 
         public async Task Save(StorageFile file)
         {
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
+        }
+
+        public async Task Close()
+        {
+            await _mediator.Send(new CloseDatabaseCommand());
         }
     }
 }
