@@ -209,16 +209,16 @@
                     <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
                 </Viewbox>
                 <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <SymbolIcon Symbol="{Binding Icon}" Width="80" Height="40"  />
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}}" Width="80" Height="40"  />
                 </Viewbox>
                 <TextBox Grid.Column="1" Grid.Row="0"
                     x:Name="TitleTextBox"
                     Text="{Binding Title, Mode=TwoWay}" 
                     Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
                     SelectionHighlightColor="{StaticResource MainColor}"
+                    BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
                     Background="Transparent"
-                    IsHitTestVisible="{Binding IsEditMode}" 
-                    BorderThickness="0" 
+                    IsHitTestVisible="{Binding IsEditMode}"
                     FontSize="20"
                     FontWeight="Light"
                     TextWrapping="NoWrap" 
@@ -227,6 +227,10 @@
                     <interactivity:Interaction.Behaviors>
                         <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
                             <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
+                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
+                        </core:DataTriggerBehavior>
+                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
+                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
