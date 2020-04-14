@@ -10,5 +10,7 @@
         public const string Icon = nameof(Icon);
         public const string ExpirationDate = nameof(ExpirationDate);
         public const string HasExpirationDate = nameof(HasExpirationDate);
+        public const string BackgroundColor = nameof(BackgroundColor);
+        public const string ForegroundColor = nameof(ForegroundColor);
     }
 }

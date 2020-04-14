@@ -43,7 +43,7 @@
         </VisualStateManager.VisualStateGroups>
         <StackPanel x:Name="OverflowButtons" Orientation="Horizontal">
             <Button Command="{Binding MoveCommand, ElementName=UserControl}" IsEnabled="{Binding IsMoveButtonEnabled, ElementName=UserControl}" Click="MoveButton_Click" Style="{StaticResource MenuButtonStyle}">
-                <SymbolIcon Symbol="Undo">
+                <SymbolIcon Symbol="MoveToFolder">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuMoveButton" />
                     </ToolTipService.ToolTip>

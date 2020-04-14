@@ -244,6 +244,22 @@
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{TemplateBinding ButtonTooltip}" />
                             </ToolTipService.ToolTip>
+                            <!--<VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="MouseOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Cursor)">
+                                                <DiscreteObjectKeyFrame KeyTime="00:00:00">
+                                                    <DiscreteObjectKeyFrame.Value>
+                                                        <Cursor>Hand</Cursor>
+                                                    </DiscreteObjectKeyFrame.Value>
+                                                </DiscreteObjectKeyFrame>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>-->
                         </Button>
                     </Grid>
                 </ControlTemplate>

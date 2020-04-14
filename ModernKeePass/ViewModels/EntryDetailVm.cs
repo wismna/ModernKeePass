@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
@@ -23,6 +23,7 @@ using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.AOP;
+using ModernKeePass.Extensions;
 
 namespace ModernKeePass.ViewModels
 {
@@ -64,8 +65,8 @@ namespace ModernKeePass.ViewModels
             get { return _entry.Title; }
             set
             {
-                SetFieldValue(nameof(Title), value).Wait();
                 _entry.Title = value;
+                SetFieldValue(nameof(Title), value).Wait();
             }
         }
 
@@ -80,8 +81,8 @@ namespace ModernKeePass.ViewModels
             get { return _entry.Password; }
             set
             {
-                SetFieldValue(nameof(Password), value).Wait();
                 _entry.Password = value;
+                SetFieldValue(nameof(Password), value).Wait();
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PasswordComplexityIndicator));
             }
@@ -92,8 +93,8 @@ namespace ModernKeePass.ViewModels
             get { return _entry.Url?.ToString(); }
             set
             {
-                SetFieldValue(nameof(Url), value).Wait();
                 _entry.Url = new Uri(value);
+                SetFieldValue(nameof(Url), value).Wait();
             }
         }
 
@@ -102,22 +103,18 @@ namespace ModernKeePass.ViewModels
             get { return _entry.Notes; }
             set
             {
-                SetFieldValue(nameof(Notes), value).Wait();
                 _entry.Notes = value;
+                SetFieldValue(nameof(Notes), value).Wait();
             }
         }
 
         public Symbol Icon
         {
-            get
-            {
-                if (HasExpired) return Symbol.ReportHacked;
-                return (Symbol) _entry.Icon;
-            }
+            get { return (Symbol)Enum.Parse(typeof(Symbol), _entry.Icon.ToString()); }
             set
             {
-                SetFieldValue(nameof(Icon), value).Wait();
-                _entry.Icon = (Icon)value;
+                _entry.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
+                SetFieldValue(nameof(Icon), _entry.Icon).Wait();
             }
         }
 
@@ -128,8 +125,8 @@ namespace ModernKeePass.ViewModels
             {
                 if (!HasExpirationDate) return;
 
-                SetFieldValue("ExpirationDate", value).Wait();
                 _entry.ExpirationDate = value.Date;
+                SetFieldValue("ExpirationDate", _entry.ExpirationDate).Wait();
             }
         }
 
@@ -140,8 +137,8 @@ namespace ModernKeePass.ViewModels
             {
                 if (!HasExpirationDate) return;
 
-                SetFieldValue("ExpirationDate", value).Wait();
                 _entry.ExpirationDate = _entry.ExpirationDate.Date.Add(value);
+                SetFieldValue("ExpirationDate", _entry.ExpirationDate).Wait();
             }
         }
         
@@ -150,35 +147,29 @@ namespace ModernKeePass.ViewModels
             get { return _entry.HasExpirationDate; }
             set
             {
-                SetFieldValue(nameof(HasExpirationDate), value).Wait();
                 _entry.HasExpirationDate = value;
-                OnPropertyChanged();
+                SetFieldValue(nameof(HasExpirationDate), value).Wait();
+                OnPropertyChanged(nameof(HasExpirationDate));
             }
         }
 
-        public Color? BackgroundColor
+        public SolidColorBrush BackgroundColor
         {
-            get { return _entry?.BackgroundColor; }
+            get { return _entry?.BackgroundColor.ToSolidColorBrush(); }
             set
             {
-                if (value != null)
-                {
-                    SetFieldValue(nameof(BackgroundColor), value).Wait();
-                    _entry.BackgroundColor = (Color)value;
-                }
+                _entry.BackgroundColor = value.ToColor();
+                SetFieldValue(nameof(BackgroundColor), _entry.BackgroundColor).Wait();
             }
         }
 
-        public Color? ForegroundColor
+        public SolidColorBrush ForegroundColor
         {
-            get { return _entry?.ForegroundColor; }
+            get { return _entry?.ForegroundColor.ToSolidColorBrush(); }
             set
             {
-                if (value != null)
-                {
-                    SetFieldValue(nameof(ForegroundColor), value).Wait();
-                    _entry.ForegroundColor = (Color)value;
-                }
+                _entry.ForegroundColor = value.ToColor();
+                SetFieldValue(nameof(ForegroundColor), _entry.ForegroundColor).Wait();
             }
         }
         public IEnumerable<EntryVm> History { get; }

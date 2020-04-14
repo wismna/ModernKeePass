@@ -205,11 +205,11 @@
                     <RowDefinition Height="40" />
                     <RowDefinition Height="20" />
                 </Grid.RowDefinitions>
-                <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="80" Height="40" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
+                <Viewbox MaxHeight="200" Width="200" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
                 </Viewbox>
-                <Viewbox MaxHeight="30" Width="50" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}}" Width="80" Height="40"  />
+                <Viewbox MaxHeight="200" Width="200" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                    <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
                 </Viewbox>
                 <TextBox Grid.Column="1" Grid.Row="0"
                     x:Name="TitleTextBox"

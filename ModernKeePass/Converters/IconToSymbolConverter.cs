@@ -9,7 +9,8 @@ namespace ModernKeePass.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var icon = (Icon)value;
+            return Enum.Parse(typeof(Symbol), value.ToString());
+            /*var icon = (Icon)value;
             switch (icon)
             {
                 case Icon.Delete: return Symbol.Delete;
@@ -62,12 +63,12 @@ namespace ModernKeePass.Converters
                 case Icon.Stop: return Symbol.Stop;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
+            }*/
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            var symbol = (Symbol)value;
+            /*var symbol = (Symbol)value;
             var defaultIcon = parameter != null ? int.Parse(parameter as string) : -1;
             switch (symbol)
             {
@@ -120,7 +121,9 @@ namespace ModernKeePass.Converters
                 case Symbol.ReportHacked: return Icon.ReportHacked;
                 case Symbol.Stop: return Icon.Stop;
                 default: return defaultIcon;
-            }
+            }*/
+
+            return Enum.Parse(typeof(Icon), value.ToString());
         }
     }
 }

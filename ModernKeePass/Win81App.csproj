@@ -101,6 +101,7 @@
     <Compile Include="Common\ResourceHelper.cs" />
     <Compile Include="Converters\IconToSymbolConverter.cs" />
     <Compile Include="DependencyInjection.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">

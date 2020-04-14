@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -67,8 +68,8 @@ namespace ModernKeePass.ViewModels
 
         public Symbol Icon
         {
-            get { return (Symbol) _group.Icon; }
-            set { _group.Icon = (Icon)value; }
+            get { return (Symbol) Enum.Parse(typeof(Symbol), _group.Icon.ToString()); }
+            set { _group.Icon = (Icon) Enum.Parse(typeof(Icon), value.ToString()); }
         }
         
         public bool IsEditMode

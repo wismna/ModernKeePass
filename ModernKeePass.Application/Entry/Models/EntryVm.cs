@@ -50,7 +50,7 @@ namespace ModernKeePass.Application.Entry.Models
                 .ForMember(d => d.HasExpirationDate, opts => opts.MapFrom(s => s.HasExpirationDate))
                 .ForMember(d => d.ExpirationDate, opts => opts.MapFrom(s => s.ExpirationDate))
                 .ForMember(d => d.ModificationDate, opts => opts.MapFrom(s => s.LastModificationDate))
-                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.Icon))
+                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.HasExpirationDate && s.ExpirationDate < DateTimeOffset.Now ? Icon.ReportHacked : s.Icon))
                 .ForMember(d => d.ForegroundColor, opts => opts.MapFrom(s => s.ForegroundColor))
                 .ForMember(d => d.BackgroundColor, opts => opts.MapFrom(s => s.BackgroundColor));
         }

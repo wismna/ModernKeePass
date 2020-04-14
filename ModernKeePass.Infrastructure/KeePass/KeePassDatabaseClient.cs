@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -241,6 +242,12 @@ namespace ModernKeePass.Infrastructure.KeePass
                     break;
                 case EntryFieldName.Icon:
                     pwEntry.IconId = IconMapper.MapIconToPwIcon((Icon)fieldValue);
+                    break;
+                case EntryFieldName.BackgroundColor:
+                    pwEntry.BackgroundColor = (Color)fieldValue;
+                    break;
+                case EntryFieldName.ForegroundColor:
+                    pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
             }
         }
