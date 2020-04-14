@@ -222,8 +222,6 @@ namespace ModernKeePass.Infrastructure.KeePass
         public void UpdateEntry(string entryId, string fieldName, object fieldValue)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
-            pwEntry.Touch(true);
-            pwEntry.CreateBackup(null);
 
             switch (fieldName)
             {
@@ -250,6 +248,13 @@ namespace ModernKeePass.Infrastructure.KeePass
                     pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
             }
+        }
+
+        public void AddHistory(string entryId)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.Touch(true);
+            pwEntry.CreateBackup(null);
         }
 
         public void UpdateGroup(string groupId)

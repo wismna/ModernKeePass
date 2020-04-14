@@ -46,8 +46,9 @@ namespace ModernKeePass.Views
             if (args != null) DataContext = new EntryDetailVm(args);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
+            await Model.AddHistory();
             NavigationHelper.OnNavigatedFrom(e);
         }
 
@@ -69,7 +70,7 @@ namespace ModernKeePass.Views
                 case -1:
                     return;
                 default:
-                    var entry = listView?.SelectedItem as Application.Entry.Models.EntryVm;
+                    var entry = listView.SelectedItem as Application.Entry.Models.EntryVm;
                     Model.SetEntry(entry, index);
                     break;
             }

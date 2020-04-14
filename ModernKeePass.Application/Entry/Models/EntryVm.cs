@@ -28,6 +28,7 @@ namespace ModernKeePass.Application.Entry.Models
         public bool HasExpirationDate { get; set; }
         public DateTimeOffset ExpirationDate { get; set; }
         public DateTimeOffset ModificationDate { get; set; }
+        public bool IsDirty { get; set; }
 
         public override string ToString()
         {

@@ -88,6 +88,7 @@
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Entry\Commands\AddHistory\AddHistoryCommand.cs" />
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />

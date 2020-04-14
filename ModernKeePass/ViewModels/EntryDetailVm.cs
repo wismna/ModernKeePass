@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Entry.Commands.AddHistory;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Application.Entry.Queries.GetEntry;
@@ -83,7 +84,7 @@ namespace ModernKeePass.ViewModels
             {
                 _entry.Password = value;
                 SetFieldValue(nameof(Password), value).Wait();
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(Password));
                 OnPropertyChanged(nameof(PasswordComplexityIndicator));
             }
         }
@@ -246,7 +247,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task MarkForDelete(string recycleBinTitle)
         {
-            await _mediator.Send(new DeleteEntryCommand {EntryId = _entry.Id, ParentGroupId = _entry.ParentGroupId, RecycleBinName = recycleBinTitle});
+            await _mediator.Send(new DeleteEntryCommand {EntryId = Id, ParentGroupId = _entry.ParentGroupId, RecycleBinName = recycleBinTitle});
         }
         
         public async Task Move(GroupVm destination)
@@ -259,18 +260,28 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            _entry.IsDirty = true;
+        }
+
+        public async Task AddHistory()
+        {
+            if (_entry.IsDirty) await _mediator.Send(new AddHistoryCommand {EntryId = Id});
         }
 
         internal void SetEntry(EntryVm entry, int index)
         {
             _entry = entry;
             IsSelected = index == 0;
+            OnPropertyChanged();
         }
 
         private async Task SaveChanges()
         {
+            await AddHistory();
             await _mediator.Send(new SaveDatabaseCommand());
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            _entry.IsDirty = false;
         }
+
     }
 }
