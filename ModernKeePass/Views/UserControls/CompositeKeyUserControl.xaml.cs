@@ -34,7 +34,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty CreateNewProperty =
             DependencyProperty.Register(
-                "CreateNew",
+                nameof(CreateNew),
                 typeof(bool),
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
@@ -46,7 +46,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty UpdateKeyProperty =
             DependencyProperty.Register(
-                "UpdateKey",
+                nameof(UpdateKey),
                 typeof(bool),
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
@@ -58,7 +58,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty ButtonLabelProperty =
             DependencyProperty.Register(
-                "ButtonLabel",
+                nameof(ButtonLabel),
                 typeof(string),
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata("OK", (o, args) => { }));
@@ -70,7 +70,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty DatabaseFilePathProperty =
             DependencyProperty.Register(
-                "DatabaseFilePath",
+                nameof(DatabaseFilePath),
                 typeof(string),
                 typeof(CompositeKeyUserControl),
                 new PropertyMetadata(null, (o, args) => { }));

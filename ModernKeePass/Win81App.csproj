@@ -97,6 +97,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\ResourceHelper.cs" />
     <Compile Include="Converters\IconToSymbolConverter.cs" />
     <Compile Include="DependencyInjection.cs" />

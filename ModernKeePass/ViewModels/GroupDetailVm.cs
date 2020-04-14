@@ -25,12 +25,11 @@ using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupDetailVm : NotifyPropertyChangedBase, IVmEntity, ISelectableModel
+    public class GroupDetailVm : NotifyPropertyChangedBase, IVmEntity
     {
         public ObservableCollection<EntryVm> Entries { get; }
 
@@ -51,25 +50,8 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsNotRoot => _database.RootGroupId != _group.Id;
+        public bool IsNotRoot => Database.RootGroupId != _group.Id;
         
-        public bool ShowRestore => IsNotRoot && _database.RecycleBinId != _group.Id;
-        
-        /// <summary>
-        /// Is the Group the database Recycle Bin?
-        /// </summary>
-        public bool IsSelected
-        {
-            get
-            {
-                return _database.IsRecycleBinEnabled && _database.RecycleBinId == _group.Id;
-            }
-            set
-            {
-                if (value && _group != null) _database.RecycleBinId = _group.Id;
-            }
-        }
-
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
             group e by e.Title.ToUpper().FirstOrDefault() into grp
             orderby grp.Key
@@ -111,10 +93,11 @@ namespace ModernKeePass.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand SortEntriesCommand { get; }
         public ICommand SortGroupsCommand { get; }
-        public ICommand UndoDeleteCommand { get; }
+        public ICommand MoveCommand { get; }
+
+        private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
         private readonly IMediator _mediator;
-        private readonly DatabaseVm _database;
         private readonly GroupVm _group;
         private readonly GroupVm _parent;
         private bool _isEditMode;
@@ -129,7 +112,6 @@ namespace ModernKeePass.ViewModels
         public GroupDetailVm(string groupId, IMediator mediator, bool isEditMode = false)
         {
             _mediator = mediator;
-            _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
@@ -138,18 +120,43 @@ namespace ModernKeePass.ViewModels
             }
             _isEditMode = isEditMode;
 
-            SaveCommand = new RelayCommand(async () => await _mediator.Send(new SaveDatabaseCommand()));
-            SortEntriesCommand = new RelayCommand(async () =>
-                await SortEntriesAsync(), () => IsEditMode);
-            SortGroupsCommand = new RelayCommand(async () =>
-                await SortGroupsAsync(), () => IsEditMode);
-            UndoDeleteCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
+            SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
+            SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
+            SortGroupsCommand = new RelayCommand(async () => await SortGroupsAsync(), () => IsEditMode);
+            MoveCommand = new RelayCommand(async () => await Move(_parent), () => IsNotRoot);
             
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
         
+        public async Task<string> AddNewGroup(string name = "")
+        {
+            return (await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group})).Id;
+        }
+        
+        public async Task<string> AddNewEntry()
+        {
+            return (await _mediator.Send(new CreateEntryCommand { ParentGroup = _group })).Id;
+        }
+
+        public async Task MarkForDelete(string recycleBinTitle)
+        {
+            await _mediator.Send(new DeleteGroupCommand { GroupId = _group.Id, ParentGroupId = _group.ParentGroupId, RecycleBinName = recycleBinTitle });
+        }
+        
+        public async Task Move(GroupVm destination)
+        {
+            await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group });
+            await _mediator.Send(new RemoveGroupCommand {ParentGroup = _parent, Group = _group });
+        }
+
+        private async Task SaveChanges()
+        {
+            await _mediator.Send(new SaveDatabaseCommand());
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
         private async void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
@@ -170,41 +177,21 @@ namespace ModernKeePass.ViewModels
                     }
                     break;
             }
-        }
-        
-        public async Task<string> AddNewGroup(string name = "")
-        {
-            return (await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group})).Id;
-        }
-        
-        public async Task<string> AddNewEntry()
-        {
-            return (await _mediator.Send(new CreateEntryCommand { ParentGroup = _group })).Id;
-        }
-
-        public async Task MarkForDelete(string recycleBinTitle)
-        {
-            await _mediator.Send(new DeleteGroupCommand { GroupId = _group.Id, ParentGroupId = _group.ParentGroupId, RecycleBinName = recycleBinTitle });
-
-            ((RelayCommand)UndoDeleteCommand).RaiseCanExecuteChanged();
-        }
-        
-        public async Task Move(GroupVm destination)
-        {
-            await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group });
-            await _mediator.Send(new RemoveGroupCommand {ParentGroup = _parent, Group = _group });
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
         }
 
         private async Task SortEntriesAsync()
         {
             await _mediator.Send(new SortEntriesCommand {Group = _group});
             OnPropertyChanged(nameof(Entries));
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
         }
         
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
             OnPropertyChanged(nameof(Groups));
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
         }
     }
 }

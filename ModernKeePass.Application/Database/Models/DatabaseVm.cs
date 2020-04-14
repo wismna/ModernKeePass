@@ -10,5 +10,7 @@
         public string Compression { get; set; }
         public string CipherId { get; set; }
         public string KeyDerivationId { get; set; }
+        public int Size { get; internal set; }
+        public bool IsDirty { get; internal set; }
     }
 }

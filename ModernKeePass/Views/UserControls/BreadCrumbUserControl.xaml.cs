@@ -21,7 +21,7 @@ namespace ModernKeePass.Views.UserControls
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
-                "ItemsSource",
+                nameof(ItemsSource),
                 typeof(IEnumerable<IEntityVm>),
                 typeof(BreadCrumbUserControl),
                 new PropertyMetadata(new Stack<IEntityVm>(), (o, args) => { }));

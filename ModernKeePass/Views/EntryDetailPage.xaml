@@ -390,7 +390,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <userControls:HamburgerMenuUserControl x:Uid="HistoryLeftListView" ItemsSource="{Binding History}" ResizeTarget="{Binding ElementName=LeftListViewColumn}" SelectionChanged="HamburgerMenuUserControl_OnSelectionChanged" />
-            <Grid x:Name="StackPanel" Grid.Column="1">
+            <Grid Grid.Column="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="20,0,0,20">
                         <StackPanel.Resources>
@@ -487,7 +487,7 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <Grid Grid.Column="1" x:Name="TopGrid">
+            <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
                     <ColumnDefinition Width="*" />
@@ -523,12 +523,10 @@
                 <userControls:BreadCrumbUserControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
             </Grid>
             <userControls:TopMenuUserControl 
-                x:Name="TopMenu" Grid.Column="2" 
-                RestoreButtonVisibility="{Binding CanRestore, Converter={StaticResource BooleanToVisibilityConverter}}" 
-                DeleteButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                x:Name="TopMenu" Grid.Column="2"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 SaveCommand="{Binding SaveCommand}"
-                RestoreCommand="{Binding UndoDeleteCommand}">
+                MoveCommand="{Binding MoveCommand}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
@@ -536,9 +534,9 @@
                     <core:EventTriggerBehavior EventName="DeleteButtonClick">
                         <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
-                    <core:EventTriggerBehavior EventName="RestoreButtonClick">
+                    <core:EventTriggerBehavior EventName="MoveButtonClick">
                         <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
-                        <actions:ToastAction x:Uid="RestoreEntryCommand" Title="{Binding Title}" />
+                        <!--<actions:ToastAction x:Uid="RestoreEntryCommand" Title="{Binding Title}" />-->
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>

@@ -211,16 +211,17 @@ namespace ModernKeePass
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                if (_settings.GetSetting("SaveSuspend", true))
+                var database = await _mediator.Send(new GetDatabaseQuery());
+                if (database.IsOpen)
                 {
-                    await _mediator.Send(new SaveDatabaseCommand()).ConfigureAwait(false);
-                }
+                    if (database.Size < Constants.File.OneMegaByte && database.IsDirty &&
+                        _settings.GetSetting(Constants.Settings.SaveSuspend, true))
+                    {
+                        await _mediator.Send(new SaveDatabaseCommand()).ConfigureAwait(false);
+                    }
 
-                await _mediator.Send(new CloseDatabaseCommand()).ConfigureAwait(false);
-            }
-            catch (DatabaseClosedException)
-            {
-                // Do nothing on purpose
+                    await _mediator.Send(new CloseDatabaseCommand()).ConfigureAwait(false);
+                }
             }
             catch (Exception exception)
             {

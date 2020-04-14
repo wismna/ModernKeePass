@@ -25,9 +25,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         private Credentials _credentials;
         // Flag: Has Dispose already been called?
         private bool _disposed;
-
-        public string ZeroId => PwUuid.Zero.ToHexString();
-
+        
         // Main information
         public bool IsOpen => (_pwDatabase?.IsOpen).GetValueOrDefault();
         public string Name => _pwDatabase?.Name;
@@ -35,6 +33,8 @@ namespace ModernKeePass.Infrastructure.KeePass
 
         // TODO: find a correct place for this
         public string FileAccessToken { get; set; }
+        public int Size { get; set; }
+        public bool IsDirty { get; set; }
 
         // Settings
         public bool IsRecycleBinEnabled

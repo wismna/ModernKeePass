@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Domain.Common;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Group.Commands.DeleteGroup
@@ -24,7 +25,7 @@ namespace ModernKeePass.Application.Group.Commands.DeleteGroup
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                if (_database.IsRecycleBinEnabled && (string.IsNullOrEmpty(_database.RecycleBinId) || _database.RecycleBinId.Equals(_database.ZeroId)))
+                if (_database.IsRecycleBinEnabled && (string.IsNullOrEmpty(_database.RecycleBinId) || _database.RecycleBinId.Equals(Constants.EmptyId)))
                 {
                     _database.CreateGroup(_database.RootGroupId, message.RecycleBinName, true);
                 }

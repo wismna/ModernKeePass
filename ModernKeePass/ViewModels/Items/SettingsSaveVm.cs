@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
@@ -17,8 +18,8 @@ namespace ModernKeePass.ViewModels
 
         public bool IsSaveSuspend
         {
-            get { return _settings.GetSetting("SaveSuspend", true); }
-            set { _settings.PutSetting("SaveSuspend", value); }
+            get { return _settings.GetSetting(Constants.Settings.SaveSuspend, true); }
+            set { _settings.PutSetting(Constants.Settings.SaveSuspend, value); }
         }
     }
 }

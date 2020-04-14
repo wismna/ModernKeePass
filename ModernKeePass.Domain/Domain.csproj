@@ -90,6 +90,7 @@
     <Compile Include="Enums\ImportFormat.cs" />
     <Compile Include="Exceptions\DatabaseClosedException.cs" />
     <Compile Include="Exceptions\DatabaseOpenException.cs" />
+    <Compile Include="Exceptions\DatabaseTooBigException.cs" />
     <Compile Include="Exceptions\NavigationException.cs" />
     <Compile Include="Exceptions\SaveException.cs" />
     <Compile Include="Interfaces\IDateTime.cs" />

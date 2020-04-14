@@ -33,6 +33,7 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
                         KeyFileContents = !string.IsNullOrEmpty(message.KeyFilePath) ? await _file.OpenBinaryFile(message.KeyFilePath): null,
                         Password = message.Password
                     });
+                _database.Size = file.Length;
                 _database.FileAccessToken = message.FilePath;
             }
             

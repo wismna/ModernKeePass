@@ -19,10 +19,6 @@ namespace ModernKeePass.Interfaces
         /// </summary>
         ICommand SaveCommand { get; }
         /// <summary>
-        /// Restore ViewModel
-        /// </summary>
-        ICommand UndoDeleteCommand { get; }
-        /// <summary>
         /// Move a entity to the destination group
         /// </summary>
         /// <param name="destination">The destination to move the entity to</param>

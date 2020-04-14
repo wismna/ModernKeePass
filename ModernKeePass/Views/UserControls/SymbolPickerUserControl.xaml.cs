@@ -19,7 +19,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty SelectedSymbolProperty =
             DependencyProperty.Register(
-                "SelectedSymbol",
+                nameof(SelectedSymbol),
                 typeof(Symbol),
                 typeof(SymbolPickerUserControl),
                 new PropertyMetadata(Symbol.Stop, (o, args) => { }));

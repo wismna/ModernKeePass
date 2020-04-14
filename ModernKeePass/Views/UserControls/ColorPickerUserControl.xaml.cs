@@ -26,7 +26,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty SelectedColorProperty =
             DependencyProperty.Register(
-                "SelectedColor",
+                nameof(SelectedColor),
                 typeof(SolidColorBrush),
                 typeof(ColorPickerUserControl),
                 new PropertyMetadata(new SolidColorBrush(), (o, args) => { }));

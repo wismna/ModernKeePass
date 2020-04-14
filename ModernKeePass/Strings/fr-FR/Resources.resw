@@ -432,11 +432,11 @@
   <data name="TopMenuMoreButton.Content" xml:space="preserve">
     <value>Plus</value>
   </data>
-  <data name="TopMenuRestoreButton.Content" xml:space="preserve">
-    <value>Restaurer</value>
+  <data name="TopMenuMoveButton.Content" xml:space="preserve">
+    <value>Déplacer</value>
   </data>
-  <data name="TopMenuRestoreFlyout.Text" xml:space="preserve">
-    <value>Restaurer</value>
+  <data name="TopMenuMoveFlyout.Text" xml:space="preserve">
+    <value>Déplacer</value>
   </data>
   <data name="TopMenuSaveButton.Content" xml:space="preserve">
     <value>Sauvegarder</value>

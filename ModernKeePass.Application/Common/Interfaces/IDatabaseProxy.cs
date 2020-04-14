@@ -7,7 +7,6 @@ namespace ModernKeePass.Application.Common.Interfaces
 {
     public interface IDatabaseProxy
     {
-        string ZeroId { get; }
         bool IsOpen { get; }
         string Name { get; }
         string RootGroupId { get; }
@@ -17,6 +16,8 @@ namespace ModernKeePass.Application.Common.Interfaces
         string Compression { get; set; }
         bool IsRecycleBinEnabled { get; set; }
         string FileAccessToken { get; set; }
+        int Size { get; set; }
+        bool IsDirty { get; set; }
 
         Task Open(byte[] file, Credentials credentials);
         Task ReOpen(byte[] file);

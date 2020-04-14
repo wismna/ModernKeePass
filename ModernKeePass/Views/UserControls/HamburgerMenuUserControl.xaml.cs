@@ -22,7 +22,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty HeaderLabelProperty =
             DependencyProperty.Register(
-                "HeaderLabel",
+                nameof(HeaderLabel),
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Header", (o, args) => { }));
@@ -34,7 +34,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty ButtonLabelProperty =
             DependencyProperty.Register(
-                "ButtonLabel",
+                nameof(ButtonLabel),
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Button", (o, args) => { }));
@@ -46,7 +46,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty DisplayMemberPathProperty =
             DependencyProperty.Register(
-                "DisplayMemberPath",
+                nameof(DisplayMemberPath),
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Title", (o, args) => { }));
@@ -58,7 +58,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty ResizeTargetProperty =
             DependencyProperty.Register(
-                "ResizeTarget",
+                nameof(ResizeTarget),
                 typeof(object),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
@@ -70,7 +70,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty IsButtonVisibleProperty =
             DependencyProperty.Register(
-                "IsButtonVisible",
+                nameof(IsButtonVisible),
                 typeof(Visibility),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
@@ -83,7 +83,7 @@ namespace ModernKeePass.Views.UserControls
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
-                "ItemsSource",
+                nameof(ItemsSource),
                 typeof(IEnumerable<IEntityVm>),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(new List<IEntityVm>(), (o, args) => { }));
@@ -95,7 +95,7 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(
-                "SelectedItem",
+                nameof(SelectedItem),
                 typeof(object),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
@@ -107,10 +107,10 @@ namespace ModernKeePass.Views.UserControls
         }
         public static readonly DependencyProperty IsOpenProperty =
             DependencyProperty.Register(
-                "IsOpen",
+                nameof(IsOpen),
                 typeof(bool),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(false, (o, args) => { }));
+                new PropertyMetadata(true, (o, args) => { }));
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

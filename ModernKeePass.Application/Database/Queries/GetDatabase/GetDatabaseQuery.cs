@@ -31,6 +31,8 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     database.Compression = _databaseProxy.Compression;
                     database.CipherId = _databaseProxy.CipherId;
                     database.KeyDerivationId = _databaseProxy.KeyDerivationId;
+                    database.Size = _databaseProxy.Size;
+                    database.IsDirty = _databaseProxy.IsDirty;
                 }
                 return database;
             }

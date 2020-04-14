@@ -1,5 +1,4 @@
-Improved search box
-Changing entry icon creates a new history entry
-Corrected startup crash on some versions of Windows
-Entry delete button now shows up correctly
-List of icons now only displays valid values
+Database corruption issues should now be a thing of the past !
+Added the ability to move entries and groups
+Edits are now in a popup instead of inline
+Updated KeePass lib to version 2.44
