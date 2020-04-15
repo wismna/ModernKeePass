@@ -19,7 +19,6 @@
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
         <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
         <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroundBrushComplexityConverter" />
-        <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
         <Style TargetType="PasswordBox" x:Name="PasswordBoxWithButtonStyle">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
             <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
@@ -410,7 +409,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" LostFocus="Username_OnLostFocus" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />
@@ -530,11 +529,17 @@
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
+                MoveButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                RestoreButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SaveCommand="{Binding SaveCommand}"
-                MoveCommand="{Binding MoveCommand}">
+                MoveCommand="{Binding MoveCommand}"
+                RestoreCommand="{Binding RestoreCommand}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
+                    </core:EventTriggerBehavior>
+                    <core:EventTriggerBehavior EventName="RestoreButtonClick">
+                        <core:ChangePropertyAction TargetObject=""  />
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="DeleteButtonClick">
                         <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />

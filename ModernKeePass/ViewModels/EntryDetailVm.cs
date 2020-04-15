@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
@@ -10,6 +11,7 @@ using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.AddHistory;
+using ModernKeePass.Application.Entry.Commands.RestoreHistory;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Application.Entry.Queries.GetEntry;
@@ -173,7 +175,8 @@ namespace ModernKeePass.ViewModels
                 SetFieldValue(nameof(ForegroundColor), _entry.ForegroundColor).Wait();
             }
         }
-        public IEnumerable<EntryVm> History { get; }
+
+        public ObservableCollection<EntryVm> History { get; }
 
         public bool IsEditMode
         {
@@ -190,6 +193,7 @@ namespace ModernKeePass.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand GeneratePasswordCommand { get; }
         public ICommand MoveCommand { get; }
+        public ICommand RestoreCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
@@ -208,16 +212,21 @@ namespace ModernKeePass.ViewModels
         public EntryDetailVm(string entryId, IMediator mediator)
         {
             _mediator = mediator;
-            _entry = _mediator.Send(new GetEntryQuery {Id = entryId}).GetAwaiter().GetResult();
-            _parent = _mediator.Send(new GetGroupQuery {Id = _entry.ParentGroupId}).GetAwaiter().GetResult();
-            History = _entry.History;
+            _entry = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
+            _parent = _mediator.Send(new GetGroupQuery { Id = _entry.ParentGroupId }).GetAwaiter().GetResult();
+            History = new ObservableCollection<EntryVm> {_entry};
+            foreach (var entry in _entry.History)
+            {
+                History.Add(entry);
+            }
             IsSelected = true;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
             MoveCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
+            RestoreCommand = new RelayCommand(async () => await RestoreHistory());
         }
-        
+
         public async Task GeneratePassword()
         {
             Password = await _mediator.Send(new GeneratePasswordCommand
@@ -256,7 +265,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task AddHistory()
         {
-            if (_entry.IsDirty) await _mediator.Send(new AddHistoryCommand {EntryId = Id});
+            if (_entry.IsDirty) await _mediator.Send(new AddHistoryCommand { EntryId = Id });
         }
 
         internal void SetEntry(EntryVm entry, int index)
@@ -266,6 +275,15 @@ namespace ModernKeePass.ViewModels
             OnPropertyChanged();
         }
 
+        private async Task RestoreHistory()
+        {
+            var index = History.IndexOf(_entry);
+            var entryToRestore = History[index];
+            SetEntry(entryToRestore, 0);
+            await _mediator.Send(new RestoreHistoryCommand { EntryId = Id, HistoryIndex = index });
+            History.Insert(0, entryToRestore);
+        }
+
         private async Task SaveChanges()
         {
             await AddHistory();
@@ -273,6 +291,5 @@ namespace ModernKeePass.ViewModels
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
             _entry.IsDirty = false;
         }
-
     }
 }

@@ -56,6 +56,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
+        public ICommand RestoreCommand
+        {
+            get { return (ICommand)GetValue(RestoreCommandProperty); }
+            set { SetValue(RestoreCommandProperty, value); }
+        }
+        public static readonly DependencyProperty RestoreCommandProperty =
+            DependencyProperty.Register(
+                nameof(RestoreCommand),
+                typeof(ICommand),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(null, (o, args) => { }));
+
         public ICommand SortEntriesCommand
         {
             get { return (ICommand)GetValue(SortEntriesCommandProperty); }
@@ -79,18 +91,6 @@ namespace ModernKeePass.Views.UserControls
                 typeof(ICommand),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
-
-        public bool IsMoveButtonEnabled
-        {
-            get { return (bool)GetValue(IsMoveButtonEnabledProperty); }
-            set { SetValue(IsMoveButtonEnabledProperty, value); }
-        }
-        public static readonly DependencyProperty IsMoveButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsMoveButtonEnabled),
-                typeof(bool),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(true, (o, args) => { }));
         
         public Visibility SortButtonVisibility
         {
@@ -104,6 +104,30 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
+        public Visibility MoveButtonVisibility
+        {
+            get { return (Visibility)GetValue(MoveButtonVisibilityProperty); }
+            set { SetValue(MoveButtonVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty MoveButtonVisibilityProperty =
+            DependencyProperty.Register(
+                nameof(MoveButtonVisibility),
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
+
+        public Visibility RestoreButtonVisibility
+        {
+            get { return (Visibility)GetValue(RestoreButtonVisibilityProperty); }
+            set { SetValue(RestoreButtonVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty RestoreButtonVisibilityProperty =
+            DependencyProperty.Register(
+                nameof(RestoreButtonVisibility),
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
+
         public bool IsDeleteButtonEnabled
         {
             get { return (bool)GetValue(IsDeleteButtonEnabledProperty); }
@@ -112,6 +136,18 @@ namespace ModernKeePass.Views.UserControls
         public static readonly DependencyProperty IsDeleteButtonEnabledProperty =
             DependencyProperty.Register(
                 nameof(IsDeleteButtonEnabled),
+                typeof(bool),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(true, (o, args) => { }));
+
+        public bool IsMoveButtonEnabled
+        {
+            get { return (bool)GetValue(IsMoveButtonEnabledProperty); }
+            set { SetValue(IsMoveButtonEnabledProperty, value); }
+        }
+        public static readonly DependencyProperty IsMoveButtonEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsMoveButtonEnabled),
                 typeof(bool),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(true, (o, args) => { }));
@@ -131,6 +167,7 @@ namespace ModernKeePass.Views.UserControls
         public event EventHandler<RoutedEventArgs> EditButtonClick;
         public event EventHandler<RoutedEventArgs> DeleteButtonClick;
         public event EventHandler<RoutedEventArgs> MoveButtonClick;
+        public event EventHandler<RoutedEventArgs> RestoreButtonClick;
         
         public TopMenuUserControl()
         {
@@ -158,6 +195,10 @@ namespace ModernKeePass.Views.UserControls
         {
             MoveButtonClick?.Invoke(sender, e);
         }
+        private void RestoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            RestoreButtonClick?.Invoke(sender, e);
+        }
 
         private void OverflowFlyout_OnOpening(object sender, object e)
         {
@@ -166,7 +207,8 @@ namespace ModernKeePass.Views.UserControls
 
             EditFlyout.IsChecked = IsEditButtonChecked;
 
-            MoveFlyout.IsEnabled = IsMoveButtonEnabled;
+            MoveFlyout.Visibility = MoveButtonVisibility;
+            RestoreFlyout.Visibility = RestoreButtonVisibility;
 
             SortEntriesFlyout.Visibility = SortButtonVisibility;
             SortGroupsFlyout.Visibility = SortButtonVisibility;
@@ -179,5 +221,6 @@ namespace ModernKeePass.Views.UserControls
             SortEntriesButtonFlyout.Command = SortEntriesCommand;
             SortGroupsButtonFlyout.Command = SortGroupsCommand;
         }
+
     }
 }

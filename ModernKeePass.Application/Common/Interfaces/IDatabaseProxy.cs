@@ -22,7 +22,6 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         Task Open(byte[] file, Credentials credentials);
         Task ReOpen(byte[] file);
-        void AddHistory(string entryId);
         Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V2);
         Task<byte[]> SaveDatabase();
         Task<byte[]> SaveDatabase(byte[] newFileContents);
@@ -43,6 +42,9 @@ namespace ModernKeePass.Application.Common.Interfaces
         GroupEntity CreateGroup(string parentGroupId, string name, bool isRecycleBin = false);
         void SortEntries(string groupId);
         void SortSubGroups(string groupId);
+
+        void AddHistory(string entryId);
+        void RestoreFromHistory(string entryId, int historyIndex);
 
         IEnumerable<EntryEntity> Search(string groupId, string text);
     }

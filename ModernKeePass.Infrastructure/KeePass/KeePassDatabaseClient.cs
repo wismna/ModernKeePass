@@ -259,6 +259,13 @@ namespace ModernKeePass.Infrastructure.KeePass
             pwEntry.CreateBackup(null);
         }
 
+        public void RestoreFromHistory(string entryId, int historyIndex)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.RestoreFromBackup((uint)historyIndex, _pwDatabase);
+            pwEntry.Touch(true);
+        }
+
         public void UpdateGroup(string groupId)
         {
             throw new NotImplementedException();

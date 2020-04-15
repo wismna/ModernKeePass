@@ -47,7 +47,7 @@ namespace ModernKeePass.Views
             if (args != null)
             {
                 DataContext = new EntryDetailVm(args.Id) { IsEditMode = args.IsNew };
-                await Model.GeneratePassword();
+                if (args.IsNew) await Model.GeneratePassword();
             }
         }
 
@@ -79,11 +79,6 @@ namespace ModernKeePass.Views
                     Model.SetEntry(entry, index);
                     break;
             }
-        }
-
-        private async void Username_OnLostFocus(object sender, RoutedEventArgs e)
-        {
-            await Model.SetFieldValue(nameof(Model.UserName), ((TextBox) sender).Text);
         }
     }
 }

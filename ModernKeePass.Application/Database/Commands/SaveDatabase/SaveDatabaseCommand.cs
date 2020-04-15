@@ -51,7 +51,7 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 
                     _database.IsDirty = false;
                 }
-                catch (ArgumentException exception)
+                catch (Exception exception)
                 {
                     throw new SaveException(exception);
                 }
