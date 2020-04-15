@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
+using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 using EntryVm = ModernKeePass.Application.Entry.Models.EntryVm;
 
@@ -53,9 +54,9 @@ namespace ModernKeePass.Views
                 DataContext = new GroupDetailVm(args.RootGroupId);
             else
             {
-                var id = e.Parameter as string;
-                if (id != null)
-                    DataContext = new GroupDetailVm(id);
+                var navigationItem = e.Parameter as NavigationItem;
+                if (navigationItem != null)
+                    DataContext = new GroupDetailVm(navigationItem.Id) { IsEditMode = navigationItem.IsNew };
             }
         }
 
@@ -77,7 +78,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
-                    Frame.Navigate(typeof(GroupDetailPage), group?.Id);
+                    Frame.Navigate(typeof(GroupDetailPage), new NavigationItem { Id = group?.Id });
                     break;
             }
         }
@@ -90,7 +91,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var entry = GridView.SelectedItem as EntryVm;
-                    Frame.Navigate(typeof(EntryDetailPage), entry?.Id);
+                    Frame.Navigate(typeof(EntryDetailPage), new NavigationItem { Id = entry?.Id });
                     break;
             }
         }
@@ -105,11 +106,19 @@ namespace ModernKeePass.Views
         }
         private async void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(EntryDetailPage), await Model.AddNewEntry());
+            Frame.Navigate(typeof(EntryDetailPage), new NavigationItem
+            {
+                Id = await Model.AddNewEntry(),
+                IsNew = true
+            });
         }
         private async void CreateGroup_ButtonClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(GroupDetailPage), await Model.AddNewGroup());
+            Frame.Navigate(typeof(GroupDetailPage), new NavigationItem
+            {
+                Id = await Model.AddNewGroup(),
+                IsNew = true
+            });
         }
 
         private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
@@ -118,10 +127,10 @@ namespace ModernKeePass.Views
             e.Data.RequestedOperation = DataPackageOperation.Move;
         }
 
-        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        private async void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
-            var results = Model.SubEntries.Where(e => e.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            var results = (await Model.Search(args.QueryText)).Take(5);
             foreach (var result in results)
             {
                 args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroupName, result.Id, imageUri, string.Empty);
@@ -130,7 +139,7 @@ namespace ModernKeePass.Views
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            Frame.Navigate(typeof(EntryDetailPage), args.Tag);
+            Frame.Navigate(typeof(EntryDetailPage), new NavigationItem { Id = args.Tag });
         }
 
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)

@@ -181,12 +181,6 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isEditMode, value); }
         }
         
-        public bool IsVisible
-        {
-            get { return _isVisible; }
-            set { SetProperty(ref _isVisible, value); }
-        }
-        
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }
@@ -205,21 +199,18 @@ namespace ModernKeePass.ViewModels
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
-        private bool _isVisible = true;
         private bool _isSelected;
 
         public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId, bool isNewEntry = false) : this(entryId, App.Services.GetRequiredService<IMediator>(), isNewEntry) { }
+        internal EntryDetailVm(string entryId) : this(entryId, App.Services.GetRequiredService<IMediator>()) { }
 
-        public EntryDetailVm(string entryId, IMediator mediator, bool isNewEntry = false)
+        public EntryDetailVm(string entryId, IMediator mediator)
         {
             _mediator = mediator;
             _entry = _mediator.Send(new GetEntryQuery {Id = entryId}).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery {Id = _entry.ParentGroupId}).GetAwaiter().GetResult();
             History = _entry.History;
-            _isEditMode = isNewEntry;
-            if (isNewEntry) GeneratePassword().GetAwaiter().GetResult();
             IsSelected = true;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);

@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
+using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Page Détail de l'élément, consultez la page http://go.microsoft.com/fwlink/?LinkId=234232
@@ -39,11 +40,15 @@ namespace ModernKeePass.Views
         /// Le paramètre de navigation est disponible dans la méthode LoadState 
         /// en plus de l'état de page conservé durant une session antérieure.
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             NavigationHelper.OnNavigatedTo(e);
-            var args = e.Parameter as string;
-            if (args != null) DataContext = new EntryDetailVm(args);
+            var args = e.Parameter as NavigationItem;
+            if (args != null)
+            {
+                DataContext = new EntryDetailVm(args.Id) { IsEditMode = args.IsNew };
+                await Model.GeneratePassword();
+            }
         }
 
         protected override async void OnNavigatedFrom(NavigationEventArgs e)

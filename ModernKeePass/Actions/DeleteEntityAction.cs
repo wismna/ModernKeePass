@@ -58,7 +58,7 @@ namespace ModernKeePass.Actions
                     ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
                     Entity.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
                     Command.Execute(null);
-                }, null).GetAwaiter().GetResult();
+                }, null).Wait();
 
             return null;
         }

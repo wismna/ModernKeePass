@@ -10,6 +10,7 @@ using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
+using ModernKeePass.Models;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels
@@ -128,7 +129,7 @@ namespace ModernKeePass.ViewModels
                     Title = database.Name,
                     PageType = typeof(GroupDetailPage),
                     Destination = referenceFrame,
-                    Parameter = database.RootGroupId,
+                    Parameter = new NavigationItem { Id = database.RootGroupId },
                     Group = "Databases",
                     SymbolIcon = Symbol.ProtectedDocument
                 });

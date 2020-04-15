@@ -23,6 +23,7 @@ using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
+using ModernKeePass.Application.Group.Queries.SearchEntries;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Enums;
@@ -35,22 +36,7 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<EntryVm> Entries { get; }
 
         public ObservableCollection<GroupVm> Groups { get; }
-
-        public IEnumerable<EntryVm> SubEntries
-        {
-            get
-            {
-                var subEntries = new List<EntryVm>();
-                subEntries.AddRange(Entries);
-                foreach (var group in Groups)
-                {
-                    subEntries.AddRange(group.Entries);
-                }
-
-                return subEntries;
-            }
-        }
-
+        
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
         
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
@@ -83,12 +69,6 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsMenuClosed
-        {
-            get { return _isMenuClosed; }
-            set { SetProperty(ref _isMenuClosed, value); }
-        }
-
         public IEnumerable<GroupVm> BreadCrumb { get; }
 
         public ICommand SaveCommand { get; }
@@ -103,14 +83,13 @@ namespace ModernKeePass.ViewModels
         private readonly GroupVm _parent;
         private bool _isEditMode;
         private EntryVm _reorderedEntry;
-        private bool _isMenuClosed = true;
 
         public GroupDetailVm() {}
         
         internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetRequiredService<IMediator>())
         { }
 
-        public GroupDetailVm(string groupId, IMediator mediator, bool isEditMode = false)
+        public GroupDetailVm(string groupId, IMediator mediator)
         {
             _mediator = mediator;
             _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
@@ -119,7 +98,6 @@ namespace ModernKeePass.ViewModels
                 _parent = _mediator.Send(new GetGroupQuery { Id = _group.ParentGroupId }).GetAwaiter().GetResult();
                 BreadCrumb = new List<GroupVm> {_parent};
             }
-            _isEditMode = isEditMode;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
@@ -150,6 +128,11 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group });
             await _mediator.Send(new RemoveGroupCommand {ParentGroup = _parent, Group = _group });
+        }
+
+        public async Task<IEnumerable<EntryVm>> Search(string queryText)
+        {
+            return await _mediator.Send(new SearchEntriesQuery {GroupId = Id, SearchText = queryText});
         }
 
         private async Task SaveChanges()

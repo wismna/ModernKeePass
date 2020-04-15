@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
@@ -28,6 +29,8 @@ namespace ModernKeePass.Application.Common.Interfaces
         void UpdateCredentials(Credentials credentials);
         void CloseDatabase();
 
+        EntryEntity GetEntry(string id);
+        GroupEntity GetGroup(string id); 
         Task AddEntry(string parentGroupId, string entryId);
         Task MoveEntry(string parentGroupId, string entryId, int index);
         Task AddGroup(string parentGroupId, string groupId);
@@ -40,7 +43,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         GroupEntity CreateGroup(string parentGroupId, string name, bool isRecycleBin = false);
         void SortEntries(string groupId);
         void SortSubGroups(string groupId);
-        EntryEntity GetEntry(string id);
-        GroupEntity GetGroup(string id);
+
+        IEnumerable<EntryEntity> Search(string groupId, string text);
     }
 }

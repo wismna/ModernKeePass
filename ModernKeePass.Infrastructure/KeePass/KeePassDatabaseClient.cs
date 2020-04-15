@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePassLib;
+using ModernKeePassLib.Collections;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
@@ -309,6 +311,21 @@ namespace ModernKeePass.Infrastructure.KeePass
         public void UpdateCredentials(Credentials credentials)
         {
             _pwDatabase.MasterKey = CreateCompositeKey(credentials);
+        }
+
+        public IEnumerable<EntryEntity> Search(string groupId, string text)
+        {
+            var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
+            var searchResults = new PwObjectList<PwEntry>();
+            pwGroup.SearchEntries(new SearchParameters
+            {
+                ComparisonMode = StringComparison.OrdinalIgnoreCase,
+                SearchInTitles = true,
+                //SearchInUserNames = true,
+                SearchString = text
+
+            }, searchResults);
+            return searchResults.Select(e => _mapper.Map<EntryEntity>(e));
         }
 
         private CompositeKey CreateCompositeKey(Credentials credentials)
