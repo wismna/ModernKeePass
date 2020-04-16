@@ -21,6 +21,7 @@ using ModernKeePass.Application.Group.Commands.MoveEntry;
 using ModernKeePass.Application.Group.Commands.RemoveGroup;
 using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
+using ModernKeePass.Application.Group.Commands.UpdateGroup;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Group.Queries.SearchEntries;
@@ -38,7 +39,7 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<GroupVm> Groups { get; }
         
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
-        
+
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
             group e by e.Title.ToUpper().FirstOrDefault() into grp
             orderby grp.Key
@@ -49,13 +50,13 @@ namespace ModernKeePass.ViewModels
         public string Title
         {
             get { return _group.Title; }
-            set { _group.Title = value; }
+            set { _mediator.Send(new UpdateGroupCommand {Group = _group, Title = value, Icon = _group.Icon}).Wait(); }
         }
 
         public Symbol Icon
         {
             get { return (Symbol) Enum.Parse(typeof(Symbol), _group.Icon.ToString()); }
-            set { _group.Icon = (Icon) Enum.Parse(typeof(Icon), value.ToString()); }
+            set { _mediator.Send(new UpdateGroupCommand { Group = _group, Title = _group.Title, Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString()) }).Wait(); }
         }
         
         public bool IsEditMode
@@ -69,6 +70,15 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public bool IsRecycleOnDelete
+        {
+            get
+            {
+                var database = Database;
+                return database.IsRecycleBinEnabled && _parent != null && _parent.Id != database.RecycleBinId;
+            }
+        }
+        
         public IEnumerable<GroupVm> BreadCrumb { get; }
 
         public ICommand SaveCommand { get; }

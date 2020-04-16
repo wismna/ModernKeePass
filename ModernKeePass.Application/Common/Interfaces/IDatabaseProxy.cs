@@ -34,7 +34,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task MoveEntry(string parentGroupId, string entryId, int index);
         Task AddGroup(string parentGroupId, string groupId);
         void UpdateEntry(string entryId, string fieldName, object fieldValue);
-        void UpdateGroup(string groupId);
+        void UpdateGroup(GroupEntity group);
         Task RemoveEntry(string parentGroupId, string entryId);
         Task RemoveGroup(string parentGroupId, string groupId);
         void DeleteEntity(string entityId);
@@ -43,8 +43,8 @@ namespace ModernKeePass.Application.Common.Interfaces
         void SortEntries(string groupId);
         void SortSubGroups(string groupId);
 
-        void AddHistory(string entryId);
-        void RestoreFromHistory(string entryId, int historyIndex);
+        EntryEntity AddHistory(string entryId);
+        EntryEntity RestoreFromHistory(string entryId, int historyIndex);
         void DeleteHistory(string entryId, int historyIndex);
 
         IEnumerable<EntryEntity> Search(string groupId, string text);

@@ -148,6 +148,25 @@ namespace ModernKeePass.Views
             VisualStateManager.GoToState(TopMenu, e.NewSize.Width < 800 ? "Collapsed" : "Overflowed", true);
         }
 
+        private async void TopMenu_OnDeleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            var resource = new ResourceHelper();
+            var isRecycleOnDelete = Model.IsRecycleOnDelete;
+
+            var message = isRecycleOnDelete
+                ? resource.GetResourceValue("GroupRecyclingConfirmation")
+                : resource.GetResourceValue("GroupDeletingConfirmation");
+            var text = isRecycleOnDelete ? resource.GetResourceValue("GroupRecycled") : resource.GetResourceValue("GroupDeleted");
+            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+                resource.GetResourceValue("EntityDeleteActionButton"),
+                resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                {
+                    //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
+                    await Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
+                    NavigationHelper.GoBack();
+                }, null);
+        }
+
         #endregion
     }
 }

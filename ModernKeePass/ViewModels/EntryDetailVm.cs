@@ -291,12 +291,12 @@ namespace ModernKeePass.ViewModels
 
         public async Task AddHistory()
         {
-            if (_isDirty) await _mediator.Send(new AddHistoryCommand { EntryId = Id });
+            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
         }
         
         private async Task RestoreHistory()
         {
-            await _mediator.Send(new RestoreHistoryCommand { EntryId = Id, HistoryIndex = History.Count - SelectedIndex - 1 });
+            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
             History.Insert(0, SelectedItem);
             SelectedIndex = 0;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
@@ -304,7 +304,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task DeleteHistory()
         {
-            await _mediator.Send(new DeleteHistoryCommand { EntryId = Id, HistoryIndex = History.Count - SelectedIndex - 1 });
+            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
             History.RemoveAt(SelectedIndex);
             SelectedIndex = 0;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();

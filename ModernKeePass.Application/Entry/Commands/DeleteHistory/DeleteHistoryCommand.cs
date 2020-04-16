@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Entry.Commands.DeleteHistory
 {
     public class DeleteHistoryCommand : IRequest
     {
-        public string EntryId { get; set; }
+        public EntryVm Entry { get; set; }
         public int HistoryIndex { get; set; }
 
         public class DeleteHistoryCommandHandler : IRequestHandler<DeleteHistoryCommand>
@@ -22,7 +23,8 @@ namespace ModernKeePass.Application.Entry.Commands.DeleteHistory
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                _database.DeleteHistory(message.EntryId, message.HistoryIndex);
+                _database.DeleteHistory(message.Entry.Id, message.HistoryIndex);
+                message.Entry.History.RemoveAt(message.HistoryIndex);
             }
         }
     }

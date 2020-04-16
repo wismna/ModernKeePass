@@ -239,18 +239,15 @@
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
-                IsMoveButtonEnabled="{Binding IsNotRoot}" 
                 IsDeleteButtonEnabled="{Binding IsNotRoot}"
                 SaveCommand="{Binding SaveCommand}"
                 MoveCommand="{Binding MoveCommand}"
                 SortEntriesCommand="{Binding SortEntriesCommand}"
-                SortGroupsCommand="{Binding SortGroupsCommand}">
+                SortGroupsCommand="{Binding SortGroupsCommand}"
+                DeleteButtonClick="TopMenu_OnDeleteButtonClick">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
-                    </core:EventTriggerBehavior>
-                    <core:EventTriggerBehavior EventName="DeleteButtonClick">
-                        <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="MoveButtonClick">
                         <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />

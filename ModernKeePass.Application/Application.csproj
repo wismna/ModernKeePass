@@ -94,6 +94,7 @@
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
+    <Compile Include="Group\Commands\UpdateGroup\UpdateGroupCommand.cs" />
     <Compile Include="Group\Queries\GetGroup\GetGroupQuery.cs" />
     <Compile Include="Group\Queries\SearchEntries\SearchEntriesQuery.cs" />
     <Compile Include="Parameters\Commands\SetCipher\SetCipherCommand.cs" />
@@ -136,9 +137,7 @@
     <Compile Include="Security\Queries\EstimatePasswordComplexity\EstimatePasswordComplexityQuery.cs" />
     <Content Include="Services\DatabaseService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Group\Commands\UpdateGroup\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ModernKeePass.Domain\Domain.csproj">
       <Project>{9a0759f1-9069-4841-99e3-3bec44e17356}</Project>

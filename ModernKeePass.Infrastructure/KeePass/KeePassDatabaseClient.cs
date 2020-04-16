@@ -252,18 +252,20 @@ namespace ModernKeePass.Infrastructure.KeePass
             }
         }
 
-        public void AddHistory(string entryId)
+        public EntryEntity AddHistory(string entryId)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
             pwEntry.Touch(true);
             pwEntry.CreateBackup(null);
+            return _mapper.Map<EntryEntity>(pwEntry.History.Last());
         }
 
-        public void RestoreFromHistory(string entryId, int historyIndex)
+        public EntryEntity RestoreFromHistory(string entryId, int historyIndex)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
             pwEntry.RestoreFromBackup((uint)historyIndex, _pwDatabase);
             pwEntry.Touch(true);
+            return _mapper.Map<EntryEntity>(pwEntry);
         }
 
         public void DeleteHistory(string entryId, int historyIndex)
@@ -272,9 +274,12 @@ namespace ModernKeePass.Infrastructure.KeePass
             pwEntry.History.RemoveAt((uint)historyIndex);
         }
 
-        public void UpdateGroup(string groupId)
+        public void UpdateGroup(GroupEntity group)
         {
-            throw new NotImplementedException();
+            var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(group.Id), true);
+            pwGroup.Name = group.Name;
+            pwGroup.IconId = IconMapper.MapIconToPwIcon(group.Icon);
+            pwGroup.Touch(true);
         }
         
         public EntryEntity CreateEntry(string parentGroupId)
