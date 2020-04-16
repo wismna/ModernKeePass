@@ -50,13 +50,21 @@ namespace ModernKeePass.ViewModels
         public string Title
         {
             get { return _group.Title; }
-            set { _mediator.Send(new UpdateGroupCommand {Group = _group, Title = value, Icon = _group.Icon}).Wait(); }
+            set
+            {
+                _mediator.Send(new UpdateGroupCommand {Group = _group, Title = value, Icon = _group.Icon}).Wait();
+                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
         }
 
         public Symbol Icon
         {
             get { return (Symbol) Enum.Parse(typeof(Symbol), _group.Icon.ToString()); }
-            set { _mediator.Send(new UpdateGroupCommand { Group = _group, Title = _group.Title, Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString()) }).Wait(); }
+            set
+            {
+                _mediator.Send(new UpdateGroupCommand { Group = _group, Title = _group.Title, Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString()) }).Wait();
+                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
         }
         
         public bool IsEditMode

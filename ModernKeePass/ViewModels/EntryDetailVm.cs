@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
@@ -241,7 +242,7 @@ namespace ModernKeePass.ViewModels
             SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
             History = new ObservableCollection<EntryVm> { SelectedItem };
-            foreach (var entry in SelectedItem.History)
+            foreach (var entry in SelectedItem.History.Skip(1))
             {
                 History.Add(entry);
             }
@@ -296,7 +297,7 @@ namespace ModernKeePass.ViewModels
         
         private async Task RestoreHistory()
         {
-            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
             History.Insert(0, SelectedItem);
             SelectedIndex = 0;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
@@ -304,7 +305,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task DeleteHistory()
         {
-            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
             History.RemoveAt(SelectedIndex);
             SelectedIndex = 0;
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();

@@ -15,7 +15,6 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class SaveDatabasePage
     {
-        private Frame _mainFrame;
         public SaveVm Model => (SaveVm)DataContext;
         public SaveDatabasePage()
         {
@@ -25,15 +24,9 @@ namespace ModernKeePass.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            _mainFrame = e.Parameter as Frame;
+            Model.Frame = e.Parameter as Frame;
         }
-
-        private async void SaveButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            await Model.Save();
-            _mainFrame.Navigate(typeof(MainPage));
-        }
-
+        
         private async void SaveAsButton_OnClick(object sender, RoutedEventArgs e)
         {
             var savePicker = new FileSavePicker
@@ -46,14 +39,6 @@ namespace ModernKeePass.Views
             var file = await savePicker.PickSaveFileAsync().AsTask();
             if (file == null) return;
             await Model.Save(file);
-
-            _mainFrame.Navigate(typeof(MainPage));
-        }
-
-        private async void CloseButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            await Model.Close();
-            _mainFrame.Navigate(typeof(MainPage));
         }
     }
 }

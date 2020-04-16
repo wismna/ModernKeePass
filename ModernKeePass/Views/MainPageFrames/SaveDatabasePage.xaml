@@ -4,6 +4,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     x:Class="ModernKeePass.Views.SaveDatabasePage"
     mc:Ignorable="d">
     <Page.DataContext>
@@ -11,11 +13,11 @@
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="SaveButton" Click="SaveButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="SaveButton" Command="{Binding SaveCommand}" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="SaveDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
         <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="SaveAsDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
-        <HyperlinkButton x:Uid="CloseButton" Click="CloseButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="CloseButton" Command="{Binding CloseCommand}" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock x:Uid="CloseDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
     </StackPanel>
 </Page>

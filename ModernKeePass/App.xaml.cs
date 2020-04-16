@@ -84,10 +84,11 @@ namespace ModernKeePass
             
             if (realException is SaveException)
             {
+                var innerException = realException.InnerException;
                 unhandledExceptionEventArgs.Handled = true;
-                HockeyClient.Current.TrackException(realException.InnerException);
+                HockeyClient.Current.TrackException(innerException);
                 await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogSaveErrorTitle"),
-                    realException.InnerException.Message,
+                    innerException?.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
                     async command =>

@@ -122,7 +122,7 @@ namespace ModernKeePass.Views.UserControls
                 nameof(IsOpen),
                 typeof(bool),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(true, (o, args) => { }));
+                new PropertyMetadata(false, (o, args) => { }));
 
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
