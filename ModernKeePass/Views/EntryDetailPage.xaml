@@ -388,7 +388,11 @@
                 <ColumnDefinition Width="{StaticResource MenuGridLength}" x:Name="LeftListViewColumn" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl x:Uid="HistoryLeftListView" ItemsSource="{Binding History}" ResizeTarget="{Binding ElementName=LeftListViewColumn}" SelectionChanged="HamburgerMenuUserControl_OnSelectionChanged" />
+            <userControls:HamburgerMenuUserControl x:Uid="HistoryLeftListView" 
+               ItemsSource="{Binding History}" 
+               ResizeTarget="{Binding ElementName=LeftListViewColumn}" 
+               SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" 
+               SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
             <Grid Grid.Column="1">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="20,0,0,20">
@@ -409,7 +413,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />
@@ -418,8 +422,8 @@
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
                         <TextBlock x:Uid="EntryPassword" />
-                        <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" IsEnabled="{Binding IsSelected}" />
-                        <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsSelected}">
+                        <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" IsEnabled="{Binding IsCurrentEntry}" />
+                        <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding Password}" />
@@ -430,7 +434,7 @@
                         <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
                         <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
                         <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" MaxLength="256" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsSelected}">
+                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" MaxLength="256" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:NavigateToUrlAction Url="{Binding Url}" />
@@ -438,8 +442,8 @@
                             </interactivity:Interaction.Behaviors>
                         </local:TextBoxWithButton>
                         <TextBlock x:Uid="EntryNotes" />
-                        <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" IsEnabled="{Binding IsSelected}" />
-                        <CheckBox x:Uid="EntryExpirationDate" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsSelected}" />
+                        <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" IsEnabled="{Binding IsCurrentEntry}" />
+                        <CheckBox x:Uid="EntryExpirationDate" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -458,11 +462,11 @@
                         <StackPanel x:Name="EditDesign" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Orientation="Horizontal">
                             <StackPanel Width="250" HorizontalAlignment="Left">
                                 <TextBlock x:Uid="EntryBackgroundColor" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsSelected}" />
+                                <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
                             </StackPanel>
                             <StackPanel Width="250" HorizontalAlignment="Left">
                                 <TextBlock x:Uid="EntryForegroundColor" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsSelected}" />
+                                <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
                             </StackPanel>
                         </StackPanel>
                     </StackPanel>
@@ -529,20 +533,15 @@
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
-                MoveButtonVisibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
-                RestoreButtonVisibility="{Binding IsSelected, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
+                RestoreButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SaveCommand="{Binding SaveCommand}"
                 MoveCommand="{Binding MoveCommand}"
-                RestoreCommand="{Binding RestoreCommand}">
+                RestoreCommand="{Binding RestoreCommand}"
+                DeleteButtonClick="TopMenu_OnDeleteButtonClick">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
-                    </core:EventTriggerBehavior>
-                    <core:EventTriggerBehavior EventName="RestoreButtonClick">
-                        <core:ChangePropertyAction TargetObject=""  />
-                    </core:EventTriggerBehavior>
-                    <core:EventTriggerBehavior EventName="DeleteButtonClick">
-                        <actions:DeleteEntityAction Entity="{Binding}" Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
                     </core:EventTriggerBehavior>
                     <core:EventTriggerBehavior EventName="MoveButtonClick">
                         <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />

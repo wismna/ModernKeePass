@@ -45,6 +45,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         void AddHistory(string entryId);
         void RestoreFromHistory(string entryId, int historyIndex);
+        void DeleteHistory(string entryId, int historyIndex);
 
         IEnumerable<EntryEntity> Search(string groupId, string text);
     }

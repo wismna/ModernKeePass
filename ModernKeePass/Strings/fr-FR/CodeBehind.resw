@@ -258,4 +258,10 @@
   <data name="NewImportFormatHelpCSV" xml:space="preserve">
     <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe;URL;Commentaires</value>
   </data>
+  <data name="HistoryDeleteDescription" xml:space="preserve">
+    <value>Supprimer cet historique ne supprimera pas l'entrée en cours.</value>
+  </data>
+  <data name="HistoryDeleteTitle" xml:space="preserve">
+    <value>Supprimer cet historique ?</value>
+  </data>
 </root>

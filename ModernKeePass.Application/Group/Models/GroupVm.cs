@@ -9,7 +9,7 @@ using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.Application.Group.Models
 {
-    public class GroupVm: IEntityVm, ISelectableModel, IMapFrom<GroupEntity>
+    public class GroupVm: IEntityVm, IMapFrom<GroupEntity>
     {
         public string ParentGroupId { get; set; }
         public string ParentGroupName { get; set; }
@@ -18,7 +18,6 @@ namespace ModernKeePass.Application.Group.Models
         public Icon Icon { get; set; }
         public List<GroupVm> SubGroups { get; set; }
         public List<EntryVm> Entries { get; set; }
-        public bool IsSelected { get; set; }
         
         public override string ToString()
         {

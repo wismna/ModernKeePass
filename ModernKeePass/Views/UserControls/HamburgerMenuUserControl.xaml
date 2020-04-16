@@ -15,7 +15,8 @@
     <ListView
         ItemsSource="{Binding ItemsSource, ElementName=UserControl}"
         SelectionChanged="Selector_OnSelectionChanged"
-        SelectedItem="{Binding SelectedItem, ElementName=UserControl}"
+        SelectedItem="{Binding SelectedItem, ElementName=UserControl, Mode=TwoWay}"
+        SelectedIndex="{Binding SelectedIndex, ElementName=UserControl, Mode=TwoWay}"
         IsSwipeEnabled="false"
         IsSynchronizedWithCurrentItem="False"
         RequestedTheme="Dark"

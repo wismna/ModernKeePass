@@ -28,7 +28,6 @@ namespace ModernKeePass.Application.Entry.Models
         public bool HasExpirationDate { get; set; }
         public DateTimeOffset ExpirationDate { get; set; }
         public DateTimeOffset ModificationDate { get; set; }
-        public bool IsDirty { get; set; }
 
         public override string ToString()
         {
@@ -47,7 +46,7 @@ namespace ModernKeePass.Application.Entry.Models
                 .ForMember(d => d.Url, opts => opts.MapFrom(s => s.Url))
                 .ForMember(d => d.Notes, opts => opts.MapFrom(s => s.Notes))
                 .ForMember(d => d.AdditionalFields, opts => opts.MapFrom(s => s.AdditionalFields))
-                .ForMember(d => d.History, opts => opts.MapFrom(s => s.History.OrderByDescending(h => h.LastModificationDate)))
+                .ForMember(d => d.History, opts => opts.MapFrom(s => s.History.Reverse()))
                 .ForMember(d => d.HasExpirationDate, opts => opts.MapFrom(s => s.HasExpirationDate))
                 .ForMember(d => d.ExpirationDate, opts => opts.MapFrom(s => s.ExpirationDate))
                 .ForMember(d => d.ModificationDate, opts => opts.MapFrom(s => s.LastModificationDate))

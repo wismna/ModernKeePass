@@ -100,6 +100,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
+        public int SelectedIndex
+        {
+            get { return (int)GetValue(SelectedIndexProperty); }
+            set { SetValue(SelectedIndexProperty, value); }
+        }
+        public static readonly DependencyProperty SelectedIndexProperty =
+            DependencyProperty.Register(
+                nameof(SelectedIndex),
+                typeof(int),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(-1, (o, args) => { }));
+
         public bool IsOpen
         {
             get { return (bool)GetValue(IsOpenProperty); }

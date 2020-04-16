@@ -89,6 +89,7 @@
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
     <Compile Include="Entry\Commands\AddHistory\AddHistoryCommand.cs" />
+    <Compile Include="Entry\Commands\DeleteHistory\DeleteHistoryCommand.cs" />
     <Compile Include="Entry\Commands\RestoreHistory\RestoreHistoryCommand.cs" />
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />

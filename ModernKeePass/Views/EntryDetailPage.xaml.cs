@@ -1,5 +1,4 @@
 ﻿using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Common;
 using ModernKeePass.Models;
@@ -22,7 +21,7 @@ namespace ModernKeePass.Views
         /// gestion de la durée de vie des processus
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
-
+        
         public EntryDetailPage()
         {
             InitializeComponent();
@@ -65,19 +64,35 @@ namespace ModernKeePass.Views
             VisualStateManager.GoToState(TopMenu, e.NewSize.Width < 800 ? "Collapsed" : "Overflowed", true);
         }
 
-        private void HamburgerMenuUserControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void TopMenu_OnDeleteButtonClick(object sender, RoutedEventArgs e)
         {
-            var listView = sender as ListView;
-            if (listView == null) return;
-            var index = listView.SelectedIndex;
-            switch (index)
+            var resource = new ResourceHelper();
+            if (Model.IsCurrentEntry)
             {
-                case -1:
-                    return;
-                default:
-                    var entry = listView.SelectedItem as Application.Entry.Models.EntryVm;
-                    Model.SetEntry(entry, index);
-                    break;
+                var isRecycleOnDelete = Model.IsRecycleOnDelete;
+
+                var message = isRecycleOnDelete
+                    ? resource.GetResourceValue("EntryRecyclingConfirmation")
+                    : resource.GetResourceValue("EntryDeletingConfirmation");
+                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
+                    resource.GetResourceValue("EntityDeleteActionButton"),
+                    resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                    {
+                        var text = isRecycleOnDelete ? resource.GetResourceValue("EntryRecycled") : resource.GetResourceValue("EntryDeleted");
+                        //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
+                        await Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
+                        NavigationHelper.GoBack();
+                    }, null);
+            }
+            else
+            {
+                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("HistoryDeleteTitle"), resource.GetResourceValue("HistoryDeleteDescription"),
+                    resource.GetResourceValue("EntityDeleteActionButton"),
+                    resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                    {
+                        //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
+                        await Model.DeleteHistory();
+                    }, null);
             }
         }
     }

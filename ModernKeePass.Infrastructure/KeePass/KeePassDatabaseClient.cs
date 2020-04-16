@@ -266,6 +266,12 @@ namespace ModernKeePass.Infrastructure.KeePass
             pwEntry.Touch(true);
         }
 
+        public void DeleteHistory(string entryId, int historyIndex)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.History.RemoveAt((uint)historyIndex);
+        }
+
         public void UpdateGroup(string groupId)
         {
             throw new NotImplementedException();

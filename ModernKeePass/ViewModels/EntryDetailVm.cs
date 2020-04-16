@@ -11,6 +11,7 @@ using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.AddHistory;
+using ModernKeePass.Application.Entry.Commands.DeleteHistory;
 using ModernKeePass.Application.Entry.Commands.RestoreHistory;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
 using ModernKeePass.Application.Entry.Models;
@@ -44,17 +45,42 @@ namespace ModernKeePass.ViewModels
         public bool SpecialPatternSelected { get; set; }
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
-        public string Id => _entry.Id;
+        public string Id => SelectedItem.Id;
+
+        public bool IsRecycleOnDelete
+        {
+            get
+            {
+                var database = Database;
+                return database.IsRecycleBinEnabled && _parent.Id != database.RecycleBinId;
+            }
+        } 
 
         public IEnumerable<GroupVm> BreadCrumb => new List<GroupVm> { _parent };
+        public ObservableCollection<EntryVm> History { get; }
 
         /// <summary>
         /// Determines if the Entry is current or from history
         /// </summary>
-        public bool IsSelected
+        public bool IsCurrentEntry => SelectedIndex == 0;
+
+        public EntryVm SelectedItem
         {
-            get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
+            get { return _selectedItem; }
+            set
+            {
+                SetProperty(ref _selectedItem, value);
+                if (value != null) OnPropertyChanged();
+            }
+        }
+        public int SelectedIndex    
+        {
+            get { return _selectedIndex; }
+            set
+            {
+                SetProperty(ref _selectedIndex, value);
+                OnPropertyChanged(nameof(IsCurrentEntry));
+            }
         }
 
         public double PasswordLength
@@ -65,26 +91,26 @@ namespace ModernKeePass.ViewModels
 
         public string Title
         {
-            get { return _entry.Title; }
+            get { return SelectedItem.Title; }
             set
             {
-                _entry.Title = value;
+                SelectedItem.Title = value;
                 SetFieldValue(nameof(Title), value).Wait();
             }
         }
 
         public string UserName
         {
-            get { return _entry.Username; }
-            set { _entry.Username = value; }
+            get { return SelectedItem.Username; }
+            set { SelectedItem.Username = value; }
         }
 
         public string Password
         {
-            get { return _entry.Password; }
+            get { return SelectedItem.Password; }
             set
             {
-                _entry.Password = value;
+                SelectedItem.Password = value;
                 SetFieldValue(nameof(Password), value).Wait();
                 OnPropertyChanged(nameof(Password));
                 OnPropertyChanged(nameof(PasswordComplexityIndicator));
@@ -93,64 +119,64 @@ namespace ModernKeePass.ViewModels
         
         public string Url
         {
-            get { return _entry.Url?.ToString(); }
+            get { return SelectedItem.Url?.ToString(); }
             set
             {
-                _entry.Url = new Uri(value);
+                SelectedItem.Url = new Uri(value);
                 SetFieldValue(nameof(Url), value).Wait();
             }
         }
 
         public string Notes
         {
-            get { return _entry.Notes; }
+            get { return SelectedItem.Notes; }
             set
             {
-                _entry.Notes = value;
+                SelectedItem.Notes = value;
                 SetFieldValue(nameof(Notes), value).Wait();
             }
         }
 
         public Symbol Icon
         {
-            get { return (Symbol)Enum.Parse(typeof(Symbol), _entry.Icon.ToString()); }
+            get { return (Symbol)Enum.Parse(typeof(Symbol), SelectedItem.Icon.ToString()); }
             set
             {
-                _entry.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
-                SetFieldValue(nameof(Icon), _entry.Icon).Wait();
+                SelectedItem.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
+                SetFieldValue(nameof(Icon), SelectedItem.Icon).Wait();
             }
         }
 
         public DateTimeOffset ExpiryDate
         {
-            get { return _entry.ExpirationDate; }
+            get { return SelectedItem.ExpirationDate; }
             set
             {
                 if (!HasExpirationDate) return;
 
-                _entry.ExpirationDate = value.Date;
-                SetFieldValue("ExpirationDate", _entry.ExpirationDate).Wait();
+                SelectedItem.ExpirationDate = value.Date;
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate).Wait();
             }
         }
 
         public TimeSpan ExpiryTime
         {
-            get { return _entry.ExpirationDate.TimeOfDay; }
+            get { return SelectedItem.ExpirationDate.TimeOfDay; }
             set
             {
                 if (!HasExpirationDate) return;
 
-                _entry.ExpirationDate = _entry.ExpirationDate.Date.Add(value);
-                SetFieldValue("ExpirationDate", _entry.ExpirationDate).Wait();
+                SelectedItem.ExpirationDate = SelectedItem.ExpirationDate.Date.Add(value);
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate).Wait();
             }
         }
         
         public bool HasExpirationDate
         {
-            get { return _entry.HasExpirationDate; }
+            get { return SelectedItem.HasExpirationDate; }
             set
             {
-                _entry.HasExpirationDate = value;
+                SelectedItem.HasExpirationDate = value;
                 SetFieldValue(nameof(HasExpirationDate), value).Wait();
                 OnPropertyChanged(nameof(HasExpirationDate));
             }
@@ -158,29 +184,28 @@ namespace ModernKeePass.ViewModels
 
         public SolidColorBrush BackgroundColor
         {
-            get { return _entry?.BackgroundColor.ToSolidColorBrush(); }
+            get { return SelectedItem?.BackgroundColor.ToSolidColorBrush(); }
             set
             {
-                _entry.BackgroundColor = value.ToColor();
-                SetFieldValue(nameof(BackgroundColor), _entry.BackgroundColor).Wait();
+                SelectedItem.BackgroundColor = value.ToColor();
+                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor).Wait();
             }
         }
 
         public SolidColorBrush ForegroundColor
         {
-            get { return _entry?.ForegroundColor.ToSolidColorBrush(); }
+            get { return SelectedItem?.ForegroundColor.ToSolidColorBrush(); }
             set
             {
-                _entry.ForegroundColor = value.ToColor();
-                SetFieldValue(nameof(ForegroundColor), _entry.ForegroundColor).Wait();
+                SelectedItem.ForegroundColor = value.ToColor();
+                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor).Wait();
             }
         }
 
-        public ObservableCollection<EntryVm> History { get; }
 
         public bool IsEditMode
         {
-            get { return IsSelected && _isEditMode; }
+            get { return IsCurrentEntry && _isEditMode; }
             set { SetProperty(ref _isEditMode, value); }
         }
         
@@ -199,11 +224,12 @@ namespace ModernKeePass.ViewModels
 
         private readonly IMediator _mediator;
         private readonly GroupVm _parent;
-        private EntryVm _entry;
+        private EntryVm _selectedItem;
+        private int _selectedIndex;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
-        private bool _isSelected;
+        private bool _isDirty;
 
         public EntryDetailVm() { }
         
@@ -212,14 +238,14 @@ namespace ModernKeePass.ViewModels
         public EntryDetailVm(string entryId, IMediator mediator)
         {
             _mediator = mediator;
-            _entry = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
-            _parent = _mediator.Send(new GetGroupQuery { Id = _entry.ParentGroupId }).GetAwaiter().GetResult();
-            History = new ObservableCollection<EntryVm> {_entry};
-            foreach (var entry in _entry.History)
+            SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
+            _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
+            History = new ObservableCollection<EntryVm> { SelectedItem };
+            foreach (var entry in SelectedItem.History)
             {
                 History.Add(entry);
             }
-            IsSelected = true;
+            SelectedIndex = 0;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -247,41 +273,41 @@ namespace ModernKeePass.ViewModels
 
         public async Task MarkForDelete(string recycleBinTitle)
         {
-            await _mediator.Send(new DeleteEntryCommand {EntryId = Id, ParentGroupId = _entry.ParentGroupId, RecycleBinName = recycleBinTitle});
+            await _mediator.Send(new DeleteEntryCommand {EntryId = Id, ParentGroupId = SelectedItem.ParentGroupId, RecycleBinName = recycleBinTitle});
         }
         
         public async Task Move(GroupVm destination)
         {
-            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = _entry });
-            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _parent, Entry = _entry });
+            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = SelectedItem });
+            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _parent, Entry = SelectedItem });
         }
         
         public async Task SetFieldValue(string fieldName, object value)
         {
             await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
-            _entry.IsDirty = true;
+            _isDirty = true;
         }
 
         public async Task AddHistory()
         {
-            if (_entry.IsDirty) await _mediator.Send(new AddHistoryCommand { EntryId = Id });
+            if (_isDirty) await _mediator.Send(new AddHistoryCommand { EntryId = Id });
         }
-
-        internal void SetEntry(EntryVm entry, int index)
-        {
-            _entry = entry;
-            IsSelected = index == 0;
-            OnPropertyChanged();
-        }
-
+        
         private async Task RestoreHistory()
         {
-            var index = History.IndexOf(_entry);
-            var entryToRestore = History[index];
-            SetEntry(entryToRestore, 0);
-            await _mediator.Send(new RestoreHistoryCommand { EntryId = Id, HistoryIndex = index });
-            History.Insert(0, entryToRestore);
+            await _mediator.Send(new RestoreHistoryCommand { EntryId = Id, HistoryIndex = History.Count - SelectedIndex - 1 });
+            History.Insert(0, SelectedItem);
+            SelectedIndex = 0;
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        public async Task DeleteHistory()
+        {
+            await _mediator.Send(new DeleteHistoryCommand { EntryId = Id, HistoryIndex = History.Count - SelectedIndex - 1 });
+            History.RemoveAt(SelectedIndex);
+            SelectedIndex = 0;
+            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
         }
 
         private async Task SaveChanges()
@@ -289,7 +315,7 @@ namespace ModernKeePass.ViewModels
             await AddHistory();
             await _mediator.Send(new SaveDatabaseCommand());
             ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
-            _entry.IsDirty = false;
+            _isDirty = false;
         }
     }
 }

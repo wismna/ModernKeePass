@@ -1,4 +1,5 @@
 Database corruption issues should now be a thing of the past !
 Added the ability to move entries and groups
 Edits are now in a popup instead of inline
+Allows restoring and deleting from entry history
 Updated KeePass lib to version 2.44
