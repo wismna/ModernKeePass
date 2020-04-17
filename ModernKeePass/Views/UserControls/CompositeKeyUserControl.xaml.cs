@@ -8,6 +8,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -24,7 +25,7 @@ namespace ModernKeePass.Views.UserControls
     public sealed partial class CompositeKeyUserControl
     {
         private readonly IMediator _mediator;
-        private readonly ResourceHelper _resource;
+        private readonly IResourceProxy _resource;
         public CompositeKeyVm Model => Grid.DataContext as CompositeKeyVm;
 
         public bool CreateNew
@@ -77,13 +78,12 @@ namespace ModernKeePass.Views.UserControls
 
         public bool ShowComplexityIndicator => CreateNew || UpdateKey;
 
-        public CompositeKeyUserControl(): this(App.Services.GetRequiredService<IMediator>())
-        { }
+        public CompositeKeyUserControl(): this(App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<IResourceProxy>()) { }
 
-        public CompositeKeyUserControl(IMediator mediator)
+        public CompositeKeyUserControl(IMediator mediator, IResourceProxy resource)
         {
             _mediator = mediator;
-            _resource = new ResourceHelper();
+            _resource = resource;
             InitializeComponent();
         }
 

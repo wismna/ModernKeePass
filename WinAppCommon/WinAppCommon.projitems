@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>a66b7a53-1d8f-41e2-a8ab-840c81b1aa92</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>ModernKeePass</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\ClipboardAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\NavigateToUrlAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\SetupFocusAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\ToastAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\MessageDialogHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ToastNotificationHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewWithDisable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\ColorToBrushConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DiscreteIntToSolidColorBrushConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\DoubleToSolidColorBrushConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\EmptyStringToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\IconToSymbolConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\InverseBooleanToVisibilityConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\NullToBooleanConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\PluralizationConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\ProgressBarLegalValuesConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Converters\TextToWidthConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Events\PasswordEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DispatcherTaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\SelectableDataTemplateSelector.cs" />
+  </ItemGroup>
+</Project>

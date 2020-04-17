@@ -1,5 +1,7 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
@@ -14,6 +16,7 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class EntryDetailPage
     {
+        private readonly IResourceProxy _resource;
         public EntryDetailVm Model => (EntryDetailVm) DataContext;
 
         /// <summary>
@@ -22,9 +25,11 @@ namespace ModernKeePass.Views
         /// </summary>
         public NavigationHelper NavigationHelper { get; }
         
-        public EntryDetailPage()
+        public EntryDetailPage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
+        public EntryDetailPage(IResourceProxy resource)
         {
             InitializeComponent();
+            _resource = resource;
             NavigationHelper = new NavigationHelper(this);
         }
         
@@ -66,29 +71,28 @@ namespace ModernKeePass.Views
 
         private async void TopMenu_OnDeleteButtonClick(object sender, RoutedEventArgs e)
         {
-            var resource = new ResourceHelper();
             if (Model.IsCurrentEntry)
             {
                 var isRecycleOnDelete = Model.IsRecycleOnDelete;
 
                 var message = isRecycleOnDelete
-                    ? resource.GetResourceValue("EntryRecyclingConfirmation")
-                    : resource.GetResourceValue("EntryDeletingConfirmation");
-                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
-                    resource.GetResourceValue("EntityDeleteActionButton"),
-                    resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                    ? _resource.GetResourceValue("EntryRecyclingConfirmation")
+                    : _resource.GetResourceValue("EntryDeletingConfirmation");
+                await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("EntityDeleteTitle"), message,
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
                     {
-                        var text = isRecycleOnDelete ? resource.GetResourceValue("EntryRecycled") : resource.GetResourceValue("EntryDeleted");
+                        var text = isRecycleOnDelete ? _resource.GetResourceValue("EntryRecycled") : _resource.GetResourceValue("EntryDeleted");
                         //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
-                        await Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
+                        await Model.MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
                         NavigationHelper.GoBack();
                     }, null);
             }
             else
             {
-                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("HistoryDeleteTitle"), resource.GetResourceValue("HistoryDeleteDescription"),
-                    resource.GetResourceValue("EntityDeleteActionButton"),
-                    resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("HistoryDeleteTitle"), _resource.GetResourceValue("HistoryDeleteDescription"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
                     {
                         //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
                         await Model.DeleteHistory();

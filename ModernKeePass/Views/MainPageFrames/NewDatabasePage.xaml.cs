@@ -4,7 +4,8 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Common;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Infrastructure.File;
 using ModernKeePass.ViewModels;
@@ -18,10 +19,13 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class NewDatabasePage
     {
+        private readonly IResourceProxy _resource;
         public NewVm Model => (NewVm)DataContext;
 
-        public NewDatabasePage()
+        public NewDatabasePage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
+        public NewDatabasePage(IResourceProxy resource)
         {
+            _resource = resource;
             InitializeComponent();
         }
 
@@ -49,14 +53,13 @@ namespace ModernKeePass.Views
 
         private void ImportFormatComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var resource = new ResourceHelper();
             var comboBox = sender as ComboBox;
             switch (comboBox?.SelectedIndex)
             {
                 case 0:
                     Model.ImportFormat = new CsvImportFormat();
                     Model.ImportFileExtensionFilter = ".csv";
-                    Model.ImportFormatHelp = resource.GetResourceValue("NewImportFormatHelpCSV");
+                    Model.ImportFormatHelp = _resource.GetResourceValue("NewImportFormatHelpCSV");
                     break;
             }
         }

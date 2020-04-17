@@ -89,34 +89,15 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Actions\ClipboardAction.cs" />
-    <Compile Include="Actions\NavigateToUrlAction.cs" />
-    <Compile Include="Actions\SetupFocusAction.cs" />
-    <Compile Include="Actions\ToastAction.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\Constants.cs" />
-    <Compile Include="Common\ResourceHelper.cs" />
-    <Compile Include="Converters\IconToSymbolConverter.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="Extensions\ColorExtensions.cs" />
     <Compile Include="Models\NavigationItem.cs" />
-    <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\MessageDialogHelper.cs" />
-    <Compile Include="Common\NavigationHelper.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
-    <Compile Include="Common\RelayCommand.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Common\ToastNotificationHelper.cs" />
-    <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
-    <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
-    <Compile Include="Converters\NullToBooleanConverter.cs" />
-    <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
     <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
       <DependentUpon>ImportExportPage.xaml</DependentUpon>
@@ -136,8 +117,6 @@
     <Compile Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
       <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
-    <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Views\UserControls\BreadCrumbUserControl.xaml.cs">
       <DependentUpon>BreadCrumbUserControl.xaml</DependentUpon>
     </Compile>
@@ -147,15 +126,6 @@
     <Compile Include="Views\UserControls\CompositeKeyUserControl.xaml.cs">
       <DependentUpon>CompositeKeyUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TextBoxWithButton.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\ColorToBrushConverter.cs" />
-    <Compile Include="Converters\DoubleToSolidColorBrushConverter.cs" />
-    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\PluralizationConverter.cs" />
-    <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />
-    <Compile Include="Converters\TextToWidthConverter.cs" />
-    <Compile Include="Events\PasswordEventArgs.cs" />
     <Compile Include="Interfaces\IVmEntity.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -557,6 +527,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\WinAppCommon\WinAppCommon.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '12.0' ">
     <VisualStudioVersion>12.0</VisualStudioVersion>
   </PropertyGroup>

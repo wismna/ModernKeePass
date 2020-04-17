@@ -94,16 +94,9 @@
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Actions\ClipboardAction.cs" />
-    <Compile Include="Actions\DeleteEntityAction.cs" />
-    <Compile Include="Actions\NavigateToUrlAction.cs" />
-    <Compile Include="Actions\SetupFocusAction.cs" />
-    <Compile Include="Actions\ToastAction.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\ResourceHelper.cs" />
-    <Compile Include="Converters\IconToSymbolConverter.cs" />
     <Compile Include="ViewModels\UserControls\UpdateCredentialsViewModel.cs" />
     <Compile Include="Views\UserControls\UpdateCredentialsUserControl.xaml.cs">
       <DependentUpon>UpdateCredentialsUserControl.xaml</DependentUpon>
@@ -114,7 +107,6 @@
     <Compile Include="ViewModels\EntriesViewModel.cs" />
     <Compile Include="ViewModels\ListItems\EntryItemViewModel.cs" />
     <Compile Include="ViewModels\GroupsViewModel.cs" />
-    <Compile Include="TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="ViewModels\ListItems\GroupItemViewModel.cs" />
     <Compile Include="ViewModels\ListItems\SettingsSaveViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -133,16 +125,6 @@
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Common\MessageDialogHelper.cs" />
-    <Compile Include="Common\NavigationHelper.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
-    <Compile Include="Common\RelayCommand.cs" />
-    <Compile Include="Common\SuspensionManager.cs" />
-    <Compile Include="Common\ToastNotificationHelper.cs" />
-    <Compile Include="Converters\DiscreteIntToSolidColorBrushConverter.cs" />
-    <Compile Include="Converters\EmptyStringToVisibilityConverter.cs" />
-    <Compile Include="Converters\NullToBooleanConverter.cs" />
-    <Compile Include="Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
     <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
       <DependentUpon>ImportExportPage.xaml</DependentUpon>
@@ -165,8 +147,6 @@
     <Compile Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
       <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TemplateSelectors\FirstItemDataTemplateSelector.cs" />
-    <Compile Include="Controls\ListViewWithDisable.cs" />
     <Compile Include="Views\UserControls\BreadCrumbUserControl.xaml.cs">
       <DependentUpon>BreadCrumbUserControl.xaml</DependentUpon>
     </Compile>
@@ -176,15 +156,6 @@
     <Compile Include="Views\UserControls\CredentialsUserControl.xaml.cs">
       <DependentUpon>CredentialsUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\TextBoxWithButton.cs" />
-    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\ColorToBrushConverter.cs" />
-    <Compile Include="Converters\DoubleToSolidColorBrushConverter.cs" />
-    <Compile Include="Converters\InverseBooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\PluralizationConverter.cs" />
-    <Compile Include="Converters\ProgressBarLegalValuesConverter.cs" />
-    <Compile Include="Converters\TextToWidthConverter.cs" />
-    <Compile Include="Events\PasswordEventArgs.cs" />
     <Content Include="Views\Old\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Content>
@@ -513,6 +484,7 @@
       <Name>Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\WinAppCommon\WinAppCommon.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

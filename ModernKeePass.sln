@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win81App", "ModernKeePass\Win81App.csproj", "{A0CFC681-769B-405A-8482-0CDEE595A91F}"
 EndProject
@@ -34,7 +34,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win10App", "ModernKeePass10
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModernKeePassApp.ViewModelTest", "ModernKeePass.ViewModelTest\ModernKeePassApp.ViewModelTest.csproj", "{D978E25B-028C-446C-8143-D85563ECA914}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "WinAppCommon", "WinAppCommon\WinAppCommon.shproj", "{A66B7A53-1D8F-41E2-A8AB-840C81B1AA92}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		WinAppCommon\WinAppCommon.projitems*{a0cfc681-769b-405a-8482-0cdee595a91f}*SharedItemsImports = 4
+		WinAppCommon\WinAppCommon.projitems*{a66b7a53-1d8f-41e2-a8ab-840c81b1aa92}*SharedItemsImports = 13
+		WinAppCommon\WinAppCommon.projitems*{d16caff7-4187-45a8-a69e-d0658b7ac5bf}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|ARM = Debug|ARM
@@ -204,6 +211,7 @@ Global
 		{52FEA1EE-2FA7-4862-85FE-CB05893D439E} = {107C7C00-56F4-41B0-A8CC-0156C46A3650}
 		{D16CAFF7-4187-45A8-A69E-D0658B7AC5BF} = {C7DB9A6F-77A8-4FE5-83CB-9C11F7100647}
 		{D978E25B-028C-446C-8143-D85563ECA914} = {107C7C00-56F4-41B0-A8CC-0156C46A3650}
+		{A66B7A53-1D8F-41E2-A8AB-840C81B1AA92} = {C7DB9A6F-77A8-4FE5-83CB-9C11F7100647}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0ADC1BC6-B1CA-427D-A97C-3CA40AAB0428}

@@ -5,11 +5,13 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Common;
 using ModernKeePass.Events;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
-using EntryVm = ModernKeePass.Application.Entry.Models.EntryVm;
 
 // The Group Detail Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234229
 
@@ -21,6 +23,8 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class GroupDetailPage
     {
+        private readonly IResourceProxy _resource;
+
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
         /// process lifetime management
@@ -28,9 +32,11 @@ namespace ModernKeePass.Views
         public NavigationHelper NavigationHelper { get; }
         public GroupDetailVm Model => (GroupDetailVm)DataContext;
 
-        public GroupDetailPage()
+        public GroupDetailPage(): this (App.Services.GetRequiredService<IResourceProxy>()) { }
+        public GroupDetailPage(IResourceProxy resource)
         {
             InitializeComponent();
+            _resource = resource;
             NavigationHelper = new NavigationHelper(this);
         }
 
@@ -150,19 +156,18 @@ namespace ModernKeePass.Views
 
         private async void TopMenu_OnDeleteButtonClick(object sender, RoutedEventArgs e)
         {
-            var resource = new ResourceHelper();
             var isRecycleOnDelete = Model.IsRecycleOnDelete;
 
             var message = isRecycleOnDelete
-                ? resource.GetResourceValue("GroupRecyclingConfirmation")
-                : resource.GetResourceValue("GroupDeletingConfirmation");
-            var text = isRecycleOnDelete ? resource.GetResourceValue("GroupRecycled") : resource.GetResourceValue("GroupDeleted");
-            await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("EntityDeleteTitle"), message,
-                resource.GetResourceValue("EntityDeleteActionButton"),
-                resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
+                ? _resource.GetResourceValue("GroupRecyclingConfirmation")
+                : _resource.GetResourceValue("GroupDeletingConfirmation");
+            var text = isRecycleOnDelete ? _resource.GetResourceValue("GroupRecycled") : _resource.GetResourceValue("GroupDeleted");
+            await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("EntityDeleteTitle"), message,
+                _resource.GetResourceValue("EntityDeleteActionButton"),
+                _resource.GetResourceValue("EntityDeleteCancelButton"), async a =>
                 {
                     //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
-                    await Model.MarkForDelete(resource.GetResourceValue("RecycleBinTitle"));
+                    await Model.MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
                     NavigationHelper.GoBack();
                 }, null);
         }

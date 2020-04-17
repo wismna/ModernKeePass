@@ -12,7 +12,6 @@ using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
-using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
@@ -113,15 +112,18 @@ namespace ModernKeePass.ViewModels
         private string _keyFileText;
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
-        private readonly ResourceHelper _resource;
+        private readonly IResourceProxy _resource;
 
-        public CompositeKeyVm() : this(App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<ISettingsProxy>()) { }
+        public CompositeKeyVm() : this(
+            App.Services.GetRequiredService<IMediator>(), 
+            App.Services.GetRequiredService<ISettingsProxy>(), 
+            App.Services.GetRequiredService<IResourceProxy>()) { }
 
-        public CompositeKeyVm(IMediator mediator, ISettingsProxy settings)
+        public CompositeKeyVm(IMediator mediator, ISettingsProxy settings, IResourceProxy resource)
         {
             _mediator = mediator;
             _settings = settings;
-            _resource = new ResourceHelper();
+            _resource = resource;
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
         }
 
