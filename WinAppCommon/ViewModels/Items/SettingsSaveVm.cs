@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
 
-namespace ModernKeePass.ViewModels
+namespace ModernKeePass.ViewModels.ListItems
 {
     public class SettingsSaveVm
     {

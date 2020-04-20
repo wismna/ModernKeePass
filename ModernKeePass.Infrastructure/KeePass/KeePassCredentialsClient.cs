@@ -7,7 +7,7 @@ using ModernKeePassLib.Security;
 
 namespace ModernKeePass.Infrastructure.KeePass
 {
-    public class KeePassPasswordClient: IPasswordProxy
+    public class KeePassCredentialsClient: ICredentialsProxy
     {
         public string GeneratePassword(PasswordGenerationOptions options)
         {
@@ -35,9 +35,9 @@ namespace ModernKeePass.Infrastructure.KeePass
             return password.ReadString();
         }
 
-        public uint EstimatePasswordComplexity(string password)
+        public int EstimatePasswordComplexity(string password)
         {
-            return QualityEstimation.EstimatePasswordBits(password?.ToCharArray());
+            return (int)QualityEstimation.EstimatePasswordBits(password?.ToCharArray());
         }
 
         public byte[] GenerateKeyFile(byte[] additionalEntropy)

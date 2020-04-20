@@ -19,9 +19,9 @@ namespace ModernKeePass.Application.Security.Commands.GeneratePassword
 
         public class GeneratePasswordCommandHandler: IRequestHandler<GeneratePasswordCommand, string>
         {
-            private readonly IPasswordProxy _security;
+            private readonly ICredentialsProxy _security;
 
-            public GeneratePasswordCommandHandler(IPasswordProxy security)
+            public GeneratePasswordCommandHandler(ICredentialsProxy security)
             {
                 _security = security;
             }

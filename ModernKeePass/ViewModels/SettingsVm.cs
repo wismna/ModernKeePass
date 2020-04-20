@@ -7,6 +7,7 @@ using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
+using ModernKeePass.ViewModels.ListItems;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels

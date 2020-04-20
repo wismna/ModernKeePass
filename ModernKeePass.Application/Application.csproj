@@ -81,7 +81,7 @@
     <Compile Include="Common\Interfaces\IEntityVm.cs" />
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
     <Compile Include="Common\Interfaces\IImportFormat.cs" />
-    <Compile Include="Common\Interfaces\IPasswordProxy.cs" />
+    <Compile Include="Common\Interfaces\ICredentialsProxy.cs" />
     <Compile Include="Common\Interfaces\IProxyInvocationHandler.cs" />
     <Compile Include="Common\Interfaces\IRecentProxy.cs" />
     <Compile Include="Common\Interfaces\IResourceProxy.cs" />

@@ -85,7 +85,7 @@
     <Compile Include="KeePass\IconMapper.cs" />
     <Compile Include="KeePass\KeePassCryptographyClient.cs" />
     <Compile Include="KeePass\KeePassDatabaseClient.cs" />
-    <Compile Include="KeePass\KeePassPasswordClient.cs" />
+    <Compile Include="KeePass\KeePassCredentialsClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UWP\StorageFileClient.cs" />
     <Compile Include="UWP\UwpRecentFilesClient.cs" />

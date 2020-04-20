@@ -38,5 +38,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\SelectableDataTemplateSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\MainMenuItemVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\RecentItemVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsDatabaseVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsNewVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsSaveVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\OpenDatabaseControlVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\UpdateCredentialsViewModel.cs" />
   </ItemGroup>
 </Project>

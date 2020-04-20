@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml.Controls;
 using ModernKeePass.ViewModels;
+using ModernKeePass.ViewModels.ListItems;
 
 // The Split Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234234
 

@@ -12,10 +12,10 @@ namespace ModernKeePass.Application.Security.Commands.GenerateKeyFile
 
         public class GenerateKeyFileCommandHandler : IAsyncRequestHandler<GenerateKeyFileCommand>
         {
-            private readonly IPasswordProxy _security;
+            private readonly ICredentialsProxy _security;
             private readonly IFileProxy _file;
 
-            public GenerateKeyFileCommandHandler(IPasswordProxy security, IFileProxy file)
+            public GenerateKeyFileCommandHandler(ICredentialsProxy security, IFileProxy file)
             {
                 _security = security;
                 _file = file;

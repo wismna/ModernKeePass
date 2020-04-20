@@ -18,7 +18,7 @@ using ModernKeePass.Application.Parameters.Queries.GetCompressions;
 using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
 using ModernKeePass.Domain.AOP;
 
-namespace ModernKeePass.ViewModels
+namespace ModernKeePass.ViewModels.ListItems
 {
     // TODO: implement Kdf settings
     public class SettingsDatabaseVm: NotifyPropertyChangedBase

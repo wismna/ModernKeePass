@@ -10,6 +10,8 @@
         public class Settings
         {
             public static string SaveSuspend => nameof(SaveSuspend);
+            public static string Sample => nameof(Sample);
+            public static string DefaultFileFormat => nameof(DefaultFileFormat);
         }
     }
 }

@@ -6,6 +6,7 @@ using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
+using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {

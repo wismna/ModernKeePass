@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
+    xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
     mc:Ignorable="d">
     <Page.Resources>
         <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
@@ -16,7 +16,7 @@
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
     </Page.Resources>
     <Page.DataContext>
-        <viewModels:SettingsDatabaseVm />
+        <listItems:SettingsDatabaseVm />
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">

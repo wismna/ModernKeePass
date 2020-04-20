@@ -4,18 +4,14 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Commands.CreateDatabase;
-using ModernKeePass.Application.Database.Commands.UpdateCredentials;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
-using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
-using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
+using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
-using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class CompositeKeyVm: NotifyPropertyChangedBase
+    public class OpenDatabaseControlVm : NotifyPropertyChangedBase
     {
         public enum StatusTypes
         {
@@ -24,7 +20,7 @@ namespace ModernKeePass.ViewModels
             Warning = 3,
             Success = 5
         }
-        
+
         public bool HasPassword
         {
             get { return _hasPassword; }
@@ -65,7 +61,6 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _password = value;
-                OnPropertyChanged(nameof(PasswordComplexityIndicator));
                 StatusType = (int)StatusTypes.Normal;
                 Status = string.Empty;
             }
@@ -88,9 +83,9 @@ namespace ModernKeePass.ViewModels
         }
 
         public string RootGroupId { get; set; }
-
-        public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery { Password = Password }).GetAwaiter().GetResult();
-
+        
+        protected readonly IMediator Mediator;
+        private readonly IResourceProxy _resource;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -99,49 +94,34 @@ namespace ModernKeePass.ViewModels
         private StatusTypes _statusType;
         private string _keyFilePath;
         private string _keyFileText;
-        private readonly IMediator _mediator;
-        private readonly ISettingsProxy _settings;
-        private readonly IResourceProxy _resource;
 
-        public CompositeKeyVm() : this(
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<ISettingsProxy>(), 
-            App.Services.GetRequiredService<IResourceProxy>()) { }
 
-        public CompositeKeyVm(IMediator mediator, ISettingsProxy settings, IResourceProxy resource)
+
+        public OpenDatabaseControlVm() : this(
+            App.Services.GetRequiredService<IMediator>(),
+            App.Services.GetRequiredService<IResourceProxy>())
+        { }
+
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource)
         {
-            _mediator = mediator;
-            _settings = settings;
+            Mediator = mediator;
             _resource = resource;
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
         }
 
-        public async Task<bool> OpenDatabase(string databaseFilePath, bool createNew)
+        public async Task<bool> OpenDatabase(string databaseFilePath)
         {
             try
             {
                 _isOpening = true;
                 OnPropertyChanged(nameof(IsValid));
-                if (createNew)
+                await Mediator.Send(new OpenDatabaseQuery
                 {
-                    await _mediator.Send(new CreateDatabaseCommand
-                    {
-                        FilePath = databaseFilePath,
-                        KeyFilePath = HasKeyFile ? KeyFilePath : null,
-                        Password = HasPassword ? Password : null,
-                        Name = "New Database",
-                        CreateSampleData = _settings.GetSetting<bool>("Sample")
-                    });
-                }
-                else
-                {
-                    await _mediator.Send(new OpenDatabaseQuery {
-                        FilePath = databaseFilePath,
-                        KeyFilePath = HasKeyFile ? KeyFilePath : null,
-                        Password = HasPassword ? Password : null,
-                    });
-                }
-                RootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
+                    FilePath = databaseFilePath,
+                    KeyFilePath = HasKeyFile ? KeyFilePath : null,
+                    Password = HasPassword ? Password : null,
+                });
+                RootGroupId = (await Mediator.Send(new GetDatabaseQuery())).RootGroupId;
                 return true;
             }
             catch (ArgumentException)
@@ -162,24 +142,6 @@ namespace ModernKeePass.ViewModels
                 OnPropertyChanged(nameof(IsValid));
             }
             return false;
-        }
-
-        public async Task UpdateKey()
-        {
-            await _mediator.Send(new UpdateCredentialsCommand
-            {
-                KeyFilePath = HasKeyFile ? KeyFilePath : null,
-                Password = HasPassword ? Password : null,
-            });
-            UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
-        }
-
-        public async Task CreateKeyFile(FileInfo file)
-        {
-            // TODO: implement entropy generator
-            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = file.Id});
-            KeyFilePath = file.Path;
-            KeyFileText = file.Name;
         }
 
         private void UpdateStatus(string text, StatusTypes type)

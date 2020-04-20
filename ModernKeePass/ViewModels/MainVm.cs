@@ -10,6 +10,7 @@ using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Models;
+using ModernKeePass.ViewModels.ListItems;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels

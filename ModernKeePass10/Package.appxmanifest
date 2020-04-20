@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" IgnorableNamespaces= "uap mp">
-  <Identity Name="wismna.ModernKeePass" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="2.0.0.0" />
-  <mp:PhoneIdentity PhoneProductId="0EFC7A82-E22B-471E-A576-65FCCDD6E449" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" IgnorableNamespaces="uap mp">
+  <Identity Name="wismna.KayPee" Publisher="CN=0719A91A-C322-4EE0-A257-E60733EECF06" Version="2.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="0EFC7A82-E22B-471E-A576-65FCCDD6E449" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17134.0" MaxVersionTested="10.0.17134.0" />
   </Dependencies>
   <Properties>
-    <DisplayName>ModernKeePass</DisplayName>
+    <DisplayName>KayPee</DisplayName>
     <PublisherDisplayName>wismna</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Resources>
     <Resource Language="x-generate" />
-    <Resource uap:Scale="180"/>
-    <Resource uap:DXFeatureLevel="dx11"/>
+    <Resource uap:Scale="180" />
+    <Resource uap:DXFeatureLevel="dx11" />
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="ModernKeePass.App">
@@ -23,28 +23,27 @@
         <uap:SplashScreen Image="Assets\ModernKeePass-SplashScreen.png" BackgroundColor="#7755c4" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.fileOpenPicker">
-          <uap:FileOpenPicker>
-            <uap:SupportedFileTypes>
-              <uap:FileType>.kdbx</uap:FileType>
-            </uap:SupportedFileTypes>
-          </uap:FileOpenPicker>
-        </uap:Extension>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="kdbx">
-            <uap:DisplayName>KeePass 2.x database</uap:DisplayName>
-            <uap:EditFlags OpenIsSafe="true" />
-            <uap:SupportedFileTypes>
-              <uap:FileType ContentType="application/xml">.kdbx</uap:FileType>
-            </uap:SupportedFileTypes>
-          </uap:FileTypeAssociation>
-        </uap:Extension>
         <uap:Extension Category="windows.fileSavePicker">
           <uap:FileSavePicker>
             <uap:SupportedFileTypes>
               <uap:FileType>.kdbx</uap:FileType>
             </uap:SupportedFileTypes>
           </uap:FileSavePicker>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="kdbx">
+            <uap:DisplayName>KeePass 2.x database</uap:DisplayName>
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="application/xml">.kdbx</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileOpenPicker">
+          <uap:FileOpenPicker>
+            <uap:SupportedFileTypes>
+              <uap:FileType>.kdbx</uap:FileType>
+            </uap:SupportedFileTypes>
+          </uap:FileOpenPicker>
         </uap:Extension>
       </Extensions>
     </Application>

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -53,7 +52,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _mediator.Send(new UpdateGroupCommand {Group = _group, Title = value, Icon = _group.Icon}).Wait();
-                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                SaveCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -63,7 +62,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _mediator.Send(new UpdateGroupCommand { Group = _group, Title = _group.Title, Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString()) }).Wait();
-                ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+                SaveCommand.RaiseCanExecuteChanged();
             }
         }
         
@@ -73,8 +72,8 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SetProperty(ref _isEditMode, value);
-                ((RelayCommand)SortEntriesCommand).RaiseCanExecuteChanged();
-                ((RelayCommand)SortGroupsCommand).RaiseCanExecuteChanged();
+                SortEntriesCommand.RaiseCanExecuteChanged();
+                SortGroupsCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -89,10 +88,10 @@ namespace ModernKeePass.ViewModels
         
         public IEnumerable<GroupVm> BreadCrumb { get; }
 
-        public ICommand SaveCommand { get; }
-        public ICommand SortEntriesCommand { get; }
-        public ICommand SortGroupsCommand { get; }
-        public ICommand MoveCommand { get; }
+        public RelayCommand SaveCommand { get; }
+        public RelayCommand SortEntriesCommand { get; }
+        public RelayCommand SortGroupsCommand { get; }
+        public RelayCommand MoveCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
@@ -156,7 +155,7 @@ namespace ModernKeePass.ViewModels
         private async Task SaveChanges()
         {
             await _mediator.Send(new SaveDatabaseCommand());
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private async void Entries_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -179,21 +178,21 @@ namespace ModernKeePass.ViewModels
                     }
                     break;
             }
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private async Task SortEntriesAsync()
         {
             await _mediator.Send(new SortEntriesCommand {Group = _group});
             OnPropertyChanged(nameof(Entries));
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
         
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
             OnPropertyChanged(nameof(Groups));
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Common;
 
-namespace ModernKeePass.ViewModels
+namespace ModernKeePass.ViewModels.ListItems
 {
     public class SettingsNewVm
     {
@@ -18,16 +19,16 @@ namespace ModernKeePass.ViewModels
 
         public bool IsCreateSample
         {
-            get { return _settings.GetSetting<bool>("Sample"); }
-            set { _settings.PutSetting("Sample", value); }
+            get { return _settings.GetSetting<bool>(Constants.Settings.Sample); }
+            set { _settings.PutSetting(Constants.Settings.Sample, value); }
         }
 
         public IEnumerable<string> FileFormats => new []{"2", "4"};
 
         public string FileFormatVersion
         {
-            get { return _settings.GetSetting<string>("DefaultFileFormat"); }
-            set { _settings.PutSetting("DefaultFileFormat", value); }
+            get { return _settings.GetSetting<string>(Constants.Settings.DefaultFileFormat); }
+            set { _settings.PutSetting(Constants.Settings.DefaultFileFormat, value); }
         }
     }
 }

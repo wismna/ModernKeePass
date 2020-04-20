@@ -4,7 +4,7 @@ using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
 
-namespace ModernKeePass.ViewModels
+namespace ModernKeePass.ViewModels.ListItems
 {
     public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
     {

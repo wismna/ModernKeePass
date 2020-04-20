@@ -2,10 +2,10 @@
 
 namespace ModernKeePass.Application.Common.Interfaces
 {
-    public interface IPasswordProxy
+    public interface ICredentialsProxy
     {
         string GeneratePassword(PasswordGenerationOptions options);
-        uint EstimatePasswordComplexity(string password);
+        int EstimatePasswordComplexity(string password);
         byte[] GenerateKeyFile(byte[] additionalEntropy);
     }
 }

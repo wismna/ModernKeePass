@@ -19,7 +19,8 @@ namespace ModernKeePass.Application.Entry.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string Notes { get; set; }
-        public Uri Url { get; set; }
+        public string Url { get; set; }
+        public bool HasUrl => !string.IsNullOrEmpty(Url);
         public Dictionary<string, string> AdditionalFields { get; set; }
         public List<EntryVm> History { get; set; }
         public Icon Icon { get; set; }

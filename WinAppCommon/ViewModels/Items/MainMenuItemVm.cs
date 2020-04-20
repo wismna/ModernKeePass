@@ -2,7 +2,7 @@
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class MainMenuItemViewModel: ListMenuItemViewModel
+    public class MainMenuItemVm: ListMenuItemVm
     {
         public object Parameter { get; set; }
         public Frame Destination { get; set; }

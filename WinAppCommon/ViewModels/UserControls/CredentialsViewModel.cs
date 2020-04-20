@@ -15,7 +15,7 @@ using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class CompositeKeyVm: NotifyPropertyChangedBase
+    public class CompositeKeyVm : NotifyPropertyChangedBase
     {
         public enum StatusTypes
         {
@@ -24,7 +24,7 @@ namespace ModernKeePass.ViewModels
             Warning = 3,
             Success = 5
         }
-        
+
         public bool HasPassword
         {
             get { return _hasPassword; }
@@ -104,9 +104,10 @@ namespace ModernKeePass.ViewModels
         private readonly IResourceProxy _resource;
 
         public CompositeKeyVm() : this(
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<ISettingsProxy>(), 
-            App.Services.GetRequiredService<IResourceProxy>()) { }
+            App.Services.GetRequiredService<IMediator>(),
+            App.Services.GetRequiredService<ISettingsProxy>(),
+            App.Services.GetRequiredService<IResourceProxy>())
+        { }
 
         public CompositeKeyVm(IMediator mediator, ISettingsProxy settings, IResourceProxy resource)
         {
@@ -135,7 +136,8 @@ namespace ModernKeePass.ViewModels
                 }
                 else
                 {
-                    await _mediator.Send(new OpenDatabaseQuery {
+                    await _mediator.Send(new OpenDatabaseQuery
+                    {
                         FilePath = databaseFilePath,
                         KeyFilePath = HasKeyFile ? KeyFilePath : null,
                         Password = HasPassword ? Password : null,
@@ -162,24 +164,6 @@ namespace ModernKeePass.ViewModels
                 OnPropertyChanged(nameof(IsValid));
             }
             return false;
-        }
-
-        public async Task UpdateKey()
-        {
-            await _mediator.Send(new UpdateCredentialsCommand
-            {
-                KeyFilePath = HasKeyFile ? KeyFilePath : null,
-                Password = HasPassword ? Password : null,
-            });
-            UpdateStatus(_resource.GetResourceValue("CompositeKeyUpdated"), StatusTypes.Success);
-        }
-
-        public async Task CreateKeyFile(FileInfo file)
-        {
-            // TODO: implement entropy generator
-            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = file.Id});
-            KeyFilePath = file.Path;
-            KeyFileText = file.Name;
         }
 
         private void UpdateStatus(string text, StatusTypes type)

@@ -19,7 +19,7 @@ namespace ModernKeePass.Infrastructure
         {
             services.AddSingleton(typeof(IDatabaseProxy), typeof(KeePassDatabaseClient));
             services.AddTransient(typeof(ICryptographyClient), typeof(KeePassCryptographyClient));
-            services.AddTransient(typeof(IPasswordProxy), typeof(KeePassPasswordClient));
+            services.AddTransient(typeof(ICredentialsProxy), typeof(KeePassCredentialsClient));
             return services;
         }
 

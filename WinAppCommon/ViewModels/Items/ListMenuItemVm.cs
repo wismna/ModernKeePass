@@ -1,12 +1,11 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
-using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class ListMenuItemViewModel : NotifyPropertyChangedBase, IIsEnabled, ISelectableModel
+    public class ListMenuItemVm : NotifyPropertyChangedBase, IIsEnabled, ISelectableModel
     {
         private bool _isSelected;
 
@@ -19,8 +18,8 @@ namespace ModernKeePass.ViewModels.ListItems
 
         public bool IsSelected
         {
-            get => _isSelected;
-            set => SetProperty(ref _isSelected, value);
+            get { return _isSelected; }
+            set { SetProperty(ref _isSelected, value); }
         }
 
         public override string ToString()

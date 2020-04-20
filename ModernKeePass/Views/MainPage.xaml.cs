@@ -2,6 +2,7 @@
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.ViewModels;
+using ModernKeePass.ViewModels.ListItems;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 

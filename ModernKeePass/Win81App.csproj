@@ -94,7 +94,6 @@
     </Compile>
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="Models\NavigationItem.cs" />
-    <Compile Include="ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
@@ -144,9 +143,6 @@
     </Compile>
     <Compile Include="ViewModels\AboutVm.cs" />
     <Compile Include="ViewModels\CompositeKeyVm.cs" />
-    <Compile Include="ViewModels\Items\ListMenuItemVm.cs" />
-    <Compile Include="ViewModels\Items\MainMenuItemVm.cs" />
-    <Compile Include="ViewModels\Items\RecentItemVm.cs" />
     <Compile Include="Views\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>
     </Compile>
@@ -165,14 +161,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\EntryDetailVm.cs" />
     <Compile Include="ViewModels\GroupDetailVm.cs" />
-    <Compile Include="ViewModels\Items\SettingsNewVm.cs" />
     <Compile Include="ViewModels\SettingsVm.cs" />
     <Compile Include="ViewModels\MainVm.cs" />
     <Compile Include="ViewModels\NewVm.cs" />
     <Compile Include="ViewModels\OpenVm.cs" />
     <Compile Include="ViewModels\RecentVm.cs" />
     <Compile Include="ViewModels\SaveVm.cs" />
-    <Compile Include="ViewModels\Items\SettingsDatabaseVm.cs" />
+    <Compile Include="Views\UserControls\OpenDatabaseUserControl.xaml.cs">
+      <DependentUpon>OpenDatabaseUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\HamburgerMenuUserControl.xaml.cs">
       <DependentUpon>HamburgerMenuUserControl.xaml</DependentUpon>
     </Compile>
@@ -181,6 +178,9 @@
     </Compile>
     <Compile Include="Views\UserControls\TopMenuUserControl.xaml.cs">
       <DependentUpon>TopMenuUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UserControls\UpdateCredentialsUserControl.xaml.cs">
+      <DependentUpon>UpdateCredentialsUserControl.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -314,6 +314,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Views\UserControls\OpenDatabaseUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\UserControls\HamburgerMenuUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -325,6 +329,10 @@
     <Page Include="Views\UserControls\TopMenuUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\UpdateCredentialsUserControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

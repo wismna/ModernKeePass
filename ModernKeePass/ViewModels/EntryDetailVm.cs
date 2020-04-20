@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using MediatR;
@@ -120,10 +119,10 @@ namespace ModernKeePass.ViewModels
         
         public string Url
         {
-            get { return SelectedItem.Url?.ToString(); }
+            get { return SelectedItem.Url; }
             set
             {
-                SelectedItem.Url = new Uri(value);
+                SelectedItem.Url = value;
                 SetFieldValue(nameof(Url), value).Wait();
             }
         }
@@ -216,10 +215,10 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _isRevealPassword, value); }
         }
 
-        public ICommand SaveCommand { get; }
-        public ICommand GeneratePasswordCommand { get; }
-        public ICommand MoveCommand { get; }
-        public ICommand RestoreCommand { get; }
+        public RelayCommand SaveCommand { get; }
+        public RelayCommand GeneratePasswordCommand { get; }
+        public RelayCommand MoveCommand { get; }
+        public RelayCommand RestoreCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
@@ -286,7 +285,7 @@ namespace ModernKeePass.ViewModels
         public async Task SetFieldValue(string fieldName, object value)
         {
             await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
             _isDirty = true;
         }
 
@@ -300,7 +299,7 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
             History.Insert(0, SelectedItem);
             SelectedIndex = 0;
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         public async Task DeleteHistory()
@@ -308,14 +307,14 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
             History.RemoveAt(SelectedIndex);
             SelectedIndex = 0;
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private async Task SaveChanges()
         {
             await AddHistory();
             await _mediator.Send(new SaveDatabaseCommand());
-            ((RelayCommand)SaveCommand).RaiseCanExecuteChanged();
+            SaveCommand.RaiseCanExecuteChanged();
             _isDirty = false;
         }
     }
