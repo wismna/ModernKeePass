@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Domain.AOP;
+﻿using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
 
@@ -8,7 +6,6 @@ namespace ModernKeePass.ViewModels.ListItems
 {
     public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
     {
-        private readonly IRecentProxy _recent;
         private bool _isSelected;
         private string _name;
         private string _token;
@@ -37,20 +34,12 @@ namespace ModernKeePass.ViewModels.ListItems
             get { return _isSelected; }
             set { SetProperty(ref _isSelected, value); }
         }
-
-        public RecentItemVm(FileInfo file): this(App.Services.GetRequiredService<IRecentProxy>(), file) {}
-        public RecentItemVm(IRecentProxy recent, FileInfo file)
+        
+        public RecentItemVm(FileInfo file)
         {
-            _recent = recent;
             Token = file.Id;
             Name = file.Name;
             Path = file.Path;
-        }
-        
-        // Called from XAML
-        public void UpdateAccessTime()
-        {
-            _recent.Get(Token, true).Wait();
         }
     }
 }

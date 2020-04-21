@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using MediatR;
+using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
-using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels
@@ -28,6 +30,7 @@ namespace ModernKeePass.ViewModels
             {
                 SetProperty(ref _hasPassword, value);
                 OnPropertyChanged(nameof(IsValid));
+                OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -38,6 +41,7 @@ namespace ModernKeePass.ViewModels
             {
                 SetProperty(ref _hasKeyFile, value);
                 OnPropertyChanged(nameof(IsValid));
+                OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -73,6 +77,7 @@ namespace ModernKeePass.ViewModels
             {
                 _keyFilePath = value;
                 OnPropertyChanged(nameof(IsValid));
+                OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -82,10 +87,17 @@ namespace ModernKeePass.ViewModels
             set { SetProperty(ref _keyFileText, value); }
         }
 
-        public string RootGroupId { get; set; }
+        public string OpenButtonLabel
+        {
+            get { return _openButtonLabel; }
+            set { SetProperty(ref _openButtonLabel, value); }
+        }
+        
+        public RelayCommand<string> OpenDatabaseCommand { get; }
         
         protected readonly IMediator Mediator;
         private readonly IResourceProxy _resource;
+        private readonly IMessenger _messenger;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -94,35 +106,55 @@ namespace ModernKeePass.ViewModels
         private StatusTypes _statusType;
         private string _keyFilePath;
         private string _keyFileText;
-
+        private string _openButtonLabel;
 
 
         public OpenDatabaseControlVm() : this(
             App.Services.GetRequiredService<IMediator>(),
-            App.Services.GetRequiredService<IResourceProxy>())
+            App.Services.GetRequiredService<IResourceProxy>(),
+            App.Services.GetRequiredService<IMessenger>())
         { }
 
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger)
         {
             Mediator = mediator;
             _resource = resource;
+            _messenger = messenger;
+            OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
+            _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
         }
 
-        public async Task<bool> OpenDatabase(string databaseFilePath)
+        public async Task TryOpenDatabase(string databaseFilePath)
         {
+            _messenger.Send(new DatabaseOpeningMessage {Token = databaseFilePath});
+
+            var database = await Mediator.Send(new GetDatabaseQuery());
+            if (database.IsOpen)
+            {
+                _messenger.Send(new DatabaseAlreadyOpenedMessage { OpenedDatabase = database });
+            }
+            else await OpenDatabase(databaseFilePath);
+        }
+
+        public async Task OpenDatabase(string databaseFilePath)
+        {
+            var oldLabel = _openButtonLabel;
+            OpenButtonLabel = _resource.GetResourceValue("CompositeKeyOpening");
+            _isOpening = true;
             try
             {
-                _isOpening = true;
                 OnPropertyChanged(nameof(IsValid));
+                OpenDatabaseCommand.RaiseCanExecuteChanged();
                 await Mediator.Send(new OpenDatabaseQuery
                 {
                     FilePath = databaseFilePath,
                     KeyFilePath = HasKeyFile ? KeyFilePath : null,
                     Password = HasPassword ? Password : null,
                 });
-                RootGroupId = (await Mediator.Send(new GetDatabaseQuery())).RootGroupId;
-                return true;
+                var rootGroupId = (await Mediator.Send(new GetDatabaseQuery())).RootGroupId;
+
+                _messenger.Send(new DatabaseOpenedMessage { RootGroupId = rootGroupId });
             }
             catch (ArgumentException)
             {
@@ -140,8 +172,9 @@ namespace ModernKeePass.ViewModels
             {
                 _isOpening = false;
                 OnPropertyChanged(nameof(IsValid));
+                OpenDatabaseCommand.RaiseCanExecuteChanged();
+                OpenButtonLabel = oldLabel;
             }
-            return false;
         }
 
         private void UpdateStatus(string text, StatusTypes type)

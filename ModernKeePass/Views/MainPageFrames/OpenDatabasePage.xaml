@@ -5,19 +5,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Class="ModernKeePass.Views.OpenDatabasePage"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <viewModels:OpenVm x:Key="ViewModel"/>
     </Page.Resources>
-    <Page.DataContext>
-        <viewModels:OpenVm/>
-    </Page.DataContext>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenBrowseDesc" />
         <!--<HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
@@ -25,13 +21,7 @@
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:OpenDatabaseUserControl DatabaseFilePath="{Binding Token}">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="DatabaseOpened">
-                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </userControls:OpenDatabaseUserControl>
+                <userControls:OpenDatabaseUserControl DatabaseFilePath="{Binding Token}" />
             </StackPanel>
         </Border>
     </StackPanel>

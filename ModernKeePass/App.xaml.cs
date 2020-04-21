@@ -10,8 +10,10 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
 using ModernKeePass.Application;
@@ -39,6 +41,8 @@ namespace ModernKeePass
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
+        private readonly IMessenger _messenger;
+        private readonly IHockeyClient _hockey;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -48,16 +52,6 @@ namespace ModernKeePass
         /// </summary>
         public App()
         {
-#if DEBUG
-            HockeyClient.Current.Configure("2fe83672-887b-4910-b9de-93a4398d0f8f");
-#else
-			HockeyClient.Current.Configure("9eb5fbb79b484fbd8daf04635e975c84");
-#endif
-            InitializeComponent();
-            Suspending += OnSuspending;
-            Resuming += OnResuming;
-            UnhandledException += OnUnhandledException;
-
             // Setup DI
             IServiceCollection serviceCollection = new ServiceCollection();
             serviceCollection.AddApplication();
@@ -71,7 +65,46 @@ namespace ModernKeePass
             _resource = Services.GetService<IResourceProxy>();
             _settings = Services.GetService<ISettingsProxy>();
             _navigation = Services.GetService<INavigationService>();
+            _messenger = Services.GetService<IMessenger>();
+            _hockey = Services.GetService<IHockeyClient>();
+
+            InitializeComponent();
+            Suspending += OnSuspending;
+            Resuming += OnResuming;
+            UnhandledException += OnUnhandledException;
+            
+            ReceiveGlobalMessage();
         }
+
+        #region Messages
+        private void ReceiveGlobalMessage()
+        {
+            _messenger.Register<DatabaseAlreadyOpenedMessage>(this, async action => await ShowDatabaseOpenedDialog(action));
+        }
+        
+        private async Task ShowDatabaseOpenedDialog(DatabaseAlreadyOpenedMessage message)
+        {
+            await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
+                string.Format(_resource.GetResourceValue("MessageDialogDBOpenDesc"), message.OpenedDatabase.Name),
+                _resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
+                _resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
+                async command =>
+                {
+                    await _mediator.Send(new SaveDatabaseCommand());
+                    ToastNotificationHelper.ShowGenericToast(
+                        message.OpenedDatabase.Name,
+                        _resource.GetResourceValue("ToastSavedMessage"));
+                    await _mediator.Send(new CloseDatabaseCommand());
+                    _messenger.Send(new DatabaseClosedMessage());
+                },
+                async command =>
+                {
+                    await _mediator.Send(new CloseDatabaseCommand());
+                    _messenger.Send(new DatabaseClosedMessage());
+                });
+        }
+        
+        #endregion
 
         #region Event Handlers
 
@@ -89,7 +122,7 @@ namespace ModernKeePass
             {
                 var innerException = realException.InnerException;
                 unhandledExceptionEventArgs.Handled = true;
-                HockeyClient.Current.TrackException(innerException);
+                _hockey.TrackException(innerException);
                 await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     innerException?.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
@@ -123,7 +156,7 @@ namespace ModernKeePass
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             await OnLaunchOrActivated(args);
-            await HockeyClient.Current.SendCrashesAsync(/* sendWithoutAsking: true */);
+            await _hockey.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
         protected override async void OnActivated(IActivatedEventArgs args)

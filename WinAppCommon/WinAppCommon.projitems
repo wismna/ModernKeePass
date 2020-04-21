@@ -36,6 +36,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Events\PasswordEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DispatcherTaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseAlreadyOpenedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseClosedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpenedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpeningMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />

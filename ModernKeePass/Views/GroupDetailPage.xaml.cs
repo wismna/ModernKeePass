@@ -58,15 +58,9 @@ namespace ModernKeePass.Views
         {
             NavigationHelper.OnNavigatedTo(e);
             
-            var args = e.Parameter as PasswordEventArgs;
-            if (args != null)
-                DataContext = new GroupDetailVm(args.RootGroupId);
-            else
-            {
-                var navigationItem = e.Parameter as NavigationItem;
-                if (navigationItem != null)
-                    DataContext = new GroupDetailVm(navigationItem.Id) { IsEditMode = navigationItem.IsNew };
-            }
+            var navigationItem = e.Parameter as NavigationItem;
+            if (navigationItem != null)
+                DataContext = new GroupDetailVm(navigationItem.Id) { IsEditMode = navigationItem.IsNew };
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

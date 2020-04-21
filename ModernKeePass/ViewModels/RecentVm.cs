@@ -42,8 +42,7 @@ namespace ModernKeePass.ViewModels
         
         public ICommand ClearAllCommand { get; }
 
-        public RecentVm() : this (App.Services.GetRequiredService<IRecentProxy>())
-        { }
+        public RecentVm() : this (App.Services.GetRequiredService<IRecentProxy>()) { }
 
         public RecentVm(IRecentProxy recent)
         {
@@ -54,6 +53,11 @@ namespace ModernKeePass.ViewModels
             RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];
+        }
+        
+        public void UpdateAccessTime(string token)
+        {
+            _recent.Get(token, true).Wait();
         }
 
         private void ClearAll()

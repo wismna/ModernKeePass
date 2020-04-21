@@ -4,18 +4,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
-    xmlns:converters="using:ModernKeePass.Converters" 
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:converters="using:ModernKeePass.Converters"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Class="ModernKeePass.Views.RecentDatabasesPage"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <viewModels:RecentVm x:Key="ViewModel"/>
-        <!--<CollectionViewSource x:Name="RecentItemsSource" Source="{Binding RecentItems}" />-->
     </Page.Resources>
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+    <Grid x:Name="Grid" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -43,16 +40,10 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Row="0" Text="{Binding Name}" Padding="5,0,0,0" />
                         <TextBlock Grid.Row="1" Text="{Binding Path}" Padding="5,0,0,0" FontSize="10" />
-                        <userControls:OpenDatabaseUserControl Grid.Row="2" HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" DatabaseFilePath="{Binding Token}">
-                            <interactivity:Interaction.Behaviors>
-                                <core:EventTriggerBehavior EventName="DatabaseOpening">
-                                    <core:CallMethodAction TargetObject="{Binding}" MethodName="UpdateAccessTime" />
-                                </core:EventTriggerBehavior>
-                                <core:EventTriggerBehavior EventName="DatabaseOpened">
-                                    <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
-                                </core:EventTriggerBehavior>
-                            </interactivity:Interaction.Behaviors>
-                        </userControls:OpenDatabaseUserControl>
+                        <userControls:OpenDatabaseUserControl Grid.Row="2" 
+                            HorizontalAlignment="Stretch" MinWidth="400" Margin="0,10,0,0" 
+                            Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                            DatabaseFilePath="{Binding Token}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

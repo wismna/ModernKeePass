@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using AutoMapper;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.HockeyApp;
 using ModernKeePass.Common;
 using ModernKeePass.Views;
 
@@ -22,6 +24,17 @@ namespace ModernKeePass
                 nav.Configure(Constants.Navigation.EntryPage, typeof(EntryDetailPage));
                 nav.Configure(Constants.Navigation.GroupPage, typeof(GroupDetailPage));
                 return nav;
+            });
+            services.AddSingleton(provider => Messenger.Default);
+
+            services.AddSingleton(provider =>
+            {
+#if DEBUG
+                HockeyClient.Current.Configure("2fe83672-887b-4910-b9de-93a4398d0f8f");
+#else
+			    HockeyClient.Current.Configure("9eb5fbb79b484fbd8daf04635e975c84");
+#endif
+                return HockeyClient.Current;
             });
 
             return services;
