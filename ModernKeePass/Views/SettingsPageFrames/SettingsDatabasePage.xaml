@@ -14,12 +14,10 @@
         <CollectionViewSource x:Name="KeyDerivations" Source="{Binding KeyDerivations}" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        <listItems:SettingsDatabaseVm x:Key="ViewModel"/>
     </Page.Resources>
-    <Page.DataContext>
-        <listItems:SettingsDatabaseVm />
-    </Page.DataContext>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <ToggleSwitch x:Uid="SettingsDatabaseRecycleBin" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
         <StackPanel Visibility="{Binding HasRecycleBin, Converter={StaticResource BooleanToVisibilityConverter}}">
             <RadioButton x:Uid="SettingsDatabaseRecycleBinCreate" GroupName="Recycle" IsChecked="{Binding IsNewRecycleBin, Mode=TwoWay}" />

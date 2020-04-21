@@ -10,16 +10,16 @@
     x:Class="ModernKeePass.Views.SettingsPage" 
     mc:Ignorable="d">
     <Page.Resources>
-        <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MenuItems}" IsSourceGrouped="True" />
+        <viewModels:SettingsVm x:Key="ViewModel"/>
     </Page.Resources>
-    <Page.DataContext>
-        <viewModels:SettingsVm />
-    </Page.DataContext>
 
     <Page.Background>
         <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
     </Page.Background>
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+        <Grid.Resources>
+            <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MenuItems}" IsSourceGrouped="True" />
+        </Grid.Resources>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>

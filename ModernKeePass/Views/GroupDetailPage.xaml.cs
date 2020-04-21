@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Common;
-using ModernKeePass.Events;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 
@@ -26,12 +25,7 @@ namespace ModernKeePass.Views
     {
         private readonly IResourceProxy _resource;
         private readonly INavigationService _navigation;
-
-        /// <summary>
-        /// NavigationHelper is used on each page to aid in navigation and 
-        /// process lifetime management
-        /// </summary>
-        public NavigationHelper NavigationHelper { get; }
+        
         public GroupDetailVm Model => (GroupDetailVm)DataContext;
 
         public GroupDetailPage(): this (App.Services.GetRequiredService<IResourceProxy>(), App.Services.GetRequiredService<INavigationService>()) { }
@@ -40,7 +34,6 @@ namespace ModernKeePass.Views
             InitializeComponent();
             _resource = resource;
             _navigation = navigation;
-            NavigationHelper = new NavigationHelper(this);
         }
 
         #region NavigationHelper registration
@@ -56,18 +49,11 @@ namespace ModernKeePass.Views
         /// 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            NavigationHelper.OnNavigatedTo(e);
-            
             var navigationItem = e.Parameter as NavigationItem;
             if (navigationItem != null)
                 DataContext = new GroupDetailVm(navigationItem.Id) { IsEditMode = navigationItem.IsNew };
         }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            NavigationHelper.OnNavigatedFrom(e);
-        }
-
+        
         #endregion
         
         #region Event Handlers
@@ -149,7 +135,7 @@ namespace ModernKeePass.Views
                 {
                     //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
                     await Model.MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
-                    NavigationHelper.GoBack();
+                    //NavigationHelper.GoBack();
                 }, null);
         }
 

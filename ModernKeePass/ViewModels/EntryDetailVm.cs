@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
@@ -219,10 +220,13 @@ namespace ModernKeePass.ViewModels
         public RelayCommand GeneratePasswordCommand { get; }
         public RelayCommand MoveCommand { get; }
         public RelayCommand RestoreCommand { get; }
+        public RelayCommand DeleteCommand { get; }
+        public RelayCommand GoBackCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
         private readonly IMediator _mediator;
+        private readonly INavigationService _navigation;
         private readonly GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
@@ -233,11 +237,12 @@ namespace ModernKeePass.ViewModels
 
         public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId) : this(entryId, App.Services.GetRequiredService<IMediator>()) { }
+        internal EntryDetailVm(string entryId) : this(entryId, App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<INavigationService>()) { }
 
-        public EntryDetailVm(string entryId, IMediator mediator)
+        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation)
         {
             _mediator = mediator;
+            _navigation = navigation;
             SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
             History = new ObservableCollection<EntryVm> { SelectedItem };
@@ -251,6 +256,13 @@ namespace ModernKeePass.ViewModels
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
             MoveCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
+            DeleteCommand = new RelayCommand(async () => await AskForDelete());
+            GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+        }
+
+        private async Task AskForDelete()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task GeneratePassword()

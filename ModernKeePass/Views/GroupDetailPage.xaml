@@ -193,7 +193,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
-                    Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
+                    Command="{Binding GoBackCommand}"
                     Height="{StaticResource MenuSize}"
                     Width="{StaticResource MenuSize}"
                     AutomationProperties.Name="Back"
@@ -254,10 +254,6 @@
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
-                    </core:EventTriggerBehavior>
-                    <core:EventTriggerBehavior EventName="MoveButtonClick">
-                        <core:InvokeCommandAction Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}" />
-                        <!--<actions:ToastAction x:Uid="RestoreGroupCommand" Title="{Binding Title}" />-->
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>

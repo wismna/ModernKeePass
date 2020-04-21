@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -92,11 +93,15 @@ namespace ModernKeePass.ViewModels
         public RelayCommand MoveCommand { get; }
         public RelayCommand CreateEntryCommand { get; }
         public RelayCommand CreateGroupCommand { get; }
+        public RelayCommand DeleteCommand { get; set; }
+        public RelayCommand GoBackCommand { get; set; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
         private readonly IMediator _mediator;
+        private readonly IResourceProxy _resource;
         private readonly INavigationService _navigation;
+        private readonly IDialogService _dialog;
         private readonly GroupVm _group;
         private readonly GroupVm _parent;
         private bool _isEditMode;
@@ -104,13 +109,19 @@ namespace ModernKeePass.ViewModels
 
         public GroupDetailVm() {}
         
-        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<INavigationService>())
+        internal GroupDetailVm(string groupId) : this(groupId, 
+            App.Services.GetRequiredService<IMediator>(), 
+            App.Services.GetRequiredService<IResourceProxy>(), 
+            App.Services.GetRequiredService<INavigationService>(), 
+            App.Services.GetRequiredService<IDialogService>())
         { }
 
-        public GroupDetailVm(string groupId, IMediator mediator, INavigationService navigation)
+        public GroupDetailVm(string groupId, IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog)
         {
             _mediator = mediator;
+            _resource = resource;
             _navigation = navigation;
+            _dialog = dialog;
             _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
@@ -124,12 +135,33 @@ namespace ModernKeePass.ViewModels
             MoveCommand = new RelayCommand(async () => await Move(_parent), () => IsNotRoot);
             CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
             CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
-            
+            DeleteCommand = new RelayCommand(async () => await AskForDelete());
+            GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
-        
+
+        private async Task AskForDelete()
+        {
+            var message = IsRecycleOnDelete
+                ? _resource.GetResourceValue("GroupRecyclingConfirmation")
+                : _resource.GetResourceValue("GroupDeletingConfirmation");
+
+            await _dialog.ShowMessage(message, _resource.GetResourceValue("EntityDeleteTitle"),
+                _resource.GetResourceValue("EntityDeleteActionButton"),
+                _resource.GetResourceValue("EntityDeleteCancelButton"),
+                async isOk =>
+                {
+                    var text = IsRecycleOnDelete ? _resource.GetResourceValue("GroupRecycled") : _resource.GetResourceValue("GroupDeleted");
+                    //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
+                    await MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
+                    _navigation.GoBack();
+                });
+        }
+
+
         public async Task AddNewGroup(string name = "")
         {
             var group = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});

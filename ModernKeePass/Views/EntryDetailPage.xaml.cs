@@ -18,19 +18,12 @@ namespace ModernKeePass.Views
     {
         private readonly IResourceProxy _resource;
         public EntryDetailVm Model => (EntryDetailVm) DataContext;
-
-        /// <summary>
-        /// NavigationHelper est utilisé sur chaque page pour faciliter la navigation et 
-        /// gestion de la durée de vie des processus
-        /// </summary>
-        public NavigationHelper NavigationHelper { get; }
         
         public EntryDetailPage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
         public EntryDetailPage(IResourceProxy resource)
         {
             InitializeComponent();
             _resource = resource;
-            NavigationHelper = new NavigationHelper(this);
         }
         
         #region Inscription de NavigationHelper
@@ -46,7 +39,6 @@ namespace ModernKeePass.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            NavigationHelper.OnNavigatedTo(e);
             var args = e.Parameter as NavigationItem;
             if (args != null)
             {
@@ -58,7 +50,6 @@ namespace ModernKeePass.Views
         protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             await Model.AddHistory();
-            NavigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
@@ -85,7 +76,7 @@ namespace ModernKeePass.Views
                         var text = isRecycleOnDelete ? _resource.GetResourceValue("EntryRecycled") : _resource.GetResourceValue("EntryDeleted");
                         //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
                         await Model.MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
-                        NavigationHelper.GoBack();
+                        //NavigationHelper.GoBack();
                     }, null);
             }
             else

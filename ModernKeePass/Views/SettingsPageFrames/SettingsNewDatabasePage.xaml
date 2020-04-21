@@ -8,11 +8,10 @@
     mc:Ignorable="d">
     <Page.Resources>
         <CollectionViewSource x:Name="KeyDerivations" Source="{Binding FileFormats}" />
+        <listItems:SettingsNewVm x:Key="ViewModel"/>
     </Page.Resources>
-    <Page.DataContext>
-        <listItems:SettingsNewVm />
-    </Page.DataContext>
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <TextBlock x:Uid="SettingsNewDatabaseDesc" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <ToggleSwitch x:Uid="SettingsNewDatabaseSample" IsOn="{Binding IsCreateSample, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
         <TextBlock x:Uid="SettingsNewDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />

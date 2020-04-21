@@ -6,11 +6,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
     mc:Ignorable="d">
-    <Page.DataContext>
-        <listItems:SettingsSaveVm />
-    </Page.DataContext>
+    <Page.Resources>
+        <listItems:SettingsSaveVm x:Name="ViewModel"/>
+    </Page.Resources>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendDesc" TextWrapping="WrapWholeWords" Margin="5,0,0,10"/>
         <ToggleSwitch x:Uid="SettingsSaveDatabaseSuspend" IsOn="{Binding IsSaveSuspend, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />

@@ -26,6 +26,7 @@ namespace ModernKeePass
                 return nav;
             });
             services.AddSingleton(provider => Messenger.Default);
+            services.AddTransient(typeof(IDialogService), typeof(DialogService));
 
             services.AddSingleton(provider =>
             {

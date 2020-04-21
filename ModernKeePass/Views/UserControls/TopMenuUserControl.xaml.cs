@@ -139,19 +139,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(bool),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(true, (o, args) => { }));
-
-        public bool IsMoveButtonEnabled
-        {
-            get { return (bool)GetValue(IsMoveButtonEnabledProperty); }
-            set { SetValue(IsMoveButtonEnabledProperty, value); }
-        }
-        public static readonly DependencyProperty IsMoveButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsMoveButtonEnabled),
-                typeof(bool),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(true, (o, args) => { }));
-
+        
         public bool IsEditButtonChecked
         {
             get { return (bool)GetValue(IsEditButtonCheckedProperty); }
@@ -166,8 +154,6 @@ namespace ModernKeePass.Views.UserControls
         
         public event EventHandler<RoutedEventArgs> EditButtonClick;
         public event EventHandler<RoutedEventArgs> DeleteButtonClick;
-        public event EventHandler<RoutedEventArgs> MoveButtonClick;
-        public event EventHandler<RoutedEventArgs> RestoreButtonClick;
         
         public TopMenuUserControl()
         {
@@ -189,15 +175,6 @@ namespace ModernKeePass.Views.UserControls
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
             DeleteButtonClick?.Invoke(sender, e);
-        }
-
-        private void MoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            MoveButtonClick?.Invoke(sender, e);
-        }
-        private void RestoreButton_Click(object sender, RoutedEventArgs e)
-        {
-            RestoreButtonClick?.Invoke(sender, e);
         }
 
         private void OverflowFlyout_OnOpening(object sender, object e)
