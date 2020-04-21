@@ -10,6 +10,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
@@ -37,6 +38,7 @@ namespace ModernKeePass
         private readonly IResourceProxy _resource;
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
+        private readonly INavigationService _navigation;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -62,12 +64,13 @@ namespace ModernKeePass
             serviceCollection.AddInfrastructureCommon();
             serviceCollection.AddInfrastructureKeePass();
             serviceCollection.AddInfrastructureUwp();
-            serviceCollection.AddAppAutomapper();
+            serviceCollection.AddWin81App();
             Services = serviceCollection.BuildServiceProvider();
 
             _mediator = Services.GetService<IMediator>();
             _resource = Services.GetService<IResourceProxy>();
             _settings = Services.GetService<ISettingsProxy>();
+            _navigation = Services.GetService<INavigationService>();
         }
 
         #region Event Handlers
@@ -157,7 +160,8 @@ namespace ModernKeePass
 
             var launchActivatedEventArgs = e as LaunchActivatedEventArgs;
             if (launchActivatedEventArgs != null && rootFrame.Content == null)
-                rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
+                //rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
+                _navigation.NavigateTo(Constants.Navigation.MainPage, launchActivatedEventArgs.Arguments);
 
             // Ensure the current window is active
             Window.Current.Activate();
@@ -247,11 +251,13 @@ namespace ModernKeePass
                     Name = file.DisplayName,
                     Path = file.Path
                 };
-                rootFrame.Navigate(typeof(MainPage), fileInfo);
+                //rootFrame.Navigate(typeof(MainPage), fileInfo);
+                _navigation.NavigateTo(Constants.Navigation.MainPage, fileInfo);
             }
             else
             {
-                rootFrame.Navigate(typeof(MainPage));
+                //rootFrame.Navigate(typeof(MainPage));
+                _navigation.NavigateTo(Constants.Navigation.MainPage);
             }
 
             Window.Current.Content = rootFrame;

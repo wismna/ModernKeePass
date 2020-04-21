@@ -13,7 +13,7 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class UpdateCredentialsUserControl
     {
-        public UpdateCredentialsViewModel ViewModel => Grid.DataContext as UpdateCredentialsViewModel;
+        public SetCredentialsViewModel ViewModel => Grid.DataContext as SetCredentialsViewModel;
         
         public string ButtonLabel
         {

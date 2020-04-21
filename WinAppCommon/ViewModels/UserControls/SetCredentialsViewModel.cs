@@ -7,7 +7,7 @@ using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class UpdateCredentialsViewModel : OpenDatabaseControlVm
+    public class SetCredentialsViewModel : OpenDatabaseControlVm
     {
         private readonly ICredentialsProxy _credentials;
         private readonly ISettingsProxy _settings;
@@ -24,9 +24,9 @@ namespace ModernKeePass.ViewModels
 
         public new bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && KeyFilePath != string.Empty;
 
-        public UpdateCredentialsViewModel(): this(App.Services.GetRequiredService<ICredentialsProxy>(), App.Services.GetRequiredService<ISettingsProxy>()) { }
+        public SetCredentialsViewModel(): this(App.Services.GetRequiredService<ICredentialsProxy>(), App.Services.GetRequiredService<ISettingsProxy>()) { }
 
-        public UpdateCredentialsViewModel(ICredentialsProxy credentials, ISettingsProxy settings)
+        public SetCredentialsViewModel(ICredentialsProxy credentials, ISettingsProxy settings)
         {
             _credentials = credentials;
             _settings = settings;

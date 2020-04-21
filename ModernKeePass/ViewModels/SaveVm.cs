@@ -2,12 +2,12 @@
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.UI.Xaml.Controls;
+using GalaSoft.MvvmLight.Command;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
-using ModernKeePass.Common;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels

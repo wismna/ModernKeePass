@@ -45,6 +45,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsNewVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsSaveVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\OpenDatabaseControlVm.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\UpdateCredentialsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\SetCredentialsViewModel.cs" />
   </ItemGroup>
 </Project>
