@@ -48,7 +48,14 @@
                 <ColumnDefinition Width="{StaticResource ExpandedMenuGridLength}" x:Name="LeftListViewColumn" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl x:Uid="GroupsLeftListView" ItemsSource="{Binding Groups}" SelectionChanged="groups_SelectionChanged" ButtonClicked="CreateGroup_ButtonClick" ResizeTarget="{Binding ElementName=LeftListViewColumn}" IsOpen="True" IsButtonVisible="Visible" />
+            <userControls:HamburgerMenuUserControl 
+                x:Uid="GroupsLeftListView" 
+                ItemsSource="{Binding Groups}" 
+                SelectionChanged="groups_SelectionChanged" 
+                ActionButtonCommand="{Binding CreateGroupCommand}"
+                ResizeTarget="{Binding ElementName=LeftListViewColumn}" 
+                IsOpen="True" 
+                IsButtonVisible="Visible" />
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -61,7 +68,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" x:Uid="ReorderEntriesLabel" Margin="10,10,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
                 <!--<TextBlock Grid.Column="1" Grid.Row="0" x:Uid="EntrySymbol" Margin="40,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />-->
-                <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Click="CreateEntry_ButtonClick"  HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
+                <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Command="{Binding CreateEntryCommand}"  HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add">
                             <ToolTipService.ToolTip>

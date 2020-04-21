@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
-using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
@@ -25,9 +25,12 @@ using ModernKeePass.Application.Group.Commands.UpdateGroup;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Group.Queries.SearchEntries;
+using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
+using ModernKeePass.Models;
+using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
@@ -77,25 +80,23 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsRecycleOnDelete
-        {
-            get
-            {
-                var database = Database;
-                return database.IsRecycleBinEnabled && _parent != null && _parent.Id != database.RecycleBinId;
-            }
-        }
-        
+        public bool IsRecycleOnDelete => Database.IsRecycleBinEnabled && !IsInRecycleBin;
+
+        public bool IsInRecycleBin => _parent != null && _parent.Id == Database.RecycleBinId;
+
         public IEnumerable<GroupVm> BreadCrumb { get; }
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand SortEntriesCommand { get; }
         public RelayCommand SortGroupsCommand { get; }
         public RelayCommand MoveCommand { get; }
+        public RelayCommand CreateEntryCommand { get; }
+        public RelayCommand CreateGroupCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
         private readonly IMediator _mediator;
+        private readonly INavigationService _navigation;
         private readonly GroupVm _group;
         private readonly GroupVm _parent;
         private bool _isEditMode;
@@ -103,12 +104,13 @@ namespace ModernKeePass.ViewModels
 
         public GroupDetailVm() {}
         
-        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetRequiredService<IMediator>())
+        internal GroupDetailVm(string groupId) : this(groupId, App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<INavigationService>())
         { }
 
-        public GroupDetailVm(string groupId, IMediator mediator)
+        public GroupDetailVm(string groupId, IMediator mediator, INavigationService navigation)
         {
             _mediator = mediator;
+            _navigation = navigation;
             _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
@@ -120,20 +122,32 @@ namespace ModernKeePass.ViewModels
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () => await SortGroupsAsync(), () => IsEditMode);
             MoveCommand = new RelayCommand(async () => await Move(_parent), () => IsNotRoot);
+            CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin);
+            CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin);
             
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
         
-        public async Task<string> AddNewGroup(string name = "")
+        public async Task AddNewGroup(string name = "")
         {
-            return (await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group})).Id;
+            var group = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});
+            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
+            {
+                Id = group.Id,
+                IsNew = true
+            });
         }
         
-        public async Task<string> AddNewEntry()
+        public async Task AddNewEntry()
         {
-            return (await _mediator.Send(new CreateEntryCommand { ParentGroup = _group })).Id;
+            var entry = await _mediator.Send(new CreateEntryCommand { ParentGroup = _group });
+            _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem
+            {
+                Id = entry.Id,
+                IsNew = true
+            });
         }
 
         public async Task MarkForDelete(string recycleBinTitle)

@@ -5,6 +5,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Views;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Entry.Models;
@@ -24,6 +25,7 @@ namespace ModernKeePass.Views
     public sealed partial class GroupDetailPage
     {
         private readonly IResourceProxy _resource;
+        private readonly INavigationService _navigation;
 
         /// <summary>
         /// NavigationHelper is used on each page to aid in navigation and 
@@ -32,11 +34,12 @@ namespace ModernKeePass.Views
         public NavigationHelper NavigationHelper { get; }
         public GroupDetailVm Model => (GroupDetailVm)DataContext;
 
-        public GroupDetailPage(): this (App.Services.GetRequiredService<IResourceProxy>()) { }
-        public GroupDetailPage(IResourceProxy resource)
+        public GroupDetailPage(): this (App.Services.GetRequiredService<IResourceProxy>(), App.Services.GetRequiredService<INavigationService>()) { }
+        public GroupDetailPage(IResourceProxy resource, INavigationService navigation)
         {
             InitializeComponent();
             _resource = resource;
+            _navigation = navigation;
             NavigationHelper = new NavigationHelper(this);
         }
 
@@ -84,7 +87,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
-                    Frame.Navigate(typeof(GroupDetailPage), new NavigationItem { Id = group?.Id });
+                    _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = group?.Id });
                     break;
             }
         }
@@ -97,7 +100,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var entry = GridView.SelectedItem as EntryVm;
-                    Frame.Navigate(typeof(EntryDetailPage), new NavigationItem { Id = entry?.Id });
+                    _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem { Id = entry?.Id });
                     break;
             }
         }
@@ -109,22 +112,6 @@ namespace ModernKeePass.Views
             {
                 e.DestinationItem.Item = e.SourceItem.Item;
             }
-        }
-        private async void CreateEntry_ButtonClick(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(EntryDetailPage), new NavigationItem
-            {
-                Id = await Model.AddNewEntry(),
-                IsNew = true
-            });
-        }
-        private async void CreateGroup_ButtonClick(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(GroupDetailPage), new NavigationItem
-            {
-                Id = await Model.AddNewGroup(),
-                IsNew = true
-            });
         }
 
         private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
@@ -145,7 +132,7 @@ namespace ModernKeePass.Views
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            Frame.Navigate(typeof(EntryDetailPage), new NavigationItem { Id = args.Tag });
+            _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem { Id = args.Tag });
         }
 
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
