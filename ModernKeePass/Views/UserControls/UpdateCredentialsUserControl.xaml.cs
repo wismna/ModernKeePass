@@ -14,6 +14,19 @@ namespace ModernKeePass.Views.UserControls
     public sealed partial class UpdateCredentialsUserControl
     {
         public UpdateCredentialsViewModel ViewModel => Grid.DataContext as UpdateCredentialsViewModel;
+        
+        public string ButtonLabel
+        {
+            get { return (string)GetValue(ButtonLabelProperty); }
+            set { SetValue(ButtonLabelProperty, value); }
+        }
+        public static readonly DependencyProperty ButtonLabelProperty =
+            DependencyProperty.Register(
+                nameof(ButtonLabel),
+                typeof(string),
+                typeof(UpdateCredentialsUserControl),
+                new PropertyMetadata("OK", (o, args) => { }));
+
         public string DatabaseFilePath
         {
             get { return (string) GetValue(DatabaseFilePathProperty); }

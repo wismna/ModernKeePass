@@ -26,18 +26,6 @@ namespace ModernKeePass.Views.UserControls
         private readonly IResourceProxy _resource;
         public OpenDatabaseControlVm Model => Grid.DataContext as OpenDatabaseControlVm;
         
-        public string ButtonLabel
-        {
-            get { return (string)GetValue(ButtonLabelProperty); }
-            set { SetValue(ButtonLabelProperty, value); }
-        }
-        public static readonly DependencyProperty ButtonLabelProperty =
-            DependencyProperty.Register(
-                nameof(ButtonLabel),
-                typeof(string),
-                typeof(OpenDatabaseUserControl),
-                new PropertyMetadata("OK", (o, args) => { }));
-
         public string DatabaseFilePath
         {
             get { return (string)GetValue(DatabaseFilePathProperty); }
@@ -121,14 +109,14 @@ namespace ModernKeePass.Views.UserControls
         
         private async Task OpenDatabase()
         {
-            var oldLabel = ButtonLabel;
-            ButtonLabel = _resource.GetResourceValue("CompositeKeyOpening");
+            var oldLabel = OpenButton.Content;
+            OpenButton.Content = _resource.GetResourceValue("CompositeKeyOpening");
             if (await Dispatcher.RunTaskAsync(async () => await Model.OpenDatabase(DatabaseFilePath)))
             {
                 DatabaseOpened?.Invoke(this, new PasswordEventArgs(Model.RootGroupId));
             }
 
-            ButtonLabel = oldLabel;
+            OpenButton.Content = oldLabel;
         }
     }
 }

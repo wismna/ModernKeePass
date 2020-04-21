@@ -221,8 +221,11 @@ namespace ModernKeePass
             {
                 ToastNotificationHelper.ShowErrorToast(exception);
             }
-            await SuspensionManager.SaveAsync().ConfigureAwait(false);
-            deferral.Complete();
+            finally
+            {
+                await SuspensionManager.SaveAsync().ConfigureAwait(false);
+                deferral.Complete();
+            }
         }
         
         /// <summary>

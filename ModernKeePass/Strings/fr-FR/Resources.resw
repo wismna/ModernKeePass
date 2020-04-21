@@ -165,7 +165,7 @@
   <data name="CompositeKeyNewKeyFileTooltip.Content" xml:space="preserve">
     <value>Créer un nouveau fichier de clé</value>
   </data>
-  <data name="CompositeKeyOpenButton.ButtonLabel" xml:space="preserve">
+  <data name="OpenDatabaseControlButton.Content" xml:space="preserve">
     <value>Ouvrir</value>
   </data>
   <data name="CompositeKeyPassword.PlaceholderText" xml:space="preserve">
