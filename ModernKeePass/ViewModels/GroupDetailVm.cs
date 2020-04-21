@@ -122,8 +122,8 @@ namespace ModernKeePass.ViewModels
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () => await SortGroupsAsync(), () => IsEditMode);
             MoveCommand = new RelayCommand(async () => await Move(_parent), () => IsNotRoot);
-            CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin);
-            CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin);
+            CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
+            CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
             
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
