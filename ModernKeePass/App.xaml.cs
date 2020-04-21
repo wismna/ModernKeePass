@@ -160,7 +160,6 @@ namespace ModernKeePass
 
             var launchActivatedEventArgs = e as LaunchActivatedEventArgs;
             if (launchActivatedEventArgs != null && rootFrame.Content == null)
-                //rootFrame.Navigate(typeof(MainPage), launchActivatedEventArgs.Arguments);
                 _navigation.NavigateTo(Constants.Navigation.MainPage, launchActivatedEventArgs.Arguments);
 
             // Ensure the current window is active
@@ -251,12 +250,10 @@ namespace ModernKeePass
                     Name = file.DisplayName,
                     Path = file.Path
                 };
-                //rootFrame.Navigate(typeof(MainPage), fileInfo);
                 _navigation.NavigateTo(Constants.Navigation.MainPage, fileInfo);
             }
             else
             {
-                //rootFrame.Navigate(typeof(MainPage));
                 _navigation.NavigateTo(Constants.Navigation.MainPage);
             }
 

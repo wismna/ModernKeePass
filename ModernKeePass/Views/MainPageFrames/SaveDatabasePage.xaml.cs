@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -19,12 +17,6 @@ namespace ModernKeePass.Views
         public SaveDatabasePage()
         {
             InitializeComponent();
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            Model.Frame = e.Parameter as Frame;
         }
         
         private async void SaveAsButton_OnClick(object sender, RoutedEventArgs e)
