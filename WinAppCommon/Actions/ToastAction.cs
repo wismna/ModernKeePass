@@ -1,6 +1,7 @@
 ﻿using Windows.UI.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Interactivity;
-using ModernKeePass.Common;
+using ModernKeePass.Application.Common.Interfaces;
 
 namespace ModernKeePass.Actions
 {
@@ -26,7 +27,8 @@ namespace ModernKeePass.Actions
 
         public object Execute(object sender, object parameter)
         {
-            ToastNotificationHelper.ShowGenericToast(Title, Message);
+            var notification = App.Services.GetRequiredService<INotificationService>();
+            notification.Show(Title, Message);
             return null;
         }
     }

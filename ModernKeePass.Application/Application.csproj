@@ -82,7 +82,7 @@
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
     <Compile Include="Common\Interfaces\IImportFormat.cs" />
     <Compile Include="Common\Interfaces\ICredentialsProxy.cs" />
-    <Compile Include="Common\Interfaces\IProxyInvocationHandler.cs" />
+    <Compile Include="Common\Interfaces\INotificationService.cs" />
     <Compile Include="Common\Interfaces\IRecentProxy.cs" />
     <Compile Include="Common\Interfaces\IResourceProxy.cs" />
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
@@ -135,7 +135,6 @@
     <Compile Include="Security\Commands\GenerateKeyFile\GenerateKeyFileCommand.cs" />
     <Compile Include="Security\Commands\GeneratePassword\GeneratePasswordCommand.cs" />
     <Compile Include="Security\Queries\EstimatePasswordComplexity\EstimatePasswordComplexityQuery.cs" />
-    <Content Include="Services\DatabaseService.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

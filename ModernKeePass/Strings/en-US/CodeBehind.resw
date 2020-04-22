@@ -133,7 +133,7 @@
     <value>Opening...</value>
   </data>
   <data name="CompositeKeyUpdated" xml:space="preserve">
-    <value>Database composite key updated.</value>
+    <value>Database credentials updated.</value>
   </data>
   <data name="EntityDeleteActionButton" xml:space="preserve">
     <value>Delete</value>

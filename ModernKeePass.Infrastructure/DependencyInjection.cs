@@ -29,6 +29,7 @@ namespace ModernKeePass.Infrastructure
             services.AddTransient(typeof(ISettingsProxy), typeof(UwpSettingsClient));
             services.AddTransient(typeof(IRecentProxy), typeof(UwpRecentFilesClient));
             services.AddTransient(typeof(IResourceProxy), typeof(UwpResourceClient));
+            services.AddTransient(typeof(INotificationService), typeof(ToastNotificationService));
             return services;
         }
     }

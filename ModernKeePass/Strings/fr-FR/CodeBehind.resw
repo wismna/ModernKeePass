@@ -133,7 +133,7 @@
     <value>Ouverture...</value>
   </data>
   <data name="CompositeKeyUpdated" xml:space="preserve">
-    <value>Clé composite de la base de données mise à jour.</value>
+    <value>Identifiants de la base de données mis à jour.</value>
   </data>
   <data name="EntityDeleteActionButton" xml:space="preserve">
     <value>Supprimer</value>

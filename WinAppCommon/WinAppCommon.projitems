@@ -14,12 +14,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Actions\SetupFocusAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ToastAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\MessageDialogHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ToastNotificationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewWithDisable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
@@ -58,6 +56,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RecentVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SaveVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\OpenDatabaseControlVm.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\SetCredentialsViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\SetCredentialsVm.cs" />
   </ItemGroup>
 </Project>

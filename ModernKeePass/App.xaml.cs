@@ -41,6 +41,7 @@ namespace ModernKeePass
         private readonly INavigationService _navigation;
         private readonly IHockeyClient _hockey;
         private readonly IDialogService _dialog;
+        private readonly INotificationService _notification;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -64,6 +65,7 @@ namespace ModernKeePass
             _settings = Services.GetService<ISettingsProxy>();
             _navigation = Services.GetService<INavigationService>();
             _dialog = Services.GetService<IDialogService>();
+            _notification = Services.GetService<INotificationService>();
             _hockey = Services.GetService<IHockeyClient>();
 
             InitializeComponent();
@@ -181,14 +183,14 @@ namespace ModernKeePass
             {
                 await _mediator.Send(new ReOpenDatabaseQuery());
 #if DEBUG
-                ToastNotificationHelper.ShowGenericToast("App resumed", "Database reopened (changes were saved)");
+                _notification.Show("App resumed", "Database reopened (changes were saved)");
 #endif
             }
             catch (Exception)
             {
                 currentFrame?.Navigate(typeof(MainPage));
 #if DEBUG
-                ToastNotificationHelper.ShowGenericToast("App resumed", "Nothing to do, no previous database opened");
+                _notification.Show("App resumed", "Nothing to do, no previous database opened");
 #endif
             }
         }
@@ -229,7 +231,7 @@ namespace ModernKeePass
             }
             catch (Exception exception)
             {
-                ToastNotificationHelper.ShowErrorToast(exception);
+                _notification.Show(exception.Source, exception.Message);
             }
             finally
             {

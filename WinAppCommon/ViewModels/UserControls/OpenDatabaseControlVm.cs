@@ -13,7 +13,6 @@ using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
-using ModernKeePass.Common;
 
 namespace ModernKeePass.ViewModels
 {
@@ -103,6 +102,7 @@ namespace ModernKeePass.ViewModels
         private readonly IResourceProxy _resource;
         private readonly IMessenger _messenger;
         private readonly IDialogService _dialog;
+        private readonly INotificationService _notification;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -117,15 +117,17 @@ namespace ModernKeePass.ViewModels
             App.Services.GetRequiredService<IMediator>(),
             App.Services.GetRequiredService<IResourceProxy>(),
             App.Services.GetRequiredService<IMessenger>(),
-            App.Services.GetRequiredService<IDialogService>())
+            App.Services.GetRequiredService<IDialogService>(),
+            App.Services.GetRequiredService<INotificationService>())
         { }
 
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger, IDialogService dialog)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
             _messenger = messenger;
             _dialog = dialog;
+            _notification = notification;
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
             _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
@@ -147,9 +149,7 @@ namespace ModernKeePass.ViewModels
                         if (isOk)
                         {
                             await _mediator.Send(new SaveDatabaseCommand());
-                            ToastNotificationHelper.ShowGenericToast(
-                                database.Name,
-                                _resource.GetResourceValue("ToastSavedMessage"));
+                            _notification.Show(database.Name, _resource.GetResourceValue("ToastSavedMessage"));
                             await _mediator.Send(new CloseDatabaseCommand());
                             await OpenDatabase(databaseFilePath);
                         }

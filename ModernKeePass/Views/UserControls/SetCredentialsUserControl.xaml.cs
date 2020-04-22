@@ -11,7 +11,7 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class SetCredentialsUserControl
     {
-        private SetCredentialsViewModel Model => (SetCredentialsViewModel)Resources["ViewModel"];
+        private SetCredentialsVm Model => (SetCredentialsVm)Resources["ViewModel"];
 
         public string ButtonLabel
         {

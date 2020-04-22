@@ -6,26 +6,27 @@ using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.UpdateCredentials;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
     public class SettingsSecurityVm
     {
         private readonly IMediator _mediator;
-        private readonly ISettingsProxy _settings;
-        private readonly INavigationService _navigation;
+        private readonly IResourceProxy _resource;
+        private readonly INotificationService _notification;
 
         public SettingsSecurityVm(): this(
             App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<ISettingsProxy>(), 
-            App.Services.GetRequiredService<IMessenger>(), 
-            App.Services.GetRequiredService<INavigationService>()) { }
+            App.Services.GetRequiredService<IMessenger>(),
+            App.Services.GetRequiredService<IResourceProxy>(), 
+            App.Services.GetRequiredService<INotificationService>()) { }
 
-        public SettingsSecurityVm(IMediator mediator, ISettingsProxy settings, IMessenger messenger, INavigationService navigation)
+        public SettingsSecurityVm(IMediator mediator, IMessenger messenger, IResourceProxy resource, INotificationService notification)
         {
             _mediator = mediator;
-            _settings = settings;
-            _navigation = navigation;
+            _resource = resource;
+            _notification = notification;
 
             messenger.Register<CredentialsSetMessage>(this, async message => await UpdateDatabaseCredentials(message));
         }
@@ -37,7 +38,8 @@ namespace ModernKeePass.ViewModels.ListItems
                 KeyFilePath = message.KeyFilePath,
                 Password = message.Password
             });
-            //TODO: Add Toast
+            var database = await _mediator.Send(new GetDatabaseQuery());
+            _notification.Show(database.Name, _resource.GetResourceValue("CompositeKeyUpdated"));
         }
     }
 }
