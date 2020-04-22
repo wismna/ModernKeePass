@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,13 +28,12 @@ using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Application.Group.Models;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Extensions;
 using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryDetailVm : NotifyPropertyChangedBase, IVmEntity
+    public class EntryDetailVm : ObservableObject, IVmEntity
     {
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
@@ -71,8 +71,8 @@ namespace ModernKeePass.ViewModels
             get { return _selectedItem; }
             set
             {
-                SetProperty(ref _selectedItem, value);
-                if (value != null) OnPropertyChanged();
+                Set(() => SelectedItem, ref _selectedItem, value);
+                if (value != null) RaisePropertyChanged();
             }
         }
         public int SelectedIndex    
@@ -80,15 +80,15 @@ namespace ModernKeePass.ViewModels
             get { return _selectedIndex; }
             set
             {
-                SetProperty(ref _selectedIndex, value);
-                OnPropertyChanged(nameof(IsCurrentEntry));
+                Set(() => SelectedIndex, ref _selectedIndex, value);
+                RaisePropertyChanged(nameof(IsCurrentEntry));
             }
         }
 
         public double PasswordLength
         {
             get { return _passwordLength; }
-            set { SetProperty(ref _passwordLength, value); }
+            set { Set(() => PasswordLength, ref _passwordLength, value); }
         }
 
         public string Title
@@ -114,8 +114,8 @@ namespace ModernKeePass.ViewModels
             {
                 SelectedItem.Password = value;
                 SetFieldValue(nameof(Password), value).Wait();
-                OnPropertyChanged(nameof(Password));
-                OnPropertyChanged(nameof(PasswordComplexityIndicator));
+                RaisePropertyChanged(nameof(Password));
+                RaisePropertyChanged(nameof(PasswordComplexityIndicator));
             }
         }
         
@@ -180,7 +180,7 @@ namespace ModernKeePass.ViewModels
             {
                 SelectedItem.HasExpirationDate = value;
                 SetFieldValue(nameof(HasExpirationDate), value).Wait();
-                OnPropertyChanged(nameof(HasExpirationDate));
+                RaisePropertyChanged(nameof(HasExpirationDate));
             }
         }
 
@@ -208,13 +208,13 @@ namespace ModernKeePass.ViewModels
         public bool IsEditMode
         {
             get { return IsCurrentEntry && _isEditMode; }
-            set { SetProperty(ref _isEditMode, value); }
+            set { Set(() => IsEditMode, ref _isEditMode, value); }
         }
         
         public bool IsRevealPassword
         {
             get { return _isRevealPassword; }
-            set { SetProperty(ref _isRevealPassword, value); }
+            set { Set(() => IsRevealPassword, ref _isRevealPassword, value); }
         }
 
         public RelayCommand SaveCommand { get; }
@@ -332,7 +332,7 @@ namespace ModernKeePass.ViewModels
                 UnderscorePatternSelected = UnderscorePatternSelected,
                 UpperCasePatternSelected = UpperCasePatternSelected
             });
-            OnPropertyChanged(nameof(IsRevealPasswordEnabled));
+            RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
         }
         
         public async Task Move(GroupVm destination)

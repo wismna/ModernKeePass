@@ -7,29 +7,19 @@
     xmlns:converters="using:ModernKeePass.Converters"
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <viewModels:NewVm x:Key="ViewModel"/>
     </Page.Resources>
-    <Page.DataContext>
-        <viewModels:NewVm />
-    </Page.DataContext>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <HyperlinkButton x:Uid="NewCreateButton" Click="CreateDatabaseButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="NewCreateDesc" />
         <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel Margin="25,0,25,0">
                 <TextBlock Text="{Binding Name}" />
-                <userControls:CompositeKeyUserControl x:Uid="CompositeKeyNewButton" CreateNew="True" DatabaseFilePath="{Binding Token}">
-                    <interactivity:Interaction.Behaviors>
-                        <core:EventTriggerBehavior EventName="ValidationChecked">
-                            <core:NavigateToPageAction TargetPage="ModernKeePass.Views.GroupDetailPage" />
-                        </core:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </userControls:CompositeKeyUserControl>
+                <userControls:SetCredentialsUserControl x:Uid="CompositeKeyNewButton" />
             </StackPanel>
         </Border>
         <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" Margin="15,10,0,0" IsChecked="{Binding IsImportChecked, Mode=TwoWay}" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />

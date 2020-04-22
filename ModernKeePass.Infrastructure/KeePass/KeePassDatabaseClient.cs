@@ -11,6 +11,7 @@ using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePassLib;
 using ModernKeePassLib.Collections;
+using ModernKeePassLib.Cryptography.Cipher;
 using ModernKeePassLib.Cryptography.KeyDerivation;
 using ModernKeePassLib.Interfaces;
 using ModernKeePassLib.Keys;
@@ -112,7 +113,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             await Open(file, _credentials);
         }
 
-        public async Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V2)
+        public async Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V4)
         {
             try
             {
@@ -131,6 +132,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                     {
                         case DatabaseVersion.V4:
                             _pwDatabase.KdfParameters = KdfPool.Get("Argon2").GetDefaultParameters();
+                            _pwDatabase.DataCipherUuid = CipherPool.GlobalPool[1].CipherUuid;
                             break;
                     }
                 });

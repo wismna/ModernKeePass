@@ -116,6 +116,10 @@ namespace ModernKeePass
                         }
                     });
             }
+            else
+            {
+                await _dialog.ShowError(realException, realException.Message, "OK", () => {});
+            }
         }
 
         /// <summary>

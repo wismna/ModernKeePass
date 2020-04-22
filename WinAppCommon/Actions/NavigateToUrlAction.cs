@@ -1,7 +1,8 @@
 ﻿using System;
 using Windows.UI.Xaml;
+using GalaSoft.MvvmLight.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Interactivity;
-using ModernKeePass.Common;
 
 namespace ModernKeePass.Actions
 {
@@ -25,7 +26,8 @@ namespace ModernKeePass.Actions
             }
             catch (Exception ex)
             {
-                MessageDialogHelper.ShowErrorDialog(ex).GetAwaiter();
+                var dialogService = App.Services.GetRequiredService<IDialogService>();
+                dialogService.ShowError(ex, ex.Message, null, () => {}).Wait();
                 return false;
             }
         }

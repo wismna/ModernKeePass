@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class OpenVm: NotifyPropertyChangedBase
+    public class OpenVm: ObservableObject
     {
         private readonly IRecentProxy _recent;
         private string _name;
@@ -17,19 +17,19 @@ namespace ModernKeePass.ViewModels
         public string Token
         {
             get { return _token; }
-            set { SetProperty(ref _token, value); }
+            set { Set(() => Token, ref _token, value); }
         }
 
         public string Name
         {
             get { return _name; }
-            private set { SetProperty(ref _name, value); }
+            private set { Set(() => Name, ref _name, value); }
         }
 
         public string Path  
         {
             get { return _path; }
-            private set { SetProperty(ref _path, value); }
+            private set { Set(() => Path, ref _path, value); }
         }
 
         public OpenVm(): this(App.Services.GetRequiredService<IRecentProxy>()) { }
@@ -44,7 +44,7 @@ namespace ModernKeePass.ViewModels
             Token = file.Id;
             Name = file.Name;
             Path = file.Path;
-            OnPropertyChanged(nameof(IsFileSelected));
+            RaisePropertyChanged(nameof(IsFileSelected));
             await AddToRecentList(file);
         }
         

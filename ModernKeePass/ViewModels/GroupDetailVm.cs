@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,6 @@ using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Group.Queries.SearchEntries;
 using ModernKeePass.Common;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Interfaces;
 using ModernKeePass.Models;
@@ -35,7 +35,7 @@ using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupDetailVm : NotifyPropertyChangedBase, IVmEntity
+    public class GroupDetailVm : ObservableObject, IVmEntity
     {
         public ObservableCollection<EntryVm> Entries { get; }
 
@@ -75,7 +75,7 @@ namespace ModernKeePass.ViewModels
             get { return _isEditMode; }
             set
             {
-                SetProperty(ref _isEditMode, value);
+                Set(() => IsEditMode, ref _isEditMode, value);
                 SortEntriesCommand.RaiseCanExecuteChanged();
                 SortGroupsCommand.RaiseCanExecuteChanged();
             }
@@ -234,14 +234,14 @@ namespace ModernKeePass.ViewModels
         private async Task SortEntriesAsync()
         {
             await _mediator.Send(new SortEntriesCommand {Group = _group});
-            OnPropertyChanged(nameof(Entries));
+            RaisePropertyChanged(nameof(Entries));
             SaveCommand.RaiseCanExecuteChanged();
         }
         
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
-            OnPropertyChanged(nameof(Groups));
+            RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
         }
     }

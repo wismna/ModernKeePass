@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using ModernKeePass.Domain.Dtos;
 using ModernKeePass.ViewModels;
-using ModernKeePass.Extensions;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace ModernKeePass.Views.UserControls
 {
-    public sealed partial class UpdateCredentialsUserControl
+    public sealed partial class SetCredentialsUserControl
     {
-        public SetCredentialsViewModel ViewModel => Grid.DataContext as SetCredentialsViewModel;
-        
+        private SetCredentialsViewModel Model => (SetCredentialsViewModel)Resources["ViewModel"];
+
         public string ButtonLabel
         {
             get { return (string)GetValue(ButtonLabelProperty); }
@@ -24,24 +22,10 @@ namespace ModernKeePass.Views.UserControls
             DependencyProperty.Register(
                 nameof(ButtonLabel),
                 typeof(string),
-                typeof(UpdateCredentialsUserControl),
+                typeof(SetCredentialsUserControl),
                 new PropertyMetadata("OK", (o, args) => { }));
-
-        public string DatabaseFilePath
-        {
-            get { return (string) GetValue(DatabaseFilePathProperty); }
-            set { SetValue(DatabaseFilePathProperty, value); }
-        }
-        public static readonly DependencyProperty DatabaseFilePathProperty =
-            DependencyProperty.Register(
-                "DatabaseFilePath",
-                typeof(string),
-                typeof(UpdateCredentialsUserControl),
-                new PropertyMetadata(null, (o, args) => { }));
-
-        public event EventHandler CredentialsUpdated;
-
-        public UpdateCredentialsUserControl()
+        
+        public SetCredentialsUserControl()
         {
             InitializeComponent();
         }
@@ -61,7 +45,7 @@ namespace ModernKeePass.Views.UserControls
             if (file == null) return;
 
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-            ViewModel.KeyFilePath = token;
+            Model.KeyFilePath = token;
         }
 
         private async void CreateKeyFileButton_Click(object sender, RoutedEventArgs e)
@@ -77,25 +61,7 @@ namespace ModernKeePass.Views.UserControls
             if (file == null) return;
 
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-            ViewModel.KeyFilePath = token;
-        }
-
-        private async void UpdateButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            //throw new NotImplementedException();
-
-            if (await Dispatcher.RunTaskAsync(async () =>
-            {
-                var fileInfo = new FileInfo
-                {
-                    Path = DatabaseFilePath
-                };
-                await ViewModel.CreateDatabase(fileInfo);
-                return true;
-            }))
-            {
-                CredentialsUpdated?.Invoke(this, new EventArgs());
-            }
+            Model.KeyFilePath = token;
         }
     }
 }

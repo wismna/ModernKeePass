@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using GalaSoft.MvvmLight;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
@@ -16,12 +17,11 @@ using ModernKeePass.Application.Parameters.Models;
 using ModernKeePass.Application.Parameters.Queries.GetCiphers;
 using ModernKeePass.Application.Parameters.Queries.GetCompressions;
 using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
-using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
     // TODO: implement Kdf settings
-    public class SettingsDatabaseVm: NotifyPropertyChangedBase
+    public class SettingsDatabaseVm: ObservableObject
     {
         private readonly IMediator _mediator;
         private readonly DatabaseVm _database;
@@ -32,7 +32,7 @@ namespace ModernKeePass.ViewModels.ListItems
             set
             {
                 _mediator.Send(new SetHasRecycleBinCommand {HasRecycleBin = value}).Wait();
-                OnPropertyChanged(nameof(HasRecycleBin));
+                RaisePropertyChanged(nameof(HasRecycleBin));
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
@@ -23,12 +24,34 @@ namespace ModernKeePass.ViewModels.ListItems
             set { _settings.PutSetting(Constants.Settings.Sample, value); }
         }
 
-        public IEnumerable<string> FileFormats => new []{"2", "4"};
-
-        public string FileFormatVersion
+        public IEnumerable<DatabaseFormat> FileFormats => new []
         {
-            get { return _settings.GetSetting<string>(Constants.Settings.DefaultFileFormat); }
-            set { _settings.PutSetting(Constants.Settings.DefaultFileFormat, value); }
+            new DatabaseFormat
+            {
+                Version = "4",
+                DisplayText = "4 (Argon2, ChaCha20)"
+            }, 
+            new DatabaseFormat
+            {
+                Version = "3",
+                DisplayText = "3 (AES-KDF, AES/Rijndael)"
+            }
+        };
+
+        public DatabaseFormat DatabaseFormatVersion
+        {
+            get
+            {
+                var version = _settings.GetSetting<string>(Constants.Settings.DefaultFileFormat);
+                return FileFormats.FirstOrDefault(f => f.Version == version);
+            }
+            set { _settings.PutSetting(Constants.Settings.DefaultFileFormat, value.Version); }
         }
+    }
+
+    public class DatabaseFormat
+    {
+        public string Version { get; set; }
+        public string DisplayText { get; set; }
     }
 }

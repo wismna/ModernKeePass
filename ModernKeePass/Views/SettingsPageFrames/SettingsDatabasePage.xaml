@@ -8,16 +8,18 @@
     xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
     mc:Ignorable="d">
     <Page.Resources>
-        <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
-        <CollectionViewSource x:Name="Ciphers" Source="{Binding Ciphers}" />
-        <CollectionViewSource x:Name="Compressions" Source="{Binding Compressions}" />
-        <CollectionViewSource x:Name="KeyDerivations" Source="{Binding KeyDerivations}" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
         <listItems:SettingsDatabaseVm x:Key="ViewModel"/>
     </Page.Resources>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+        <StackPanel.Resources>
+            <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
+            <CollectionViewSource x:Name="Ciphers" Source="{Binding Ciphers}" />
+            <CollectionViewSource x:Name="Compressions" Source="{Binding Compressions}" />
+            <CollectionViewSource x:Name="KeyDerivations" Source="{Binding KeyDerivations}" />
+        </StackPanel.Resources>
         <ToggleSwitch x:Uid="SettingsDatabaseRecycleBin" IsOn="{Binding HasRecycleBin, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
         <StackPanel Visibility="{Binding HasRecycleBin, Converter={StaticResource BooleanToVisibilityConverter}}">
             <RadioButton x:Uid="SettingsDatabaseRecycleBinCreate" GroupName="Recycle" IsChecked="{Binding IsNewRecycleBin, Mode=TwoWay}" />

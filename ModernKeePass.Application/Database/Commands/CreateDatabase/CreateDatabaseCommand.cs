@@ -13,6 +13,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
         public string Password { get; set; }
         public string KeyFilePath { get; set; }
         public string Name { get; set; }
+        public string Version { get; set; }
         public bool CreateSampleData { get; set; }
 
         public class CreateDatabaseCommandHandler : IAsyncRequestHandler<CreateDatabaseCommand>
@@ -30,12 +31,25 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
             {
                 if (_database.IsOpen) throw new DatabaseOpenException();
 
+                var version = DatabaseVersion.V2;
+                switch (message.Version)
+                {
+                    case "4":
+                        version = DatabaseVersion.V4;
+                        break;
+                    case "3":
+                        version = DatabaseVersion.V3;
+                        break;
+                }
+
                 await _database.Create(new Credentials
                     {
                         KeyFileContents = !string.IsNullOrEmpty(message.KeyFilePath) ? await _file.OpenBinaryFile(message.KeyFilePath) : null,
                         Password = message.Password
-                    }, message.Name);
+                    }, message.Name, version);
                 _database.FileAccessToken = message.FilePath;
+                var contents = await _database.SaveDatabase();
+                await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
 
                 if (message.CreateSampleData)
                 {

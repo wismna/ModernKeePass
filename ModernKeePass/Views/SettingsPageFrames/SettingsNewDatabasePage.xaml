@@ -7,11 +7,13 @@
     xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
     mc:Ignorable="d">
     <Page.Resources>
-        <CollectionViewSource x:Name="KeyDerivations" Source="{Binding FileFormats}" />
         <listItems:SettingsNewVm x:Key="ViewModel"/>
     </Page.Resources>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+        <StackPanel.Resources>
+            <CollectionViewSource x:Name="KeyDerivations" Source="{Binding FileFormats}" />
+        </StackPanel.Resources>
         <TextBlock x:Uid="SettingsNewDatabaseDesc" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <ToggleSwitch x:Uid="SettingsNewDatabaseSample" IsOn="{Binding IsCreateSample, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
         <TextBlock x:Uid="SettingsNewDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
@@ -21,7 +23,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding FileFormatVersion, Mode=TwoWay}" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" Style="{StaticResource MainColorComboBox}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" Style="{StaticResource MainColorComboBox}" />
             <Button Grid.Column="2" Style="{StaticResource TextBlockButtonStyle}">
                 <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
                     <SymbolIcon.RenderTransform>

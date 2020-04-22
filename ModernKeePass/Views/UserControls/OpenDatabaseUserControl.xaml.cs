@@ -12,8 +12,8 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class OpenDatabaseUserControl
     {
-        public OpenDatabaseControlVm Model => Grid.DataContext as OpenDatabaseControlVm;
-        
+        private OpenDatabaseControlVm Model => (OpenDatabaseControlVm)Resources["ViewModel"];
+
         public string DatabaseFilePath
         {
             get { return (string)GetValue(DatabaseFilePathProperty); }

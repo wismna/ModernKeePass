@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
@@ -13,11 +14,10 @@ using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
 using ModernKeePass.Common;
-using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels
 {
-    public class OpenDatabaseControlVm : NotifyPropertyChangedBase
+    public class OpenDatabaseControlVm : ObservableObject
     {
         public enum StatusTypes
         {
@@ -32,8 +32,8 @@ namespace ModernKeePass.ViewModels
             get { return _hasPassword; }
             set
             {
-                SetProperty(ref _hasPassword, value);
-                OnPropertyChanged(nameof(IsValid));
+                Set(() => HasPassword, ref _hasPassword, value);
+                RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
@@ -43,8 +43,8 @@ namespace ModernKeePass.ViewModels
             get { return _hasKeyFile; }
             set
             {
-                SetProperty(ref _hasKeyFile, value);
-                OnPropertyChanged(nameof(IsValid));
+                Set(() => HasKeyFile, ref _hasKeyFile, value);
+                RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
@@ -54,13 +54,13 @@ namespace ModernKeePass.ViewModels
         public string Status
         {
             get { return _status; }
-            set { SetProperty(ref _status, value); }
+            set { Set(() => Status, ref _status, value); }
         }
 
         public int StatusType
         {
-            get { return (int)_statusType; }
-            set { SetProperty(ref _statusType, (StatusTypes)value); }
+            get { return _statusType; }
+            set { Set(() => StatusType, ref _statusType, value); }
         }
 
         public string Password
@@ -80,7 +80,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _keyFilePath = value;
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
         }
@@ -88,18 +88,18 @@ namespace ModernKeePass.ViewModels
         public string KeyFileText
         {
             get { return _keyFileText; }
-            set { SetProperty(ref _keyFileText, value); }
+            set { Set(() => KeyFileText, ref _keyFileText, value); }
         }
 
         public string OpenButtonLabel
         {
             get { return _openButtonLabel; }
-            set { SetProperty(ref _openButtonLabel, value); }
+            set { Set(() => OpenButtonLabel, ref _openButtonLabel, value); }
         }
         
         public RelayCommand<string> OpenDatabaseCommand { get; }
         
-        protected readonly IMediator Mediator;
+        private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
         private readonly IMessenger _messenger;
         private readonly IDialogService _dialog;
@@ -108,7 +108,7 @@ namespace ModernKeePass.ViewModels
         private bool _isOpening;
         private string _password = string.Empty;
         private string _status;
-        private StatusTypes _statusType;
+        private int _statusType;
         private string _keyFilePath;
         private string _keyFileText;
         private string _openButtonLabel;
@@ -123,7 +123,7 @@ namespace ModernKeePass.ViewModels
 
         public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger, IDialogService dialog)
         {
-            Mediator = mediator;
+            _mediator = mediator;
             _resource = resource;
             _messenger = messenger;
             _dialog = dialog;
@@ -136,7 +136,7 @@ namespace ModernKeePass.ViewModels
         {
             _messenger.Send(new DatabaseOpeningMessage {Token = databaseFilePath});
 
-            var database = await Mediator.Send(new GetDatabaseQuery());
+            var database = await _mediator.Send(new GetDatabaseQuery());
             if (database.IsOpen)
             {
                 await _dialog.ShowMessage(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
@@ -147,16 +147,16 @@ namespace ModernKeePass.ViewModels
                     {
                         if (isOk)
                         {
-                            await Mediator.Send(new SaveDatabaseCommand());
+                            await _mediator.Send(new SaveDatabaseCommand());
                             ToastNotificationHelper.ShowGenericToast(
                                 database.Name,
                                 _resource.GetResourceValue("ToastSavedMessage"));
-                            await Mediator.Send(new CloseDatabaseCommand());
+                            await _mediator.Send(new CloseDatabaseCommand());
                             await OpenDatabase(databaseFilePath);
                         }
                         else
                         {
-                            await Mediator.Send(new CloseDatabaseCommand());
+                            await _mediator.Send(new CloseDatabaseCommand());
                             await OpenDatabase(databaseFilePath);
                         }
                     });
@@ -171,15 +171,15 @@ namespace ModernKeePass.ViewModels
             _isOpening = true;
             try
             {
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
-                await Mediator.Send(new OpenDatabaseQuery
+                await _mediator.Send(new OpenDatabaseQuery
                 {
                     FilePath = databaseFilePath,
                     KeyFilePath = HasKeyFile ? KeyFilePath : null,
                     Password = HasPassword ? Password : null,
                 });
-                var rootGroupId = (await Mediator.Send(new GetDatabaseQuery())).RootGroupId;
+                var rootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
 
                 _messenger.Send(new DatabaseOpenedMessage { RootGroupId = rootGroupId });
             }
@@ -198,7 +198,7 @@ namespace ModernKeePass.ViewModels
             finally
             {
                 _isOpening = false;
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
                 OpenButtonLabel = oldLabel;
             }

@@ -1,46 +1,120 @@
-﻿using System.Threading.Tasks;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Commands.CreateDatabase;
-using ModernKeePass.Common;
-using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class SetCredentialsViewModel : OpenDatabaseControlVm
+    public class SetCredentialsViewModel : ObservableObject
     {
         private readonly ICredentialsProxy _credentials;
-        private readonly ISettingsProxy _settings;
-        private string _confirmPassword;
+        private readonly IMessenger _messenger;
         
+        public bool HasPassword
+        {
+            get { return _hasPassword; }
+            set
+            {
+                Set(() => HasPassword, ref _hasPassword, value);
+                RaisePropertyChanged(nameof(IsValid));
+                GenerateCredentialsCommand.RaiseCanExecuteChanged();
+            }
+        }
 
+        public bool HasKeyFile
+        {
+            get { return _hasKeyFile; }
+            set
+            {
+                Set(() => HasKeyFile, ref _hasKeyFile, value);
+                RaisePropertyChanged(nameof(IsValid));
+                GenerateCredentialsCommand.RaiseCanExecuteChanged();
+            }
+        }
+        
+        public string Status
+        {
+            get { return _status; }
+            set { Set(() => Status, ref _status, value); }
+        }
+        
+        public string Password
+        {
+            get { return _password; }
+            set
+            {
+                _password = value;
+                RaisePropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(PasswordComplexityIndicator));
+                GenerateCredentialsCommand.RaiseCanExecuteChanged();
+            }
+        }
         public string ConfirmPassword
         {
             get { return _confirmPassword; }
-            set { SetProperty(ref _confirmPassword, value); }
+            set
+            {
+                _confirmPassword = value;
+                RaisePropertyChanged(nameof(IsValid));
+                GenerateCredentialsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string KeyFilePath
+        {
+            get { return _keyFilePath; }
+            set
+            {
+                _keyFilePath = value;
+                RaisePropertyChanged(nameof(IsValid));
+                GenerateCredentialsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public string KeyFileText
+        {
+            get { return _keyFileText; }
+            set { Set(() => KeyFileText, ref _keyFileText, value); }
+        }
+
+        public string OpenButtonLabel
+        {
+            get { return _openButtonLabel; }
+            set { Set(() => OpenButtonLabel, ref _openButtonLabel, value); }
         }
 
         public double PasswordComplexityIndicator => _credentials.EstimatePasswordComplexity(Password);
 
-        public new bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && KeyFilePath != string.Empty;
+        public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && KeyFilePath != string.Empty;
 
-        public SetCredentialsViewModel(): this(App.Services.GetRequiredService<ICredentialsProxy>(), App.Services.GetRequiredService<ISettingsProxy>()) { }
+        public RelayCommand GenerateCredentialsCommand{ get; }
 
-        public SetCredentialsViewModel(ICredentialsProxy credentials, ISettingsProxy settings)
+        private bool _hasPassword;
+        private bool _hasKeyFile;
+        private string _password = string.Empty;
+        private string _confirmPassword;
+        private string _status;
+        private string _keyFilePath;
+        private string _keyFileText;
+        private string _openButtonLabel;
+
+        public SetCredentialsViewModel(): this(App.Services.GetRequiredService<ICredentialsProxy>(), App.Services.GetRequiredService<IMessenger>()) { }
+
+        public SetCredentialsViewModel(ICredentialsProxy credentials, IMessenger messenger)
         {
             _credentials = credentials;
-            _settings = settings;
+            _messenger = messenger;
+            GenerateCredentialsCommand = new RelayCommand(GenerateCredentials, () => IsValid);
         }
 
-        public async Task CreateDatabase(FileInfo fileInfo)
+        private void GenerateCredentials()
         {
-            await Mediator.Send(new CreateDatabaseCommand
+            _messenger.Send(new CredentialsSetMessage
             {
-                FilePath = fileInfo.Path,
-                KeyFilePath = HasKeyFile ? KeyFilePath : null,
                 Password = HasPassword ? Password : null,
-                Name = "New Database",
-                CreateSampleData = _settings.GetSetting<bool>(Constants.Settings.Sample)
+                KeyFilePath = HasKeyFile ? KeyFilePath : null
             });
         }
     }

@@ -1,10 +1,10 @@
-﻿using ModernKeePass.Domain.AOP;
+﻿using GalaSoft.MvvmLight;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class RecentItemVm: NotifyPropertyChangedBase, ISelectableModel
+    public class RecentItemVm: ObservableObject, ISelectableModel
     {
         private bool _isSelected;
         private string _name;
@@ -14,25 +14,25 @@ namespace ModernKeePass.ViewModels.ListItems
         public string Token
         {
             get { return _token; }
-            set { SetProperty(ref _token, value); }
+            set { Set(() => Token, ref _token, value); }
         }
 
         public string Name
         {
             get { return _name; }
-            set { SetProperty(ref _name, value); }
+            set { Set(() => Name, ref _name, value); }
         }
 
         public string Path
         {
             get { return _path; }
-            set { SetProperty(ref _path, value); }
+            set { Set(() => Path, ref _path, value); }
         }
 
         public bool IsSelected
         {
             get { return _isSelected; }
-            set { SetProperty(ref _isSelected, value); }
+            set { Set(() => IsSelected, ref _isSelected, value); }
         }
         
         public RecentItemVm(FileInfo file)

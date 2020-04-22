@@ -1,16 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentVm : NotifyPropertyChangedBase, IHasSelectableObject
+    public class RecentVm : ObservableObject, IHasSelectableObject
     {
         private readonly IRecentProxy _recent;
         private ISelectableModel _selectedItem;
@@ -19,7 +19,7 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<RecentItemVm> RecentItems
         {
             get { return _recentItems; }
-            set { SetProperty(ref _recentItems, value); }
+            set { Set(() => RecentItems, ref _recentItems, value); }
         }
 
         public ISelectableModel SelectedItem
@@ -33,8 +33,8 @@ namespace ModernKeePass.ViewModels
                     _selectedItem.IsSelected = false;
                 }
 
-                SetProperty(ref _selectedItem, value);
-                
+                Set(() => SelectedItem, ref _selectedItem, value);
+
                 if (_selectedItem == null) return;
                 _selectedItem.IsSelected = true;
             }

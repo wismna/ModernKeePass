@@ -22,7 +22,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         Task Open(byte[] file, Credentials credentials);
         Task ReOpen(byte[] file);
-        Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V2);
+        Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V3);
         Task<byte[]> SaveDatabase();
         Task<byte[]> SaveDatabase(byte[] newFileContents);
         void UpdateCredentials(Credentials credentials);

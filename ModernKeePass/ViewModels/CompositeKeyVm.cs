@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
@@ -10,12 +11,11 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
 using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class CompositeKeyVm: NotifyPropertyChangedBase
+    public class CompositeKeyVm: ObservableObject
     {
         public enum StatusTypes
         {
@@ -30,8 +30,8 @@ namespace ModernKeePass.ViewModels
             get { return _hasPassword; }
             set
             {
-                SetProperty(ref _hasPassword, value);
-                OnPropertyChanged(nameof(IsValid));
+                Set(() => HasPassword, ref _hasPassword, value);
+                RaisePropertyChanged(nameof(IsValid));
             }
         }
 
@@ -40,8 +40,8 @@ namespace ModernKeePass.ViewModels
             get { return _hasKeyFile; }
             set
             {
-                SetProperty(ref _hasKeyFile, value);
-                OnPropertyChanged(nameof(IsValid));
+                Set(() => HasKeyFile, ref _hasKeyFile, value);
+                RaisePropertyChanged(nameof(IsValid));
             }
         }
 
@@ -50,13 +50,13 @@ namespace ModernKeePass.ViewModels
         public string Status
         {
             get { return _status; }
-            set { SetProperty(ref _status, value); }
+            set { Set(() => Status, ref _status, value); }
         }
 
         public int StatusType
         {
-            get { return (int)_statusType; }
-            set { SetProperty(ref _statusType, (StatusTypes)value); }
+            get { return _statusType; }
+            set { Set(() => StatusType, ref _statusType, value); }
         }
 
         public string Password
@@ -65,7 +65,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _password = value;
-                OnPropertyChanged(nameof(PasswordComplexityIndicator));
+                RaisePropertyChanged(nameof(PasswordComplexityIndicator));
                 StatusType = (int)StatusTypes.Normal;
                 Status = string.Empty;
             }
@@ -77,14 +77,14 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _keyFilePath = value;
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
             }
         }
 
         public string KeyFileText
         {
             get { return _keyFileText; }
-            set { SetProperty(ref _keyFileText, value); }
+            set { Set(() => KeyFileText, ref _keyFileText, value); }
         }
 
         public string RootGroupId { get; set; }
@@ -96,7 +96,7 @@ namespace ModernKeePass.ViewModels
         private bool _isOpening;
         private string _password = string.Empty;
         private string _status;
-        private StatusTypes _statusType;
+        private int _statusType;
         private string _keyFilePath;
         private string _keyFileText;
         private readonly IMediator _mediator;
@@ -121,7 +121,7 @@ namespace ModernKeePass.ViewModels
             try
             {
                 _isOpening = true;
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
                 if (createNew)
                 {
                     await _mediator.Send(new CreateDatabaseCommand
@@ -159,7 +159,7 @@ namespace ModernKeePass.ViewModels
             finally
             {
                 _isOpening = false;
-                OnPropertyChanged(nameof(IsValid));
+                RaisePropertyChanged(nameof(IsValid));
             }
             return false;
         }

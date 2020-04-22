@@ -12,12 +12,9 @@
     <UserControl.Resources>
         <converters:DiscreteIntToSolidColorBrushConverter x:Key="DiscreteIntToSolidColorBrushConverter"/>
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
+        <viewModels:OpenDatabaseControlVm x:Key="ViewModel"/>
     </UserControl.Resources>
-    <Grid x:Name="Grid">
-        <!-- DataContext is not set at the root of the control because of issues happening when displaying it -->
-        <Grid.DataContext>
-            <viewModels:OpenDatabaseControlVm />
-        </Grid.DataContext>
+    <Grid DataContext="{StaticResource ViewModel}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="*" />

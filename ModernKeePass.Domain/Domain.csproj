@@ -75,7 +75,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AOP\NotifyPropertyChangedBase.cs" />
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Dtos\Credentials.cs" />
     <Compile Include="Dtos\FileInfo.cs" />

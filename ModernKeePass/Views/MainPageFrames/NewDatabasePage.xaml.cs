@@ -20,7 +20,7 @@ namespace ModernKeePass.Views
     public sealed partial class NewDatabasePage
     {
         private readonly IResourceProxy _resource;
-        public NewVm Model => (NewVm)DataContext;
+        private NewVm Model => (NewVm)Resources["ViewModel"];
 
         public NewDatabasePage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
         public NewDatabasePage(IResourceProxy resource)

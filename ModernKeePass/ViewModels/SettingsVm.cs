@@ -1,27 +1,27 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.UI.Xaml.Controls;
+using GalaSoft.MvvmLight;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
-using ModernKeePass.Domain.AOP;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.ViewModels.ListItems;
 using ModernKeePass.Views;
 
 namespace ModernKeePass.ViewModels
 {
-    public class SettingsVm : NotifyPropertyChangedBase, IHasSelectableObject
+    public class SettingsVm : ObservableObject, IHasSelectableObject
     {
-        private ListMenuItemVm _selectedItem;
+        private ISelectableModel _selectedItem;
         
         private IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> _menuItems;
 
         public IOrderedEnumerable<IGrouping<string, ListMenuItemVm>> MenuItems
         {
             get { return _menuItems; }
-            set { SetProperty(ref _menuItems, value); }
+            set { Set(() => MenuItems, ref _menuItems, value); }
         }
 
         public ISelectableModel SelectedItem
@@ -35,7 +35,7 @@ namespace ModernKeePass.ViewModels
                     _selectedItem.IsSelected = false;
                 }
 
-                SetProperty(ref _selectedItem, (ListMenuItemVm)value);
+                Set(() => SelectedItem, ref _selectedItem, value);
 
                 if (_selectedItem != null)
                 {
