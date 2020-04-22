@@ -101,7 +101,6 @@
       <DependentUpon>UpdateCredentialsUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
-    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\EntriesViewModel.cs" />
     <Compile Include="ViewModels\ListItems\EntryItemViewModel.cs" />
@@ -185,10 +184,6 @@
       <DependentUpon>SaveDatabasePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\NewViewModel.cs" />
-    <Compile Include="ViewModels\OpenViewModel.cs" />
-    <Compile Include="ViewModels\RecentViewModel.cs" />
-    <Compile Include="ViewModels\SaveViewModel.cs" />
     <Compile Include="Views\UserControls\HamburgerMenuUserControl.xaml.cs">
       <DependentUpon>HamburgerMenuUserControl.xaml</DependentUpon>
     </Compile>
@@ -207,9 +202,6 @@
     <PRIResource Include="Strings\fr-FR\CodeBehind.resw" />
     <PRIResource Include="Strings\en-US\CodeBehind.resw" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

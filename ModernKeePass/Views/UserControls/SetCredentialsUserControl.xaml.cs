@@ -38,7 +38,7 @@ namespace ModernKeePass.Views.UserControls
                     ViewMode = PickerViewMode.List,
                     SuggestedStartLocation = PickerLocationId.DocumentsLibrary
                 };
-            picker.FileTypeFilter.Add(".key");
+            picker.FileTypeFilter.Add("*");
 
             // Application now has read/write access to the picked file
             var file = await picker.PickSingleFileAsync();
@@ -46,6 +46,7 @@ namespace ModernKeePass.Views.UserControls
 
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             Model.KeyFilePath = token;
+            Model.KeyFileText = file.DisplayName;
         }
 
         private async void CreateKeyFileButton_Click(object sender, RoutedEventArgs e)
@@ -62,6 +63,8 @@ namespace ModernKeePass.Views.UserControls
 
             var token = StorageApplicationPermissions.FutureAccessList.Add(file);
             Model.KeyFilePath = token;
+            Model.KeyFileText = file.DisplayName;
+            await Model.GenerateKeyFile();
         }
     }
 }

@@ -52,6 +52,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsDatabaseVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsNewVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsSaveVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\SettingsSecurityVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\NewVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\OpenVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RecentVm.cs" />

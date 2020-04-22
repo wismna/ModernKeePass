@@ -5,24 +5,19 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
     mc:Ignorable="d">
+    <Page.Resources>
+        <listItems:SettingsSecurityVm x:Key="ViewModel"/>
+    </Page.Resources>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
         <TextBlock x:Uid="SettingsSecurityTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,0" />
         <TextBlock TextWrapping="WrapWholeWords" Margin="5,0,0,0">
             <Run x:Uid="SettingsSecurityDesc1" />
             <Run x:Uid="SettingsSecurityDesc2" FontWeight="SemiBold" />
             <Run x:Uid="SettingsSecurityDesc3" />
         </TextBlock>
-        <userControls:CompositeKeyUserControl Margin="0,20,0,0" UpdateKey="True" x:Uid="SettingsSecurityUpdateButton">
-            <interactivity:Interaction.Behaviors>
-                <core:EventTriggerBehavior EventName="ValidationChecked">
-                    <actions:ToastAction x:Uid="ToastUpdateDatabase" />
-                </core:EventTriggerBehavior>
-            </interactivity:Interaction.Behaviors>
-        </userControls:CompositeKeyUserControl>
+        <userControls:SetCredentialsUserControl Margin="0,20,0,0" x:Uid="SettingsSecurityUpdateButton"/>
     </StackPanel>
 </Page>

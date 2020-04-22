@@ -27,7 +27,7 @@ namespace ModernKeePass.Application.Database.Commands.UpdateCredentials
                 if (!_database.IsOpen) throw new DatabaseClosedException();
                 _database.UpdateCredentials(new Credentials
                 {
-                    KeyFileContents = await _file.OpenBinaryFile(message.KeyFilePath),
+                    KeyFileContents = !string.IsNullOrEmpty(message.KeyFilePath) ? await _file.OpenBinaryFile(message.KeyFilePath) : null,
                     Password = message.Password
                 });
             }

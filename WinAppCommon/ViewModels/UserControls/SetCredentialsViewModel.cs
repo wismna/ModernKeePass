@@ -1,14 +1,18 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using MediatR;
 using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
 
 namespace ModernKeePass.ViewModels
 {
     public class SetCredentialsViewModel : ObservableObject
     {
+        private readonly IMediator _mediator;
         private readonly ICredentialsProxy _credentials;
         private readonly IMessenger _messenger;
         
@@ -87,7 +91,7 @@ namespace ModernKeePass.ViewModels
 
         public double PasswordComplexityIndicator => _credentials.EstimatePasswordComplexity(Password);
 
-        public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && KeyFilePath != string.Empty;
+        public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath);
 
         public RelayCommand GenerateCredentialsCommand{ get; }
 
@@ -100,13 +104,25 @@ namespace ModernKeePass.ViewModels
         private string _keyFileText;
         private string _openButtonLabel;
 
-        public SetCredentialsViewModel(): this(App.Services.GetRequiredService<ICredentialsProxy>(), App.Services.GetRequiredService<IMessenger>()) { }
+        public SetCredentialsViewModel(): this(
+            App.Services.GetRequiredService<IMediator>(), 
+            App.Services.GetRequiredService<ICredentialsProxy>(), 
+            App.Services.GetRequiredService<IMessenger>(), 
+            App.Services.GetRequiredService<IResourceProxy>()) { }
 
-        public SetCredentialsViewModel(ICredentialsProxy credentials, IMessenger messenger)
+        public SetCredentialsViewModel(IMediator mediator, ICredentialsProxy credentials, IMessenger messenger, IResourceProxy resource)
         {
+            _mediator = mediator;
             _credentials = credentials;
             _messenger = messenger;
             GenerateCredentialsCommand = new RelayCommand(GenerateCredentials, () => IsValid);
+
+            _keyFileText = resource.GetResourceValue("CompositeKeyDefaultKeyFile");
+        }
+
+        public async Task GenerateKeyFile()
+        {
+            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = KeyFilePath});
         }
 
         private void GenerateCredentials()

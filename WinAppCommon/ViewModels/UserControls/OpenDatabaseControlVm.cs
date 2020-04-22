@@ -49,7 +49,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && KeyFilePath != null);
+        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath));
 
         public string Status
         {
@@ -112,7 +112,6 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         private string _openButtonLabel;
-
 
         public OpenDatabaseControlVm() : this(
             App.Services.GetRequiredService<IMediator>(),
