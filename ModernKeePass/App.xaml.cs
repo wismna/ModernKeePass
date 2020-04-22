@@ -10,10 +10,8 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
-using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
 using ModernKeePass.Application;
@@ -41,8 +39,8 @@ namespace ModernKeePass
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
-        private readonly IMessenger _messenger;
         private readonly IHockeyClient _hockey;
+        private readonly IDialogService _dialog;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -65,47 +63,15 @@ namespace ModernKeePass
             _resource = Services.GetService<IResourceProxy>();
             _settings = Services.GetService<ISettingsProxy>();
             _navigation = Services.GetService<INavigationService>();
-            _messenger = Services.GetService<IMessenger>();
+            _dialog = Services.GetService<IDialogService>();
             _hockey = Services.GetService<IHockeyClient>();
 
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
-            
-            ReceiveGlobalMessage();
-        }
-
-        #region Messages
-        private void ReceiveGlobalMessage()
-        {
-            _messenger.Register<DatabaseAlreadyOpenedMessage>(this, async action => await ShowDatabaseOpenedDialog(action));
         }
         
-        private async Task ShowDatabaseOpenedDialog(DatabaseAlreadyOpenedMessage message)
-        {
-            await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
-                string.Format(_resource.GetResourceValue("MessageDialogDBOpenDesc"), message.OpenedDatabase.Name),
-                _resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
-                _resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
-                async command =>
-                {
-                    await _mediator.Send(new SaveDatabaseCommand());
-                    ToastNotificationHelper.ShowGenericToast(
-                        message.OpenedDatabase.Name,
-                        _resource.GetResourceValue("ToastSavedMessage"));
-                    await _mediator.Send(new CloseDatabaseCommand());
-                    _messenger.Send(new DatabaseClosedMessage());
-                },
-                async command =>
-                {
-                    await _mediator.Send(new CloseDatabaseCommand());
-                    _messenger.Send(new DatabaseClosedMessage());
-                });
-        }
-        
-        #endregion
-
         #region Event Handlers
 
         private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
@@ -123,28 +89,32 @@ namespace ModernKeePass
                 var innerException = realException.InnerException;
                 unhandledExceptionEventArgs.Handled = true;
                 _hockey.TrackException(innerException);
-                await MessageDialogHelper.ShowActionDialog(_resource.GetResourceValue("MessageDialogSaveErrorTitle"),
-                    innerException?.Message,
+                await _dialog.ShowMessage(innerException?.Message,
+                    _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
-                    async command =>
+                    async isOk =>
                     {
-                        var database = await _mediator.Send(new GetDatabaseQuery());
-                        var savePicker = new FileSavePicker
+                        if (isOk)
                         {
-                            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-                            SuggestedFileName = $"{database.Name} - copy"
-                        };
-                        savePicker.FileTypeChoices.Add(_resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
-                            new List<string> {".kdbx"});
+                            var database = await _mediator.Send(new GetDatabaseQuery());
+                            var savePicker = new FileSavePicker
+                            {
+                                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                                SuggestedFileName = $"{database.Name} - copy"
+                            };
+                            savePicker.FileTypeChoices.Add(
+                                _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
+                                new List<string> {".kdbx"});
 
-                        var file = await savePicker.PickSaveFileAsync().AsTask();
-                        if (file != null)
-                        {
-                            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-                            await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
+                            var file = await savePicker.PickSaveFileAsync().AsTask();
+                            if (file != null)
+                            {
+                                var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                                await _mediator.Send(new SaveDatabaseCommand {FilePath = token});
+                            }
                         }
-                    }, null);
+                    });
             }
         }
 
@@ -183,7 +153,7 @@ namespace ModernKeePass
                     // Load state from previously terminated application
                     await SuspensionManager.RestoreAsync();
 #if DEBUG
-                    await MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
+                    await _dialog.ShowMessage("Windows or an error made the app terminate", "App terminated");
 #endif
                 }
 

@@ -5,10 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -29,6 +29,7 @@ using ModernKeePass.Interfaces;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.AOP;
 using ModernKeePass.Extensions;
+using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
@@ -227,6 +228,8 @@ namespace ModernKeePass.ViewModels
 
         private readonly IMediator _mediator;
         private readonly INavigationService _navigation;
+        private readonly IResourceProxy _resource;
+        private readonly IDialogService _dialog;
         private readonly GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
@@ -237,12 +240,18 @@ namespace ModernKeePass.ViewModels
 
         public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId) : this(entryId, App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<INavigationService>()) { }
+        internal EntryDetailVm(string entryId) : this(entryId, 
+            App.Services.GetRequiredService<IMediator>(), 
+            App.Services.GetRequiredService<INavigationService>(), 
+            App.Services.GetRequiredService<IResourceProxy>(), 
+            App.Services.GetRequiredService<IDialogService>()) { }
 
-        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation)
+        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog)
         {
             _mediator = mediator;
             _navigation = navigation;
+            _resource = resource;
+            _dialog = dialog;
             SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
             History = new ObservableCollection<EntryVm> { SelectedItem };
@@ -262,7 +271,50 @@ namespace ModernKeePass.ViewModels
 
         private async Task AskForDelete()
         {
-            throw new NotImplementedException();
+            if (IsCurrentEntry)
+            {
+                var isRecycleOnDelete = IsRecycleOnDelete;
+
+                var message = isRecycleOnDelete
+                    ? _resource.GetResourceValue("EntryRecyclingConfirmation")
+                    : _resource.GetResourceValue("EntryDeletingConfirmation");
+                await _dialog.ShowMessage(message, 
+                    _resource.GetResourceValue("EntityDeleteTitle"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"), 
+                    async isOk =>
+                    {
+                        if (isOk)
+                        {
+                            var text = isRecycleOnDelete
+                                ? _resource.GetResourceValue("EntryRecycled")
+                                : _resource.GetResourceValue("EntryDeleted");
+                            //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
+                            await _mediator.Send(new DeleteEntryCommand
+                            {
+                                EntryId = Id, ParentGroupId = SelectedItem.ParentGroupId,
+                                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+                            });
+                            _navigation.GoBack();
+                        }
+                    });
+            }
+            else
+            {
+                await _dialog.ShowMessage(_resource.GetResourceValue("HistoryDeleteDescription"), _resource.GetResourceValue("HistoryDeleteTitle"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"), async isOk =>
+                    {
+                        if (isOk)
+                        {
+                            //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
+                            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+                            History.RemoveAt(SelectedIndex);
+                            SelectedIndex = 0;
+                            SaveCommand.RaiseCanExecuteChanged();
+                        }
+                    });
+            }
         }
 
         public async Task GeneratePassword()
@@ -281,11 +333,6 @@ namespace ModernKeePass.ViewModels
                 UpperCasePatternSelected = UpperCasePatternSelected
             });
             OnPropertyChanged(nameof(IsRevealPasswordEnabled));
-        }
-
-        public async Task MarkForDelete(string recycleBinTitle)
-        {
-            await _mediator.Send(new DeleteEntryCommand {EntryId = Id, ParentGroupId = SelectedItem.ParentGroupId, RecycleBinName = recycleBinTitle});
         }
         
         public async Task Move(GroupVm destination)
@@ -308,20 +355,12 @@ namespace ModernKeePass.ViewModels
         
         private async Task RestoreHistory()
         {
-            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
+            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
             History.Insert(0, SelectedItem);
             SelectedIndex = 0;
             SaveCommand.RaiseCanExecuteChanged();
         }
-
-        public async Task DeleteHistory()
-        {
-            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex });
-            History.RemoveAt(SelectedIndex);
-            SelectedIndex = 0;
-            SaveCommand.RaiseCanExecuteChanged();
-        }
-
+        
         private async Task SaveChanges()
         {
             await AddHistory();

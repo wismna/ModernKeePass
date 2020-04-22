@@ -12,7 +12,7 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class SettingsPage
     {
-        private new SettingsVm Model => (SettingsVm)Resources["ViewModel"];
+        public new SettingsVm Model => (SettingsVm)DataContext;
 
         public SettingsPage()
         {

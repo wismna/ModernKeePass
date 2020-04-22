@@ -13,7 +13,7 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class MainPage
     {
-        private new MainVm Model => (MainVm)Resources["ViewModel"];
+        public new MainVm Model => (MainVm)DataContext;
 
         public MainPage()
         {

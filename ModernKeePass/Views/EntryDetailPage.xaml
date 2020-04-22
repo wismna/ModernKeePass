@@ -10,7 +10,6 @@
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
-    x:Name="PageRoot"
     x:Class="ModernKeePass.Views.EntryDetailPage"
     mc:Ignorable="d"
     SizeChanged="EntryDetailPage_OnSizeChanged">
@@ -538,7 +537,7 @@
                 SaveCommand="{Binding SaveCommand}"
                 MoveCommand="{Binding MoveCommand}"
                 RestoreCommand="{Binding RestoreCommand}"
-                DeleteButtonClick="TopMenu_OnDeleteButtonClick">
+                DeleteCommand="{Binding DeleteCommand}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />

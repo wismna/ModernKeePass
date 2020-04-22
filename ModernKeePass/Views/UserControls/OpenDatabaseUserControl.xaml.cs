@@ -4,9 +4,6 @@ using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
-using GalaSoft.MvvmLight.Messaging;
-using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.ViewModels;
 
 // Pour en savoir plus sur le modèle d'élément Contrôle utilisateur, consultez la page http://go.microsoft.com/fwlink/?LinkId=234236
@@ -29,13 +26,9 @@ namespace ModernKeePass.Views.UserControls
                 typeof(OpenDatabaseUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
         
-        public OpenDatabaseUserControl() : this(App.Services.GetRequiredService<IMessenger>()) { }
-
-        public OpenDatabaseUserControl(IMessenger messenger)
+        public OpenDatabaseUserControl()
         {
             InitializeComponent();
-            
-            messenger.Register<DatabaseClosedMessage>(this, async action => await Model.OpenDatabase(DatabaseFilePath));
         }
 
         private async void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)

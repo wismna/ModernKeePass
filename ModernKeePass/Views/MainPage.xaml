@@ -10,17 +10,20 @@
     x:Name="PageRoot"
     mc:Ignorable="d">
     <Page.Resources>
-        <viewModels:MainVm x:Key="ViewModel"/>
+        <CollectionViewSource 
+            x:Name="MenuItemsSource" 
+            Source="{Binding MainMenuItems}" 
+            IsSourceGrouped="True" />
     </Page.Resources>
 
     <Page.Background>
         <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
     </Page.Background>
+    <Page.DataContext>
+        <viewModels:MainVm />
+    </Page.DataContext>
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
-        <Grid.Resources>
-            <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MainMenuItems}" IsSourceGrouped="True" />
-        </Grid.Resources>
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>
                 <EntranceThemeTransition/>

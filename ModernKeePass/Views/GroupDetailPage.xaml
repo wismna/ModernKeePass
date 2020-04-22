@@ -250,7 +250,7 @@
                 MoveCommand="{Binding MoveCommand}"
                 SortEntriesCommand="{Binding SortEntriesCommand}"
                 SortGroupsCommand="{Binding SortGroupsCommand}"
-                DeleteButtonClick="TopMenu_OnDeleteButtonClick">
+                DeleteCommand="{Binding DeleteCommand}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="EditButtonClick">
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />

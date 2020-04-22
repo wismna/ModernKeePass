@@ -3,12 +3,16 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Database.Commands.CloseDatabase;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
+using ModernKeePass.Common;
 using ModernKeePass.Domain.AOP;
 
 namespace ModernKeePass.ViewModels
@@ -98,6 +102,7 @@ namespace ModernKeePass.ViewModels
         protected readonly IMediator Mediator;
         private readonly IResourceProxy _resource;
         private readonly IMessenger _messenger;
+        private readonly IDialogService _dialog;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -112,14 +117,16 @@ namespace ModernKeePass.ViewModels
         public OpenDatabaseControlVm() : this(
             App.Services.GetRequiredService<IMediator>(),
             App.Services.GetRequiredService<IResourceProxy>(),
-            App.Services.GetRequiredService<IMessenger>())
+            App.Services.GetRequiredService<IMessenger>(),
+            App.Services.GetRequiredService<IDialogService>())
         { }
 
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger, IDialogService dialog)
         {
             Mediator = mediator;
             _resource = resource;
             _messenger = messenger;
+            _dialog = dialog;
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
             _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
@@ -132,7 +139,27 @@ namespace ModernKeePass.ViewModels
             var database = await Mediator.Send(new GetDatabaseQuery());
             if (database.IsOpen)
             {
-                _messenger.Send(new DatabaseAlreadyOpenedMessage { OpenedDatabase = database });
+                await _dialog.ShowMessage(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
+                    string.Format(_resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
+                    _resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
+                    _resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
+                    async isOk =>
+                    {
+                        if (isOk)
+                        {
+                            await Mediator.Send(new SaveDatabaseCommand());
+                            ToastNotificationHelper.ShowGenericToast(
+                                database.Name,
+                                _resource.GetResourceValue("ToastSavedMessage"));
+                            await Mediator.Send(new CloseDatabaseCommand());
+                            await OpenDatabase(databaseFilePath);
+                        }
+                        else
+                        {
+                            await Mediator.Send(new CloseDatabaseCommand());
+                            await OpenDatabase(databaseFilePath);
+                        }
+                    });
             }
             else await OpenDatabase(databaseFilePath);
         }

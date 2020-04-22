@@ -154,10 +154,19 @@ namespace ModernKeePass.ViewModels
                 _resource.GetResourceValue("EntityDeleteCancelButton"),
                 async isOk =>
                 {
-                    var text = IsRecycleOnDelete ? _resource.GetResourceValue("GroupRecycled") : _resource.GetResourceValue("GroupDeleted");
-                    //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
-                    await MarkForDelete(_resource.GetResourceValue("RecycleBinTitle"));
-                    _navigation.GoBack();
+                    if (isOk)
+                    {
+                        var text = IsRecycleOnDelete
+                            ? _resource.GetResourceValue("GroupRecycled")
+                            : _resource.GetResourceValue("GroupDeleted");
+                        //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
+                        await _mediator.Send(new DeleteGroupCommand
+                        {
+                            GroupId = _group.Id, ParentGroupId = _group.ParentGroupId,
+                            RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+                        });
+                        _navigation.GoBack();
+                    }
                 });
         }
 
@@ -180,11 +189,6 @@ namespace ModernKeePass.ViewModels
                 Id = entry.Id,
                 IsNew = true
             });
-        }
-
-        public async Task MarkForDelete(string recycleBinTitle)
-        {
-            await _mediator.Send(new DeleteGroupCommand { GroupId = _group.Id, ParentGroupId = _group.ParentGroupId, RecycleBinName = recycleBinTitle });
         }
         
         public async Task Move(GroupVm destination)
