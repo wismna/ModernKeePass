@@ -351,7 +351,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         private CompositeKey CreateCompositeKey(Credentials credentials)
         {
             var compositeKey = new CompositeKey();
-            if (!string.IsNullOrEmpty(credentials.Password)) compositeKey.AddUserKey(new KcpPassword(credentials.Password));
+            if (credentials.Password != null) compositeKey.AddUserKey(new KcpPassword(credentials.Password));
             if (credentials.KeyFileContents != null)
             {
                 compositeKey.AddUserKey(new KcpKeyFile(IOConnectionInfo.FromByteArray(credentials.KeyFileContents)));

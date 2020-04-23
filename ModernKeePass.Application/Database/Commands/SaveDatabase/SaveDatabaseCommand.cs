@@ -34,8 +34,7 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 
                         // Test DB integrity before writing changes to file
                         _database.CloseDatabase();
-                        var file = await _file.OpenBinaryFile(_database.FileAccessToken);
-                        await _database.ReOpen(file);
+                        await _database.ReOpen(contents);
 
                         await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
                     }

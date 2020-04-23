@@ -11,7 +11,7 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class SetCredentialsUserControl
     {
-        private SetCredentialsVm Model => (SetCredentialsVm)Resources["ViewModel"];
+        private SetCredentialsVm Model => (SetCredentialsVm)Grid.DataContext;
 
         public string ButtonLabel
         {
@@ -44,7 +44,7 @@ namespace ModernKeePass.Views.UserControls
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             Model.KeyFilePath = token;
             Model.KeyFileText = file.DisplayName;
         }
@@ -61,7 +61,7 @@ namespace ModernKeePass.Views.UserControls
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             Model.KeyFilePath = token;
             Model.KeyFileText = file.DisplayName;
             await Model.GenerateKeyFile();

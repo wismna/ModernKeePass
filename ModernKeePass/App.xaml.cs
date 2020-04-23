@@ -88,10 +88,9 @@ namespace ModernKeePass
             
             if (realException is SaveException)
             {
-                var innerException = realException.InnerException;
                 unhandledExceptionEventArgs.Handled = true;
-                _hockey.TrackException(innerException);
-                await _dialog.ShowMessage(innerException?.Message,
+                _hockey.TrackException(realException);
+                await _dialog.ShowMessage(realException.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
@@ -112,7 +111,7 @@ namespace ModernKeePass
                             var file = await savePicker.PickSaveFileAsync().AsTask();
                             if (file != null)
                             {
-                                var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                                var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
                                 await _mediator.Send(new SaveDatabaseCommand {FilePath = token});
                             }
                         }
@@ -252,7 +251,7 @@ namespace ModernKeePass
 
             if (file != null)
             {
-                var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+                var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
                 var fileInfo = new FileInfo
                 {
                     Id = token,

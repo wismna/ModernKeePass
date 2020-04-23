@@ -12,7 +12,7 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class OpenDatabaseUserControl
     {
-        private OpenDatabaseControlVm Model => (OpenDatabaseControlVm)Resources["ViewModel"];
+        private OpenDatabaseControlVm Model => (OpenDatabaseControlVm)Grid.DataContext;
 
         public string DatabaseFilePath
         {
@@ -52,7 +52,7 @@ namespace ModernKeePass.Views.UserControls
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             Model.KeyFilePath = token;
             Model.KeyFileText = file.DisplayName;
         }

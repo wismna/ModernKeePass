@@ -8,6 +8,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 {
     public interface IDatabaseProxy
     {
+        // PW Database properties
         bool IsOpen { get; }
         string Name { get; }
         string RootGroupId { get; }
@@ -16,6 +17,8 @@ namespace ModernKeePass.Application.Common.Interfaces
         string KeyDerivationId { get; set; }
         string Compression { get; set; }
         bool IsRecycleBinEnabled { get; set; }
+
+        // Custom properties
         string FileAccessToken { get; set; }
         int Size { get; set; }
         bool IsDirty { get; set; }

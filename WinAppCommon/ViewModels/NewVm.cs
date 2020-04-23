@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Windows.Storage;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.CreateDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -37,23 +35,28 @@ namespace ModernKeePass.ViewModels
                 RaisePropertyChanged(nameof(ImportFormatHelp));
             }
         }
-
-        public NewVm(): this(
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<ISettingsProxy>(), 
-            App.Services.GetRequiredService<IMessenger>(), 
-            App.Services.GetRequiredService<INavigationService>()) { }
-
-        public NewVm(IMediator mediator, ISettingsProxy settings, IMessenger messenger, INavigationService navigation)
+        
+        public NewVm(IMediator mediator, IRecentProxy recent, ISettingsProxy settings, INavigationService navigation) : base(recent)
         {
             _mediator = mediator;
             _settings = settings;
             _navigation = navigation;
 
-            messenger.Register<CredentialsSetMessage>(this, async message => await CreateDatabase(message));
+            MessengerInstance.Register<CredentialsSetMessage>(this, async m => await TryCreateDatabase(m));
         }
 
-        public async Task CreateDatabase(CredentialsSetMessage message)
+        private async Task TryCreateDatabase(CredentialsSetMessage message)
+        {
+            var database = await _mediator.Send(new GetDatabaseQuery());
+            if (database.IsDirty)
+            {
+                MessengerInstance.Register<DatabaseClosedMessage>(this, async m => await CreateDatabase(m.Parameter as CredentialsSetMessage));
+                MessengerInstance.Send(new DatabaseAlreadyOpenedMessage { Parameter = message });
+            }
+            else await CreateDatabase(message);
+        }
+        
+        private async Task CreateDatabase(CredentialsSetMessage message)
         {
             await _mediator.Send(new CreateDatabaseCommand
             {

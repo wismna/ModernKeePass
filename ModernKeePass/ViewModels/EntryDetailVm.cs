@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,14 +27,12 @@ using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Interfaces;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Extensions;
-using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryDetailVm : ObservableObject, IVmEntity
+    public class EntryDetailVm : ObservableObject
     {
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
@@ -230,6 +229,7 @@ namespace ModernKeePass.ViewModels
         private readonly INavigationService _navigation;
         private readonly IResourceProxy _resource;
         private readonly IDialogService _dialog;
+        private readonly INotificationService _notification;
         private readonly GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
@@ -244,14 +244,16 @@ namespace ModernKeePass.ViewModels
             App.Services.GetRequiredService<IMediator>(), 
             App.Services.GetRequiredService<INavigationService>(), 
             App.Services.GetRequiredService<IResourceProxy>(), 
-            App.Services.GetRequiredService<IDialogService>()) { }
+            App.Services.GetRequiredService<IDialogService>(), 
+            App.Services.GetRequiredService<INotificationService>()) { }
 
-        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog)
+        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _navigation = navigation;
             _resource = resource;
             _dialog = dialog;
+            _notification = notification;
             SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
             _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
             History = new ObservableCollection<EntryVm> { SelectedItem };
@@ -273,31 +275,22 @@ namespace ModernKeePass.ViewModels
         {
             if (IsCurrentEntry)
             {
-                var isRecycleOnDelete = IsRecycleOnDelete;
-
-                var message = isRecycleOnDelete
-                    ? _resource.GetResourceValue("EntryRecyclingConfirmation")
-                    : _resource.GetResourceValue("EntryDeletingConfirmation");
-                await _dialog.ShowMessage(message, 
-                    _resource.GetResourceValue("EntityDeleteTitle"),
-                    _resource.GetResourceValue("EntityDeleteActionButton"),
-                    _resource.GetResourceValue("EntityDeleteCancelButton"), 
-                    async isOk =>
-                    {
-                        if (isOk)
+                if (IsRecycleOnDelete)
+                {
+                    await Delete();
+                    _notification.Show(_resource.GetResourceValue("EntryRecyclingConfirmation"), _resource.GetResourceValue("EntryRecycled"));
+                }
+                else
+                {
+                    await _dialog.ShowMessage(_resource.GetResourceValue("EntryDeletingConfirmation"),
+                        _resource.GetResourceValue("EntityDeleteTitle"),
+                        _resource.GetResourceValue("EntityDeleteActionButton"),
+                        _resource.GetResourceValue("EntityDeleteCancelButton"),
+                        async isOk =>
                         {
-                            var text = isRecycleOnDelete
-                                ? _resource.GetResourceValue("EntryRecycled")
-                                : _resource.GetResourceValue("EntryDeleted");
-                            //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
-                            await _mediator.Send(new DeleteEntryCommand
-                            {
-                                EntryId = Id, ParentGroupId = SelectedItem.ParentGroupId,
-                                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
-                            });
-                            _navigation.GoBack();
-                        }
-                    });
+                            if (isOk) await Delete();
+                        });
+                }
             }
             else
             {
@@ -305,14 +298,11 @@ namespace ModernKeePass.ViewModels
                     _resource.GetResourceValue("EntityDeleteActionButton"),
                     _resource.GetResourceValue("EntityDeleteCancelButton"), async isOk =>
                     {
-                        if (isOk)
-                        {
-                            //ToastNotificationHelper.ShowMovedToast(Entity, _resource.GetResourceValue("EntityDeleting"), text);
-                            await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
-                            History.RemoveAt(SelectedIndex);
-                            SelectedIndex = 0;
-                            SaveCommand.RaiseCanExecuteChanged();
-                        }
+                        if (!isOk) return;
+                        await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+                        History.RemoveAt(SelectedIndex);
+                        SelectedIndex = 0;
+                        SaveCommand.RaiseCanExecuteChanged();
                     });
             }
         }
@@ -367,6 +357,17 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new SaveDatabaseCommand());
             SaveCommand.RaiseCanExecuteChanged();
             _isDirty = false;
+        }
+
+        private async Task Delete()
+        {
+            await _mediator.Send(new DeleteEntryCommand
+            {
+                EntryId = Id,
+                ParentGroupId = SelectedItem.ParentGroupId,
+                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+            });
+            _navigation.GoBack();
         }
     }
 }

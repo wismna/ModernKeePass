@@ -29,7 +29,7 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
 
             public async Task Handle(CreateDatabaseCommand message)
             {
-                if (_database.IsOpen) throw new DatabaseOpenException();
+                if (_database.IsDirty) throw new DatabaseOpenException();
 
                 var version = DatabaseVersion.V2;
                 switch (message.Version)
@@ -48,8 +48,6 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                         Password = message.Password
                     }, message.Name, version);
                 _database.FileAccessToken = message.FilePath;
-                var contents = await _database.SaveDatabase();
-                await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
 
                 if (message.CreateSampleData)
                 {

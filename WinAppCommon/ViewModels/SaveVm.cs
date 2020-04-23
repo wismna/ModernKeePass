@@ -3,7 +3,6 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -21,9 +20,7 @@ namespace ModernKeePass.ViewModels
 
         private readonly IMediator _mediator;
         private readonly INavigationService _navigation;
-
-        public SaveVm() : this(App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<INavigationService>()) { }
-
+        
         public SaveVm(IMediator mediator, INavigationService navigation)
         {
             _mediator = mediator;
@@ -41,7 +38,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task Save(StorageFile file)
         {
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
             _navigation.NavigateTo(Constants.Navigation.MainPage);
         }

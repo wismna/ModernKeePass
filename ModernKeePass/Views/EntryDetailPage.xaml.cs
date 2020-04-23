@@ -22,15 +22,6 @@ namespace ModernKeePass.Views
         
         #region Inscription de NavigationHelper
 
-        /// Les méthodes fournies dans cette section sont utilisées simplement pour permettre
-        /// NavigationHelper pour répondre aux méthodes de navigation de la page.
-        /// 
-        /// La logique spécifique à la page doit être placée dans les gestionnaires d'événements pour  
-        /// <see cref="Common.NavigationHelper.LoadState"/>
-        /// et <see cref="Common.NavigationHelper.SaveState"/>.
-        /// Le paramètre de navigation est disponible dans la méthode LoadState 
-        /// en plus de l'état de page conservé durant une session antérieure.
-
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             var args = e.Parameter as NavigationItem;

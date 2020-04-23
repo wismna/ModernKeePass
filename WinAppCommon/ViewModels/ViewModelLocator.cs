@@ -69,17 +69,17 @@ namespace ModernKeePass.ViewModels
             SimpleIoc.Default.Register<SaveVm>();
         }
         
-        public MainVm Main => ServiceLocator.Current.GetInstance<MainVm>();
-        public SettingsVm Settings => ServiceLocator.Current.GetInstance<SettingsVm>();
-        public SettingsDatabaseVm SettingsDatabase => ServiceLocator.Current.GetInstance<SettingsDatabaseVm>();
-        public SettingsNewVm SettingsNew => ServiceLocator.Current.GetInstance<SettingsNewVm>();
-        public SettingsSaveVm SettingsSave => ServiceLocator.Current.GetInstance<SettingsSaveVm>();
-        public SettingsSecurityVm SettingsSecurity => ServiceLocator.Current.GetInstance<SettingsSecurityVm>();
+        public MainVm Main => ServiceLocator.Current.GetInstance<MainVm>(Guid.NewGuid().ToString());
+        public SettingsVm Settings => ServiceLocator.Current.GetInstance<SettingsVm>(Guid.NewGuid().ToString());
+        public SettingsDatabaseVm SettingsDatabase => ServiceLocator.Current.GetInstance<SettingsDatabaseVm>(Guid.NewGuid().ToString());
+        public SettingsNewVm SettingsNew => ServiceLocator.Current.GetInstance<SettingsNewVm>(Guid.NewGuid().ToString());
+        public SettingsSaveVm SettingsSave => ServiceLocator.Current.GetInstance<SettingsSaveVm>(Guid.NewGuid().ToString());
+        public SettingsSecurityVm SettingsSecurity => ServiceLocator.Current.GetInstance<SettingsSecurityVm>(Guid.NewGuid().ToString());
         public OpenDatabaseControlVm OpenDatabaseControl => ServiceLocator.Current.GetInstance<OpenDatabaseControlVm>(Guid.NewGuid().ToString());
         public SetCredentialsVm SetCredentials => ServiceLocator.Current.GetInstance<SetCredentialsVm>(Guid.NewGuid().ToString());
         public NewVm New => ServiceLocator.Current.GetInstance<NewVm>();
         public OpenVm Open => ServiceLocator.Current.GetInstance<OpenVm>();
-        public RecentVm Recent => ServiceLocator.Current.GetInstance<RecentVm>();
+        public RecentVm Recent => ServiceLocator.Current.GetInstance<RecentVm>(Guid.NewGuid().ToString());
         public SaveVm Save => ServiceLocator.Current.GetInstance<SaveVm>();
 
         public static void Cleanup()

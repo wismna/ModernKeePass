@@ -21,7 +21,7 @@ namespace ModernKeePass.Infrastructure.UWP
             {
                 var file = await _mru.GetFileAsync(token,
                     updateAccessTime ? AccessCacheOptions.None : AccessCacheOptions.SuppressAccessTimeUpdate).AsTask().ConfigureAwait(false);
-                _fal.AddOrReplace(token, file);
+                _fal.AddOrReplace(token, file, file.Name);
                 return new FileInfo
                 {
                     Id = token,

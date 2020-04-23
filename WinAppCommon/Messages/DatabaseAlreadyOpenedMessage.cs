@@ -4,6 +4,6 @@ namespace Messages
 {
     public class DatabaseAlreadyOpenedMessage
     {
-        public DatabaseVm OpenedDatabase { get; set; }
+        public object Parameter { get; set; }
     }
 }

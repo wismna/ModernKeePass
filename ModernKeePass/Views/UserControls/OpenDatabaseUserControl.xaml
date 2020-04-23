@@ -7,14 +7,12 @@
      xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
      xmlns:core="using:Microsoft.Xaml.Interactions.Core"
      xmlns:converters="using:ModernKeePass.Converters"
-     xmlns:viewModels="using:ModernKeePass.ViewModels"
      mc:Ignorable="d" >
     <UserControl.Resources>
         <converters:DiscreteIntToSolidColorBrushConverter x:Key="DiscreteIntToSolidColorBrushConverter"/>
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
-        <viewModels:OpenDatabaseControlVm x:Key="ViewModel"/>
     </UserControl.Resources>
-    <Grid DataContext="{StaticResource ViewModel}">
+    <Grid x:Name="Grid" DataContext="{Binding Source={StaticResource Locator}, Path=OpenDatabaseControl}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="*" />

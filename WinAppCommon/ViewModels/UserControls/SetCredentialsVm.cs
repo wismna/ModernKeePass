@@ -1,20 +1,17 @@
 ﻿using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 using MediatR;
 using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
 
 namespace ModernKeePass.ViewModels
 {
-    public class SetCredentialsVm : ObservableObject
+    public class SetCredentialsVm : ViewModelBase
     {
         private readonly IMediator _mediator;
         private readonly ICredentialsProxy _credentials;
-        private readonly IMessenger _messenger;
         
         public bool HasPassword
         {
@@ -103,18 +100,11 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         private string _openButtonLabel;
-
-        public SetCredentialsVm(): this(
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<ICredentialsProxy>(), 
-            App.Services.GetRequiredService<IMessenger>(), 
-            App.Services.GetRequiredService<IResourceProxy>()) { }
-
-        public SetCredentialsVm(IMediator mediator, ICredentialsProxy credentials, IMessenger messenger, IResourceProxy resource)
+        
+        public SetCredentialsVm(IMediator mediator, ICredentialsProxy credentials, IResourceProxy resource)
         {
             _mediator = mediator;
             _credentials = credentials;
-            _messenger = messenger;
             GenerateCredentialsCommand = new RelayCommand(GenerateCredentials, () => IsValid);
 
             _keyFileText = resource.GetResourceValue("CompositeKeyDefaultKeyFile");
@@ -127,7 +117,7 @@ namespace ModernKeePass.ViewModels
 
         private void GenerateCredentials()
         {
-            _messenger.Send(new CredentialsSetMessage
+            MessengerInstance.Send(new CredentialsSetMessage
             {
                 Password = HasPassword ? Password : null,
                 KeyFilePath = HasKeyFile ? KeyFilePath : null

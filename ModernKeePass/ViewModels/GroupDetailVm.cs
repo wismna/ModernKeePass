@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,13 +30,11 @@ using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Group.Queries.SearchEntries;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Interfaces;
 using ModernKeePass.Models;
-using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupDetailVm : ObservableObject, IVmEntity
+    public class GroupDetailVm : ObservableObject
     {
         public ObservableCollection<EntryVm> Entries { get; }
 
@@ -102,6 +101,7 @@ namespace ModernKeePass.ViewModels
         private readonly IResourceProxy _resource;
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialog;
+        private readonly INotificationService _notification;
         private readonly GroupVm _group;
         private readonly GroupVm _parent;
         private bool _isEditMode;
@@ -113,15 +113,17 @@ namespace ModernKeePass.ViewModels
             App.Services.GetRequiredService<IMediator>(), 
             App.Services.GetRequiredService<IResourceProxy>(), 
             App.Services.GetRequiredService<INavigationService>(), 
-            App.Services.GetRequiredService<IDialogService>())
+            App.Services.GetRequiredService<IDialogService>(), 
+            App.Services.GetRequiredService<INotificationService>())
         { }
 
-        public GroupDetailVm(string groupId, IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog)
+        public GroupDetailVm(string groupId, IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
             _navigation = navigation;
             _dialog = dialog;
+            _notification = notification;
             _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
@@ -145,29 +147,21 @@ namespace ModernKeePass.ViewModels
 
         private async Task AskForDelete()
         {
-            var message = IsRecycleOnDelete
-                ? _resource.GetResourceValue("GroupRecyclingConfirmation")
-                : _resource.GetResourceValue("GroupDeletingConfirmation");
-
-            await _dialog.ShowMessage(message, _resource.GetResourceValue("EntityDeleteTitle"),
+            if (IsRecycleOnDelete)
+            {
+                await Delete();
+                _notification.Show(_resource.GetResourceValue("GroupRecyclingConfirmation"), _resource.GetResourceValue("GroupRecycled"));
+            }
+            else
+            {
+                await _dialog.ShowMessage(_resource.GetResourceValue("GroupDeletingConfirmation"), _resource.GetResourceValue("EntityDeleteTitle"),
                 _resource.GetResourceValue("EntityDeleteActionButton"),
                 _resource.GetResourceValue("EntityDeleteCancelButton"),
                 async isOk =>
                 {
-                    if (isOk)
-                    {
-                        var text = IsRecycleOnDelete
-                            ? _resource.GetResourceValue("GroupRecycled")
-                            : _resource.GetResourceValue("GroupDeleted");
-                        //ToastNotificationHelper.ShowMovedToast(Entity, resource.GetResourceValue("EntityDeleting"), text);
-                        await _mediator.Send(new DeleteGroupCommand
-                        {
-                            GroupId = _group.Id, ParentGroupId = _group.ParentGroupId,
-                            RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
-                        });
-                        _navigation.GoBack();
-                    }
+                    if (isOk) await Delete();
                 });
+            }
         }
 
 
@@ -243,6 +237,17 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new SortGroupsCommand {Group = _group});
             RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
+        }
+
+        private async Task Delete()
+        {
+            await _mediator.Send(new DeleteGroupCommand
+            {
+                GroupId = _group.Id,
+                ParentGroupId = _group.ParentGroupId,
+                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+            });
+            _navigation.GoBack();
         }
     }
 }

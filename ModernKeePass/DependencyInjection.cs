@@ -25,7 +25,6 @@ namespace ModernKeePass
                 nav.Configure(Constants.Navigation.GroupPage, typeof(GroupDetailPage));
                 return nav;
             });
-            services.AddSingleton(provider => Messenger.Default);
             services.AddTransient(typeof(IDialogService), typeof(DialogService));
 
             services.AddSingleton(provider =>

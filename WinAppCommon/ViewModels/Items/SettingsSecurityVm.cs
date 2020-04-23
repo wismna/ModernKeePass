@@ -1,34 +1,26 @@
 ﻿using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
+using GalaSoft.MvvmLight;
 using MediatR;
 using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.UpdateCredentials;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class SettingsSecurityVm
+    public class SettingsSecurityVm: ViewModelBase
     {
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
         private readonly INotificationService _notification;
-
-        public SettingsSecurityVm(): this(
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<IMessenger>(),
-            App.Services.GetRequiredService<IResourceProxy>(), 
-            App.Services.GetRequiredService<INotificationService>()) { }
-
-        public SettingsSecurityVm(IMediator mediator, IMessenger messenger, IResourceProxy resource, INotificationService notification)
+        
+        public SettingsSecurityVm(IMediator mediator, IResourceProxy resource, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
             _notification = notification;
 
-            messenger.Register<CredentialsSetMessage>(this, async message => await UpdateDatabaseCredentials(message));
+            MessengerInstance.Register<CredentialsSetMessage>(this, async message => await UpdateDatabaseCredentials(message));
         }
 
         public async Task UpdateDatabaseCredentials(CredentialsSetMessage message)

@@ -3,12 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:ModernKeePass.ViewModels"
     x:Class="ModernKeePass.Views.SaveDatabasePage"
-    mc:Ignorable="d">
-    <Page.DataContext>
-        <viewModels:SaveVm/>
-    </Page.DataContext>
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=Save}">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <HyperlinkButton x:Uid="SaveButton" Command="{Binding SaveCommand}" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />

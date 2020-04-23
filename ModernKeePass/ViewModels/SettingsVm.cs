@@ -43,9 +43,7 @@ namespace ModernKeePass.ViewModels
                 }
             }
         }
-
-        public SettingsVm() : this(App.Services.GetRequiredService<IMediator>(), App.Services.GetRequiredService<IResourceProxy>()) { }
-
+        
         public SettingsVm(IMediator mediator, IResourceProxy resource)
         {
             var database = mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();

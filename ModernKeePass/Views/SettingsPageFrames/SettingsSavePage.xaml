@@ -4,13 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:listItems="using:ModernKeePass.ViewModels.ListItems"
-    mc:Ignorable="d">
-    <Page.Resources>
-        <listItems:SettingsSaveVm x:Name="ViewModel"/>
-    </Page.Resources>
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=SettingsSave}">
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <TextBlock x:Uid="SettingsSaveDatabaseSuspendDesc" TextWrapping="WrapWholeWords" Margin="5,0,0,10"/>
         <ToggleSwitch x:Uid="SettingsSaveDatabaseSuspend" IsOn="{Binding IsSaveSuspend, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />

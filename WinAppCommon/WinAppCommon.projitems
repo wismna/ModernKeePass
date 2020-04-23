@@ -15,8 +15,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ToastAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ObservableDictionary.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewWithDisable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
@@ -31,7 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\PluralizationConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ProgressBarLegalValuesConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\TextToWidthConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Events\PasswordEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\CredentialsMessage.cs" />
@@ -57,5 +54,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SaveVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\OpenDatabaseControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\SetCredentialsVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocator.cs" />
   </ItemGroup>
 </Project>

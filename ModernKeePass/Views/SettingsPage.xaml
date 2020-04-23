@@ -4,17 +4,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ModernKeePass.Controls"
-    xmlns:viewModels="using:ModernKeePass.ViewModels" 
     xmlns:basePages="using:ModernKeePass.Views.BasePages"
     x:Name="PageRoot"
     x:Class="ModernKeePass.Views.SettingsPage" 
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
     <Page.Resources>
         <CollectionViewSource x:Name="MenuItemsSource" Source="{Binding MenuItems}" IsSourceGrouped="True" />
     </Page.Resources>
-    <Page.DataContext>
-        <viewModels:SettingsVm />
-    </Page.DataContext>
 
     <Page.Background>
         <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>

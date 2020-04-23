@@ -94,8 +94,6 @@
     </Compile>
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="Models\NavigationItem.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
@@ -124,7 +122,6 @@
     <Compile Include="Views\UserControls\ColorPickerUserControl.xaml.cs">
       <DependentUpon>ColorPickerUserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Interfaces\IVmEntity.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -140,7 +137,6 @@
     <Compile Include="Views\MainPageFrames\WelcomePage.xaml.cs">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\CompositeKeyVm.cs" />
     <Compile Include="Views\EntryDetailPage.xaml.cs">
       <DependentUpon>EntryDetailPage.xaml</DependentUpon>
     </Compile>

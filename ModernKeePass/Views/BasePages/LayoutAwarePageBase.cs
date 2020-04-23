@@ -3,6 +3,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Command;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Interfaces;
 

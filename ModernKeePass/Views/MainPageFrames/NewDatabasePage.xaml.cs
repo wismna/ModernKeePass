@@ -20,7 +20,7 @@ namespace ModernKeePass.Views
     public sealed partial class NewDatabasePage
     {
         private readonly IResourceProxy _resource;
-        private NewVm Model => (NewVm)Resources["ViewModel"];
+        private NewVm Model => (NewVm)DataContext;
 
         public NewDatabasePage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
         public NewDatabasePage(IResourceProxy resource)
@@ -41,7 +41,7 @@ namespace ModernKeePass.Views
             var file = await savePicker.PickSaveFileAsync().AsTask();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             var fileInfo = new FileInfo
             {
                 Id = token,

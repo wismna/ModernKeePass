@@ -3,20 +3,15 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Commands.CloseDatabase;
-using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
 
 namespace ModernKeePass.ViewModels
 {
-    public class OpenDatabaseControlVm : ObservableObject
+    public class OpenDatabaseControlVm : ViewModelBase
     {
         public enum StatusTypes
         {
@@ -100,9 +95,6 @@ namespace ModernKeePass.ViewModels
         
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
-        private readonly IMessenger _messenger;
-        private readonly IDialogService _dialog;
-        private readonly INotificationService _notification;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -112,22 +104,11 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         private string _openButtonLabel;
-
-        public OpenDatabaseControlVm() : this(
-            App.Services.GetRequiredService<IMediator>(),
-            App.Services.GetRequiredService<IResourceProxy>(),
-            App.Services.GetRequiredService<IMessenger>(),
-            App.Services.GetRequiredService<IDialogService>(),
-            App.Services.GetRequiredService<INotificationService>())
-        { }
-
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, IMessenger messenger, IDialogService dialog, INotificationService notification)
+        
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource)
         {
             _mediator = mediator;
             _resource = resource;
-            _messenger = messenger;
-            _dialog = dialog;
-            _notification = notification;
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
             _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
@@ -135,30 +116,13 @@ namespace ModernKeePass.ViewModels
 
         public async Task TryOpenDatabase(string databaseFilePath)
         {
-            _messenger.Send(new DatabaseOpeningMessage {Token = databaseFilePath});
+            MessengerInstance.Send(new DatabaseOpeningMessage {Token = databaseFilePath});
 
             var database = await _mediator.Send(new GetDatabaseQuery());
-            if (database.IsOpen)
+            if (database.IsDirty)
             {
-                await _dialog.ShowMessage(_resource.GetResourceValue("MessageDialogDBOpenTitle"),
-                    string.Format(_resource.GetResourceValue("MessageDialogDBOpenDesc"), database.Name),
-                    _resource.GetResourceValue("MessageDialogDBOpenButtonSave"),
-                    _resource.GetResourceValue("MessageDialogDBOpenButtonDiscard"),
-                    async isOk =>
-                    {
-                        if (isOk)
-                        {
-                            await _mediator.Send(new SaveDatabaseCommand());
-                            _notification.Show(database.Name, _resource.GetResourceValue("ToastSavedMessage"));
-                            await _mediator.Send(new CloseDatabaseCommand());
-                            await OpenDatabase(databaseFilePath);
-                        }
-                        else
-                        {
-                            await _mediator.Send(new CloseDatabaseCommand());
-                            await OpenDatabase(databaseFilePath);
-                        }
-                    });
+                MessengerInstance.Register<DatabaseClosedMessage>(this, async message => await OpenDatabase(message.Parameter as string));
+                MessengerInstance.Send(new DatabaseAlreadyOpenedMessage {Parameter = databaseFilePath});
             }
             else await OpenDatabase(databaseFilePath);
         }
@@ -180,7 +144,7 @@ namespace ModernKeePass.ViewModels
                 });
                 var rootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
 
-                _messenger.Send(new DatabaseOpenedMessage { RootGroupId = rootGroupId });
+                MessengerInstance.Send(new DatabaseOpenedMessage { RootGroupId = rootGroupId });
             }
             catch (ArgumentException)
             {

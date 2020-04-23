@@ -21,7 +21,11 @@ namespace ModernKeePass.Application.Database.Commands.CloseDatabase
                 if (!_database.IsOpen) throw new DatabaseClosedException();
                 _database.CloseDatabase();
                 _file.ReleaseFile(_database.FileAccessToken);
+
+                // Cleanup
                 _database.FileAccessToken = null;
+                _database.IsDirty = false;
+                _database.Size = 0;
             }
         }
     }

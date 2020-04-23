@@ -3,13 +3,7 @@ using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
-using Messages;
-using Microsoft.Extensions.DependencyInjection;
-using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
-using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -21,24 +15,11 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class OpenDatabasePage
     {
-        private readonly INavigationService _navigation;
-        private OpenVm Model => (OpenVm)Resources["ViewModel"];
-
-        public OpenDatabasePage(): this(
-            App.Services.GetRequiredService<INavigationService>(),
-            App.Services.GetRequiredService<IMessenger>()) { }
-
-        public OpenDatabasePage(INavigationService navigation, IMessenger messenger)
+        private OpenVm Model => (OpenVm)DataContext;
+        
+        public OpenDatabasePage()
         {
-            _navigation = navigation;
             InitializeComponent();
-
-            messenger.Register<DatabaseOpenedMessage>(this, NavigateToPage);
-        }
-
-        private void NavigateToPage(DatabaseOpenedMessage message)
-        {
-            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = message.RootGroupId });
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -64,8 +45,7 @@ namespace ModernKeePass.Views
             var file = await picker.PickSingleFileAsync().AsTask();
             if (file == null) return;
 
-
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file);
+            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             var fileInfo = new FileInfo
             {
                 Path = file.Path,

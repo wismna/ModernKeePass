@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
 
@@ -9,10 +8,7 @@ namespace ModernKeePass.ViewModels.ListItems
     public class SettingsNewVm
     {
         private readonly ISettingsProxy _settings;
-
-        public SettingsNewVm() : this(App.Services.GetRequiredService<ISettingsProxy>())
-        { }
-
+        
         public SettingsNewVm(ISettingsProxy settings)
         {
             _settings = settings;

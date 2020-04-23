@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
-    public class OpenVm: ObservableObject
+    public class OpenVm: ViewModelBase
     {
         private readonly IRecentProxy _recent;
         private string _name;
@@ -31,9 +30,7 @@ namespace ModernKeePass.ViewModels
             get { return _path; }
             private set { Set(() => Path, ref _path, value); }
         }
-
-        public OpenVm(): this(App.Services.GetRequiredService<IRecentProxy>()) { }
-
+        
         public OpenVm(IRecentProxy recent)
         {
             _recent = recent;

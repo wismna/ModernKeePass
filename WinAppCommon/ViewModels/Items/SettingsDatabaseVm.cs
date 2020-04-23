@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -76,9 +75,7 @@ namespace ModernKeePass.ViewModels.ListItems
                 if (!IsNewRecycleBin) _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait();
             }
         }
-
-        public SettingsDatabaseVm() : this(App.Services.GetRequiredService<IMediator>()) { }
-
+        
         public SettingsDatabaseVm(IMediator mediator)
         {
             _mediator = mediator;
