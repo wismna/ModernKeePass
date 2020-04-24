@@ -77,10 +77,10 @@ namespace ModernKeePass.ViewModels
         public SettingsSecurityVm SettingsSecurity => ServiceLocator.Current.GetInstance<SettingsSecurityVm>(Guid.NewGuid().ToString());
         public OpenDatabaseControlVm OpenDatabaseControl => ServiceLocator.Current.GetInstance<OpenDatabaseControlVm>(Guid.NewGuid().ToString());
         public SetCredentialsVm SetCredentials => ServiceLocator.Current.GetInstance<SetCredentialsVm>(Guid.NewGuid().ToString());
-        public NewVm New => ServiceLocator.Current.GetInstance<NewVm>();
-        public OpenVm Open => ServiceLocator.Current.GetInstance<OpenVm>();
+        public NewVm New => ServiceLocator.Current.GetInstance<NewVm>(Guid.NewGuid().ToString());
+        public OpenVm Open => ServiceLocator.Current.GetInstance<OpenVm>(Guid.NewGuid().ToString());
         public RecentVm Recent => ServiceLocator.Current.GetInstance<RecentVm>(Guid.NewGuid().ToString());
-        public SaveVm Save => ServiceLocator.Current.GetInstance<SaveVm>();
+        public SaveVm Save => ServiceLocator.Current.GetInstance<SaveVm>(Guid.NewGuid().ToString());
 
         public static void Cleanup()
         {

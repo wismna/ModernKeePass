@@ -249,9 +249,12 @@ namespace ModernKeePass
             var rootFrame = new Frame();
             var file = args.Files[0] as StorageFile;
 
+            Window.Current.Content = rootFrame;
+
             if (file != null)
             {
-                var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+                // TODO: use service
+                var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Path);
                 var fileInfo = new FileInfo
                 {
                     Id = token,
@@ -265,7 +268,6 @@ namespace ModernKeePass
                 _navigation.NavigateTo(Constants.Navigation.MainPage);
             }
 
-            Window.Current.Content = rootFrame;
             Window.Current.Activate();
         }
         

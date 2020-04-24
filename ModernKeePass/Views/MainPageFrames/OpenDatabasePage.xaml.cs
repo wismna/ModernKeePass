@@ -44,10 +44,9 @@ namespace ModernKeePass.Views
             // Application now has read/write access to the picked file
             var file = await picker.PickSingleFileAsync().AsTask();
             if (file == null) return;
-
-            //var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            
             // TODO: use service
-            var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Name);
+            var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Path);
             var fileInfo = new FileInfo
             {
                 Path = file.Path,
