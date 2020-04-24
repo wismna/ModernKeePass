@@ -12,14 +12,14 @@ namespace ModernKeePass.Infrastructure.UWP
     {
         public async Task<byte[]> OpenBinaryFile(string path)
         {
-            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(path).AsTask();
+            var file = await GetFile(path);
             var result = await FileIO.ReadBufferAsync(file).AsTask();
             return result.ToArray();
         }
 
         public async Task<IList<string>> OpenTextFile(string path)
         {
-            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(path).AsTask();
+            var file = await GetFile(path);
             var result = await FileIO.ReadLinesAsync(file).AsTask();
             return result;
         }
@@ -31,8 +31,17 @@ namespace ModernKeePass.Infrastructure.UWP
 
         public async Task WriteBinaryContentsToFile(string path, byte[] contents)
         {
-            var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(path).AsTask();
+            var file = await GetFile(path);
             await FileIO.WriteBytesAsync(file, contents).AsTask();
+        }
+
+        private async Task<StorageFile> GetFile(string token)
+        {
+            if (StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem(token))
+                return await StorageApplicationPermissions.MostRecentlyUsedList.GetFileAsync(token).AsTask();
+            if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
+                return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token).AsTask();
+            return null;
         }
     }
 }

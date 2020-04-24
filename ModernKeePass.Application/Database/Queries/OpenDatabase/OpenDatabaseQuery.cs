@@ -16,20 +16,18 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
         {
             private readonly IDatabaseProxy _database;
             private readonly IFileProxy _file;
-            private readonly IRecentProxy _recent;
 
-            public OpenDatabaseQueryHandler(IDatabaseProxy database, IFileProxy file, IRecentProxy recent)
+            public OpenDatabaseQueryHandler(IDatabaseProxy database, IFileProxy file)
             {
                 _database = database;
                 _file = file;
-                _recent = recent;
             }
 
             public async Task Handle(OpenDatabaseQuery message)
             {
                 if (_database.IsDirty) throw new DatabaseOpenException();
                 
-                var file = await _recent.Get(message.FilePath);
+                var file = await _file.OpenBinaryFile(message.FilePath);
                 var hasKeyFile = !string.IsNullOrEmpty(message.KeyFilePath);
                 await _database.Open(file, new Credentials
                     {
