@@ -1,13 +1,10 @@
-﻿using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
-using ModernKeePass.Application.Common.Interfaces;
+﻿using GalaSoft.MvvmLight;
 using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
     public class OpenVm: ViewModelBase
     {
-        private readonly IRecentProxy _recent;
         private string _name;
         private string _path;
         private string _token;
@@ -31,23 +28,12 @@ namespace ModernKeePass.ViewModels
             private set { Set(() => Path, ref _path, value); }
         }
         
-        public OpenVm(IRecentProxy recent)
-        {
-            _recent = recent;
-        }
-        
-        public async Task OpenFile(FileInfo file)
+        public void OpenFile(FileInfo file)
         {
             Token = file.Id;
             Name = file.Name;
             Path = file.Path;
             RaisePropertyChanged(nameof(IsFileSelected));
-            await AddToRecentList(file);
-        }
-        
-        private async Task AddToRecentList(FileInfo file)
-        {
-            await _recent.Add(file);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace ModernKeePass.Views
                 Path = file.Path,
                 Name = file.DisplayName
             };
-            await Model.OpenFile(fileInfo);
+            Model.OpenFile(fileInfo);
         }
 
         private void ImportFormatComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

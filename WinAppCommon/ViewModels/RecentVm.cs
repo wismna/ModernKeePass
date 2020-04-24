@@ -1,17 +1,15 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentVm : ViewModelBase, IHasSelectableObject
+    public class RecentVm : ObservableObject, IHasSelectableObject
     {
         private readonly IRecentProxy _recent;
         private ISelectableModel _selectedItem;
@@ -52,15 +50,8 @@ namespace ModernKeePass.ViewModels
             RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];
-
-            MessengerInstance.Register<DatabaseOpeningMessage>(this, async action => await UpdateAccessTime(action.Token));
         }
         
-        private async Task UpdateAccessTime(string token)
-        {
-            await _recent.Get(token, true);
-        }
-
         private void ClearAll()
         {
             _recent.ClearAll();

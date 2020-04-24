@@ -1,33 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage.AccessCache;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
+using Windows.Storage;
 
 namespace ModernKeePass.Infrastructure.UWP
 {
     public class UwpRecentFilesClient: IRecentProxy
     {
         private readonly StorageItemMostRecentlyUsedList _mru = StorageApplicationPermissions.MostRecentlyUsedList;
-        private readonly StorageItemAccessList _fal = StorageApplicationPermissions.FutureAccessList;
 
         public int EntryCount => _mru.Entries.Count;
 
-        public async Task<FileInfo> Get(string token, bool updateAccessTime = false)
+        public async Task<byte[]> Get(string token, bool updateAccessTime = true)
         {
             try
             {
                 var file = await _mru.GetFileAsync(token,
                     updateAccessTime ? AccessCacheOptions.None : AccessCacheOptions.SuppressAccessTimeUpdate).AsTask().ConfigureAwait(false);
-                _fal.AddOrReplace(token, file, file.Name);
-                return new FileInfo
-                {
-                    Id = token,
-                    Name = file.DisplayName,
-                    Path = file.Path
-                };
+
+                var result = await FileIO.ReadBufferAsync(file).AsTask();
+                return result.ToArray();
             }
             catch (Exception)
             {
@@ -45,18 +42,11 @@ namespace ModernKeePass.Infrastructure.UWP
                 Path = e.Metadata
             });
         }
-
-        public async Task Add(FileInfo recentItem)
-        {
-            var file = await _fal.GetFileAsync(recentItem.Id).AsTask();
-            _mru.Add(file, file.Path);
-        }
-
+        
         public void ClearAll()
         {
             foreach (var entry in _mru.Entries)
             {
-                if (_fal.ContainsItem(entry.Token)) _fal.Remove(entry.Token);
                 _mru.Remove(entry.Token);
             }
         }

@@ -22,13 +22,13 @@ namespace ModernKeePass.Views
             InitializeComponent();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             var file = e.Parameter as FileInfo;
             if (file != null)
             {
-                await Model.OpenFile(file);
+                Model.OpenFile(file);
             }
         }
 
@@ -45,14 +45,16 @@ namespace ModernKeePass.Views
             var file = await picker.PickSingleFileAsync().AsTask();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            //var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            // TODO: use service
+            var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Name);
             var fileInfo = new FileInfo
             {
                 Path = file.Path,
                 Name = file.DisplayName,
                 Id = token
             };
-            await Model.OpenFile(fileInfo);
+            Model.OpenFile(fileInfo);
         }
     }
 }

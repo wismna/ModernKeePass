@@ -36,7 +36,7 @@ namespace ModernKeePass.ViewModels
             }
         }
         
-        public NewVm(IMediator mediator, IRecentProxy recent, ISettingsProxy settings, INavigationService navigation) : base(recent)
+        public NewVm(IMediator mediator, IRecentProxy recent, ISettingsProxy settings, INavigationService navigation)
         {
             _mediator = mediator;
             _settings = settings;
