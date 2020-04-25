@@ -3,12 +3,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:ModernKeePass.ViewModels" 
     xmlns:controls="using:ModernKeePass.Controls" 
     xmlns:basePages="using:ModernKeePass.Views.BasePages"
     x:Class="ModernKeePass.Views.MainPage"
     x:Name="PageRoot"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=Main}">
     <Page.Resources>
         <CollectionViewSource 
             x:Name="MenuItemsSource" 
@@ -19,9 +19,6 @@
     <Page.Background>
         <StaticResource ResourceKey="ApplicationPageBackgroundThemeBrush"/>
     </Page.Background>
-    <Page.DataContext>
-        <viewModels:MainVm />
-    </Page.DataContext>
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>

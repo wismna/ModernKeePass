@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
@@ -58,7 +57,7 @@ namespace ModernKeePass.ViewModels
         } 
 
         public IEnumerable<GroupVm> BreadCrumb => new List<GroupVm> { _parent };
-        public ObservableCollection<EntryVm> History { get; }
+        public ObservableCollection<EntryVm> History { get; private set; }
 
         /// <summary>
         /// Determines if the Entry is current or from history
@@ -230,38 +229,21 @@ namespace ModernKeePass.ViewModels
         private readonly IResourceProxy _resource;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
-        private readonly GroupVm _parent;
+        private GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isDirty;
-
-        public EntryDetailVm() { }
         
-        internal EntryDetailVm(string entryId) : this(entryId, 
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<INavigationService>(), 
-            App.Services.GetRequiredService<IResourceProxy>(), 
-            App.Services.GetRequiredService<IDialogService>(), 
-            App.Services.GetRequiredService<INotificationService>()) { }
-
-        public EntryDetailVm(string entryId, IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification)
+        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _navigation = navigation;
             _resource = resource;
             _dialog = dialog;
             _notification = notification;
-            SelectedItem = _mediator.Send(new GetEntryQuery { Id = entryId }).GetAwaiter().GetResult();
-            _parent = _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId }).GetAwaiter().GetResult();
-            History = new ObservableCollection<EntryVm> { SelectedItem };
-            foreach (var entry in SelectedItem.History.Skip(1))
-            {
-                History.Add(entry);
-            }
-            SelectedIndex = 0;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -269,6 +251,18 @@ namespace ModernKeePass.ViewModels
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+        }
+
+        public async Task Initialize(string entryId)
+        {
+            SelectedItem = await _mediator.Send(new GetEntryQuery { Id = entryId });
+            _parent = await _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId });
+            History = new ObservableCollection<EntryVm> { SelectedItem };
+            foreach (var entry in SelectedItem.History.Skip(1))
+            {
+                History.Add(entry);
+            }
+            SelectedIndex = 0;
         }
 
         private async Task AskForDelete()

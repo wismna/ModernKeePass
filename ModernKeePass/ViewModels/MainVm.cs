@@ -5,7 +5,6 @@ using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
 using MediatR;
 using Messages;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Domain.Dtos;
@@ -61,30 +60,13 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public MainVm() {}
-
-        internal MainVm(Frame referenceFrame, Frame destinationFrame, FileInfo databaseFile = null) : this(
-            referenceFrame, 
-            destinationFrame,
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<IRecentProxy>(), 
-            App.Services.GetRequiredService<IResourceProxy>(),
-            App.Services.GetRequiredService<IDialogService>(),
-            App.Services.GetRequiredService<INotificationService>(), 
-            App.Services.GetRequiredService<INavigationService>(), 
-            databaseFile)
-        { }
-
         public MainVm(
-            Frame referenceFrame, 
-            Frame destinationFrame, 
             IMediator mediator, 
             IRecentProxy recent, 
             IResourceProxy resource, 
             IDialogService dialog,
             INotificationService notification,
-            INavigationService navigation,
-            FileInfo databaseFile = null)
+            INavigationService navigation)
         {
             _mediator = mediator;
             _recent = recent;
@@ -92,16 +74,14 @@ namespace ModernKeePass.ViewModels
             _dialog = dialog;
             _notification = notification;
             _navigation = navigation;
-
-            BuildMainMenuItems(referenceFrame, destinationFrame, databaseFile);
-
+            
             MessengerInstance.Register<DatabaseOpenedMessage>(this, NavigateToPage);
             MessengerInstance.Register<DatabaseAlreadyOpenedMessage>(this, async message => await DisplaySaveConfirmation(message));
         }
 
-        private void BuildMainMenuItems(Frame referenceFrame, Frame destinationFrame, FileInfo databaseFile)
+        public async Task Initialize(Frame referenceFrame, Frame destinationFrame, FileInfo databaseFile = null)
         {
-            var database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
+            var database = await _mediator.Send(new GetDatabaseQuery());
             var mainMenuItems = new ObservableCollection<MainMenuItemVm>
             {
                 new MainMenuItemVm

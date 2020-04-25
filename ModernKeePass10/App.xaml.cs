@@ -11,11 +11,9 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
-using Autofac;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using ModernKeePass.Common;
-using ModernKeePass.Composition;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Domain.Interfaces;
@@ -30,10 +28,6 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
-        private readonly IDatabaseService _databaseService;
-
-        public static IContainer Container { get; set; }
-
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -48,12 +42,7 @@ namespace ModernKeePass
             UnhandledException += OnUnhandledException;
 
             // Setup DI
-            var builder = new ContainerBuilder();
-            builder.RegisterModule<SharedCompositionRoot>();
-            builder.RegisterModule<UwpCompositionRoot>();
-            Container = builder.Build();
 
-            _databaseService = Container.Resolve<IDatabaseService>();
         }
 
         #region Event Handlers

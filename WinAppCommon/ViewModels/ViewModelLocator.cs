@@ -63,10 +63,13 @@ namespace ModernKeePass.ViewModels
             SimpleIoc.Default.Register<SettingsSecurityVm>();
             SimpleIoc.Default.Register<OpenDatabaseControlVm>();
             SimpleIoc.Default.Register<SetCredentialsVm>();
+            SimpleIoc.Default.Register<MainVm>();
             SimpleIoc.Default.Register<NewVm>();
             SimpleIoc.Default.Register<OpenVm>();
             SimpleIoc.Default.Register<RecentVm>();
             SimpleIoc.Default.Register<SaveVm>();
+            SimpleIoc.Default.Register<GroupDetailVm>();
+            SimpleIoc.Default.Register<EntryDetailVm>();
         }
         
         public MainVm Main => ServiceLocator.Current.GetInstance<MainVm>(Guid.NewGuid().ToString());
@@ -81,6 +84,8 @@ namespace ModernKeePass.ViewModels
         public OpenVm Open => ServiceLocator.Current.GetInstance<OpenVm>(Guid.NewGuid().ToString());
         public RecentVm Recent => ServiceLocator.Current.GetInstance<RecentVm>(Guid.NewGuid().ToString());
         public SaveVm Save => ServiceLocator.Current.GetInstance<SaveVm>(Guid.NewGuid().ToString());
+        public GroupDetailVm Group => ServiceLocator.Current.GetInstance<GroupDetailVm>(Guid.NewGuid().ToString());
+        public EntryDetailVm Entry => ServiceLocator.Current.GetInstance<EntryDetailVm>(Guid.NewGuid().ToString());
 
         public static void Cleanup()
         {

@@ -12,7 +12,8 @@
     xmlns:userControls="using:ModernKeePass.Views.UserControls"
     x:Class="ModernKeePass.Views.EntryDetailPage"
     mc:Ignorable="d"
-    SizeChanged="EntryDetailPage_OnSizeChanged">
+    SizeChanged="EntryDetailPage_OnSizeChanged"
+    DataContext="{Binding Source={StaticResource Locator}, Path=Entry}">
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
@@ -369,9 +370,6 @@
             </Setter>
         </Style>
     </Page.Resources>
-    <Page.DataContext>
-        <viewModels:EntryDetailVm />
-    </Page.DataContext>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
             <TransitionCollection>

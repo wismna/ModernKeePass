@@ -27,7 +27,8 @@ namespace ModernKeePass.Views
             var args = e.Parameter as NavigationItem;
             if (args != null)
             {
-                DataContext = new EntryDetailVm(args.Id) { IsEditMode = args.IsNew };
+                await Model.Initialize(args.Id);
+                Model.IsEditMode = args.IsNew;
                 if (args.IsNew) await Model.GeneratePassword();
             }
         }

@@ -37,11 +37,11 @@ namespace ModernKeePass.Views
             else selectedItem.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
         }
         
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             var file = e.Parameter as FileInfo;
-            DataContext = new MainVm(Frame, MenuFrame, file);
+            await Model.Initialize(Frame, MenuFrame, file);
         }
     }
 }

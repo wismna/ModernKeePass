@@ -9,7 +9,6 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
@@ -36,9 +35,9 @@ namespace ModernKeePass.ViewModels
 {
     public class GroupDetailVm : ObservableObject
     {
-        public ObservableCollection<EntryVm> Entries { get; }
+        public ObservableCollection<EntryVm> Entries { get; private set; }
 
-        public ObservableCollection<GroupVm> Groups { get; }
+        public ObservableCollection<GroupVm> Groups { get; private set; }
         
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
 
@@ -84,7 +83,7 @@ namespace ModernKeePass.ViewModels
 
         public bool IsInRecycleBin => _parent != null && _parent.Id == Database.RecycleBinId;
 
-        public IEnumerable<GroupVm> BreadCrumb { get; }
+        public IEnumerable<GroupVm> BreadCrumb { get; private set; }
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand SortEntriesCommand { get; }
@@ -102,34 +101,18 @@ namespace ModernKeePass.ViewModels
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
-        private readonly GroupVm _group;
-        private readonly GroupVm _parent;
+        private GroupVm _group;
+        private GroupVm _parent;
         private bool _isEditMode;
         private EntryVm _reorderedEntry;
-
-        public GroupDetailVm() {}
         
-        internal GroupDetailVm(string groupId) : this(groupId, 
-            App.Services.GetRequiredService<IMediator>(), 
-            App.Services.GetRequiredService<IResourceProxy>(), 
-            App.Services.GetRequiredService<INavigationService>(), 
-            App.Services.GetRequiredService<IDialogService>(), 
-            App.Services.GetRequiredService<INotificationService>())
-        { }
-
-        public GroupDetailVm(string groupId, IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
+        public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
             _navigation = navigation;
             _dialog = dialog;
             _notification = notification;
-            _group = _mediator.Send(new GetGroupQuery { Id = groupId }).GetAwaiter().GetResult();
-            if (!string.IsNullOrEmpty(_group.ParentGroupId))
-            {
-                _parent = _mediator.Send(new GetGroupQuery { Id = _group.ParentGroupId }).GetAwaiter().GetResult();
-                BreadCrumb = new List<GroupVm> {_parent};
-            }
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
@@ -139,32 +122,22 @@ namespace ModernKeePass.ViewModels
             CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+        }
+
+        public async Task Initialize(string groupId)
+        {
+            _group = await _mediator.Send(new GetGroupQuery { Id = groupId });
+            if (!string.IsNullOrEmpty(_group.ParentGroupId))
+            {
+                _parent = await _mediator.Send(new GetGroupQuery { Id = _group.ParentGroupId });
+                BreadCrumb = new List<GroupVm> { _parent };
+            }
 
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
-
-        private async Task AskForDelete()
-        {
-            if (IsRecycleOnDelete)
-            {
-                await Delete();
-                _notification.Show(_resource.GetResourceValue("GroupRecyclingConfirmation"), _resource.GetResourceValue("GroupRecycled"));
-            }
-            else
-            {
-                await _dialog.ShowMessage(_resource.GetResourceValue("GroupDeletingConfirmation"), _resource.GetResourceValue("EntityDeleteTitle"),
-                _resource.GetResourceValue("EntityDeleteActionButton"),
-                _resource.GetResourceValue("EntityDeleteCancelButton"),
-                async isOk =>
-                {
-                    if (isOk) await Delete();
-                });
-            }
-        }
-
-
+        
         public async Task AddNewGroup(string name = "")
         {
             var group = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});
@@ -237,6 +210,25 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new SortGroupsCommand {Group = _group});
             RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
+        }
+
+        private async Task AskForDelete()
+        {
+            if (IsRecycleOnDelete)
+            {
+                await Delete();
+                _notification.Show(_resource.GetResourceValue("GroupRecyclingConfirmation"), _resource.GetResourceValue("GroupRecycled"));
+            }
+            else
+            {
+                await _dialog.ShowMessage(_resource.GetResourceValue("GroupDeletingConfirmation"), _resource.GetResourceValue("EntityDeleteTitle"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"),
+                    async isOk =>
+                    {
+                        if (isOk) await Delete();
+                    });
+            }
         }
 
         private async Task Delete()
