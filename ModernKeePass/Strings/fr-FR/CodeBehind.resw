@@ -267,4 +267,10 @@
   <data name="CompositeKeyOpenButtonLabel" xml:space="preserve">
     <value>Open</value>
   </data>
+  <data name="FileNotFoundDescription" xml:space="preserve">
+    <value>Le fichier n'existe plus.</value>
+  </data>
+  <data name="FileNotFoundTitle" xml:space="preserve">
+    <value>Fichier manquant</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -38,10 +39,21 @@ namespace ModernKeePass.Infrastructure.UWP
         private async Task<StorageFile> GetFile(string token)
         {
             if (StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem(token))
-                return await StorageApplicationPermissions.MostRecentlyUsedList.GetFileAsync(token).AsTask();
+            {
+                try
+                {
+                    return await StorageApplicationPermissions.MostRecentlyUsedList.GetFileAsync(token).AsTask();
+                }
+                catch (Exception)
+                {
+                    StorageApplicationPermissions.MostRecentlyUsedList.Remove(token);
+                    throw new FileNotFoundException();
+                }
+            }
+
             if (StorageApplicationPermissions.FutureAccessList.ContainsItem(token))
                 return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(token).AsTask();
-            return null;
+            throw new FileNotFoundException();
         }
     }
 }

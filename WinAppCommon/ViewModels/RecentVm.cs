@@ -3,13 +3,14 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {
-    public class RecentVm : ObservableObject, IHasSelectableObject
+    public class RecentVm : ViewModelBase, IHasSelectableObject
     {
         private readonly IRecentProxy _recent;
         private ISelectableModel _selectedItem;
@@ -45,13 +46,18 @@ namespace ModernKeePass.ViewModels
         {
             _recent = recent;
             ClearAllCommand = new RelayCommand(ClearAll);
-            
+            PopulateRecentItems();
+            MessengerInstance.Register<FileNotFoundMessage>(this, _ => PopulateRecentItems());
+        }
+
+        private void PopulateRecentItems()
+        {
             var recentItems = _recent.GetAll().Select(r => new RecentItemVm(r));
             RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
             if (RecentItems.Count > 0)
                 SelectedItem = RecentItems[0];
         }
-        
+
         private void ClearAll()
         {
             _recent.ClearAll();

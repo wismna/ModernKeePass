@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseClosedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpenedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpeningMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\FileNotFoundMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />

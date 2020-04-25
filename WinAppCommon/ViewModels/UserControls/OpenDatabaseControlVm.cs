@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
@@ -95,6 +96,7 @@ namespace ModernKeePass.ViewModels
         
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
+        private readonly INotificationService _notification;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -105,10 +107,11 @@ namespace ModernKeePass.ViewModels
         private string _keyFileText;
         private string _openButtonLabel;
         
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
+            _notification = notification;
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
             _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
@@ -152,6 +155,13 @@ namespace ModernKeePass.ViewModels
                 if (HasPassword) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
                 if (HasKeyFile) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
                 UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
+            }
+            catch (FileNotFoundException)
+            {
+                _notification.Show(
+                    $"{_resource.GetResourceValue("FileNotFoundTitle")}", 
+                    $"{_resource.GetResourceValue("FileNotFoundDescription")}");
+                MessengerInstance.Send(new FileNotFoundMessage());
             }
             catch (Exception e)
             {
