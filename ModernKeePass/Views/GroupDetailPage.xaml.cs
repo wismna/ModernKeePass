@@ -5,10 +5,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using GalaSoft.MvvmLight.Views;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Entry.Models;
-using ModernKeePass.Common;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 
@@ -22,15 +19,11 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class GroupDetailPage
     {
-        private readonly INavigationService _navigation;
-        
         public GroupDetailVm Model => (GroupDetailVm)DataContext;
 
-        public GroupDetailPage(): this (App.Services.GetRequiredService<INavigationService>()) { }
-        public GroupDetailPage(INavigationService navigation)
+        public GroupDetailPage()
         {
             InitializeComponent();
-            _navigation = navigation;
         }
 
         #region NavigationHelper registration
@@ -58,7 +51,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
-                    _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = group?.Id });
+                    Model.GoToGroup(group?.Id);
                     break;
             }
         }
@@ -71,7 +64,7 @@ namespace ModernKeePass.Views
                     return;
                 default:
                     var entry = GridView.SelectedItem as EntryVm;
-                    _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem { Id = entry?.Id });
+                    Model.GoToEntry(entry?.Id);
                     break;
             }
         }
@@ -103,7 +96,7 @@ namespace ModernKeePass.Views
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem { Id = args.Tag });
+            Model.GoToEntry(args.Tag);
         }
 
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)

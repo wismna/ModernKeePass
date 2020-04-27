@@ -21,7 +21,6 @@ namespace ModernKeePass.Application.Database.Commands.CloseDatabase
 
                 // Cleanup
                 _database.FileAccessToken = null;
-                _database.IsDirty = false;
                 _database.Size = 0;
             }
         }

@@ -47,8 +47,6 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
                         _file.ReleaseFile(_database.FileAccessToken);
                         _database.FileAccessToken = message.FilePath;
                     }
-
-                    _database.IsDirty = false;
                 }
                 catch (Exception exception)
                 {

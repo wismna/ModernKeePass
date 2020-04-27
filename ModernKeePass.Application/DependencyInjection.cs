@@ -12,7 +12,7 @@ namespace ModernKeePass.Application
         {
             var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
             services.AddMediatR(assembly);
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(SetDirtyBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DirtyStatusBehavior<,>));
             //services.AddValidatorsFromAssembly(assembly);
 
             return services;

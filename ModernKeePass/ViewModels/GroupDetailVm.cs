@@ -137,25 +137,34 @@ namespace ModernKeePass.ViewModels
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
         }
+
+        public void GoToEntry(string entryId, bool isNew = false)
+        {
+            _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem
+            {
+                Id = entryId,
+                IsNew = isNew
+            });
+        }
+        public void GoToGroup(string entryId, bool isNew = false)
+        {
+            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
+            {
+                Id = entryId,
+                IsNew = isNew
+            });
+        }
         
         public async Task AddNewGroup(string name = "")
         {
             var group = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});
-            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
-            {
-                Id = group.Id,
-                IsNew = true
-            });
+            GoToGroup(group.Id, true);
         }
         
         public async Task AddNewEntry()
         {
             var entry = await _mediator.Send(new CreateEntryCommand { ParentGroup = _group });
-            _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem
-            {
-                Id = entry.Id,
-                IsNew = true
-            });
+            GoToEntry(entry.Id, true);
         }
         
         public async Task Move(GroupVm destination)

@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Microsoft.Extensions.DependencyInjection;
-using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Dtos;
-using ModernKeePass.Infrastructure.File;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -19,13 +15,10 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class NewDatabasePage
     {
-        private readonly IResourceProxy _resource;
         private NewVm Model => (NewVm)DataContext;
-
-        public NewDatabasePage(): this(App.Services.GetRequiredService<IResourceProxy>()) { }
-        public NewDatabasePage(IResourceProxy resource)
+        
+        public NewDatabasePage()
         {
-            _resource = resource;
             InitializeComponent();
         }
 
@@ -49,34 +42,6 @@ namespace ModernKeePass.Views
                 Name = file.DisplayName
             };
             Model.OpenFile(fileInfo);
-        }
-
-        private void ImportFormatComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var comboBox = sender as ComboBox;
-            switch (comboBox?.SelectedIndex)
-            {
-                case 0:
-                    Model.ImportFormat = new CsvImportFormat();
-                    Model.ImportFileExtensionFilter = ".csv";
-                    Model.ImportFormatHelp = _resource.GetResourceValue("NewImportFormatHelpCSV");
-                    break;
-            }
-        }
-
-        private async void ImportFileButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            var picker = new FileOpenPicker
-            {
-                ViewMode = PickerViewMode.List,
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
-            };
-            if (!string.IsNullOrEmpty(Model.ImportFileExtensionFilter))
-                picker.FileTypeFilter.Add(Model.ImportFileExtensionFilter);
-
-            // Application now has read/write access to the picked file
-            Model.ImportFile = await picker.PickSingleFileAsync().AsTask();
-            if (Model.ImportFile != null) ImportFileLink.Content = Model.ImportFile.Name;
         }
     }
 }

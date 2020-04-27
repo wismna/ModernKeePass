@@ -21,30 +21,6 @@
                 <userControls:SetCredentialsUserControl x:Uid="CompositeKeyNewButton" />
             </StackPanel>
         </Border>
-        <CheckBox x:Name="CheckBox" x:Uid="NewImportCheckbox" Margin="15,10,0,0" IsChecked="{Binding IsImportChecked, Mode=TwoWay}" Visibility="{Binding IsFileSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        <Border HorizontalAlignment="Left" BorderThickness="1" BorderBrush="AliceBlue" Width="550" Visibility="{Binding IsChecked, Converter={StaticResource BooleanToVisibilityConverter}, ElementName=CheckBox}">
-            <StackPanel Margin="25,0,25,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock x:Uid="NewImportFormat" Margin="0,15,0,10" Style="{StaticResource BodyTextBlockStyle}" />
-                    <ComboBox Style="{StaticResource MainColorComboBox}" Margin="15,15,0,0" SelectionChanged="ImportFormatComboBox_OnSelectionChanged">
-                        <ComboBoxItem>CSV</ComboBoxItem>
-                    </ComboBox>
-                    <Button Margin="5,10,0,0" Style="{StaticResource TextBlockButtonStyle}">
-                        <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
-                            <SymbolIcon.RenderTransform>
-                                <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
-                            </SymbolIcon.RenderTransform>
-                        </SymbolIcon>
-                        <Button.Flyout>
-                            <Flyout>
-                                <TextBlock Text="{Binding ImportFormatHelp}" TextWrapping="WrapWholeWords" MaxWidth="400" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                </StackPanel>
-                <HyperlinkButton x:Name="ImportFileLink" x:Uid="NewImportFile" Margin="-15,0,0,0" Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
-            </StackPanel>
-        </Border>
     </StackPanel>
 </Page>
 

@@ -25,7 +25,7 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 - Change database compression
 - Change database key derivation
 - Displays and change entry colors and icons
-- Import existing CSV data
+- Move entries from a group to another
 
 # Build and Test
 1. Clone the repository
@@ -38,7 +38,7 @@ Otherwise, there are still many things left to implement:
 - Entry custom fields
 - Entry attachments
 - Multi entry selection (for delete, or move)
-- Move entries from a group to another
+- Import existing data from CSV, JSON, or XML
 - Open database from URL (and maybe some clouds?)
 
 # Credits

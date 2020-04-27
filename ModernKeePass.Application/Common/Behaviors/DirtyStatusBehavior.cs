@@ -7,14 +7,14 @@ using ModernKeePass.Application.Database.Commands.SaveDatabase;
 
 namespace ModernKeePass.Application.Common.Behaviors
 {
-    public class SetDirtyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class DirtyStatusBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly List<string> _excludedCommands = new List<string>
             {nameof(SaveDatabaseCommand), nameof(CloseDatabaseCommand)};
 
         private readonly IDatabaseProxy _database;
 
-        public SetDirtyBehavior(IDatabaseProxy database)
+        public DirtyStatusBehavior(IDatabaseProxy database)
         {
             _database = database;
         }
@@ -23,9 +23,9 @@ namespace ModernKeePass.Application.Common.Behaviors
         {
             var response = await next();
             var queryName = typeof(TRequest).Name;
-            if (queryName.Contains("Command") && !_excludedCommands.Contains(queryName))
+            if (queryName.Contains("Command"))
             {
-                _database.IsDirty = true;
+                _database.IsDirty = !_excludedCommands.Contains(queryName);
             }
 
             return response;

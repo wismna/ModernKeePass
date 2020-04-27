@@ -75,7 +75,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Behaviors\SetDirtyBehavior.cs" />
+    <Compile Include="Common\Behaviors\DirtyStatusBehavior.cs" />
     <Compile Include="Common\Interfaces\ICryptographyClient.cs" />
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
     <Compile Include="Common\Interfaces\IEntityVm.cs" />
