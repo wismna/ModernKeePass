@@ -1,5 +1,7 @@
-Database corruption issues should now be a thing of the past !
+Database corruption issues should now be a thing of the past:
+  Database integrity is checked after each save
+  Data is written to the filesystem using a transactional model (meaning: if an error occurs, the original file is left untouched)
+  Auto-save on suspend/exit is now only active when database has changes and its size is under 1MB
 Added the ability to move entries and groups
-Edits are now in a popup instead of inline
 Allows restoring and deleting from entry history
 Updated KeePass lib to version 2.44

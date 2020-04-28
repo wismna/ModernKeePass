@@ -24,7 +24,6 @@ using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Infrastructure;
-using ModernKeePass.Views;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
 
@@ -187,7 +186,7 @@ namespace ModernKeePass
             }
             catch (Exception)
             {
-                currentFrame?.Navigate(typeof(MainPage));
+                _navigation.NavigateTo(Constants.Navigation.MainPage);
 #if DEBUG
                 _notification.Show("App resumed", "Nothing to do, no previous database opened");
 #endif

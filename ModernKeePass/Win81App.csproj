@@ -94,6 +94,7 @@
     </Compile>
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="Models\NavigationItem.cs" />
+    <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>

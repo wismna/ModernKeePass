@@ -2,7 +2,9 @@
 using AutoMapper;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.HockeyApp;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using ModernKeePass.Common;
 using ModernKeePass.Views;
 
@@ -10,7 +12,7 @@ namespace ModernKeePass
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddWin81App(this IServiceCollection services)
+        public static IServiceCollection AddWin10App(this IServiceCollection services)
         {
             var applicationAssembly = typeof(Application.DependencyInjection).GetTypeInfo().Assembly;
             var infrastructureAssembly = typeof(Infrastructure.DependencyInjection).GetTypeInfo().Assembly;
@@ -19,21 +21,16 @@ namespace ModernKeePass
             services.AddSingleton<INavigationService>(provider =>
             {
                 var nav = new NavigationService();
-                nav.Configure(Constants.Navigation.MainPage, typeof(MainPage));
-                nav.Configure(Constants.Navigation.EntryPage, typeof(EntryDetailPage));
-                nav.Configure(Constants.Navigation.GroupPage, typeof(GroupDetailPage));
+                nav.Configure(Constants.Navigation.MainPage, typeof(MainPage10));
+                nav.Configure(Constants.Navigation.EntryPage, typeof(EntryPage));
+                nav.Configure(Constants.Navigation.GroupPage, typeof(EntriesPage));
                 return nav;
             });
             services.AddTransient(typeof(IDialogService), typeof(DialogService));
 
             services.AddSingleton(provider =>
             {
-#if DEBUG
-                HockeyClient.Current.Configure("2fe83672-887b-4910-b9de-93a4398d0f8f");
-#else
-			    HockeyClient.Current.Configure("9eb5fbb79b484fbd8daf04635e975c84");
-#endif
-                return HockeyClient.Current;
+
             });
 
             return services;

@@ -10,13 +10,22 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
+using GalaSoft.MvvmLight.Views;
+using MediatR;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.Extensions.DependencyInjection;
+using ModernKeePass.Application;
+using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Database.Commands.CloseDatabase;
+using ModernKeePass.Application.Database.Commands.SaveDatabase;
+using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Database.Queries.ReOpenDatabase;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
-using ModernKeePass.Domain.Interfaces;
+using ModernKeePass.Infrastructure;
 using ModernKeePass.Views;
 
 // The Blank Application template is documented at http://go.microsoft.com/fwlink/?LinkId=234227
@@ -28,26 +37,53 @@ namespace ModernKeePass
     /// </summary>
     sealed partial class App
     {
+        private readonly IResourceProxy _resource;
+        private readonly IMediator _mediator;
+        private readonly ISettingsProxy _settings;
+        private readonly INavigationService _navigation;
+        private readonly IAppCenterService _appCenter;
+        private readonly IDialogService _dialog;
+        private readonly INotificationService _notification;
+
+        public static IServiceProvider Services { get; private set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics));
+            // Setup DI
+            IServiceCollection serviceCollection = new ServiceCollection();
+            serviceCollection.AddApplication();
+            serviceCollection.AddInfrastructureCommon();
+            serviceCollection.AddInfrastructureKeePass();
+            serviceCollection.AddInfrastructureUwp();
+            serviceCollection.AddWin10App();
+            Services = serviceCollection.BuildServiceProvider();
+
+            _mediator = Services.GetService<IMediator>();
+            _resource = Services.GetService<IResourceProxy>();
+            _settings = Services.GetService<ISettingsProxy>();
+            _navigation = Services.GetService<INavigationService>();
+            _dialog = Services.GetService<IDialogService>();
+            _notification = Services.GetService<INotificationService>();
+
+#if DEBUG
+            AppCenter.Start("029ab91d-1e4b-4d4d-9661-5d438dd671a5",
+                typeof(Analytics), typeof(Crashes));
+#else
+			AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics));
+#endif
 
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
-
-            // Setup DI
-
         }
 
         #region Event Handlers
 
-        // TODO: do something else here instead of showing dialog and handle save issues directly where it happens
         private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             // Save the argument exception because it's cleared on first access
@@ -58,33 +94,40 @@ namespace ModernKeePass
                     ? exception.InnerException
                     : exception;
 
-            var resource = Container.Resolve<IResourceService>();
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                await MessageDialogHelper.ShowActionDialog(resource.GetResourceValue("MessageDialogSaveErrorTitle"),
-                    realException.InnerException.Message,
-                    resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
-                    resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
-                    async command =>
+                //_hockey.TrackException(realException);
+                await _dialog.ShowMessage(realException.Message,
+                    _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
+                    _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
+                    _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"),
+                    async isOk =>
                     {
-                        var savePicker = new FileSavePicker
+                        if (isOk)
                         {
-                            SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-                            SuggestedFileName = $"{_databaseService.Name} - copy"
-                        };
-                        savePicker.FileTypeChoices.Add(resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
-                            new List<string> {".kdbx"});
+                            var database = await _mediator.Send(new GetDatabaseQuery());
+                            var savePicker = new FileSavePicker
+                            {
+                                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+                                SuggestedFileName = $"{database.Name} - copy"
+                            };
+                            savePicker.FileTypeChoices.Add(
+                                _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
+                                new List<string> { ".kdbx" });
 
-                        var file = await savePicker.PickSaveFileAsync();
-                        var token = StorageApplicationPermissions.FutureAccessList.Add(file);
-                        var fileInfo = new FileInfo
-                        {
-                            Path = token,
-                            Name = file.DisplayName
-                        };
-                        await _databaseService.SaveAs(fileInfo);
-                    }, null);
+                            var file = await savePicker.PickSaveFileAsync().AsTask();
+                            if (file != null)
+                            {
+                                var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+                                await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
+                            }
+                        }
+                    });
+            }
+            else
+            {
+                await _dialog.ShowError(realException, realException.Message, "OK", () => { });
             }
         }
 
@@ -96,6 +139,7 @@ namespace ModernKeePass
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             await OnLaunchOrActivated(args);
+            //await _hockey.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
         protected override async void OnActivated(IActivatedEventArgs args)
@@ -105,12 +149,14 @@ namespace ModernKeePass
 
         private async Task OnLaunchOrActivated(IActivatedEventArgs e)
         {
+            var rootFrame = Window.Current.Content as Frame;
+
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (!(Window.Current.Content is Frame rootFrame))
+            if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                rootFrame = new Frame { Language = Windows.Globalization.ApplicationLanguages.Languages[0] };
                 // Set the default language
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
@@ -120,7 +166,7 @@ namespace ModernKeePass
                     // Load state from previously terminated application
                     await SuspensionManager.RestoreAsync();
 #if DEBUG
-                    await MessageDialogHelper.ShowNotificationDialog("App terminated", "Windows or an error made the app terminate");
+                    await _dialog.ShowMessage("Windows or an error made the app terminate", "App terminated");
 #endif
                 }
 
@@ -128,31 +174,30 @@ namespace ModernKeePass
                 Window.Current.Content = rootFrame;
             }
 
-            if (e is LaunchActivatedEventArgs lauchActivatedEventArgs && rootFrame.Content == null)
-            {
-                rootFrame.Navigate(typeof(MainPage10), lauchActivatedEventArgs.Arguments);
-            }
+            var launchActivatedEventArgs = e as LaunchActivatedEventArgs;
+            if (launchActivatedEventArgs != null && rootFrame.Content == null)
+                _navigation.NavigateTo(Constants.Navigation.MainPage, launchActivatedEventArgs.Arguments);
 
             // Ensure the current window is active
             Window.Current.Activate();
         }
 
-        private void OnResuming(object sender, object e)
+        private async void OnResuming(object sender, object e)
         {
             var currentFrame = Window.Current.Content as Frame;
 
             try
             {
-                //_databaseService.ReOpen();
+                await _mediator.Send(new ReOpenDatabaseQuery());
 #if DEBUG
-                ToastNotificationHelper.ShowGenericToast(_databaseService.Name, "Database reopened (changes were saved)");
+                _notification.Show("App resumed", "Database reopened (changes were saved)");
 #endif
             }
             catch (Exception)
             {
                 currentFrame?.Navigate(typeof(MainPage10));
 #if DEBUG
-                ToastNotificationHelper.ShowGenericToast("App resumed", "Nothing to do, no previous database opened");
+                _notification.Show("App resumed", "Nothing to do, no previous database opened");
 #endif
             }
         }
@@ -177,21 +222,31 @@ namespace ModernKeePass
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            var settings = Container.Resolve<ISettingsService>();
             try
             {
-                // TODO: definitely do something about this to avoid DB corruption if app closes before save has completed
-                if (settings.GetSetting("SaveSuspend", true)) await _databaseService.Save();
-                _databaseService.Close();
+                var database = await _mediator.Send(new GetDatabaseQuery());
+                if (database.IsOpen)
+                {
+                    if (database.Size < Constants.File.OneMegaByte && database.IsDirty &&
+                        _settings.GetSetting(Constants.Settings.SaveSuspend, true))
+                    {
+                        await _mediator.Send(new SaveDatabaseCommand()).ConfigureAwait(false);
+                    }
+
+                    await _mediator.Send(new CloseDatabaseCommand()).ConfigureAwait(false);
+                }
             }
             catch (Exception exception)
             {
-                ToastNotificationHelper.ShowErrorToast(exception);
+                _notification.Show(exception.Source, exception.Message);
             }
-            await SuspensionManager.SaveAsync();
-            deferral.Complete();
+            finally
+            {
+                await SuspensionManager.SaveAsync().ConfigureAwait(false);
+                deferral.Complete();
+            }
         }
-        
+
         /// <summary>
         /// Invoked when application is launched from opening a file in Windows Explorer 
         /// </summary>
@@ -200,11 +255,30 @@ namespace ModernKeePass
         {
             base.OnFileActivated(args);
             var rootFrame = new Frame();
-            rootFrame.Navigate(typeof(MainPage10), args.Files[0] as StorageFile);
+            var file = args.Files[0] as StorageFile;
+
             Window.Current.Content = rootFrame;
+
+            if (file != null)
+            {
+                // TODO: use service
+                var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Path);
+                var fileInfo = new FileInfo
+                {
+                    Id = token,
+                    Name = file.DisplayName,
+                    Path = file.Path
+                };
+                _navigation.NavigateTo(Constants.Navigation.MainPage, fileInfo);
+            }
+            else
+            {
+                _navigation.NavigateTo(Constants.Navigation.MainPage);
+            }
+
             Window.Current.Activate();
         }
-        
+
         #endregion
     }
 }
