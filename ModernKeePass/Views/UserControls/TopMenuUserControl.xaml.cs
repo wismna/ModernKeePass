@@ -134,18 +134,6 @@ namespace ModernKeePass.Views.UserControls
                 typeof(Visibility),
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
-
-        public bool IsDeleteButtonEnabled
-        {
-            get { return (bool)GetValue(IsDeleteButtonEnabledProperty); }
-            set { SetValue(IsDeleteButtonEnabledProperty, value); }
-        }
-        public static readonly DependencyProperty IsDeleteButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsDeleteButtonEnabled),
-                typeof(bool),
-                typeof(TopMenuUserControl),
-                new PropertyMetadata(true, (o, args) => { }));
         
         public bool IsEditButtonChecked
         {
@@ -160,7 +148,6 @@ namespace ModernKeePass.Views.UserControls
                 new PropertyMetadata(false, (o, args) => { }));
         
         public event EventHandler<RoutedEventArgs> EditButtonClick;
-        public event EventHandler<RoutedEventArgs> DeleteButtonClick;
         
         public TopMenuUserControl()
         {
@@ -179,25 +166,26 @@ namespace ModernKeePass.Views.UserControls
             EditButtonClick?.Invoke(sender, e);
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
-        {
-            DeleteButtonClick?.Invoke(sender, e);
-        }
-
         private void OverflowFlyout_OnOpening(object sender, object e)
         {
-            DeleteFlyout.IsEnabled = IsDeleteButtonEnabled;
-            DeleteFlyout.IsEnabled = IsDeleteButtonEnabled;
-
             EditFlyout.IsChecked = IsEditButtonChecked;
 
             MoveFlyout.Visibility = MoveButtonVisibility;
             RestoreFlyout.Visibility = RestoreButtonVisibility;
-
             SortEntriesFlyout.Visibility = SortButtonVisibility;
             SortGroupsFlyout.Visibility = SortButtonVisibility;
+
+            SaveFlyout.Command = SaveCommand;
+            DeleteFlyout.Command = DeleteCommand;
+            RestoreFlyout.Command = RestoreCommand;
             SortEntriesFlyout.Command = SortEntriesCommand;
             SortGroupsFlyout.Command = SortGroupsCommand;
+        }
+
+        // These are somehow necessary as otherwise, the command is not bound
+        private void MoveButtonFlyout_OnOpening(object sender, object e)
+        {
+            MoveButton.Command = MoveCommand;
         }
 
         private void SortFlyout_OnOpening(object sender, object e)
@@ -209,15 +197,21 @@ namespace ModernKeePass.Views.UserControls
         private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
-            foreach (var group in Model.Groups.Where(g => g.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0))
+            var groups = Model.Groups.Where(g => g.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
+            foreach (var group in groups)
             {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(group.Title, group.ParentGroupName, group.Id, imageUri, string.Empty);
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(
+                    group.Title, 
+                    group.ParentGroupName, 
+                    group.Id, 
+                    imageUri, 
+                    string.Empty);
             }
         }
 
         private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
-            Model.SelectedDestinationGroup = args.Tag;
+            MoveButton.CommandParameter = args.Tag;
             MoveCommand.RaiseCanExecuteChanged();
         }
     }

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Linq;
+using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
@@ -23,6 +24,7 @@ namespace ModernKeePass.Application.Group.Commands.SortEntries
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 _database.SortEntries(message.Group.Id);
+                message.Group.Entries = message.Group.Entries.OrderBy(e => e.Title).ToList();
             }
         }
     }

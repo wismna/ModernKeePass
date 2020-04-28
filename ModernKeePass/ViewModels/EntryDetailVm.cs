@@ -27,7 +27,9 @@ using ModernKeePass.Application.Security.Commands.GeneratePassword;
 using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Application.Group.Models;
+using ModernKeePass.Common;
 using ModernKeePass.Extensions;
+using ModernKeePass.Models;
 
 namespace ModernKeePass.ViewModels
 {
@@ -45,7 +47,10 @@ namespace ModernKeePass.ViewModels
         public bool SpecialPatternSelected { get; set; }
         public bool BracketsPatternSelected { get; set; }
         public string CustomChars { get; set; } = string.Empty;
+
         public string Id => SelectedItem.Id;
+
+        public string ParentGroupName => _parent.Title;
 
         public bool IsRecycleOnDelete
         {
@@ -221,6 +226,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand RestoreCommand { get; }
         public RelayCommand DeleteCommand { get; }
         public RelayCommand GoBackCommand { get; }
+        public RelayCommand GoToParentCommand { get; set; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
@@ -251,6 +257,7 @@ namespace ModernKeePass.ViewModels
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+            GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
         }
 
         public async Task Initialize(string entryId)
@@ -323,6 +330,7 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new AddEntryCommand { ParentGroupId = destination, EntryId = Id });
             await _mediator.Send(new RemoveEntryCommand { ParentGroupId = _parent.Id, EntryId = Id });
+            GoToGroup(destination);
         }
         
         public async Task SetFieldValue(string fieldName, object value)
@@ -362,6 +370,11 @@ namespace ModernKeePass.ViewModels
                 RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
             });
             _navigation.GoBack();
+        }
+
+        public void GoToGroup(string groupId)
+        {
+            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = groupId });
         }
     }
 }

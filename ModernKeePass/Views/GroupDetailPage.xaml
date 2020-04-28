@@ -236,12 +236,16 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <userControls:BreadCrumbUserControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
+                <HyperlinkButton Grid.Column="1" Grid.Row="1"
+                     FontWeight="Light" FontSize="12" Padding="0" Margin="5,-5,0,0"
+                     Foreground="{StaticResource MainColor}" 
+                     Content="{Binding ParentGroupName}" 
+                     Style="{StaticResource MainColorHyperlinkButton}"
+                     Command="{Binding GoToParentCommand}"/>
             </Grid>
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
-                IsDeleteButtonEnabled="{Binding IsNotRoot}"
                 SaveCommand="{Binding SaveCommand}"
                 MoveCommand="{Binding MoveCommand}"
                 SortEntriesCommand="{Binding SortEntriesCommand}"

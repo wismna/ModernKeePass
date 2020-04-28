@@ -79,12 +79,12 @@ namespace ModernKeePass.ViewModels
             }
         }
 
+        public string ParentGroupName => _parent?.Title;
+
         public bool IsRecycleOnDelete => Database.IsRecycleBinEnabled && !IsInRecycleBin;
 
         public bool IsInRecycleBin => _parent != null && _parent.Id == Database.RecycleBinId;
-
-        public IEnumerable<GroupVm> BreadCrumb { get; private set; }
-
+        
         public RelayCommand SaveCommand { get; }
         public RelayCommand SortEntriesCommand { get; }
         public RelayCommand SortGroupsCommand { get; }
@@ -93,9 +93,10 @@ namespace ModernKeePass.ViewModels
         public RelayCommand CreateGroupCommand { get; }
         public RelayCommand DeleteCommand { get; set; }
         public RelayCommand GoBackCommand { get; set; }
+        public RelayCommand GoToParentCommand { get; set; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
-
+        
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
         private readonly INavigationService _navigation;
@@ -122,6 +123,7 @@ namespace ModernKeePass.ViewModels
             CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
             DeleteCommand = new RelayCommand(async () => await AskForDelete(),() => IsNotRoot);
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
+            GoToParentCommand= new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
         }
 
         public async Task Initialize(string groupId)
@@ -130,7 +132,6 @@ namespace ModernKeePass.ViewModels
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
                 _parent = await _mediator.Send(new GetGroupQuery { Id = _group.ParentGroupId });
-                BreadCrumb = new List<GroupVm> { _parent };
             }
 
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
@@ -146,11 +147,11 @@ namespace ModernKeePass.ViewModels
                 IsNew = isNew
             });
         }
-        public void GoToGroup(string entryId, bool isNew = false)
+        public void GoToGroup(string groupId, bool isNew = false)
         {
             _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
             {
-                Id = entryId,
+                Id = groupId,
                 IsNew = isNew
             });
         }
@@ -171,6 +172,7 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new AddGroupCommand {ParentGroupId = destinationId, GroupId = Id });
             await _mediator.Send(new RemoveGroupCommand {ParentGroupId = _parent.Id, GroupId = Id });
+            GoToGroup(destinationId);
         }
 
         public async Task<IEnumerable<EntryVm>> Search(string queryText)
@@ -210,6 +212,8 @@ namespace ModernKeePass.ViewModels
         private async Task SortEntriesAsync()
         {
             await _mediator.Send(new SortEntriesCommand {Group = _group});
+            Entries = new ObservableCollection<EntryVm>(_group.Entries);
+            Entries.CollectionChanged += Entries_CollectionChanged;
             RaisePropertyChanged(nameof(Entries));
             SaveCommand.RaiseCanExecuteChanged();
         }
@@ -217,6 +221,7 @@ namespace ModernKeePass.ViewModels
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
+            Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
             RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
         }

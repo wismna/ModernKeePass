@@ -56,10 +56,9 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
                 <Button.Flyout>
-                    <Flyout>
+                    <Flyout Opening="MoveButtonFlyout_OnOpening">
                         <StackPanel>
-                            <SearchBox 
-                                x:Uid="GroupsSearch" 
+                            <SearchBox x:Uid="GroupsSearch" 
                                 Padding="12" Width="350"
                                 Margin="0,5,0,5" 
                                 FontSize="15" 
@@ -68,7 +67,7 @@
                                 SearchHistoryEnabled="False"
                                 Style="{StaticResource MainColorSearchBox}">
                             </SearchBox>
-                            <Button x:Uid="MoveButton" Command="{Binding MoveCommand, ElementName=UserControl}" CommandParameter="{Binding SelectedDestinationGroup}" Style="{StaticResource MainColorButton}" />
+                            <Button x:Name="MoveButton" x:Uid="MoveButton" Style="{StaticResource MainColorButton}" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>
@@ -100,7 +99,7 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </ToggleButton>
-            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Click="DeleteButton_Click" Style="{StaticResource MenuButtonStyle}">
+            <Button Command="{Binding DeleteCommand, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Delete">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuDeleteButton" />
@@ -112,13 +111,13 @@
             <SymbolIcon Symbol="More" />
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">
-                    <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" x:Name="SaveFlyout" />
                     <MenuFlyoutItem x:Uid="TopMenuMoveFlyout" x:Name="MoveFlyout" Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
-                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
-                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Click="DeleteButton_Click" />
-                    <MenuFlyoutItem x:Uid="TopMenuSortEntriesFlyout" x:Name="SortEntriesFlyout" Command="{Binding SortEntriesCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="TopMenuSortGroupsFlyout" x:Name="SortGroupsFlyout" Command="{Binding SortGroupsCommand, ElementName=UserControl}" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
+                    <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
+                    <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortEntriesFlyout" x:Name="SortEntriesFlyout" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuSortGroupsFlyout" x:Name="SortGroupsFlyout" Visibility="{Binding SortButtonVisibility, ElementName=UserControl}" />
                 </MenuFlyout>
             </Button.Flyout>
         </Button>

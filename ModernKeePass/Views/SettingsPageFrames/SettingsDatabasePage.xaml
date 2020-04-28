@@ -12,7 +12,7 @@
         <converters:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
     </Page.Resources>
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" DataContext="{StaticResource ViewModel}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel.Resources>
             <CollectionViewSource x:Name="RecycleBinGroups" Source="{Binding Groups}" />
             <CollectionViewSource x:Name="Ciphers" Source="{Binding Ciphers}" />

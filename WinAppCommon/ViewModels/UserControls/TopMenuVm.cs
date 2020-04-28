@@ -9,7 +9,6 @@ namespace ModernKeePass.ViewModels
     public class TopMenuVm
     {
         public IEnumerable<GroupVm> Groups { get; set; }
-        public string SelectedDestinationGroup { get; set; }
 
         public TopMenuVm(IMediator mediator)
         {

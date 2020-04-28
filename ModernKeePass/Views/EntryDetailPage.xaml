@@ -402,14 +402,9 @@
                                 <Setter Property="Margin" Value="0,20,0,0"/>
                                 <Setter Property="FontSize" Value="18"/>
                             </Style>
-                            <Style BasedOn="{StaticResource TextBoxWithButtonStyle}" TargetType="local:TextBoxWithButton" x:Key="EntryTextBoxWithButtonStyle">
-                                <Setter Property="Width" Value="350"/>
-                                <Setter Property="Height" Value="32"/>
-                                <Setter Property="HorizontalAlignment" Value="Left"/>
-                            </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />
@@ -419,7 +414,7 @@
                         </local:TextBoxWithButton>
                         <TextBlock x:Uid="EntryPassword" />
                         <PasswordBox HorizontalAlignment="Left" Password="{Binding Password, Mode=TwoWay}" Width="350" Height="32" IsPasswordRevealButtonEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" IsEnabled="{Binding IsCurrentEntry}" />
-                        <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding Password}" />
@@ -430,7 +425,7 @@
                         <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
                         <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
                         <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:NavigateToUrlAction Url="{Binding Url}" />
@@ -524,7 +519,12 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <userControls:BreadCrumbUserControl Grid.Column="1" Grid.Row="1" ItemsSource="{Binding BreadCrumb}" Margin="5,-5,0,0" />
+                <HyperlinkButton Grid.Column="1" Grid.Row="1"
+                     FontWeight="Light" FontSize="12" Padding="0" Margin="5,-5,0,0"
+                     Foreground="{StaticResource MainColor}" 
+                     Content="{Binding ParentGroupName}" 
+                     Style="{StaticResource MainColorHyperlinkButton}"
+                     Command="{Binding GoToParentCommand}"/>
             </Grid>
             <userControls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="2"
