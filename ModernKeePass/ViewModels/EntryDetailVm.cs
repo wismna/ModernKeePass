@@ -217,7 +217,7 @@ namespace ModernKeePass.ViewModels
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand GeneratePasswordCommand { get; }
-        public RelayCommand MoveCommand { get; }
+        public RelayCommand<string> MoveCommand { get; }
         public RelayCommand RestoreCommand { get; }
         public RelayCommand DeleteCommand { get; }
         public RelayCommand GoBackCommand { get; }
@@ -247,7 +247,7 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
-            MoveCommand = new RelayCommand(async () => await Move(_parent), () => _parent != null);
+            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && string.IsNullOrEmpty(destination) && destination != _parent.Id);
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
@@ -319,10 +319,10 @@ namespace ModernKeePass.ViewModels
             RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
         }
         
-        public async Task Move(GroupVm destination)
+        public async Task Move(string destination)
         {
-            await _mediator.Send(new AddEntryCommand { ParentGroup = destination, Entry = SelectedItem });
-            await _mediator.Send(new RemoveEntryCommand { ParentGroup = _parent, Entry = SelectedItem });
+            await _mediator.Send(new AddEntryCommand { ParentGroupId = destination, EntryId = Id });
+            await _mediator.Send(new RemoveEntryCommand { ParentGroupId = _parent.Id, EntryId = Id });
         }
         
         public async Task SetFieldValue(string fieldName, object value)

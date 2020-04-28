@@ -16,7 +16,7 @@
             <Setter Property="Height" Value="{StaticResource MenuSize}" />
         </Style>
     </UserControl.Resources>
-    <StackPanel Orientation="Horizontal">
+    <StackPanel x:Name="StackPanel" Orientation="Horizontal" DataContext="{Binding Source={StaticResource Locator}, Path=TopMenu}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="VisibilityStates">
                 <VisualState x:Name="Overflowed">
@@ -49,12 +49,29 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </Button>
-            <Button Command="{Binding MoveCommand, ElementName=UserControl}" Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
+            <Button Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="MoveToFolder">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="TopMenuMoveButton" />
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
+                <Button.Flyout>
+                    <Flyout>
+                        <StackPanel>
+                            <SearchBox 
+                                x:Uid="GroupsSearch" 
+                                Padding="12" Width="350"
+                                Margin="0,5,0,5" 
+                                FontSize="15" 
+                                SuggestionsRequested="SearchBox_OnSuggestionsRequested" 
+                                ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" 
+                                SearchHistoryEnabled="False"
+                                Style="{StaticResource MainColorSearchBox}">
+                            </SearchBox>
+                            <Button x:Uid="MoveButton" Command="{Binding MoveCommand, ElementName=UserControl}" CommandParameter="{Binding SelectedDestinationGroup}" Style="{StaticResource MainColorButton}" />
+                        </StackPanel>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
             <Button Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" Style="{StaticResource MenuButtonStyle}">
                 <SymbolIcon Symbol="Undo">
@@ -96,7 +113,7 @@
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" Command="{Binding SaveCommand, ElementName=UserControl}" />
-                    <MenuFlyoutItem x:Uid="TopMenuMoveFlyout" x:Name="MoveFlyout" Command="{Binding MoveCommand, ElementName=UserControl}" Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" />
+                    <MenuFlyoutItem x:Uid="TopMenuMoveFlyout" x:Name="MoveFlyout" Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Command="{Binding RestoreCommand, ElementName=UserControl}" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" Command="{Binding EditCommand, ElementName=UserControl}" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
                     <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" Command="{Binding DeleteCommand, ElementName=UserControl}" IsEnabled="{Binding IsDeleteButtonEnabled, ElementName=UserControl}" Click="DeleteButton_Click" />

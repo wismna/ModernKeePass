@@ -95,6 +95,7 @@
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
     <Compile Include="Group\Commands\UpdateGroup\UpdateGroupCommand.cs" />
+    <Compile Include="Group\Queries\GetAllGroups\GetAllGroupsQuery.cs" />
     <Compile Include="Group\Queries\GetGroup\GetGroupQuery.cs" />
     <Compile Include="Group\Queries\SearchEntries\SearchEntriesQuery.cs" />
     <Compile Include="Parameters\Commands\SetCipher\SetCipherCommand.cs" />

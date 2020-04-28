@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:viewModels="using:ModernKeePass.ViewModels"
     xmlns:converters="using:ModernKeePass.Converters" 
     xmlns:local="using:ModernKeePass.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
@@ -431,7 +430,7 @@
                         <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
                         <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
                         <TextBlock TextWrapping="Wrap" Text="URL" FontSize="18"/>
-                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" MaxLength="256" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource EntryTextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:NavigateToUrlAction Url="{Binding Url}" />

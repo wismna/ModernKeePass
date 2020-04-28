@@ -120,7 +120,7 @@
     <Style TargetType="SearchBox" x:Key="MainColorSearchBox">
         <Setter Property="Background" Value="{ThemeResource SearchBoxBackgroundThemeBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarBackgroundThemeBrush}" />
-        <Setter Property="BorderThickness" Value="{ThemeResource SearchBoxBorderThemeThickness}" />
+        <Setter Property="BorderThickness" Value="2" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource SearchBoxContentThemeFontSize}" />
         <Setter Property="FontWeight" Value="{ThemeResource SearchBoxContentThemeFontWeight}"/>
@@ -153,7 +153,7 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBorderThemeBrush}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColorLight}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColorLight}" />
@@ -182,7 +182,7 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBorderThemeBrush}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColor}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButton" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonForegroundThemeBrush}" />
@@ -420,8 +420,8 @@
                                HorizontalAlignment="Left"
                                VerticalAlignment="Bottom">
                             <Border x:Name="SearchSuggestionsPopupBorder"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{ThemeResource ButtonBackgroundThemeBrush}"
+                                    BorderThickness="1"
                                     MinWidth="{ThemeResource SearchBoxSuggestionPopupThemeMinWidth}">
                                 <Border.Resources>
                                     <Style x:Key="SearchSuggestionListViewItemStyle" TargetType="ListViewItem">
@@ -555,7 +555,7 @@
                                     <Border x:Name="IMECandidateListContainer" />
                                     <Border x:Name="IMECandidateListSeparator" Grid.Row="1" Visibility="Collapsed" BorderThickness="{ThemeResource SearchBoxIMECandidateListSeparatorThemeThickness}" BorderBrush="{ThemeResource SearchBoxIMECandidateListSeparatorThemeBrush}" />
                                     <ListView x:Name="SearchSuggestionsList"
-                                              Background="{ThemeResource TextBoxBackgroundThemeBrush}"
+                                              Background="{ThemeResource AppBarBackgroundThemeBrush}"
                                               Grid.Row="2"
                                               IsTabStop="False"
                                               IsItemClickEnabled="true"

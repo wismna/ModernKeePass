@@ -55,6 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\SaveVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\OpenDatabaseControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\SetCredentialsVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\TopMenuVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocator.cs" />
   </ItemGroup>
 </Project>

@@ -210,7 +210,7 @@
   <data name="GroupCreateEntry.Text" xml:space="preserve">
     <value>Create new entry</value>
   </data>
-  <data name="GroupSearch.PlaceholderText" xml:space="preserve">
+  <data name="EntriesSearch.PlaceholderText" xml:space="preserve">
     <value>Search...</value>
   </data>
   <data name="GroupTitle.PlaceholderText" xml:space="preserve">
@@ -497,5 +497,11 @@
   </data>
   <data name="CloseDesc.Text" xml:space="preserve">
     <value>This will close the currently opened database without saving the changes.</value>
+  </data>
+  <data name="GroupsSearch.PlaceholderText" xml:space="preserve">
+    <value>Destination group</value>
+  </data>
+  <data name="MoveButton.Content" xml:space="preserve">
+    <value>Move</value>
   </data>
 </root>

@@ -348,6 +348,18 @@ namespace ModernKeePass.Infrastructure.KeePass
             return searchResults.Select(e => _mapper.Map<EntryEntity>(e));
         }
 
+        public IEnumerable<BaseEntity> GetAllGroups(string groupId)
+        {
+            var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
+            var groups = pwGroup.GetGroups(true).Select(g => new GroupEntity
+            {
+                Id = g.Uuid.ToHexString(),
+                Name = g.Name,
+                ParentName = g.ParentGroup?.Name
+            });
+            return groups;
+        }
+
         private CompositeKey CreateCompositeKey(Credentials credentials)
         {
             var compositeKey = new CompositeKey();

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using GalaSoft.MvvmLight.Command;
 using ModernKeePass.Application.Common.Interfaces;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
@@ -125,15 +125,15 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
 
-        public RelayCommand ActionButtonCommand
+        public ICommand ActionButtonCommand
         {
-            get { return (RelayCommand)GetValue(ActionButtonCommandProperty); }
+            get { return (ICommand)GetValue(ActionButtonCommandProperty); }
             set { SetValue(ActionButtonCommandProperty, value); }
         }
         public static readonly DependencyProperty ActionButtonCommandProperty =
             DependencyProperty.Register(
                 nameof(ActionButtonCommand),
-                typeof(RelayCommand),
+                typeof(ICommand),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 

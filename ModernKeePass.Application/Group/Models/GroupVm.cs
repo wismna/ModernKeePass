@@ -5,7 +5,6 @@ using ModernKeePass.Application.Common.Mappings;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
-using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.Application.Group.Models
 {

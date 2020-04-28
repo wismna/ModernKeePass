@@ -1,16 +1,14 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Entry.Models;
-using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.Application.Group.Commands.RemoveEntry
 {
     public class RemoveEntryCommand : IRequest
     {
-        public GroupVm ParentGroup { get; set; }
-        public EntryVm Entry { get; set; }
+        public string ParentGroupId { get; set; }
+        public string EntryId { get; set; }
 
         public class RemoveEntryCommandHandler : IAsyncRequestHandler<RemoveEntryCommand>
         {
@@ -25,8 +23,8 @@ namespace ModernKeePass.Application.Group.Commands.RemoveEntry
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                await _database.RemoveEntry(message.ParentGroup.Id, message.Entry.Id);
-                message.ParentGroup.Entries.Remove(message.Entry);
+                await _database.RemoveEntry(message.ParentGroupId, message.EntryId);
+                //message.ParentGroup.Entries.Remove(message.Entry);
             }
         }
     }

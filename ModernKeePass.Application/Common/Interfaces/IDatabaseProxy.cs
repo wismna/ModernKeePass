@@ -51,5 +51,6 @@ namespace ModernKeePass.Application.Common.Interfaces
         void DeleteHistory(string entryId, int historyIndex);
 
         IEnumerable<EntryEntity> Search(string groupId, string text);
+        IEnumerable<BaseEntity> GetAllGroups(string groupId);
     }
 }

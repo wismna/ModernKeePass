@@ -270,7 +270,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </Button>
-            <SearchBox Grid.Column="3" x:Uid="GroupSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Background="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" BorderThickness="0" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}">
+            <SearchBox Grid.Column="3" x:Uid="EntriesSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="LostFocus">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Collapsed" />

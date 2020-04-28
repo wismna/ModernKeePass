@@ -88,7 +88,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand SaveCommand { get; }
         public RelayCommand SortEntriesCommand { get; }
         public RelayCommand SortGroupsCommand { get; }
-        public RelayCommand MoveCommand { get; }
+        public RelayCommand<string> MoveCommand { get; }
         public RelayCommand CreateEntryCommand { get; }
         public RelayCommand CreateGroupCommand { get; }
         public RelayCommand DeleteCommand { get; set; }
@@ -117,10 +117,10 @@ namespace ModernKeePass.ViewModels
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
             SortGroupsCommand = new RelayCommand(async () => await SortGroupsAsync(), () => IsEditMode);
-            MoveCommand = new RelayCommand(async () => await Move(_parent), () => IsNotRoot);
+            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => IsNotRoot && !string.IsNullOrEmpty(destination) && destination != Id);
             CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
             CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
-            DeleteCommand = new RelayCommand(async () => await AskForDelete());
+            DeleteCommand = new RelayCommand(async () => await AskForDelete(),() => IsNotRoot);
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
         }
 
@@ -167,10 +167,10 @@ namespace ModernKeePass.ViewModels
             GoToEntry(entry.Id, true);
         }
         
-        public async Task Move(GroupVm destination)
+        public async Task Move(string destinationId)
         {
-            await _mediator.Send(new AddGroupCommand {ParentGroup = destination, Group = _group });
-            await _mediator.Send(new RemoveGroupCommand {ParentGroup = _parent, Group = _group });
+            await _mediator.Send(new AddGroupCommand {ParentGroupId = destinationId, GroupId = Id });
+            await _mediator.Send(new RemoveGroupCommand {ParentGroupId = _parent.Id, GroupId = Id });
         }
 
         public async Task<IEnumerable<EntryVm>> Search(string queryText)
@@ -196,7 +196,7 @@ namespace ModernKeePass.ViewModels
                     if (_reorderedEntry == null)
                     {
                         var entry = (EntryVm) e.NewItems[0];
-                        await _mediator.Send(new AddEntryCommand {Entry = entry, ParentGroup = _group});
+                        await _mediator.Send(new AddEntryCommand {EntryId = entry.Id, ParentGroupId = Id});
                     }
                     else
                     {
