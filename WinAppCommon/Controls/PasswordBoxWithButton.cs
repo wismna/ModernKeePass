@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace ModernKeePass.Controls
 {
-    public class TextBoxWithButton : SearchBox
+    public class PasswordBoxWithButton: SearchBox
     {
         public event EventHandler<RoutedEventArgs> ButtonClick;
 
@@ -18,7 +17,7 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(ButtonSymbol),
                 typeof(string),
-                typeof(TextBoxWithButton),
+                typeof(PasswordBoxWithButton),
                 new PropertyMetadata("&#xE107;", (o, args) => { }));
 
         public string ButtonTooltip
@@ -30,33 +29,21 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(ButtonTooltip),
                 typeof(string),
-                typeof(TextBoxWithButton),
+                typeof(PasswordBoxWithButton),
                 new PropertyMetadata(string.Empty, (o, args) => { }));
 
-        public string Text
+        public string Password
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return (string)GetValue(PasswordProperty); }
+            set { SetValue(PasswordProperty, value); }
         }
-        public static readonly DependencyProperty TextProperty =
+        public static readonly DependencyProperty PasswordProperty =
             DependencyProperty.Register(
-                nameof(Text),
+                nameof(Password),
                 typeof(string),
-                typeof(TextBoxWithButton),
+                typeof(PasswordBoxWithButton),
                 new PropertyMetadata(string.Empty, (o, args) => { }));
         
-        public ICommand ButtonCommand
-        {
-            get { return (ICommand)GetValue(ButtonCommandProperty); }
-            set { SetValue(ButtonCommandProperty, value); }
-        }
-        public static readonly DependencyProperty ButtonCommandProperty =
-            DependencyProperty.Register(
-                nameof(ButtonCommand),
-                typeof(ICommand),
-                typeof(TextBoxWithButton),
-                new PropertyMetadata(null, (o, args) => { }));
-
         public bool IsButtonEnabled
         {
             get { return (bool)GetValue(IsButtonEnabledProperty); }
@@ -66,13 +53,25 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(IsButtonEnabled),
                 typeof(bool),
-                typeof(TextBoxWithButton),
+                typeof(PasswordBoxWithButton),
                 new PropertyMetadata(true, (o, args) => { }));
-        
 
-        public TextBoxWithButton()
+        public bool IsPasswordRevealEnabled
         {
-            DefaultStyleKey = typeof(TextBoxWithButton);
+            get { return (bool)GetValue(IsPasswordRevealEnabledProperty); }
+            set { SetValue(IsPasswordRevealEnabledProperty, value); }
+        }
+        public static readonly DependencyProperty IsPasswordRevealEnabledProperty =
+            DependencyProperty.Register(
+                nameof(IsPasswordRevealEnabled),
+                typeof(bool),
+                typeof(PasswordBoxWithButton),
+                new PropertyMetadata(true, (o, args) => { }));
+
+
+        public PasswordBoxWithButton()
+        {
+            DefaultStyleKey = typeof(PasswordBoxWithButton);
         }
         protected override void OnApplyTemplate()
         {

@@ -1,0 +1,22 @@
+﻿<Application
+    x:Class="ModernKeePass.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewModels="using:ModernKeePass.ViewModels"
+    RequestedTheme="Light">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls"/>
+                <ResourceDictionary Source="ResourceDictionaries/MasterDetailsView.xaml" />
+                <!--<ResourceDictionary Source="ResourceDictionaries/TextBoxWithButtonStyle.xaml" />-->
+                <ResourceDictionary Source="ResourceDictionaries/HamburgerButtonStyle.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/ListViewLeftIndicatorStyle.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/NoBorderButtonStyle.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/NoBorderToggleButtonStyle.xaml" />
+                <ResourceDictionary Source="ResourceDictionaries/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <viewModels:ViewModelLocator x:Key="Locator" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

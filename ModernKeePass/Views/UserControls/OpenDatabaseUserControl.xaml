@@ -24,7 +24,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" SelectionHighlightColor="{StaticResource MainColor}" >
+        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="GotFocus">
                     <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="HasPassword" Value="True" />
@@ -35,13 +35,11 @@
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" 
                          Content="{Binding KeyFileText}" 
                          IsEnabled="{Binding HasKeyFile}" 
-                         Click="KeyFileButton_Click" 
-                         Style="{StaticResource MainColorHyperlinkButton}" />
+                         Click="KeyFileButton_Click" />
         <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
                 Content="{Binding OpenButtonLabel}"
                 Command="{Binding OpenDatabaseCommand}"
-                CommandParameter="{Binding DatabaseFilePath, ElementName=UserControl}"
-                Style="{StaticResource MainColorButton}" />
+                CommandParameter="{Binding DatabaseFilePath, ElementName=UserControl}" />
         <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Height="Auto" FontSize="14" FontWeight="Light" 
                    Text="{Binding Status}" 
                    Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" 

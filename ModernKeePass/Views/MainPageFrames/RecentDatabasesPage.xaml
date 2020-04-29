@@ -16,7 +16,7 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainColorHyperlinkButton}" Foreground="{StaticResource MainColor}" Command="{Binding ClearAllCommand}">
+        <HyperlinkButton Grid.Row="0" HorizontalAlignment="Right" Command="{Binding ClearAllCommand}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Cancel" />
                 <TextBlock x:Uid="RecentClear" VerticalAlignment="Center" Margin="10,0,0,0" />

@@ -21,7 +21,7 @@
         IsSynchronizedWithCurrentItem="False"
         RequestedTheme="Dark"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-        Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
+        Foreground="{ThemeResource TextColorLightBrush}"
         ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
         <ListView.Resources>
             <DataTemplate x:Name="IsSpecial">
@@ -77,6 +77,7 @@
                             Visibility="{Binding IsButtonVisible, ElementName=UserControl}" 
                             Style="{StaticResource NoBorderButtonStyle}" 
                             Background="Transparent" 
+                            Foreground="{ThemeResource TextColorLightBrush}"
                             BorderThickness="0" 
                             Width="{StaticResource ExpandedMenuSize}" 
                             HorizontalContentAlignment="Left" 
@@ -90,7 +91,14 @@
                             <TextBlock Text="{Binding ButtonLabel, ElementName=UserControl}" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
                         </StackPanel>
                     </Button>
-                    <Button Padding="0" Height="{StaticResource MenuSize}" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Width="{StaticResource ExpandedMenuSize}" HorizontalContentAlignment="Left">
+                    <Button Padding="0" Margin="0" 
+                            Height="{StaticResource MenuSize}" 
+                            Style="{StaticResource NoBorderButtonStyle}" 
+                            Foreground="{ThemeResource TextColorLightBrush}"
+                            Background="Transparent" 
+                            BorderThickness="0" 
+                            Width="{StaticResource ExpandedMenuSize}" 
+                            HorizontalContentAlignment="Left">
                         <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                             <SymbolIcon Symbol="Home">
                                 <ToolTipService.ToolTip>
@@ -105,7 +113,15 @@
                             </core:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </Button>
-                    <Button Padding="0" Height="{StaticResource MenuSize}" Margin="0" Style="{StaticResource NoBorderButtonStyle}" Background="Transparent" BorderThickness="0" Width="{StaticResource ExpandedMenuSize}" HorizontalContentAlignment="Left">
+                    <Button 
+                        Padding="0" Margin="0" 
+                        Height="{StaticResource MenuSize}" 
+                        Style="{StaticResource NoBorderButtonStyle}" 
+                        Foreground="{ThemeResource TextColorLightBrush}"
+                        Background="Transparent" 
+                        BorderThickness="0" 
+                        Width="{StaticResource ExpandedMenuSize}" 
+                        HorizontalContentAlignment="Left">
                         <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                             <SymbolIcon Symbol="Setting">
                                 <ToolTipService.ToolTip>

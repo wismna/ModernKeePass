@@ -12,8 +12,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.HockeyApp;
 using ModernKeePass.Application;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
@@ -38,7 +40,7 @@ namespace ModernKeePass
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
-        private readonly IHockeyClient _hockey;
+        private readonly IAppCenterService _appCenter;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
 
@@ -56,7 +58,7 @@ namespace ModernKeePass
             serviceCollection.AddInfrastructureCommon();
             serviceCollection.AddInfrastructureKeePass();
             serviceCollection.AddInfrastructureUwp();
-            serviceCollection.AddWin81App();
+            serviceCollection.AddWin10App();
             Services = serviceCollection.BuildServiceProvider();
 
             _mediator = Services.GetService<IMediator>();
@@ -65,17 +67,23 @@ namespace ModernKeePass
             _navigation = Services.GetService<INavigationService>();
             _dialog = Services.GetService<IDialogService>();
             _notification = Services.GetService<INotificationService>();
-            _hockey = Services.GetService<IHockeyClient>();
+
+#if DEBUG
+            AppCenter.Start("029ab91d-1e4b-4d4d-9661-5d438dd671a5",
+                typeof(Analytics), typeof(Crashes));
+#else
+			AppCenter.Start("79d23520-a486-4f63-af81-8d90bf4e1bea", typeof(Analytics));
+#endif
 
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
         }
-        
+
         #region Event Handlers
 
-        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        private async void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             // Save the argument exception because it's cleared on first access
             var exception = unhandledExceptionEventArgs.Exception;
@@ -84,15 +92,15 @@ namespace ModernKeePass
                 exception.InnerException != null
                     ? exception.InnerException
                     : exception;
-            
+
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                _hockey.TrackException(realException);
+                //_hockey.TrackException(realException);
                 await _dialog.ShowMessage(realException.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
-                    _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
+                    _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"),
                     async isOk =>
                     {
                         if (isOk)
@@ -105,20 +113,20 @@ namespace ModernKeePass
                             };
                             savePicker.FileTypeChoices.Add(
                                 _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
-                                new List<string> {".kdbx"});
+                                new List<string> { ".kdbx" });
 
                             var file = await savePicker.PickSaveFileAsync().AsTask();
                             if (file != null)
                             {
                                 var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-                                await _mediator.Send(new SaveDatabaseCommand {FilePath = token});
+                                await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
                             }
                         }
                     });
             }
             else
             {
-                await _dialog.ShowError(realException, realException.Message, "OK", () => {});
+                await _dialog.ShowError(realException, realException.Message, "OK", () => { });
             }
         }
 
@@ -130,7 +138,7 @@ namespace ModernKeePass
         protected override async void OnLaunched(LaunchActivatedEventArgs args)
         {
             await OnLaunchOrActivated(args);
-            await _hockey.SendCrashesAsync(/* sendWithoutAsking: true */);
+            //await _hockey.SendCrashesAsync(/* sendWithoutAsking: true */);
         }
 
         protected override async void OnActivated(IActivatedEventArgs args)
@@ -147,7 +155,7 @@ namespace ModernKeePass
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame {Language = Windows.Globalization.ApplicationLanguages.Languages[0]};
+                rootFrame = new Frame { Language = Windows.Globalization.ApplicationLanguages.Languages[0] };
                 // Set the default language
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
@@ -235,7 +243,7 @@ namespace ModernKeePass
                 deferral.Complete();
             }
         }
-        
+
         /// <summary>
         /// Invoked when application is launched from opening a file in Windows Explorer 
         /// </summary>
@@ -267,7 +275,7 @@ namespace ModernKeePass
 
             Window.Current.Activate();
         }
-        
+
         #endregion
     }
 }

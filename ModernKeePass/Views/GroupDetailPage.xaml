@@ -64,7 +64,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" x:Uid="ReorderEntriesLabel" Margin="10,10,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
                 <!--<TextBlock Grid.Column="1" Grid.Row="0" x:Uid="EntrySymbol" Margin="40,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />-->
-                <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Command="{Binding CreateEntryCommand}"  HorizontalAlignment="Right" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}">
+                <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Command="{Binding CreateEntryCommand}"  HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add">
                             <ToolTipService.ToolTip>
@@ -105,9 +105,9 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColor}, Converter={StaticResource ColorToBrushConverter}}">
+                                        <Border Grid.Column="0" Background="{Binding BackgroundColor, ConverterParameter={StaticResource MainColorBrush}, Converter={StaticResource ColorToBrushConverter}}">
                                             <Viewbox MaxHeight="50" Width="100">
-                                                <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}}" Foreground="{StaticResource TextColor}" />
+                                                <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}}" Foreground="{StaticResource TextColorLightBrush}" />
                                             </Viewbox>
                                         </Border>
                                         <StackPanel Grid.Column="1" VerticalAlignment="Top" Margin="10,10,0,0" >
@@ -116,7 +116,7 @@
                                             <TextBlock Text="{Binding Username}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                             <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                         </StackPanel>
-                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{StaticResource AppBarBackgroundThemeBrush}" VerticalAlignment="Bottom">
+                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{StaticResource AppBarBackgroundThemeBrush}" VerticalAlignment="Bottom" Foreground="{StaticResource TextColorDarkBrush}">
                                             <SymbolIcon Symbol="More" />
                                             <Button.Flyout>
                                                 <MenuFlyout>
@@ -169,7 +169,7 @@
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
                                             <Grid Background="LightGray" HorizontalAlignment="Left">
-                                                <TextBlock Text="{Binding Key}" Width="50" Margin="30" Foreground="{StaticResource MainColor}" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
+                                                <TextBlock Text="{Binding Key}" Width="50" Margin="30" Foreground="{StaticResource MainColorBrush}" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
                                             </Grid>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
@@ -213,19 +213,16 @@
                 <Viewbox MaxHeight="200" Width="200" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
                 </Viewbox>
-                <TextBox Grid.Column="1" Grid.Row="0"
+                <TextBox Grid.Column="1" Grid.Row="0" 
+                    x:Uid="GroupTitle"
                     x:Name="TitleTextBox"
                     Text="{Binding Title, Mode=TwoWay}" 
-                    Foreground="{ThemeResource DefaultTextForegroundThemeBrush}"
-                    SelectionHighlightColor="{StaticResource MainColor}"
-                    BorderBrush="{ThemeResource TextBoxBorderThemeBrush}"
                     Background="Transparent"
                     IsHitTestVisible="{Binding IsEditMode}"
                     FontSize="20"
                     FontWeight="Light"
                     TextWrapping="NoWrap" 
-                    VerticalAlignment="Center" 
-                    x:Uid="GroupTitle">
+                    VerticalAlignment="Center">
                     <interactivity:Interaction.Behaviors>
                         <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
                             <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
@@ -238,10 +235,8 @@
                 </TextBox>
                 <HyperlinkButton Grid.Column="1" Grid.Row="1"
                      FontWeight="Light" FontSize="12" Padding="0" Margin="5,-5,0,0"
-                     Foreground="{StaticResource MainColor}" 
                      Content="{Binding ParentGroupName}" 
-                     Style="{StaticResource MainColorHyperlinkButton}"
-                     Command="{Binding GoToParentCommand}"/>
+                     Command="{Binding GoToParentCommand}" />
             </Grid>
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -274,7 +269,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </Button>
-            <SearchBox Grid.Column="3" x:Uid="EntriesSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" Style="{StaticResource MainColorSearchBox}">
+            <SearchBox Grid.Column="3" x:Uid="EntriesSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="LostFocus">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Collapsed" />

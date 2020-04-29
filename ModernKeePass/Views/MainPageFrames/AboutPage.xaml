@@ -22,7 +22,7 @@
         </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run x:Uid="AboutHomepage" />
-            <Hyperlink NavigateUri="https://wismna.github.io/ModernKeePass/" Foreground="{StaticResource MainColor}">
+            <Hyperlink NavigateUri="https://wismna.github.io/ModernKeePass/">
                 <Run Text="https://wismna.github.io/ModernKeePass/"/>
             </Hyperlink>
         </TextBlock>

@@ -16,11 +16,7 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.Resources>
             <DataTemplate x:Name="FirstItemTemplate">
-                <HyperlinkButton 
-                    FontWeight="Light" FontSize="12" Padding="0"
-                    Foreground="{StaticResource MainColor}" 
-                    Content="{Binding Title}" 
-                    Style="{StaticResource MainColorHyperlinkButton}">
+                <HyperlinkButton FontWeight="Light" FontSize="12" Padding="0" Content="{Binding Title}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Click">
                             <core:NavigateToPageAction Parameter="{Binding Id}" TargetPage="ModernKeePass.Views.GroupDetailPage" />
@@ -33,7 +29,7 @@
                     <Viewbox MaxHeight="10" Margin="0,2,0,0">
                         <SymbolIcon Symbol="Forward" />
                     </Viewbox>
-                    <HyperlinkButton Foreground="{StaticResource MainColor}" Content="{Binding Title}" Style="{StaticResource MainColorHyperlinkButton}" FontWeight="Light" FontSize="12" Padding="0">
+                    <HyperlinkButton Content="{Binding Title}" FontWeight="Light" FontSize="12" Padding="0">
                         <interactivity:Interaction.Behaviors>
                             <core:EventTriggerBehavior EventName="Click">
                                 <core:NavigateToPageAction Parameter="{Binding Id}" TargetPage="ModernKeePass.Views.GroupDetailPage" />

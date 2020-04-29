@@ -9,9 +9,7 @@
         x:Name="ComboBox" 
         ItemsSource="{Binding Symbols, ElementName=UserControl}" 
         SelectedItem="{Binding SelectedSymbol, ElementName=UserControl, Mode=TwoWay}" 
-        Loaded="ComboBox_OnLoaded" 
-        ItemContainerStyle="{StaticResource MainColorComboBoxItem}" 
-        Style="{StaticResource MainColorComboBox}">
+        Loaded="ComboBox_OnLoaded">
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <Border>

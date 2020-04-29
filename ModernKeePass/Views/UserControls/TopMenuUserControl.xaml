@@ -8,7 +8,6 @@
     <UserControl.Resources>
         <Style BasedOn="{StaticResource NoBorderButtonStyle}" TargetType="Button" x:Key="MenuButtonStyle" >
             <Setter Property="Padding" Value="25,0,25,0" />
-            <Setter Property="Background" Value="{ThemeResource ToggleButtonBackgroundThemeBrush}" />
             <Setter Property="Height" Value="{StaticResource MenuSize}" />
         </Style>
         <Style BasedOn="{StaticResource NoBorderToggleButtonStyle}" TargetType="ToggleButton" x:Key="MenuToggleButtonStyle" >
@@ -64,10 +63,9 @@
                                 FontSize="15" 
                                 SuggestionsRequested="SearchBox_OnSuggestionsRequested" 
                                 ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" 
-                                SearchHistoryEnabled="False"
-                                Style="{StaticResource MainColorSearchBox}">
+                                SearchHistoryEnabled="False">
                             </SearchBox>
-                            <Button x:Name="MoveButton" x:Uid="MoveButton" Style="{StaticResource MainColorButton}" />
+                            <Button x:Name="MoveButton" x:Uid="MoveButton" />
                         </StackPanel>
                     </Flyout>
                 </Button.Flyout>

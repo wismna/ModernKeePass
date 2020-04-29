@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewWithDisable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\PasswordBoxWithButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ColorToBrushConverter.cs" />

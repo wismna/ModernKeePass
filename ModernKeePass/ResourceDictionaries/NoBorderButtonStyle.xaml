@@ -3,8 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <!-- Default style for Windows.UI.Xaml.Controls.Button -->
     <Style TargetType="Button" x:Key="NoBorderButtonStyle">
-        <Setter Property="Background" Value="{ThemeResource ButtonBackgroundThemeBrush}" />
-        <Setter Property="Foreground" Value="{ThemeResource ButtonForegroundThemeBrush}"/>
+        <Setter Property="Background" Value="{ThemeResource ToggleButtonBackgroundThemeBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource TextColorDark}"/>
         <Setter Property="BorderBrush" Value="{ThemeResource ButtonBorderThemeBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}" />
         <Setter Property="Padding" Value="12,4,12,4" />
@@ -24,7 +24,7 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border"
                                                                        Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ButtonPointerOverBackgroundThemeBrush}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
                                                                        Storyboard.TargetProperty="Foreground">

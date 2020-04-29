@@ -9,8 +9,6 @@
               ItemsSource="{Binding Colors, ElementName=UserControl}" 
               SelectionChanged="Selector_OnSelectionChanged" 
               Loaded="ComboBox_Loaded" 
-              ItemContainerStyle="{StaticResource MainColorComboBoxItem}" 
-              Style="{StaticResource MainColorComboBox}" 
               IsEnabled="{Binding IsEnabled, ElementName=UserControl}">
         <ComboBox.ItemTemplate>
             <DataTemplate>

@@ -8,11 +8,11 @@
     DataContext="{Binding Source={StaticResource Locator}, Path=Save}">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="SaveButton" Command="{Binding SaveCommand}" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="SaveButton" Command="{Binding SaveCommand}" />
         <TextBlock x:Uid="SaveDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
-        <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="SaveAsButton" Click="SaveAsButton_OnClick" />
         <TextBlock x:Uid="SaveAsDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
-        <HyperlinkButton x:Uid="CloseButton" Command="{Binding CloseCommand}" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
+        <HyperlinkButton x:Uid="CloseButton" Command="{Binding CloseCommand}" />
         <TextBlock x:Uid="CloseDesc" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" />
     </StackPanel>
 </Page>

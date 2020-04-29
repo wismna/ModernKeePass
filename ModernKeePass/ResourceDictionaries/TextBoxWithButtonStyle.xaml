@@ -5,8 +5,8 @@
 
     <Style TargetType="controls:TextBoxWithButton" x:Key="TextBoxWithButtonStyle">
         <Setter Property="Background" Value="{ThemeResource SearchBoxBackgroundThemeBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarBackgroundThemeBrush}" />
-        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderThemeBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource SearchBoxContentThemeFontSize}" />
         <Setter Property="FontWeight" Value="{ThemeResource SearchBoxContentThemeFontWeight}"/>

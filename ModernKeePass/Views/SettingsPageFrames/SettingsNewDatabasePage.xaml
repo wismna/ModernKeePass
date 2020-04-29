@@ -12,7 +12,7 @@
             <CollectionViewSource x:Name="KeyDerivations" Source="{Binding FileFormats}" />
         </StackPanel.Resources>
         <TextBlock x:Uid="SettingsNewDatabaseDesc" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
-        <ToggleSwitch x:Uid="SettingsNewDatabaseSample" IsOn="{Binding IsCreateSample, Mode=TwoWay}" Style="{StaticResource MainColorToggleSwitch}" />
+        <ToggleSwitch x:Uid="SettingsNewDatabaseSample" IsOn="{Binding IsCreateSample, Mode=TwoWay}" />
         <TextBlock x:Uid="SettingsNewDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" ItemContainerStyle="{StaticResource MainColorComboBoxItem}" Style="{StaticResource MainColorComboBox}" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" />
             <Button Grid.Column="2" Style="{StaticResource TextBlockButtonStyle}">
                 <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
                     <SymbolIcon.RenderTransform>
