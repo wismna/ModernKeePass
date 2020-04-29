@@ -42,6 +42,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AboutVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\MainMenuItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\RecentItemVm.cs" />
