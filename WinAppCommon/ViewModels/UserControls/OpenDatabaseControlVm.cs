@@ -137,8 +137,6 @@ namespace ModernKeePass.ViewModels
             _isOpening = true;
             try
             {
-                RaisePropertyChanged(nameof(IsValid));
-                OpenDatabaseCommand.RaiseCanExecuteChanged();
                 await _mediator.Send(new OpenDatabaseQuery
                 {
                     FilePath = databaseFilePath,
@@ -171,8 +169,6 @@ namespace ModernKeePass.ViewModels
             finally
             {
                 _isOpening = false;
-                RaisePropertyChanged(nameof(IsValid));
-                OpenDatabaseCommand.RaiseCanExecuteChanged();
                 OpenButtonLabel = oldLabel;
             }
         }
