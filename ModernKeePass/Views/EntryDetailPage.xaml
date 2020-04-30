@@ -306,7 +306,7 @@
                                          Style="{StaticResource PasswordBoxStyle}"
                                          VerticalAlignment="Stretch"
                                          Margin="0"
-                                         Password="{TemplateBinding Password}"
+                                         Password="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=Password}"
                                          IsPasswordRevealButtonEnabled="{TemplateBinding IsPasswordRevealEnabled}"/>
                                     <Button x:Name="ActionButton"
                                         AutomationProperties.AccessibilityView="Raw"
@@ -393,7 +393,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox"  Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />

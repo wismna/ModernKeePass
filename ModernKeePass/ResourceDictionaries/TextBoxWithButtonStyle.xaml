@@ -291,7 +291,7 @@
                                          TextWrapping="NoWrap"
                                          VerticalAlignment="Stretch"
                                          Margin="0"
-                                         Text="{TemplateBinding Text}" />
+                                         Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=Text}" />
                                 <Button x:Name="ActionButton"
                                         AutomationProperties.AccessibilityView="Raw"
                                         Background="Transparent"
