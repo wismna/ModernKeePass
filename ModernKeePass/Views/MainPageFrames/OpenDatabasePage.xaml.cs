@@ -28,7 +28,9 @@ namespace ModernKeePass.Views
             var file = e.Parameter as FileInfo;
             if (file != null)
             {
-                Model.OpenFile(file);
+                Model.Path = file.Path;
+                Model.Name = file.Name;
+                Model.Token = file.Id;
             }
         }
 
@@ -46,14 +48,9 @@ namespace ModernKeePass.Views
             if (file == null) return;
             
             // TODO: use service
-            var token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Path);
-            var fileInfo = new FileInfo
-            {
-                Path = file.Path,
-                Name = file.DisplayName,
-                Id = token
-            };
-            Model.OpenFile(fileInfo);
+            Model.Token = StorageApplicationPermissions.MostRecentlyUsedList.Add(file, file.Path);
+            Model.Path = file.Path;
+            Model.Name = file.Name;
         }
     }
 }

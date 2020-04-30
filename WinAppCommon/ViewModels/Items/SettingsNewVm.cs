@@ -16,7 +16,7 @@ namespace ModernKeePass.ViewModels.ListItems
 
         public bool IsCreateSample
         {
-            get { return _settings.GetSetting<bool>(Constants.Settings.Sample); }
+            get { return _settings.GetSetting(Constants.Settings.Sample, true); }
             set { _settings.PutSetting(Constants.Settings.Sample, value); }
         }
 
@@ -38,7 +38,7 @@ namespace ModernKeePass.ViewModels.ListItems
         {
             get
             {
-                var version = _settings.GetSetting<string>(Constants.Settings.DefaultFileFormat);
+                var version = _settings.GetSetting(Constants.Settings.DefaultFileFormat, "4");
                 return FileFormats.FirstOrDefault(f => f.Version == version);
             }
             set { _settings.PutSetting(Constants.Settings.DefaultFileFormat, value.Version); }

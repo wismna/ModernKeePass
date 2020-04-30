@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
-using ModernKeePass.Domain.Dtos;
 using ModernKeePass.ViewModels;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
@@ -29,19 +28,14 @@ namespace ModernKeePass.Views
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
                 SuggestedFileName = "New Database"
             };
-            savePicker.FileTypeChoices.Add("KeePass 2.x database", new List<string> { ".kdbx" });
+            savePicker.FileTypeChoices.Add("KeePass 2.x database", new List<string> {".kdbx"});
 
             var file = await savePicker.PickSaveFileAsync().AsTask();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-            var fileInfo = new FileInfo
-            {
-                Id = token,
-                Path = file.Path,
-                Name = file.DisplayName
-            };
-            Model.OpenFile(fileInfo);
+            Model.Token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            Model.Name = file.Name;
+            Model.Path = file.Path;
         }
     }
 }

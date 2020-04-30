@@ -107,7 +107,12 @@ namespace ModernKeePass.ViewModels
         public string UserName
         {
             get { return SelectedItem.Username; }
-            set { SelectedItem.Username = value; }
+            set
+            {
+                SelectedItem.Username = value;
+                SetFieldValue(nameof(UserName), value).Wait();
+                RaisePropertyChanged(nameof(UserName));
+            }
         }
 
         public string Password
@@ -129,6 +134,7 @@ namespace ModernKeePass.ViewModels
             {
                 SelectedItem.Url = value;
                 SetFieldValue(nameof(Url), value).Wait();
+                RaisePropertyChanged(nameof(Url));
             }
         }
 
@@ -253,7 +259,7 @@ namespace ModernKeePass.ViewModels
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
-            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && string.IsNullOrEmpty(destination) && destination != _parent.Id);
+            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && !string.IsNullOrEmpty(destination) && destination != _parent.Id);
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());

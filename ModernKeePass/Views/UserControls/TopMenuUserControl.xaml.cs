@@ -202,7 +202,7 @@ namespace ModernKeePass.Views.UserControls
             {
                 args.Request.SearchSuggestionCollection.AppendResultSuggestion(
                     group.Title, 
-                    group.ParentGroupName, 
+                    group.ParentGroupName ?? string.Empty, 
                     group.Id, 
                     imageUri, 
                     string.Empty);

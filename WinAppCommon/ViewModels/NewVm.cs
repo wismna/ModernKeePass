@@ -45,7 +45,7 @@ namespace ModernKeePass.ViewModels
                 Password = message.Password,
                 Name = "ModernKeePass",
                 Version = _settings.GetSetting(Constants.Settings.DefaultFileFormat, "4"),
-                CreateSampleData = _settings.GetSetting<bool>(Constants.Settings.Sample)
+                CreateSampleData = _settings.GetSetting<bool>(Constants.Settings.Sample, true)
             });
 
             var database = await _mediator.Send(new GetDatabaseQuery());

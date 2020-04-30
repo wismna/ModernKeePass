@@ -44,9 +44,8 @@ namespace ModernKeePass.Views.UserControls
             var file = await picker.PickSingleFileAsync();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-            Model.KeyFilePath = token;
-            Model.KeyFileText = file.DisplayName;
+            Model.KeyFilePath = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            Model.KeyFileText = file.Name;
         }
 
         private async void CreateKeyFileButton_Click(object sender, RoutedEventArgs e)
@@ -61,9 +60,8 @@ namespace ModernKeePass.Views.UserControls
             var file = await savePicker.PickSaveFileAsync();
             if (file == null) return;
 
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-            Model.KeyFilePath = token;
-            Model.KeyFileText = file.DisplayName;
+            Model.KeyFilePath = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
+            Model.KeyFileText = file.Name;
             await Model.GenerateKeyFile();
         }
     }

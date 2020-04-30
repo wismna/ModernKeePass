@@ -13,7 +13,8 @@ namespace ModernKeePass.Infrastructure.UWP
         {
             try
             {
-                return (T)Convert.ChangeType(_values[property], typeof(T));
+                var value = (T)Convert.ChangeType(_values[property], typeof(T));
+                return value == null ? defaultValue : value;
             }
             catch (InvalidCastException)
             {

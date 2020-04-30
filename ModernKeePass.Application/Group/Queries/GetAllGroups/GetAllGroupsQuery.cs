@@ -26,7 +26,9 @@ namespace ModernKeePass.Application.Group.Queries.GetAllGroups
             public IEnumerable<GroupVm> Handle(GetAllGroupsQuery message)
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
-                return _database.GetAllGroups(message.GroupId).Select(g => _mapper.Map<GroupVm>(g));
+                var groups = new List<GroupVm> {_mapper.Map<GroupVm>(_database.GetGroup(message.GroupId))};
+                groups.AddRange(_database.GetAllGroups(message.GroupId).Select(g => _mapper.Map<GroupVm>(g)));
+                return groups;
             }
         }
     }

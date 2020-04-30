@@ -83,7 +83,7 @@ namespace ModernKeePass.ViewModels
 
         public bool IsPasswordValid => HasPassword && Password == ConfirmPassword || !HasPassword;
         public bool IsKeyFileValid => HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) || !HasKeyFile;
-        public bool IsValid => (IsPasswordValid || IsKeyFileValid) && (HasPassword || HasKeyFile);
+        public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) && (HasPassword || HasKeyFile);
 
         public RelayCommand GenerateCredentialsCommand{ get; }
 
