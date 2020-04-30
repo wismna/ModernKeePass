@@ -337,7 +337,7 @@
     <value>Sauvegarder</value>
   </data>
   <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
-    <value>Ce paramètre est généralement recommandé. Si vous l'activez, la base de données sera sauvegardée automatiquement lors de la suspension et de la fermeture. Cependant, si votre base de données est très volumineuse, il se peut que Windows estime que cela prend trop de temps et tue l'application.</value>
+    <value>Ce paramètre est généralement recommandé. Si vous l'activez, la base de données sera sauvegardée automatiquement lors de la suspension et de la fermeture, à supposer qu'elle fasse moins de 1MO. En effet, Windows peut estimer que sauvegarder une base de données plus grande prenne trop de temps et tue l'application pendant la sauvegarde, ce qui fait que les derniers changements seraient perdus.</value>
   </data>
   <data name="SettingsSaveDatabaseSuspendTitle.Text" xml:space="preserve">
     <value>Sauvegarder automatiquement lors de la suspension ?</value>

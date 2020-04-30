@@ -58,10 +58,10 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBackgroundThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColorLight}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBorderThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColorLight}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverTextThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -76,7 +76,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxDisabledTextThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchTextBox" Storyboard.TargetProperty="Background">
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PasswordBox" Storyboard.TargetProperty="Background">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
@@ -93,7 +93,7 @@
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonForegroundThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MainColor}" />
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBorderThemeBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualState>
@@ -129,7 +129,7 @@
                                                                         <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonPointerOverForegroundThemeBrush}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButtonBackground" Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MainColor}" />
+                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonPointerOverBackgroundThemeBrush}" />
                                                                     </ObjectAnimationUsingKeyFrames>
                                                                 </Storyboard>
                                                             </VisualState>
@@ -173,7 +173,7 @@
                                     <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}" />
                                     <Setter Property="Background" Value="{ThemeResource TextBoxBackgroundThemeBrush}" />
                                     <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderThemeBrush}" />
-                                    <Setter Property="SelectionHighlightColor" Value="{StaticResource MainColor}" />
+                                    <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextSelectionHighlightColorThemeBrush}" />
                                     <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
                                     <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                     <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -292,7 +292,7 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <PasswordBox x:Name="SearchTextBox"
+                                    <PasswordBox x:Name="PasswordBox"
                                          BorderThickness="0"
                                          Background="Transparent"
                                          FontFamily="{TemplateBinding FontFamily}"
@@ -393,7 +393,7 @@
                             </Style>
                         </StackPanel.Resources>
                         <TextBlock x:Uid="EntryLogin" />
-                        <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                        <local:TextBoxWithButton x:Uid="LoginTextBox"  Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="ButtonClick">
                                     <actions:ClipboardAction Text="{Binding UserName}" />

@@ -88,6 +88,7 @@ namespace ModernKeePass
             _hockey.TrackException(realException);
             if (realException is SaveException)
             {
+                // TODO: this is not working
                 unhandledExceptionEventArgs.Handled = true;
                 await _dialog.ShowMessage(realException.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
@@ -107,7 +108,7 @@ namespace ModernKeePass
                                 _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
                                 new List<string> {".kdbx"});
 
-                            var file = await savePicker.PickSaveFileAsync().AsTask();
+                            var file = await savePicker.PickSaveFileAsync();
                             if (file != null)
                             {
                                 var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);

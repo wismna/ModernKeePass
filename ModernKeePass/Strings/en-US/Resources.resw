@@ -336,9 +336,6 @@
   <data name="SettingsSaveDatabaseSuspend.OnContent" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
-    <value>This settings is generally recommended. If you enable it, database will automatically be saved on application suspension and closing. However, if your database is huge, saving may be deemed too long by Windows, which will then forcibly kill the app.</value>
-  </data>
   <data name="SettingsSaveDatabaseSuspendTitle.Text" xml:space="preserve">
     <value>Auto-save on suspend?</value>
   </data>
@@ -512,5 +509,8 @@
   </data>
   <data name="CompositeKeyConfirmPassword.PlaceholderText" xml:space="preserve">
     <value>Confirm password</value>
+  </data>
+  <data name="SettingsSaveDatabaseSuspendDesc.Text" xml:space="preserve">
+    <value>This settings is generally recommended. If you enable it, database will automatically be saved on application suspension and closing, provided your database is less than 1MB big. Saving bigger databases may take too long and Windows may then forcibly kill the app before saving is finished, resulting in your changes not being saved.</value>
   </data>
 </root>
