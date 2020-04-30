@@ -9,10 +9,14 @@
      xmlns:converters="using:ModernKeePass.Converters"
      mc:Ignorable="d" >
     <UserControl.Resources>
-        <converters:DiscreteIntToSolidColorBrushConverter x:Key="DiscreteIntToSolidColorBrushConverter"/>
         <converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid x:Name="Grid" DataContext="{Binding Source={StaticResource Locator}, Path=OpenDatabaseControl}">
+        <Grid.Resources>
+            <SolidColorBrush x:Key="ErrorBrush" Color="Red" />
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50" />
             <ColumnDefinition Width="*" />
@@ -24,7 +28,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasPassword, Mode=TwoWay}" />
-        <PasswordBox Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" BorderBrush="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" >
+        <PasswordBox x:Name="PasswordBox" Grid.Row="0" Grid.Column="1" x:Uid="CompositeKeyPassword" Password="{Binding Password, Mode=TwoWay}" Height="30" IsPasswordRevealButtonEnabled="True" KeyDown="PasswordBox_KeyDown" >
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="GotFocus">
                     <core:ChangePropertyAction TargetObject="{Binding}" PropertyName="HasPassword" Value="True" />
@@ -33,16 +37,52 @@
         </PasswordBox>
         <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" 
+                         x:Name="HyperlinkButton"
                          Content="{Binding KeyFileText}" 
                          IsEnabled="{Binding HasKeyFile}" 
                          Click="KeyFileButton_Click" />
         <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
-                Content="{Binding OpenButtonLabel}"
+                x:Uid="OpenDatabaseControlButton"
+                Visibility="{Binding IsOpening, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 Command="{Binding OpenDatabaseCommand}"
                 CommandParameter="{Binding DatabaseFilePath, ElementName=UserControl}" />
+        <ProgressRing Grid.Column="0" Grid.Row="2" IsActive="{Binding IsOpening}" Visibility="{Binding IsOpening, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{StaticResource MainColorBrush}" />
         <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Height="Auto" FontSize="14" FontWeight="Light" 
                    Text="{Binding Status}" 
-                   Foreground="{Binding StatusType, Converter={StaticResource DiscreteIntToSolidColorBrushConverter}}" 
+                   Foreground="Red" 
                    Visibility="{Binding Status, Converter={StaticResource EmptyStringToVisibilityConverter}}" />
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="CredentialStatus">
+                <VisualState x:Name="Error">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PasswordBox" Storyboard.TargetProperty="BorderBrush">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ErrorBrush}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HyperlinkButton" Storyboard.TargetProperty="Foreground">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ErrorBrush}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Initial">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PasswordBox" Storyboard.TargetProperty="BorderBrush">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource TextBoxBorderThemeBrush}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HyperlinkButton" Storyboard.TargetProperty="Foreground">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource HyperlinkForegroundThemeBrush}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <interactivity:Interaction.Behaviors>
+            <core:DataTriggerBehavior Binding="{Binding IsError}" Value="True">
+                <core:GoToStateAction StateName="Error"/>
+            </core:DataTriggerBehavior>
+            <core:DataTriggerBehavior Binding="{Binding IsError}" Value="False">
+                <core:GoToStateAction StateName="Initial"/>
+            </core:DataTriggerBehavior>
+        </interactivity:Interaction.Behaviors>
     </Grid>
 </UserControl>

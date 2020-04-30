@@ -14,14 +14,6 @@ namespace ModernKeePass.ViewModels
 {
     public class OpenDatabaseControlVm : ViewModelBase
     {
-        public enum StatusTypes
-        {
-            Normal = 0,
-            Error = 1,
-            Warning = 3,
-            Success = 5
-        }
-
         public bool HasPassword
         {
             get { return _hasPassword; }
@@ -44,18 +36,10 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public bool IsValid => !_isOpening && (HasPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath));
-
         public string Status
         {
             get { return _status; }
             set { Set(() => Status, ref _status, value); }
-        }
-
-        public int StatusType
-        {
-            get { return _statusType; }
-            set { Set(() => StatusType, ref _statusType, value); }
         }
 
         public string Password
@@ -64,7 +48,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _password = value;
-                StatusType = (int)StatusTypes.Normal;
+                IsError = false;
                 Status = string.Empty;
             }
         }
@@ -75,6 +59,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 _keyFilePath = value;
+                IsError = false;
                 RaisePropertyChanged(nameof(IsValid));
                 OpenDatabaseCommand.RaiseCanExecuteChanged();
             }
@@ -86,14 +71,22 @@ namespace ModernKeePass.ViewModels
             set { Set(() => KeyFileText, ref _keyFileText, value); }
         }
 
-        public string OpenButtonLabel
+        public bool IsOpening
         {
-            get { return _openButtonLabel; }
-            set { Set(() => OpenButtonLabel, ref _openButtonLabel, value); }
+            get { return _isOpening; }
+            set { Set(() => IsOpening, ref _isOpening, value); }
         }
-        
+
+        public bool IsError
+        {
+            get { return _isError; }
+            set { Set(() => IsError, ref _isError, value); }
+        }
+
+        public bool IsValid => !IsOpening && (HasPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath));
+
         public RelayCommand<string> OpenDatabaseCommand { get; }
-        
+
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
         private readonly INotificationService _notification;
@@ -102,11 +95,10 @@ namespace ModernKeePass.ViewModels
         private bool _isOpening;
         private string _password = string.Empty;
         private string _status;
-        private int _statusType;
         private string _keyFilePath;
         private string _keyFileText;
-        private string _openButtonLabel;
-        
+        private bool _isError;
+
         public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification)
         {
             _mediator = mediator;
@@ -114,7 +106,6 @@ namespace ModernKeePass.ViewModels
             _notification = notification;
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
-            _openButtonLabel = _resource.GetResourceValue("CompositeKeyOpenButtonLabel");
         }
 
         public async Task TryOpenDatabase(string databaseFilePath)
@@ -132,9 +123,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task OpenDatabase(string databaseFilePath)
         {
-            var oldLabel = _openButtonLabel;
-            OpenButtonLabel = _resource.GetResourceValue("CompositeKeyOpening");
-            _isOpening = true;
+            IsOpening = true;
             try
             {
                 await _mediator.Send(new OpenDatabaseQuery
@@ -152,7 +141,8 @@ namespace ModernKeePass.ViewModels
                 var errorMessage = new StringBuilder($"{_resource.GetResourceValue("CompositeKeyErrorOpen")}\n");
                 if (HasPassword) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserPassword"));
                 if (HasKeyFile) errorMessage.AppendLine(_resource.GetResourceValue("CompositeKeyErrorUserKeyFile"));
-                UpdateStatus(errorMessage.ToString(), StatusTypes.Error);
+                Status = errorMessage.ToString();
+                IsError = true;
             }
             catch (FileNotFoundException)
             {
@@ -160,23 +150,17 @@ namespace ModernKeePass.ViewModels
                     $"{_resource.GetResourceValue("FileNotFoundTitle")}", 
                     $"{_resource.GetResourceValue("FileNotFoundDescription")}");
                 MessengerInstance.Send(new FileNotFoundMessage());
+                IsError = true;
             }
             catch (Exception e)
             {
-                var error = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}{e.Message}";
-                UpdateStatus(error, StatusTypes.Error);
+                Status = $"{_resource.GetResourceValue("CompositeKeyErrorOpen")}{e.Message}";
+                IsError = true;
             }
             finally
             {
-                _isOpening = false;
-                OpenButtonLabel = oldLabel;
+                IsOpening = false;
             }
-        }
-
-        private void UpdateStatus(string text, StatusTypes type)
-        {
-            Status = text;
-            StatusType = (int)type;
         }
     }
 }

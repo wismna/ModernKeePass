@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Windows.UI;
+using GalaSoft.MvvmLight;
 using ModernKeePass.Domain.Entities;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class EntryItemVm : NotifyPropertyChangedBase
+    public class EntryItemVm : ObservableObject
     {
-        private readonly ISecurityService _securityService;
-
         public EntryEntity EntryEntity { get; }
         public GroupItemVm Parent { get; }
 

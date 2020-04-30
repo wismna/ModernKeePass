@@ -21,7 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ColorToBrushConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\DiscreteIntToSolidColorBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\DoubleToSolidColorBrushConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\EmptyStringToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\IconToSymbolConverter.cs" />

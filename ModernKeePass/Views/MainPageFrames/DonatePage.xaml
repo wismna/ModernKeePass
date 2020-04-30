@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d">
     <Grid>
-        <ProgressRing x:Name="LoadingRing" IsActive="True" Width="50" Height="50" Foreground="{StaticResource MainColor}" />
+        <ProgressRing x:Name="LoadingRing" IsActive="True" Width="50" Height="50" Foreground="{StaticResource MainColorBrush}" />
         <WebView Source="https://PayPal.Me/wismna">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="DOMContentLoaded">

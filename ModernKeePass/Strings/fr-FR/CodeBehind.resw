@@ -129,9 +129,6 @@
   <data name="CompositeKeyErrorUserPassword" xml:space="preserve">
     <value>- mot de passe incorrect</value>
   </data>
-  <data name="CompositeKeyOpening" xml:space="preserve">
-    <value>Ouverture...</value>
-  </data>
   <data name="CompositeKeyUpdated" xml:space="preserve">
     <value>Identifiants de la base de données mis à jour.</value>
   </data>
@@ -263,9 +260,6 @@
   </data>
   <data name="HistoryDeleteTitle" xml:space="preserve">
     <value>Supprimer cet historique ?</value>
-  </data>
-  <data name="CompositeKeyOpenButtonLabel" xml:space="preserve">
-    <value>Open</value>
   </data>
   <data name="FileNotFoundDescription" xml:space="preserve">
     <value>Le fichier n'existe plus.</value>
