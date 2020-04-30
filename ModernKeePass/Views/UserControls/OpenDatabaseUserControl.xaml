@@ -35,12 +35,14 @@
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </PasswordBox>
+
         <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasKeyFile, Mode=TwoWay}" />
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" 
                          x:Name="HyperlinkButton"
                          Content="{Binding KeyFileText}" 
                          IsEnabled="{Binding HasKeyFile}" 
                          Click="KeyFileButton_Click" />
+
         <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
                 x:Uid="OpenDatabaseControlButton"
                 Visibility="{Binding IsOpening, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
@@ -49,7 +51,7 @@
         <ProgressRing Grid.Column="0" Grid.Row="2" IsActive="{Binding IsOpening}" Visibility="{Binding IsOpening, Converter={StaticResource BooleanToVisibilityConverter}}" Foreground="{StaticResource MainColorBrush}" />
         <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Height="Auto" FontSize="14" FontWeight="Light" 
                    Text="{Binding Status}" 
-                   Foreground="Red" 
+                   Foreground="{StaticResource ErrorBrush}" 
                    Visibility="{Binding Status, Converter={StaticResource EmptyStringToVisibilityConverter}}" />
 
         <VisualStateManager.VisualStateGroups>

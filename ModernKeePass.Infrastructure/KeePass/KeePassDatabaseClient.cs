@@ -331,6 +331,7 @@ namespace ModernKeePass.Infrastructure.KeePass
         public void UpdateCredentials(Credentials credentials)
         {
             _pwDatabase.MasterKey = CreateCompositeKey(credentials);
+            _credentials = credentials;
         }
 
         public IEnumerable<EntryEntity> Search(string groupId, string text)

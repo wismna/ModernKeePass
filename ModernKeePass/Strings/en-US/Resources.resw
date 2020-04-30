@@ -504,4 +504,13 @@
   <data name="MoveButton.Content" xml:space="preserve">
     <value>Move</value>
   </data>
+  <data name="SetCredentialsControlMatchingPasswords.Text" xml:space="preserve">
+    <value>Passwords must match</value>
+  </data>
+  <data name="SetCredentialsControlMissingKeyFile.Text" xml:space="preserve">
+    <value>Key file can't be empty</value>
+  </data>
+  <data name="CompositeKeyConfirmPassword.PlaceholderText" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
 </root>

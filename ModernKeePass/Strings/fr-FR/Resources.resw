@@ -507,4 +507,13 @@
   <data name="MoveButton.Content" xml:space="preserve">
     <value>Déplacer</value>
   </data>
+  <data name="SetCredentialsControlMatchingPasswords.Text" xml:space="preserve">
+    <value>Les mots de passe doivent être égaux</value>
+  </data>
+  <data name="SetCredentialsControlMissingKeyFile.Text" xml:space="preserve">
+    <value>Vous devez sélectionner un fichier de clé</value>
+  </data>
+  <data name="CompositeKeyConfirmPassword.PlaceholderText" xml:space="preserve">
+    <value>Confirmer le mot de passe</value>
+  </data>
 </root>

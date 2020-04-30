@@ -85,10 +85,10 @@ namespace ModernKeePass
                     ? exception.InnerException
                     : exception;
             
+            _hockey.TrackException(realException);
             if (realException is SaveException)
             {
                 unhandledExceptionEventArgs.Handled = true;
-                _hockey.TrackException(realException);
                 await _dialog.ShowMessage(realException.Message,
                     _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
                     _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
@@ -115,10 +115,6 @@ namespace ModernKeePass
                             }
                         }
                     });
-            }
-            else
-            {
-                await _dialog.ShowError(realException, realException.Message, "OK", () => {});
             }
         }
 
