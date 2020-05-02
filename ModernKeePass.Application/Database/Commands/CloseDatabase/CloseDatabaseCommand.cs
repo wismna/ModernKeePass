@@ -18,10 +18,6 @@ namespace ModernKeePass.Application.Database.Commands.CloseDatabase
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
                 _database.CloseDatabase();
-
-                // Cleanup
-                _database.FileAccessToken = null;
-                _database.Size = 0;
             }
         }
     }

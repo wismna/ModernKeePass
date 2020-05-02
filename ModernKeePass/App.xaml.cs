@@ -179,7 +179,7 @@ namespace ModernKeePass
                 _notification.Show("App resumed", "Database reopened (changes were saved)");
 #endif
             }
-            catch (Exception)
+            catch (DatabaseClosedException)
             {
                 _navigation.NavigateTo(Constants.Navigation.MainPage);
 #if DEBUG

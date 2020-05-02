@@ -1,4 +1,5 @@
 [<img src="https://geogeob.visualstudio.com/_apis/public/build/definitions/04291454-0e79-47a4-9502-5bd374804ccf/2/badge"/>](https://geogeob.visualstudio.com/_apis/public/build/index?definitionId=2)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ModernKeePass&metric=alert_status)](https://sonarcloud.io/dashboard?id=ModernKeePass)
 
 # Introduction
 **ModernKeePass** is port of the classic Windows application KeePass 2.x for the Windows Store.  
