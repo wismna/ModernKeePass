@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Group.Models;

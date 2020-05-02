@@ -9,8 +9,6 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class RecentDatabasesPage
     {
-        private RecentVm Model => (RecentVm)DataContext;
-        
         public RecentDatabasesPage()
         {
             InitializeComponent();

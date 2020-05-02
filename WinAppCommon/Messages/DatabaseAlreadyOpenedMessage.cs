@@ -1,6 +1,4 @@
-﻿using ModernKeePass.Application.Database.Models;
-
-namespace Messages
+﻿namespace Messages
 {
     public class DatabaseAlreadyOpenedMessage
     {

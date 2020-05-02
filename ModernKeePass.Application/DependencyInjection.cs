@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Behaviors;
@@ -13,7 +12,6 @@ namespace ModernKeePass.Application
             var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
             services.AddMediatR(assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DirtyStatusBehavior<,>));
-            //services.AddValidatorsFromAssembly(assembly);
 
             return services;
         }

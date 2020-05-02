@@ -1,7 +1,0 @@
-Les problemes de corruption de bases de données sont maintenant totalement corrigees :
-  L'integrite de la base de donnees est verfiee apres chaque sauvegarde
-  Les donnees sont ecrites dans le systeme de fichiers en utilisant un modele transactionnel (autrement dit, s'il y a une erreur, le fichier original n'est pas modifie)
-  L'auto-sauvegarde lors de la suspension/sortie ne se fait que lorsqu'il y a eu des changements et que la taille de la base de donnees est inferieure a 1MB
-Possibilite de deplacer des groupes et des entree
-Possibilite de supprimer et restaurer des versions de l'historique d'entrees
-Libraire mise a jour en version 2.44

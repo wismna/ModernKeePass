@@ -55,6 +55,7 @@ namespace ModernKeePass.Views.UserControls
             var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
             Model.KeyFilePath = token;
             Model.KeyFileText = file.Name;
+            Model.HasKeyFile = true;
         }
     }
 }

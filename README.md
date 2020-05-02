@@ -17,7 +17,7 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 - Use Recycle Bin
 - Search entries
 - Sort and reorder entries
-- View entries history
+- View, delete and restore from entry history
 - Use Semantic Zoom to see your entries in a grouped mode
 - List recently opened databases
 - Open database from Windows Explorer
@@ -43,4 +43,4 @@ Otherwise, there are still many things left to implement:
 
 # Credits
 *Dominik Reichl* for the [KeePass application](https://keepass.info/), library and file format  
-*David Lechner* for his [PCL adapatation](https://github.com/dlech/KeePass2PCL) of the KeePass Library and the correlated tests which served as an inspiration basis for my own adaptation
+*David Lechner* for his [PCL adapatation](https://github.com/dlech/KeePass2PCL) of the KeePass Library and the related tests which served as an inspiration basis for my own adaptation

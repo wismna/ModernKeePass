@@ -3,7 +3,6 @@ using System.Linq;
 using Windows.UI.Xaml.Controls;
 using GalaSoft.MvvmLight;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Domain.Interfaces;
