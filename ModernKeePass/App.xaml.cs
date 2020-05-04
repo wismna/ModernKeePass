@@ -41,6 +41,7 @@ namespace ModernKeePass
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
+        private readonly IMessenger _messenger;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -67,14 +68,14 @@ namespace ModernKeePass
             _notification = Services.GetService<INotificationService>();
             _hockey = Services.GetService<IHockeyClient>();
             _file = Services.GetService<IFileProxy>();
-            var messenger = Services.GetService<IMessenger>();
+            _messenger = Services.GetService<IMessenger>();
 
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
 
-            messenger.Register<SaveErrorMessage>(this, async message => await HandelSaveError(message.Message));
+            _messenger.Register<SaveErrorMessage>(this, async message => await HandelSaveError(message.Message));
         }
 
         private async Task HandelSaveError(string message)
@@ -84,7 +85,11 @@ namespace ModernKeePass
             var file = await _file.CreateFile($"{database.Name} - copy",
                 Domain.Common.Constants.Extensions.Kdbx,
                 _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"), true);
-            if (file != null) await _mediator.Send(new SaveDatabaseCommand { FilePath = file.Id });
+            if (file != null)
+            {
+                await _mediator.Send(new SaveDatabaseCommand { FilePath = file.Id });
+                _messenger.Send(new DatabaseSavedMessage());
+            }
         }
 
         #region Event Handlers

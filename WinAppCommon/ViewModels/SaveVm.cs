@@ -34,6 +34,8 @@ namespace ModernKeePass.ViewModels
             SaveAsCommand = new RelayCommand(async () => await SaveAs());
             SaveCommand = new RelayCommand(async () => await Save(), () => IsSaveEnabled);
             CloseCommand = new RelayCommand(async () => await Close());
+
+            MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
         }
         
         private async Task SaveAs()
