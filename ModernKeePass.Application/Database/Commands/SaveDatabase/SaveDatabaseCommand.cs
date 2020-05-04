@@ -27,26 +27,19 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 
                 try
                 {
-                    byte[] contents;
-                    if (string.IsNullOrEmpty(message.FilePath))
+                    if (!string.IsNullOrEmpty(message.FilePath))
                     {
-                        contents = await _database.SaveDatabase();
-
-                        // Test DB integrity before writing changes to file
-                        _database.CloseDatabase();
-                        await _database.ReOpen(contents);
-
-                        await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
-                    }
-                    else
-                    {
-                        var newFileContents = await _file.OpenBinaryFile(message.FilePath);
-                        contents = await _database.SaveDatabase(newFileContents);
-                        await _file.WriteBinaryContentsToFile(message.FilePath, contents);
-
-                        _file.ReleaseFile(_database.FileAccessToken);
                         _database.FileAccessToken = message.FilePath;
                     }
+
+                    var contents = await _database.SaveDatabase();
+
+                    // Test DB integrity
+                    _database.CloseDatabase();
+                    await _database.ReOpen(contents);
+
+                    // Transactional write to file
+                    await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
                 }
                 catch (Exception exception)
                 {

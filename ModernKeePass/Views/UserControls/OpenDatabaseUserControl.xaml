@@ -40,7 +40,7 @@
         <HyperlinkButton Grid.Row="1" Grid.Column="1" Margin="-15,0,0,0" 
                          x:Name="HyperlinkButton"
                          Content="{Binding KeyFileText}"
-                         Click="KeyFileButton_Click" />
+                         Command="{Binding OpenKeyFileCommand}" />
 
         <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
                 x:Uid="OpenDatabaseControlButton"

@@ -83,4 +83,7 @@
     <SolidColorBrush x:Key="SliderTrackDecreaseBackgroundThemeBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="SliderTrackDecreasePressedBackgroundThemeBrush" Color="{ThemeResource MainColorDark}" />
     <SolidColorBrush x:Key="SliderTrackDecreasePointerOverBackgroundThemeBrush" Color="{ThemeResource MainColorLight}" />
+
+    <Thickness x:Key="FlyoutBorderThemeThickness">0</Thickness>
+    <Thickness x:Key="MenuFlyoutPresenterThemePadding">0</Thickness>
 </ResourceDictionary>

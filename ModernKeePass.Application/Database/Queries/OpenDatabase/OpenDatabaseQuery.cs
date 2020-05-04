@@ -27,11 +27,11 @@ namespace ModernKeePass.Application.Database.Queries.OpenDatabase
             {
                 if (_database.IsDirty) throw new DatabaseOpenException();
                 
-                var file = await _file.OpenBinaryFile(message.FilePath);
+                var file = await _file.ReadBinaryFile(message.FilePath);
                 var hasKeyFile = !string.IsNullOrEmpty(message.KeyFilePath);
                 await _database.Open(file, new Credentials
                     {
-                        KeyFileContents = hasKeyFile ? await _file.OpenBinaryFile(message.KeyFilePath): null,
+                        KeyFileContents = hasKeyFile ? await _file.ReadBinaryFile(message.KeyFilePath): null,
                         Password = message.Password
                     });
                 if (hasKeyFile) _file.ReleaseFile(message.KeyFilePath);

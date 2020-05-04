@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
@@ -28,12 +29,13 @@ using ModernKeePass.Application.Security.Queries.EstimatePasswordComplexity;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Common;
+using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Extensions;
 using ModernKeePass.Models;
 
 namespace ModernKeePass.ViewModels
 {
-    public class EntryDetailVm : ObservableObject
+    public class EntryDetailVm : ViewModelBase
     {
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
@@ -362,7 +364,14 @@ namespace ModernKeePass.ViewModels
         private async Task SaveChanges()
         {
             await AddHistory();
-            await _mediator.Send(new SaveDatabaseCommand());
+            try
+            {
+                await _mediator.Send(new SaveDatabaseCommand());
+            }
+            catch (SaveException e)
+            {
+                MessengerInstance.Send(new SaveErrorMessage { Message = e.Message });
+            }
             SaveCommand.RaiseCanExecuteChanged();
             _isDirty = false;
         }

@@ -5,6 +5,8 @@ using MediatR;
 using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Security.Commands.GenerateKeyFile;
+using ModernKeePass.Domain.Common;
+using ModernKeePass.Domain.Dtos;
 
 namespace ModernKeePass.ViewModels
 {
@@ -12,7 +14,8 @@ namespace ModernKeePass.ViewModels
     {
         private readonly IMediator _mediator;
         private readonly ICredentialsProxy _credentials;
-        
+        private readonly IFileProxy _file;
+
         public bool HasPassword
         {
             get { return _hasPassword; }
@@ -33,6 +36,8 @@ namespace ModernKeePass.ViewModels
                 Set(() => HasKeyFile, ref _hasKeyFile, value);
                 RaisePropertyChanged(nameof(IsKeyFileValid));
                 RaisePropertyChanged(nameof(IsValid));
+                OpenKeyFileCommand.RaiseCanExecuteChanged();
+                CreateKeyFileCommand.RaiseCanExecuteChanged();
                 GenerateCredentialsCommand.RaiseCanExecuteChanged();
             }
         }
@@ -85,6 +90,8 @@ namespace ModernKeePass.ViewModels
         public bool IsKeyFileValid => HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) || !HasKeyFile;
         public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) && (HasPassword || HasKeyFile);
 
+        public RelayCommand OpenKeyFileCommand { get; }
+        public RelayCommand CreateKeyFileCommand { get; }
         public RelayCommand GenerateCredentialsCommand{ get; }
 
         private bool _hasPassword;
@@ -94,20 +101,41 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         
-        public SetCredentialsVm(IMediator mediator, ICredentialsProxy credentials, IResourceProxy resource)
+        public SetCredentialsVm(IMediator mediator, ICredentialsProxy credentials, IResourceProxy resource, IFileProxy file)
         {
             _mediator = mediator;
             _credentials = credentials;
+            _file = file;
+
+            OpenKeyFileCommand = new RelayCommand(async () => await OpenKeyFile(), () => HasKeyFile);
+            CreateKeyFileCommand = new RelayCommand(async () => await CreateKeyFile(), () => HasKeyFile);
             GenerateCredentialsCommand = new RelayCommand(GenerateCredentials, () => IsValid);
 
             _keyFileText = resource.GetResourceValue("CompositeKeyDefaultKeyFile");
         }
-
-        public async Task GenerateKeyFile()
+        
+        private async Task OpenKeyFile()
         {
-            await _mediator.Send(new GenerateKeyFileCommand {KeyFilePath = KeyFilePath});
+            var file = await _file.OpenFile(string.Empty, Constants.Extensions.Any, false);
+            SetKeyFileInfo(file);
         }
 
+        private async Task CreateKeyFile()
+        {
+            var file = await _file.CreateFile("Key", Constants.Extensions.Any, "Key file", false);
+            SetKeyFileInfo(file);
+
+            await _mediator.Send(new GenerateKeyFileCommand { KeyFilePath = KeyFilePath });
+        }
+
+        private void SetKeyFileInfo(FileInfo file)
+        {
+            if (file == null) return;
+            KeyFilePath = file.Id;
+            KeyFileText = file.Name;
+            HasKeyFile = true;
+        }
+        
         private void GenerateCredentials()
         {
             MessengerInstance.Send(new CredentialsSetMessage

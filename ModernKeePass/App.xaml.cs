@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
-using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Messages;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
 using ModernKeePass.Application;
@@ -41,6 +40,7 @@ namespace ModernKeePass
         private readonly IHockeyClient _hockey;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
+        private readonly IFileProxy _file;
 
         public static IServiceProvider Services { get; private set; }
 
@@ -66,57 +66,33 @@ namespace ModernKeePass
             _dialog = Services.GetService<IDialogService>();
             _notification = Services.GetService<INotificationService>();
             _hockey = Services.GetService<IHockeyClient>();
+            _file = Services.GetService<IFileProxy>();
+            var messenger = Services.GetService<IMessenger>();
 
             InitializeComponent();
             Suspending += OnSuspending;
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
+
+            messenger.Register<SaveErrorMessage>(this, async message => await HandelSaveError(message.Message));
         }
-        
+
+        private async Task HandelSaveError(string message)
+        {
+            _notification.Show(_resource.GetResourceValue("MessageDialogSaveErrorTitle"), message);
+            var database = await _mediator.Send(new GetDatabaseQuery());
+            var file = await _file.CreateFile($"{database.Name} - copy",
+                Domain.Common.Constants.Extensions.Kdbx,
+                _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"), true);
+            if (file != null) await _mediator.Send(new SaveDatabaseCommand { FilePath = file.Id });
+        }
+
         #region Event Handlers
 
-        private async void OnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            // Save the argument exception because it's cleared on first access
-            var exception = unhandledExceptionEventArgs.Exception;
-            var realException =
-                exception is TargetInvocationException &&
-                exception.InnerException != null
-                    ? exception.InnerException
-                    : exception;
-            
-            _hockey.TrackException(realException);
-            if (realException is SaveException)
-            {
-                // TODO: this is not working
-                unhandledExceptionEventArgs.Handled = true;
-                await _dialog.ShowMessage(realException.Message,
-                    _resource.GetResourceValue("MessageDialogSaveErrorTitle"),
-                    _resource.GetResourceValue("MessageDialogSaveErrorButtonSaveAs"),
-                    _resource.GetResourceValue("MessageDialogSaveErrorButtonDiscard"), 
-                    async isOk =>
-                    {
-                        if (isOk)
-                        {
-                            var database = await _mediator.Send(new GetDatabaseQuery());
-                            var savePicker = new FileSavePicker
-                            {
-                                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-                                SuggestedFileName = $"{database.Name} - copy"
-                            };
-                            savePicker.FileTypeChoices.Add(
-                                _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"),
-                                new List<string> {".kdbx"});
-
-                            var file = await savePicker.PickSaveFileAsync();
-                            if (file != null)
-                            {
-                                var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-                                await _mediator.Send(new SaveDatabaseCommand {FilePath = token});
-                            }
-                        }
-                    });
-            }
+            _hockey.TrackException(e.Exception);
+            _hockey.Flush();
         }
 
         /// <summary>

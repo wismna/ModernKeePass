@@ -1,48 +1,63 @@
 ﻿using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.AccessCache;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Messages;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.CloseDatabase;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Common;
-using RelayCommand = GalaSoft.MvvmLight.Command.RelayCommand;
+using ModernKeePass.Domain.Exceptions;
 
 namespace ModernKeePass.ViewModels
 {
-    public class SaveVm
+    public class SaveVm: ViewModelBase
     {
         public bool IsSaveEnabled => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult().IsDirty;
 
+        public RelayCommand SaveAsCommand { get; }
         public RelayCommand SaveCommand { get; }
         public RelayCommand CloseCommand { get; }
 
         private readonly IMediator _mediator;
         private readonly INavigationService _navigation;
-        
-        public SaveVm(IMediator mediator, INavigationService navigation)
+        private readonly IFileProxy _file;
+
+        public SaveVm(IMediator mediator, INavigationService navigation, IFileProxy file)
         {
             _mediator = mediator;
             _navigation = navigation;
+            _file = file;
+
+            SaveAsCommand = new RelayCommand(async () => await SaveAs());
             SaveCommand = new RelayCommand(async () => await Save(), () => IsSaveEnabled);
             CloseCommand = new RelayCommand(async () => await Close());
         }
-
-        public async Task Save(bool close = true)
+        
+        private async Task SaveAs()
         {
-            await _mediator.Send(new SaveDatabaseCommand());
-            if (close) await _mediator.Send(new CloseDatabaseCommand());
+            // TODO: get these from resource
+            var file = await _file.CreateFile("New Database", Domain.Common.Constants.Extensions.Kdbx, "KeePass 2.x database", true);
+
+            await _mediator.Send(new SaveDatabaseCommand { FilePath = file.Id });
             _navigation.NavigateTo(Constants.Navigation.MainPage);
         }
 
-        public async Task Save(StorageFile file)
+        public async Task Save()
         {
-            var token = StorageApplicationPermissions.FutureAccessList.Add(file, file.Name);
-            await _mediator.Send(new SaveDatabaseCommand { FilePath = token });
-            _navigation.NavigateTo(Constants.Navigation.MainPage);
+            try
+            {
+                await _mediator.Send(new SaveDatabaseCommand());
+                await Close();
+            }
+            catch (SaveException e)
+            {
+                MessengerInstance.Send(new SaveErrorMessage { Message = e.Message });
+            }
         }
-
+        
         public async Task Close()
         {
             await _mediator.Send(new CloseDatabaseCommand());

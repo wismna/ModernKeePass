@@ -13,7 +13,7 @@
     </Page.Resources>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <HyperlinkButton x:Uid="OpenBrowseButton" Click="ButtonBase_OnClick" />
+        <HyperlinkButton x:Uid="OpenBrowseButton" Command="{Binding OpenDatabaseFileCommand}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenBrowseDesc" />
         <!--<HyperlinkButton x:Uid="OpenUrlButton" IsEnabled="False" Foreground="{StaticResource MainColor}" Style="{StaticResource MainColorHyperlinkButton}" />
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,0,30" x:Uid="OpenUrlDesc" />-->

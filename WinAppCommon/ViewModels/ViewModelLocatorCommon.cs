@@ -50,6 +50,7 @@ namespace ModernKeePass.ViewModels
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IRecentProxy>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IResourceProxy>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<ISettingsProxy>());
+                SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IFileProxy>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<ICredentialsProxy>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IDialogService>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<INavigationService>());

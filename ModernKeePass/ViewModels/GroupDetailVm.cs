@@ -9,6 +9,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using MediatR;
+using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
@@ -29,11 +30,12 @@ using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Group.Queries.SearchEntries;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Enums;
+using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Models;
 
 namespace ModernKeePass.ViewModels
 {
-    public class GroupDetailVm : ObservableObject
+    public class GroupDetailVm : ViewModelBase
     {
         public ObservableCollection<EntryVm> Entries { get; private set; }
 
@@ -182,7 +184,14 @@ namespace ModernKeePass.ViewModels
 
         private async Task SaveChanges()
         {
-            await _mediator.Send(new SaveDatabaseCommand());
+            try
+            {
+                await _mediator.Send(new SaveDatabaseCommand());
+            }
+            catch (SaveException e)
+            {
+                MessengerInstance.Send(new SaveErrorMessage { Message = e.Message });
+            }
             SaveCommand.RaiseCanExecuteChanged();
         }
 

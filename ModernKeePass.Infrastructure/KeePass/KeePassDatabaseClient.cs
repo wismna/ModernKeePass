@@ -152,15 +152,6 @@ namespace ModernKeePass.Infrastructure.KeePass
             });
         }
 
-        public async Task<byte[]> SaveDatabase(byte[] newFileContents)
-        {
-            return await Task.Run(() =>
-            {
-                _pwDatabase.SaveAs(IOConnectionInfo.FromByteArray(newFileContents), true, new NullStatusLogger());
-                return _pwDatabase.IOConnectionInfo.Bytes;
-            });
-        }
-        
         public void CloseDatabase()
         {
             _pwDatabase?.Close();

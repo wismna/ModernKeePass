@@ -27,7 +27,6 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task ReOpen(byte[] file);
         Task Create(Credentials credentials, string name, DatabaseVersion version = DatabaseVersion.V4);
         Task<byte[]> SaveDatabase();
-        Task<byte[]> SaveDatabase(byte[] newFileContents);
         void UpdateCredentials(Credentials credentials);
         void CloseDatabase();
 

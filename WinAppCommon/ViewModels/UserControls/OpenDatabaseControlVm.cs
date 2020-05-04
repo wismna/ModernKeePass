@@ -9,6 +9,7 @@ using Messages;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Database.Queries.OpenDatabase;
+using ModernKeePass.Domain.Common;
 
 namespace ModernKeePass.ViewModels
 {
@@ -85,11 +86,13 @@ namespace ModernKeePass.ViewModels
 
         public bool IsValid => !IsOpening && (HasPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath));
 
+        public RelayCommand OpenKeyFileCommand { get; }
         public RelayCommand<string> OpenDatabaseCommand { get; }
 
         private readonly IMediator _mediator;
         private readonly IResourceProxy _resource;
         private readonly INotificationService _notification;
+        private readonly IFileProxy _file;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -99,13 +102,24 @@ namespace ModernKeePass.ViewModels
         private string _keyFileText;
         private bool _isError;
 
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification, IFileProxy file)
         {
             _mediator = mediator;
             _resource = resource;
             _notification = notification;
+            _file = file;
+            OpenKeyFileCommand = new RelayCommand(async () => await OpenKeyFile());
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
+        }
+
+        private async Task OpenKeyFile()
+        {
+            var file = await _file.OpenFile(string.Empty, Constants.Extensions.Any, false);
+            if (file == null) return;
+            KeyFilePath = file.Id;
+            KeyFileText = file.Name;
+            HasKeyFile = true;
         }
 
         public async Task TryOpenDatabase(string databaseFilePath)

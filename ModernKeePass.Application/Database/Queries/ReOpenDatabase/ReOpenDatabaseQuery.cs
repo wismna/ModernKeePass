@@ -23,7 +23,7 @@ namespace ModernKeePass.Application.Database.Queries.ReOpenDatabase
                 if (_database.IsOpen) throw new DatabaseOpenException();
                 if (string.IsNullOrEmpty(_database.FileAccessToken)) throw new DatabaseClosedException();
 
-                var file = await _file.OpenBinaryFile(_database.FileAccessToken);
+                var file = await _file.ReadBinaryFile(_database.FileAccessToken);
                 await _database.ReOpen(file);
             }
         }
