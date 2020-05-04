@@ -36,21 +36,20 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource MenuGridLength}"/>
+            <RowDefinition Height="{StaticResource MenuHeightGridLength}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{StaticResource ExpandedMenuGridLength}" x:Name="LeftListViewColumn" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <userControls:HamburgerMenuUserControl 
+                x:Name="HamburgerMenu"
                 x:Uid="GroupsLeftListView" 
                 ItemsSource="{Binding Groups}" 
                 SelectionChanged="groups_SelectionChanged" 
                 ActionButtonCommand="{Binding CreateGroupCommand}"
-                ResizeTarget="{Binding ElementName=LeftListViewColumn}" 
-                IsOpen="True" 
                 IsButtonVisible="Visible" />
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
@@ -116,7 +115,7 @@
                                             <TextBlock Text="{Binding Username}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                             <TextBlock Text="{Binding Url}" Style="{StaticResource BodyTextBlockStyle}" Foreground="{Binding ForegroundColor, ConverterParameter={StaticResource TextBoxForegroundThemeBrush}, Converter={StaticResource ColorToBrushConverter}}" MaxHeight="60" />
                                         </StackPanel>
-                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{StaticResource AppBarBackgroundThemeBrush}" VerticalAlignment="Bottom" Foreground="{StaticResource TextColorDarkBrush}">
+                                        <Button Grid.Column="2" Style="{StaticResource NoBorderButtonStyle}" Background="{StaticResource AppBarBackgroundThemeBrush}" VerticalAlignment="Bottom">
                                             <SymbolIcon Symbol="More" />
                                             <Button.Flyout>
                                                 <MenuFlyout>
@@ -183,37 +182,38 @@
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{StaticResource MenuGridLength}"/>
+                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
                     Command="{Binding GoBackCommand}"
-                    Height="{StaticResource MenuSize}"
-                    Width="{StaticResource MenuSize}"
+                    Height="{StaticResource MenuHeight}"
+                    Width="{StaticResource MenuWidth}"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <Grid Grid.Column="1" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40" />
-                    <RowDefinition Height="20" />
-                </Grid.RowDefinitions>
-                <Viewbox MaxHeight="200" Width="200" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button
+                    Height="{StaticResource MenuHeight}"
+                    Width="{StaticResource MenuWidth}"
+                    Command="{Binding GoToParentCommand}"
+                    Style="{StaticResource NoBorderButtonStyle}">
+                    <SymbolIcon Symbol="Up" />
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="{Binding ParentGroupName}" />
+                    </ToolTipService.ToolTip>
+                </Button>
+                <Viewbox MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
                 </Viewbox>
-                <Viewbox MaxHeight="200" Width="200" Grid.Column="0" Grid.Row="0" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <Viewbox MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                     <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
                 </Viewbox>
-                <TextBox Grid.Column="1" Grid.Row="0" 
+                <TextBox
                     x:Uid="GroupTitle"
                     x:Name="TitleTextBox"
                     Text="{Binding Title, Mode=TwoWay}" 
@@ -222,6 +222,7 @@
                     FontSize="20"
                     FontWeight="Light"
                     TextWrapping="NoWrap" 
+                    MinWidth="360"
                     VerticalAlignment="Center">
                     <interactivity:Interaction.Behaviors>
                         <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
@@ -233,11 +234,7 @@
                         </core:DataTriggerBehavior>
                     </interactivity:Interaction.Behaviors>
                 </TextBox>
-                <HyperlinkButton Grid.Column="1" Grid.Row="1"
-                     FontWeight="Light" FontSize="12" Padding="0" Margin="5,-5,0,0"
-                     Content="{Binding ParentGroupName}" 
-                     Command="{Binding GoToParentCommand}" />
-            </Grid>
+            </StackPanel>
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
@@ -252,31 +249,7 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>
-            <Button Grid.Column="3" x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Background="{ThemeResource ToggleButtonBackgroundThemeBrush}" Height="{StaticResource MenuSize}" Padding="25,0,25,0">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Find" />
-                    <TextBlock x:Uid="SearchButtonLabel" x:Name="SearchButtonLabel" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0" />
-                </StackPanel>
-                <ToolTipService.ToolTip>
-                    <ToolTip x:Uid="SearchButtonTooltip" />
-                </ToolTipService.ToolTip>
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="Click">
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Visible" />
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Collapsed" />
-                        <!-- TODO: make this work -->
-                        <actions:SetupFocusAction TargetObject="{Binding ElementName=SearchBox}" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </Button>
-            <SearchBox Grid.Column="3" x:Uid="EntriesSearch" x:Name="SearchBox" Padding="12" Width="350" Visibility="Collapsed" Margin="0,5,0,5" FontSize="15" SuggestionsRequested="SearchBox_OnSuggestionsRequested" SearchHistoryEnabled="False" ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen">
-                <interactivity:Interaction.Behaviors>
-                    <core:EventTriggerBehavior EventName="LostFocus">
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Collapsed" />
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Visible" />
-                    </core:EventTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </SearchBox>
+            
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="DragDropGroup">
@@ -301,17 +274,11 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>

@@ -4,15 +4,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:actions="using:ModernKeePass.Actions"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Style BasedOn="{StaticResource NoBorderButtonStyle}" TargetType="Button" x:Key="MenuButtonStyle" >
             <Setter Property="Padding" Value="25,0,25,0" />
-            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+            <Setter Property="Height" Value="{StaticResource MenuHeight}" />
         </Style>
         <Style BasedOn="{StaticResource NoBorderToggleButtonStyle}" TargetType="ToggleButton" x:Key="MenuToggleButtonStyle" >
             <Setter Property="Padding" Value="25,0,25,0" />
-            <Setter Property="Height" Value="{StaticResource MenuSize}" />
+            <Setter Property="Height" Value="{StaticResource MenuHeight}" />
         </Style>
     </UserControl.Resources>
     <StackPanel x:Name="StackPanel" Orientation="Horizontal" DataContext="{Binding Source={StaticResource Locator}, Path=TopMenu}">
@@ -26,6 +29,9 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Collapsed">
@@ -35,6 +41,9 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MoreButton" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchButtonLabel" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -56,13 +65,12 @@
                 </SymbolIcon>
                 <Button.Flyout>
                     <Flyout Opening="MoveButtonFlyout_OnOpening">
-                        <StackPanel>
+                        <StackPanel Background="Transparent">
                             <SearchBox x:Uid="GroupsSearch" 
-                                Padding="12" Width="350"
-                                Margin="0,5,0,5" 
-                                FontSize="15" 
-                                SuggestionsRequested="SearchBox_OnSuggestionsRequested" 
-                                ResultSuggestionChosen="SearchBox_OnResultSuggestionChosen" 
+                                Width="250" 
+                                Margin="0,5,0,5"
+                                SuggestionsRequested="GroupSearchBox_OnSuggestionsRequested" 
+                                ResultSuggestionChosen="GroupSearchBox_OnResultSuggestionChosen" 
                                 SearchHistoryEnabled="False">
                             </SearchBox>
                             <Button x:Name="MoveButton" x:Uid="MoveButton" />
@@ -104,6 +112,39 @@
                     </ToolTipService.ToolTip>
                 </SymbolIcon>
             </Button>
+            <Button x:Name="SearchButton" Style="{StaticResource NoBorderButtonStyle}" Height="{StaticResource MenuHeight}" Padding="25,0,25,0">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Find" />
+                    <TextBlock x:Uid="SearchButtonLabel" x:Name="SearchButtonLabel" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="10,0,0,0" />
+                </StackPanel>
+                <ToolTipService.ToolTip>
+                    <ToolTip x:Uid="SearchButtonTooltip" />
+                </ToolTipService.ToolTip>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Visible" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Collapsed" />
+                        <!-- TODO: make this work -->
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=SearchBox}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </Button>
+            <SearchBox 
+                x:Uid="EntriesSearch" 
+                x:Name="SearchBox" 
+                Margin="0,5,0,5" 
+                Width="350" 
+                Visibility="Collapsed" 
+                SuggestionsRequested="EntrySearchBox_OnSuggestionsRequested" 
+                SearchHistoryEnabled="False" 
+                ResultSuggestionChosen="EntrySearchBox_OnResultSuggestionChosen">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="LostFocus">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Collapsed" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Visible" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </SearchBox>
         </StackPanel>
         <Button x:Name="MoreButton" Style="{StaticResource MenuButtonStyle}">
             <SymbolIcon Symbol="More" />

@@ -51,19 +51,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Title", (o, args) => { }));
-
-        public object ResizeTarget
-        {
-            get { return GetValue(ResizeTargetProperty); }
-            set { SetValue(ResizeTargetProperty, value); }
-        }
-        public static readonly DependencyProperty ResizeTargetProperty =
-            DependencyProperty.Register(
-                nameof(ResizeTarget),
-                typeof(object),
-                typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(null, (o, args) => { }));
-
+        
         public Visibility IsButtonVisible
         {
             get { return (Visibility)GetValue(IsButtonVisibleProperty); }
@@ -112,19 +100,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(int),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(-1, (o, args) => { }));
-
-        public bool IsOpen
-        {
-            get { return (bool)GetValue(IsOpenProperty); }
-            set { SetValue(IsOpenProperty, value); }
-        }
-        public static readonly DependencyProperty IsOpenProperty =
-            DependencyProperty.Register(
-                nameof(IsOpen),
-                typeof(bool),
-                typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(false, (o, args) => { }));
-
+        
         public ICommand ActionButtonCommand
         {
             get { return (ICommand)GetValue(ActionButtonCommandProperty); }
@@ -142,6 +118,13 @@ namespace ModernKeePass.Views.UserControls
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectionChanged?.Invoke(sender, e);
+        }
+
+        private void ToggleButton_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            var parent = Parent as FrameworkElement;
+            if (parent == null) return;
+            VisualStateManager.GoToState(this, parent.ActualWidth <= 640 ? "Hidden" : "Collapsed", true);
         }
     }
 }

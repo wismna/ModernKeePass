@@ -27,7 +27,7 @@
             </TransitionCollection>
         </Grid.ChildrenTransitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="{StaticResource MenuGridLength}"/>
+            <RowDefinition Height="{StaticResource MenuHeightGridLength}"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -44,7 +44,7 @@
             <Button x:Name="BackButton"
                     Command="{Binding NavigationHelper.GoBackCommand, ElementName=PageRoot}"
                     Visibility="Collapsed"
-                    Height="{StaticResource MenuSize}"
+                    Height="{StaticResource MenuWidth}"
                     AutomationProperties.Name="Back"
                     AutomationProperties.AutomationId="BackButton"
                     AutomationProperties.ItemType="Navigation Button"

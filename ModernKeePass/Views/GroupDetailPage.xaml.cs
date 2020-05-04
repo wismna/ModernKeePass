@@ -83,26 +83,27 @@ namespace ModernKeePass.Views
             e.Cancel = !Model.IsEditMode;
             e.Data.RequestedOperation = DataPackageOperation.Move;
         }
-
-        private async void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
-        {
-            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
-            var results = (await Model.Search(args.QueryText)).Take(5);
-            foreach (var result in results)
-            {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroupName, result.Id, imageUri, string.Empty);
-            }
-        }
-
-        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
-        {
-            Model.GoToEntry(args.Tag);
-        }
-
+        
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            VisualStateManager.GoToState(this, e.NewSize.Width < 800 ? "Small" : "Large", true);
-            VisualStateManager.GoToState(TopMenu, e.NewSize.Width < 800 ? "Collapsed" : "Overflowed", true);
+            if (e.NewSize.Width <= 640)
+            {
+                VisualStateManager.GoToState(this, "Small", true);
+                VisualStateManager.GoToState(TopMenu, "Collapsed", true);
+                VisualStateManager.GoToState(HamburgerMenu, "Hidden", true);
+            }
+            else if (e.NewSize.Width > 640 && e.NewSize.Width <= 1008)
+            {
+                VisualStateManager.GoToState(this, "Medium", true);
+                VisualStateManager.GoToState(TopMenu, "Overflowed", true);
+                VisualStateManager.GoToState(HamburgerMenu, "Collapsed", true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, "Large", true);
+                VisualStateManager.GoToState(TopMenu, "Overflowed", true);
+                VisualStateManager.GoToState(HamburgerMenu, "Expanded", true);
+            }
         }
         
         #endregion

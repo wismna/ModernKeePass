@@ -12,132 +12,173 @@
     <UserControl.Resources>
         <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
     </UserControl.Resources>
-    <ListView
-        ItemsSource="{Binding ItemsSource, ElementName=UserControl}"
-        SelectionChanged="Selector_OnSelectionChanged"
-        SelectedItem="{Binding SelectedItem, ElementName=UserControl, Mode=TwoWay}"
-        SelectedIndex="{Binding SelectedIndex, ElementName=UserControl, Mode=TwoWay}"
-        IsSwipeEnabled="false"
-        IsSynchronizedWithCurrentItem="False"
-        RequestedTheme="Dark"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-        Foreground="{ThemeResource TextColorLightBrush}"
-        ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-        <ListView.Resources>
-            <DataTemplate x:Name="IsSpecial">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
-                        <ToolTipService.ToolTip>
-                            <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
-                        </ToolTipService.ToolTip>
-                    </SymbolIcon>
-                    <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="Italic" />
-                </StackPanel>
-            </DataTemplate>
-            <DataTemplate x:Name="IsNormal">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
-                        <ToolTipService.ToolTip>
-                            <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
-                        </ToolTipService.ToolTip>
-                    </SymbolIcon>
-                    <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
-                </StackPanel>
-            </DataTemplate>
-        </ListView.Resources>
-        <ListView.ItemTemplateSelector>
-            <templateSelectors:SelectableDataTemplateSelector FalseItem="{StaticResource IsNormal}" TrueItem="{StaticResource IsSpecial}" />
-        </ListView.ItemTemplateSelector>
-        <ListView.HeaderTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                    <ToggleButton Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl}">
-                        <ToolTipService.ToolTip>
-                            <ToolTip Content="{Binding HeaderLabel, ElementName=UserControl}" />
-                        </ToolTipService.ToolTip>
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Checked">
-                                <core:ChangePropertyAction PropertyName="Width" Value="{StaticResource ExpandedMenuSize}" TargetObject="{Binding ResizeTarget, ElementName=UserControl}"/>
-                            </core:EventTriggerBehavior>
-                            <core:EventTriggerBehavior EventName="Unchecked">
-                                <core:ChangePropertyAction PropertyName="Width" Value="{StaticResource MenuSize}" TargetObject="{Binding ResizeTarget, ElementName=UserControl}"/>
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </ToggleButton>
-                    <TextBlock Text="{Binding HeaderLabel, ElementName=UserControl}" FontWeight="Bold" FontSize="18" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" HorizontalAlignment="Center" />
-                </StackPanel>
-            </DataTemplate>
-        </ListView.HeaderTemplate>
-        <ListView.FooterTemplate>
-            <DataTemplate>
-                <StackPanel Orientation="Vertical">
-                    <Border BorderBrush="White" BorderThickness="0,0,0,1" />
-                    <Button Padding="0" Margin="0" 
-                            Height="{StaticResource MenuSize}" 
-                            Visibility="{Binding IsButtonVisible, ElementName=UserControl}" 
+    <Grid HorizontalAlignment="Left">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisibilityStates">
+                <VisualState x:Name="Hidden">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListView" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderTextBlock" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Collapsed">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListView" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListView" Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuWidth}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderTextBlock" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Expanded">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListView" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListView" Storyboard.TargetProperty="Width">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ExpandedMenuSize}"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderTextBlock" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource MenuHeightGridLength}" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <ToggleButton Style="{StaticResource HamburgerToggleButton}" Unchecked="ToggleButton_OnUnchecked">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Checked">
+                        <core:GoToStateAction StateName="Expanded" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </ToggleButton>
+            <TextBlock 
+                x:Name="HeaderTextBlock" 
+                Text="{Binding HeaderLabel, ElementName=UserControl}" 
+                FontWeight="Bold"
+                FontSize="18" 
+                TextWrapping="NoWrap" 
+                VerticalAlignment="Center" 
+                Margin="30,0,20,0" 
+                HorizontalAlignment="Center" />
+        </StackPanel>
+        <ListView 
+            x:Name="ListView"
+            Grid.Row="1"
+            ItemsSource="{Binding ItemsSource, ElementName=UserControl}"
+            SelectionChanged="Selector_OnSelectionChanged"
+            SelectedItem="{Binding SelectedItem, ElementName=UserControl, Mode=TwoWay}"
+            SelectedIndex="{Binding SelectedIndex, ElementName=UserControl, Mode=TwoWay}"
+            IsSwipeEnabled="false"
+            IsSynchronizedWithCurrentItem="False"
+            Background="{ThemeResource AppBarBackgroundThemeBrush}"
+            ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+            <ListView.Resources>
+                <DataTemplate x:Name="IsSpecial">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
+                            </ToolTipService.ToolTip>
+                        </SymbolIcon>
+                        <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="Italic" />
+                    </StackPanel>
+                </DataTemplate>
+                <DataTemplate x:Name="IsNormal">
+                    <StackPanel Orientation="Horizontal">
+                        <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
+                            </ToolTipService.ToolTip>
+                        </SymbolIcon>
+                        <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.Resources>
+            <ListView.ItemTemplateSelector>
+                <templateSelectors:SelectableDataTemplateSelector FalseItem="{StaticResource IsNormal}" TrueItem="{StaticResource IsSpecial}" />
+            </ListView.ItemTemplateSelector>
+            <ListView.FooterTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                        <Button Padding="0" Margin="0" 
+                                Height="{StaticResource MenuWidth}" 
+                                Visibility="{Binding IsButtonVisible, ElementName=UserControl}" 
+                                Style="{StaticResource NoBorderButtonStyle}" 
+                                Background="Transparent" 
+                                BorderThickness="0" 
+                                Width="{StaticResource ExpandedMenuSize}" 
+                                HorizontalContentAlignment="Left" 
+                                Command="{Binding ActionButtonCommand, ElementName=UserControl}">
+                            <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
+                                <SymbolIcon Symbol="Add">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{Binding ButtonLabel, ElementName=UserControl}" />
+                                    </ToolTipService.ToolTip>
+                                </SymbolIcon>
+                                <TextBlock Text="{Binding ButtonLabel, ElementName=UserControl}" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
+                            </StackPanel>
+                        </Button>
+                        <Button Padding="0" Margin="0" 
+                                Height="{StaticResource MenuWidth}" 
+                                Style="{StaticResource NoBorderButtonStyle}" 
+                                Background="Transparent" 
+                                BorderThickness="0" 
+                                Width="{StaticResource ExpandedMenuSize}" 
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
+                                <SymbolIcon Symbol="Home">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip x:Uid="HamburgerMenuHomeTooltip" />
+                                    </ToolTipService.ToolTip>
+                                </SymbolIcon>
+                                <TextBlock x:Uid="HamburgerMenuHomeLabel" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
+                            </StackPanel>
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Click">
+                                    <core:NavigateToPageAction TargetPage="ModernKeePass.Views.MainPage" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </Button>
+                        <Button 
+                            Padding="0" Margin="0" 
+                            Height="{StaticResource MenuWidth}" 
                             Style="{StaticResource NoBorderButtonStyle}" 
-                            Background="Transparent" 
-                            Foreground="{ThemeResource TextColorLightBrush}"
-                            BorderThickness="0" 
-                            Width="{StaticResource ExpandedMenuSize}" 
-                            HorizontalContentAlignment="Left" 
-                            Command="{Binding ActionButtonCommand, ElementName=UserControl}">
-                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
-                            <SymbolIcon Symbol="Add">
-                                <ToolTipService.ToolTip>
-                                    <ToolTip Content="{Binding ButtonLabel, ElementName=UserControl}" />
-                                </ToolTipService.ToolTip>
-                            </SymbolIcon>
-                            <TextBlock Text="{Binding ButtonLabel, ElementName=UserControl}" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
-                        </StackPanel>
-                    </Button>
-                    <Button Padding="0" Margin="0" 
-                            Height="{StaticResource MenuSize}" 
-                            Style="{StaticResource NoBorderButtonStyle}" 
-                            Foreground="{ThemeResource TextColorLightBrush}"
                             Background="Transparent" 
                             BorderThickness="0" 
                             Width="{StaticResource ExpandedMenuSize}" 
                             HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
-                            <SymbolIcon Symbol="Home">
-                                <ToolTipService.ToolTip>
-                                    <ToolTip x:Uid="HamburgerMenuHomeTooltip" />
-                                </ToolTipService.ToolTip>
-                            </SymbolIcon>
-                            <TextBlock x:Uid="HamburgerMenuHomeLabel" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
-                        </StackPanel>
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Click">
-                                <core:NavigateToPageAction TargetPage="ModernKeePass.Views.MainPage" />
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </Button>
-                    <Button 
-                        Padding="0" Margin="0" 
-                        Height="{StaticResource MenuSize}" 
-                        Style="{StaticResource NoBorderButtonStyle}" 
-                        Foreground="{ThemeResource TextColorLightBrush}"
-                        Background="Transparent" 
-                        BorderThickness="0" 
-                        Width="{StaticResource ExpandedMenuSize}" 
-                        HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
-                            <SymbolIcon Symbol="Setting">
-                                <ToolTipService.ToolTip>
-                                    <ToolTip x:Uid="HamburgerMenuSettingsTooltip" />
-                                </ToolTipService.ToolTip>
-                            </SymbolIcon>
-                            <TextBlock x:Uid="HamburgerMenuSettingsLabel" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
-                        </StackPanel>
-                        <interactivity:Interaction.Behaviors>
-                            <core:EventTriggerBehavior EventName="Click">
-                                <core:NavigateToPageAction TargetPage="ModernKeePass.Views.SettingsPage" />
-                            </core:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </Button>
-                </StackPanel>
-            </DataTemplate>
-        </ListView.FooterTemplate>
-    </ListView>
+                            <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
+                                <SymbolIcon Symbol="Setting">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip x:Uid="HamburgerMenuSettingsTooltip" />
+                                    </ToolTipService.ToolTip>
+                                </SymbolIcon>
+                                <TextBlock x:Uid="HamburgerMenuSettingsLabel" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
+                            </StackPanel>
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Click">
+                                    <core:NavigateToPageAction TargetPage="ModernKeePass.Views.SettingsPage" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </Button>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.FooterTemplate>
+        </ListView>
+    </Grid>
 </UserControl>

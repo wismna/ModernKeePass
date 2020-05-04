@@ -22,7 +22,7 @@
             </Grid.ColumnDefinitions>
             <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" />
             <Button Grid.Column="2" Style="{StaticResource TextBlockButtonStyle}">
-                <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5" >
+                <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5">
                     <SymbolIcon.RenderTransform>
                         <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
                     </SymbolIcon.RenderTransform>

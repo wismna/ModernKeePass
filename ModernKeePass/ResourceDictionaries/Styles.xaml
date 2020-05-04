@@ -3,39 +3,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Common theme values -->
-    <x:Double x:Key="MenuSize">60</x:Double>
+    <x:Double x:Key="MenuWidth">60</x:Double>
+    <x:Double x:Key="MenuHeight">40</x:Double>
     <x:Double x:Key="ExpandedMenuSize">300</x:Double>
-    <GridLength x:Key="MenuGridLength">60</GridLength>
+    <GridLength x:Key="MenuHeightGridLength">40</GridLength>
+    <GridLength x:Key="MenuWidthGridLength">60</GridLength>
     <GridLength x:Key="ExpandedMenuGridLength">300</GridLength>
-    <!-- Only available for Windows 10 -->
-    <!--<SolidColorBrush x:Key="MainColor" Color="{ThemeResource SystemAccentColor}" />
-    <SolidColorBrush x:Key="TextColor" Color="{ThemeResource SystemColorHighlightTextColor}" />
-    
-    <SolidColorBrush x:Key="CheckBoxForegroundChecked" Color="{ThemeResource MainColor}"/>
-    <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{ThemeResource TextColorLight}"/>
-    <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeChecked" Color="{ThemeResource MainColor}"/>
-    <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{ThemeResource MainColor}"/>-->
 
     <Color x:Key="MainColor">SlateBlue</Color>
     <Color x:Key="MainColorLight">MediumPurple</Color>
     <Color x:Key="MainColorDark">Indigo</Color>
     <Color x:Key="TextColorLight">WhiteSmoke</Color>
-    <Color x:Key="TextColorDark">DarkSlateGray</Color>
     <Color x:Key="BorderColor">DarkGray</Color>
+    <Color x:Key="FlyoutColor">#FFF0F0F0</Color>
 
     <SolidColorBrush x:Key="MainColorBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="MainColorLightBrush" Color="{ThemeResource MainColorLight}" />
     <SolidColorBrush x:Key="MainColorDarkBrush" Color="{ThemeResource MainColorDark}" />
     <SolidColorBrush x:Key="TextColorLightBrush" Color="{ThemeResource TextColorLight}" />
-    <SolidColorBrush x:Key="TextColorDarkBrush" Color="{ThemeResource TextColorDark}" />
 
     <Style TargetType="TextBlock" x:Key="TextBlockSettingsHeaderStyle" >
         <Setter Property="FontFamily" Value="Segoe UI" />
-        <Setter Property="FontSize" Value="14.667" />
+        <Setter Property="FontSize" Value="16" />
         <Setter Property="FontWeight" Value="SemiLight" />
     </Style>
 
-    <SolidColorBrush x:Key="TextBoxForegroundThemeBrush" Color="{ThemeResource TextColorDark}" />
     <SolidColorBrush x:Key="TextBoxBorderThemeBrush" Color="{ThemeResource BorderColor}" />
     <SolidColorBrush x:Key="TextSelectionHighlightColorThemeBrush" Color="{ThemeResource MainColor}" />
 
@@ -50,9 +42,9 @@
     <SolidColorBrush x:Key="HyperlinkForegroundThemeBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="HyperlinkPointerOverForegroundThemeBrush" Color="{ThemeResource MainColorLight}" />
 
-    <SolidColorBrush x:Key="SearchBoxForegroundThemeBrush" Color="{ThemeResource TextColorDark}" />
     <!--<SolidColorBrush x:Key="SearchBoxPointerOverBorderThemeBrush" Color="{ThemeResource MainColorLight}" />-->
     <SolidColorBrush x:Key="SearchBoxPointerOverTextThemeBrush" Color="{ThemeResource MainColorLight}" />
+    <SolidColorBrush x:Key="SearchBoxBorderThemeBrush" Color="{ThemeResource BorderColor}" />
     <SolidColorBrush x:Key="SearchBoxFocusedBorderThemeBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="SearchBoxButtonBackgroundThemeBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="SearchBoxHitHighlightForegroundThemeBrush" Color="{ThemeResource MainColor}" />
@@ -84,6 +76,9 @@
     <SolidColorBrush x:Key="SliderTrackDecreasePressedBackgroundThemeBrush" Color="{ThemeResource MainColorDark}" />
     <SolidColorBrush x:Key="SliderTrackDecreasePointerOverBackgroundThemeBrush" Color="{ThemeResource MainColorLight}" />
 
-    <Thickness x:Key="FlyoutBorderThemeThickness">0</Thickness>
     <Thickness x:Key="MenuFlyoutPresenterThemePadding">0</Thickness>
+    <Thickness x:Key="FlyoutContentThemePadding">5</Thickness>
+    <Thickness x:Key="FlyoutBorderThemeThickness">0</Thickness>
+    <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="{ThemeResource FlyoutColor}" />
+    <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="{ThemeResource FlyoutColor}" />
 </ResourceDictionary>

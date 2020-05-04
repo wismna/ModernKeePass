@@ -194,7 +194,7 @@ namespace ModernKeePass.Views.UserControls
             SortGroupsButtonFlyout.Command = SortGroupsCommand;
         }
         
-        private void SearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        private void GroupSearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
             var groups = Model.Groups.Where(g => g.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
@@ -209,10 +209,26 @@ namespace ModernKeePass.Views.UserControls
             }
         }
 
-        private void SearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
+        private void GroupSearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
         {
             MoveButton.CommandParameter = args.Tag;
             MoveCommand.RaiseCanExecuteChanged();
+        }
+
+
+        private async void EntrySearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
+        {
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
+            var results = (await Model.Search(args.QueryText)).Take(5);
+            foreach (var result in results)
+            {
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroupName, result.Id, imageUri, string.Empty);
+            }
+        }
+
+        private void EntrySearchBox_OnResultSuggestionChosen(SearchBox sender, SearchBoxResultSuggestionChosenEventArgs args)
+        {
+            Model.GoToEntry(args.Tag);
         }
     }
 }

@@ -178,12 +178,7 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new RemoveGroupCommand {ParentGroupId = _parent.Id, GroupId = Id });
             GoToGroup(destinationId);
         }
-
-        public async Task<IEnumerable<EntryVm>> Search(string queryText)
-        {
-            return await _mediator.Send(new SearchEntriesQuery {GroupId = Id, SearchText = queryText});
-        }
-
+        
         private async Task SaveChanges()
         {
             try

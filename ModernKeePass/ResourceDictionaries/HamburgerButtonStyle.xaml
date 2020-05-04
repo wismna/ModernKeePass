@@ -13,14 +13,14 @@
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Grid"
-                                                                        Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
+                                                                        Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleButtonPointerOverBackgroundThemeBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid x:Name="Grid" Background="{StaticResource MainColor}" Margin="0" Width="{StaticResource MenuSize}" Height="{StaticResource MenuSize}">
+                        <Grid x:Name="Grid" Background="{StaticResource AppBarBackgroundThemeBrush}" Margin="0" Width="{StaticResource MenuWidth}" Height="{StaticResource MenuHeight}">
                             <Canvas x:Name="HamburgerMenu" HorizontalAlignment="Center" Height="17" UseLayoutRounding="False" VerticalAlignment="Center" Width="28">
                                 <Canvas x:Name="Layer1" Height="17" Canvas.Left="0" Width="28" Margin="0" RenderTransformOrigin="0.5,0.5">
                                     <Canvas.RenderTransform>
@@ -52,7 +52,7 @@
         <Setter Property="Margin" Value="0" />
     </Style>
     <Style x:Key="HeaderTextBoxStyle" TargetType="TextBox">
-        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontSize" Value="30"/>
         <Setter Property="FontWeight" Value="Light"/>
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Background" Value="Transparent" />
