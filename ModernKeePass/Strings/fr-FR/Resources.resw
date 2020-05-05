@@ -516,4 +516,7 @@
   <data name="CompositeKeyConfirmPassword.PlaceholderText" xml:space="preserve">
     <value>Confirmer le mot de passe</value>
   </data>
+  <data name="NewGroupTextBox" xml:space="preserve">
+    <value>Nom du groupe</value>
+  </data>
 </root>

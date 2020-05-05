@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Controls;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -11,11 +14,6 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class HamburgerMenuUserControl
     {
-        public HamburgerMenuUserControl()
-        {
-            InitializeComponent();
-        }
-
         public string HeaderLabel
         {
             get { return (string)GetValue(HeaderLabelProperty); }
@@ -112,9 +110,14 @@ namespace ModernKeePass.Views.UserControls
                 typeof(ICommand),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
-
-
+        
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
+        
+        public HamburgerMenuUserControl()
+        {
+            InitializeComponent();
+        }
+
         private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             SelectionChanged?.Invoke(sender, e);
@@ -125,6 +128,15 @@ namespace ModernKeePass.Views.UserControls
             var parent = Parent as FrameworkElement;
             if (parent == null) return;
             VisualStateManager.GoToState(this, parent.ActualWidth <= 640 ? "Hidden" : "Collapsed", true);
+        }
+
+        private void NewGroupTextBox_OnKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key != VirtualKey.Enter) return;
+            var textBox = sender as TextBoxWithButton;
+            ActionButtonCommand.Execute(textBox?.Text);
+            // Stop the event from triggering twice
+            e.Handled = true;
         }
     }
 }

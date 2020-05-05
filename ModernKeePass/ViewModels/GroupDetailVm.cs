@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -27,7 +26,6 @@ using ModernKeePass.Application.Group.Commands.SortGroups;
 using ModernKeePass.Application.Group.Commands.UpdateGroup;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Application.Group.Queries.GetGroup;
-using ModernKeePass.Application.Group.Queries.SearchEntries;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Enums;
 using ModernKeePass.Domain.Exceptions;
@@ -92,7 +90,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand SortGroupsCommand { get; }
         public RelayCommand<string> MoveCommand { get; }
         public RelayCommand CreateEntryCommand { get; }
-        public RelayCommand CreateGroupCommand { get; }
+        public RelayCommand<string> CreateGroupCommand { get; }
         public RelayCommand DeleteCommand { get; set; }
         public RelayCommand GoBackCommand { get; set; }
         public RelayCommand GoToParentCommand { get; set; }
@@ -122,7 +120,7 @@ namespace ModernKeePass.ViewModels
             SortGroupsCommand = new RelayCommand(async () => await SortGroupsAsync(), () => IsEditMode);
             MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => IsNotRoot && !string.IsNullOrEmpty(destination) && destination != Id);
             CreateEntryCommand = new RelayCommand(async () => await AddNewEntry(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
-            CreateGroupCommand = new RelayCommand(async () => await AddNewGroup(), () => !IsInRecycleBin && Database.RecycleBinId != Id);
+            CreateGroupCommand = new RelayCommand<string>(async newGroupName => await AddNewGroup(newGroupName), _ => !IsInRecycleBin && Database.RecycleBinId != Id);
             DeleteCommand = new RelayCommand(async () => await AskForDelete(),() => IsNotRoot);
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand= new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
@@ -163,7 +161,7 @@ namespace ModernKeePass.ViewModels
         public async Task AddNewGroup(string name = "")
         {
             var group = await _mediator.Send(new CreateGroupCommand {Name = name, ParentGroup = _group});
-            GoToGroup(group.Id, true);
+            Groups.Add(group);
         }
         
         public async Task AddNewEntry()

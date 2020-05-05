@@ -8,6 +8,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:ModernKeePass.Converters"
+    xmlns:actions="using:ModernKeePass.Actions"
+    xmlns:controls="using:ModernKeePass.Controls"
     mc:Ignorable="d">
     <UserControl.Resources>
         <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
@@ -111,19 +113,18 @@
             <ListView.ItemTemplateSelector>
                 <templateSelectors:SelectableDataTemplateSelector FalseItem="{StaticResource IsNormal}" TrueItem="{StaticResource IsSpecial}" />
             </ListView.ItemTemplateSelector>
-            <ListView.FooterTemplate>
+            <ListView.HeaderTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical">
-                        <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
-                        <Button Padding="0" Margin="0" 
-                                Height="{StaticResource MenuWidth}" 
-                                Visibility="{Binding IsButtonVisible, ElementName=UserControl}" 
-                                Style="{StaticResource NoBorderButtonStyle}" 
-                                Background="Transparent" 
-                                BorderThickness="0" 
-                                Width="{StaticResource ExpandedMenuSize}" 
-                                HorizontalContentAlignment="Left" 
-                                Command="{Binding ActionButtonCommand, ElementName=UserControl}">
+                    <StackPanel Orientation="Vertical" Visibility="{Binding IsButtonVisible, ElementName=UserControl}">
+                        <Button x:Name="NewGroupButton"
+                            Padding="0" Margin="0" 
+                            Height="{StaticResource MenuWidth}" 
+                            Visibility="{Binding IsButtonVisible, ElementName=UserControl}" 
+                            Style="{StaticResource NoBorderButtonStyle}" 
+                            Background="Transparent" 
+                            BorderThickness="0" 
+                            Width="{StaticResource ExpandedMenuSize}" 
+                            HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal" Margin="17,0,5,0">
                                 <SymbolIcon Symbol="Add">
                                     <ToolTipService.ToolTip>
@@ -132,7 +133,42 @@
                                 </SymbolIcon>
                                 <TextBlock Text="{Binding ButtonLabel, ElementName=UserControl}" FontWeight="SemiBold" TextWrapping="NoWrap" FontSize="16" VerticalAlignment="Center" Margin="30,0,20,0" />
                             </StackPanel>
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="Click">
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupTextBox}" PropertyName="Visibility" Value="Visible" />
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupButton}" PropertyName="Visibility" Value="Collapsed" />
+                                    <actions:SetupFocusAction TargetObject="{Binding ElementName=NewGroupTextBox}" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
                         </Button>
+                        <controls:TextBoxWithButton 
+                            x:Uid="NewGroupTextBox" 
+                            x:Name="NewGroupTextBox" 
+                            Margin="0,5,0,5" 
+                            Visibility="Collapsed"
+                            Width="280"
+                            HorizontalAlignment="Center"
+                            ButtonCommand="{Binding ActionButtonCommand, ElementName=UserControl}" 
+                            ButtonCommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
+                            Style="{StaticResource TextBoxWithButtonStyle}"
+                            KeyDown="NewGroupTextBox_OnKeyDown"
+                            ButtonSymbol="&#xE111;">
+                            <interactivity:Interaction.Behaviors>
+                                <core:EventTriggerBehavior EventName="LostFocus">
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupButton}" PropertyName="Visibility" Value="Visible" />
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupTextBox}" PropertyName="Visibility" Value="Collapsed" />
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupTextBox}" PropertyName="Text" Value="" />
+                                </core:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </controls:TextBoxWithButton>
+                        <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.FooterTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
                         <Button Padding="0" Margin="0" 
                                 Height="{StaticResource MenuWidth}" 
                                 Style="{StaticResource NoBorderButtonStyle}" 

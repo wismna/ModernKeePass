@@ -124,7 +124,6 @@
                     <core:EventTriggerBehavior EventName="Click">
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchBox}" PropertyName="Visibility" Value="Visible" />
                         <core:ChangePropertyAction TargetObject="{Binding ElementName=SearchButton}" PropertyName="Visibility" Value="Collapsed" />
-                        <!-- TODO: make this work -->
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=SearchBox}" />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>

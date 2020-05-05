@@ -291,7 +291,7 @@
                                          TextWrapping="NoWrap"
                                          VerticalAlignment="Stretch"
                                          Margin="0"
-                                         Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=Text}" />
+                                         Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=Text, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button x:Name="ActionButton"
                                         AutomationProperties.AccessibilityView="Raw"
                                         Background="Transparent"
@@ -301,7 +301,8 @@
                                         Style="{StaticResource ActionButtonStyle}"
                                         Content="{TemplateBinding ButtonSymbol}"
                                         IsEnabled="{TemplateBinding IsButtonEnabled}"
-                                        Command="{TemplateBinding ButtonCommand}">
+                                        Command="{TemplateBinding ButtonCommand}"
+                                        CommandParameter="{TemplateBinding ButtonCommandParameter}">
                                     <ToolTipService.ToolTip>
                                         <ToolTip Content="{TemplateBinding ButtonTooltip}" />
                                     </ToolTipService.ToolTip>
