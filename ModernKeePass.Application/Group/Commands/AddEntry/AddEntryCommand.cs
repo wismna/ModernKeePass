@@ -24,7 +24,6 @@ namespace ModernKeePass.Application.Group.Commands.AddEntry
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 await _database.AddEntry(message.ParentGroupId, message.EntryId);
-                //message.ParentGroup.Entries.Add(message.Entry);
             }
         }
     }

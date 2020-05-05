@@ -17,15 +17,17 @@ namespace ModernKeePass.ViewModels
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
         private readonly IFileProxy _file;
+        private readonly IResourceProxy _resource;
 
         public RelayCommand CreateDatabaseFileCommand { get; }
         
-        public NewVm(IMediator mediator, ISettingsProxy settings, INavigationService navigation, IFileProxy file): base(file)
+        public NewVm(IMediator mediator, ISettingsProxy settings, INavigationService navigation, IFileProxy file, IResourceProxy resource): base(file)
         {
             _mediator = mediator;
             _settings = settings;
             _navigation = navigation;
             _file = file;
+            _resource = resource;
 
             CreateDatabaseFileCommand = new RelayCommand(async () => await CreateDatabaseFile());
 
@@ -34,8 +36,11 @@ namespace ModernKeePass.ViewModels
 
         private async Task CreateDatabaseFile()
         {
-            // TODO: get these from resource
-            var file = await _file.CreateFile("New Database", Domain.Common.Constants.Extensions.Kdbx, "KeePass 2.x database", true);
+            var file = await _file.CreateFile(_resource.GetResourceValue("MessageDialogSaveNameSuggestion"),
+                Domain.Common.Constants.Extensions.Kdbx,
+                _resource.GetResourceValue("MessageDialogSaveErrorFileTypeDesc"), 
+                true);
+            if (file == null) return;
             Token = file.Id;
             Path = file.Path;
             Name = file.Name;

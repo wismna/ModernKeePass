@@ -14,6 +14,7 @@ namespace ModernKeePass.ViewModels
     {
         private readonly IMediator _mediator;
         private readonly ICredentialsProxy _credentials;
+        private readonly IResourceProxy _resource;
         private readonly IFileProxy _file;
 
         public bool HasPassword
@@ -105,6 +106,7 @@ namespace ModernKeePass.ViewModels
         {
             _mediator = mediator;
             _credentials = credentials;
+            _resource = resource;
             _file = file;
 
             OpenKeyFileCommand = new RelayCommand(async () => await OpenKeyFile(), () => HasKeyFile);
@@ -117,12 +119,16 @@ namespace ModernKeePass.ViewModels
         private async Task OpenKeyFile()
         {
             var file = await _file.OpenFile(string.Empty, Constants.Extensions.Any, false);
+            if (file == null) return;
             SetKeyFileInfo(file);
         }
 
         private async Task CreateKeyFile()
         {
-            var file = await _file.CreateFile("Key", Constants.Extensions.Any, "Key file", false);
+            var file = await _file.CreateFile(_resource.GetResourceValue("CompositeKeyFileNameSuggestion"),
+                Constants.Extensions.Key, _resource.GetResourceValue("CompositeKeyFileTypeDesc"), 
+                false);
+            if (file == null) return;
             SetKeyFileInfo(file);
 
             await _mediator.Send(new GenerateKeyFileCommand { KeyFilePath = KeyFilePath });
@@ -130,7 +136,6 @@ namespace ModernKeePass.ViewModels
 
         private void SetKeyFileInfo(FileInfo file)
         {
-            if (file == null) return;
             KeyFilePath = file.Id;
             KeyFileText = file.Name;
             HasKeyFile = true;

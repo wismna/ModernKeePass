@@ -24,7 +24,6 @@ namespace ModernKeePass.Application.Group.Commands.AddGroup
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 await _database.AddGroup(message.ParentGroupId, message.GroupId);
-                //message.ParentGroup.SubGroups.Add(message.Group);
             }
         }
     }

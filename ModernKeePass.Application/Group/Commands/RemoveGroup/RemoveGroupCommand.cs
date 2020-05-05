@@ -24,7 +24,6 @@ namespace ModernKeePass.Application.Group.Commands.RemoveGroup
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 await _database.RemoveGroup(message.ParentGroupId, message.GroupId);
-                //message.ParentGroup.SubGroups.Remove(message.Group);
             }
         }
     }

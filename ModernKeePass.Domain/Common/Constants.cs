@@ -8,6 +8,7 @@
         {
             public static string Any => "*";
             public static string Kdbx => ".kdbx";
+            public static string Key => ".key";
         }
     }
 }

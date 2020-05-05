@@ -38,7 +38,6 @@ namespace ModernKeePass
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
         private readonly IHockeyClient _hockey;
-        private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
         private readonly IMessenger _messenger;
@@ -64,7 +63,6 @@ namespace ModernKeePass
             _resource = Services.GetService<IResourceProxy>();
             _settings = Services.GetService<ISettingsProxy>();
             _navigation = Services.GetService<INavigationService>();
-            _dialog = Services.GetService<IDialogService>();
             _notification = Services.GetService<INotificationService>();
             _hockey = Services.GetService<IHockeyClient>();
             _file = Services.GetService<IFileProxy>();
@@ -134,9 +132,6 @@ namespace ModernKeePass
                 {
                     // Load state from previously terminated application
                     await SuspensionManager.RestoreAsync();
-#if DEBUG
-                    await _dialog.ShowMessage("Windows or an error made the app terminate", "App terminated");
-#endif
                 }
 
                 // Place the frame in the current Window

@@ -267,4 +267,13 @@
   <data name="FileNotFoundTitle" xml:space="preserve">
     <value>Fichier manquant</value>
   </data>
+  <data name="MessageDialogSaveNameSuggestion" xml:space="preserve">
+    <value>KeePass</value>
+  </data>
+  <data name="CompositeKeyFileTypeDesc" xml:space="preserve">
+    <value>Fichier de clé</value>
+  </data>
+  <data name="CompositeKeyFileNameSuggestion" xml:space="preserve">
+    <value>Clé</value>
+  </data>
 </root>

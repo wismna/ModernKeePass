@@ -24,7 +24,6 @@ namespace ModernKeePass.Application.Group.Commands.RemoveEntry
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 await _database.RemoveEntry(message.ParentGroupId, message.EntryId);
-                //message.ParentGroup.Entries.Remove(message.Entry);
             }
         }
     }

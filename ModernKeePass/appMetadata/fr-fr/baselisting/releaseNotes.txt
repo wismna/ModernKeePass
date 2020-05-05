@@ -1,0 +1,5 @@
+Redesign de l'interface utilisateur (menu superieur et menu hamburger)
+Le re-chargement de l'app re-ouvre la base de donnees ouverte precedemment
+L'utlisateur est prevenu et un popup de sauvegarde est affiche quand il y a une erreur de sauvegarde
+La fonctionnalite Sauvegarder Sous fonctionne correctement
+La creation d'un nouveau groupe se fait directement dans le menu
