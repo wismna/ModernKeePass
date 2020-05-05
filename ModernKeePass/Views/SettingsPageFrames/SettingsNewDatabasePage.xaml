@@ -13,18 +13,12 @@
         </StackPanel.Resources>
         <TextBlock x:Uid="SettingsNewDatabaseDesc" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,10"/>
         <ToggleSwitch x:Uid="SettingsNewDatabaseSample" IsOn="{Binding IsCreateSample, Mode=TwoWay}" />
-        <TextBlock x:Uid="SettingsNewDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" />
-            <Button Grid.Column="2" Style="{StaticResource TextBlockButtonStyle}">
+        <StackPanel Orientation="Horizontal" Margin="5,20,0,10">
+            <TextBlock x:Uid="SettingsNewDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" />
+            <Button Style="{StaticResource TextBlockButtonStyle}" Foreground="{StaticResource ButtonPointerOverForegroundThemeBrush}" Margin="0,-2,0,0">
                 <SymbolIcon Symbol="Help" RenderTransformOrigin="0.5,0.5">
                     <SymbolIcon.RenderTransform>
-                        <CompositeTransform ScaleX="0.7" ScaleY="0.7"/>
+                        <CompositeTransform ScaleX="0.6" ScaleY="0.6"/>
                     </SymbolIcon.RenderTransform>
                 </SymbolIcon>
                 <Button.Flyout>
@@ -33,6 +27,7 @@
                     </Flyout>
                 </Button.Flyout>
             </Button>
-        </Grid>
+        </StackPanel>
+        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" SelectedItem="{Binding DatabaseFormatVersion, Mode=TwoWay}" DisplayMemberPath="DisplayText" />
     </StackPanel>
 </Page>

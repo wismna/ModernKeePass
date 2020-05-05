@@ -75,12 +75,12 @@ namespace ModernKeePass
             Resuming += OnResuming;
             UnhandledException += OnUnhandledException;
 
-            _messenger.Register<SaveErrorMessage>(this, async message => await HandelSaveError(message.Message));
+            _messenger.Register<SaveErrorMessage>(this, async message => await HandleSaveError(message));
         }
 
-        private async Task HandelSaveError(string message)
+        private async Task HandleSaveError(SaveErrorMessage message)
         {
-            _notification.Show(_resource.GetResourceValue("MessageDialogSaveErrorTitle"), message);
+            _notification.Show(_resource.GetResourceValue("MessageDialogSaveErrorTitle"), message?.Message);
             var database = await _mediator.Send(new GetDatabaseQuery());
             var file = await _file.CreateFile($"{database.Name} - copy",
                 Domain.Common.Constants.Extensions.Kdbx,

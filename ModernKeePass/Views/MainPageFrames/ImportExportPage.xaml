@@ -20,10 +20,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Text="Import" Style="{StaticResource SubheaderTextBlockStyle}" />
-        <HyperlinkButton Grid.Column="0" Grid.Row="1" Content="Select file..." Style="{StaticResource MainColorHyperlinkButton}" Click="ImportFileButton_OnClick" />
+        <HyperlinkButton Grid.Column="0" Grid.Row="1" Content="Select file..." />
         <StackPanel Grid.Column="1" Grid.Row="1" >
             <TextBlock Text="Format" Style="{StaticResource BodyTextBlockStyle}" Margin="0,0,0,10" />
-            <ComboBox Style="{StaticResource MainColorComboBox}">
+            <ComboBox>
                 <ComboBoxItem>CSV</ComboBoxItem>
             </ComboBox>
         </StackPanel>
@@ -32,6 +32,6 @@
             <RadioButton GroupName="ImportDestination" Content="New database" />
             <RadioButton GroupName="ImportDestination" Content="Currently opened database" />
         </StackPanel>
-        <Button Grid.Column="3" Grid.Row="1" Content="Import" Style="{StaticResource MainColorButton}" />
+        <Button Grid.Column="3" Grid.Row="1" Content="Import" />
     </Grid>
 </Page>

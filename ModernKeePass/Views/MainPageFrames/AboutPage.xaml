@@ -6,15 +6,14 @@
     xmlns:viewModels="using:ModernKeePass.ViewModels"
     x:Class="ModernKeePass.Views.AboutPage"
     mc:Ignorable="d">
-
     <Page.DataContext>
         <viewModels:AboutVm/>
     </Page.DataContext>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBlock Style="{StaticResource BodyTextBlockStyle}"  Margin="10,0,0,0">
-            <Run Text="{Binding Name}"/>
-            <Run Text="version"/>
+            <Run Text="{Binding Name}" />
+            <Run Text="version" />
             <Run Text="{Binding Version}" />
         </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
@@ -23,7 +22,7 @@
         <TextBlock Style="{StaticResource BodyTextBlockStyle}" Margin="30,0,0,0">
             <Run x:Uid="AboutHomepage" />
             <Hyperlink NavigateUri="https://wismna.github.io/ModernKeePass/">
-                <Run Text="https://wismna.github.io/ModernKeePass/"/>
+                <Run Text="https://wismna.github.io/ModernKeePass/" />
             </Hyperlink>
         </TextBlock>
         <TextBlock Style="{StaticResource BodyTextBlockStyle}"  Margin="10,0,0,0">

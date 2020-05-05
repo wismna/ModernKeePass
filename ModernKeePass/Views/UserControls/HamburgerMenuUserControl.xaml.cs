@@ -99,6 +99,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(-1, (o, args) => { }));
         
+        public bool IsOpen
+        {
+            get { return (bool)GetValue(IsOpenProperty); }
+            set { SetValue(IsOpenProperty, value); }
+        }
+        public static readonly DependencyProperty IsOpenProperty =
+            DependencyProperty.Register(
+                nameof(IsOpen),
+                typeof(bool),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
+
         public ICommand ActionButtonCommand
         {
             get { return (ICommand)GetValue(ActionButtonCommandProperty); }

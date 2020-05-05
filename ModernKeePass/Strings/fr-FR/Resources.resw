@@ -492,9 +492,6 @@
   <data name="NewImportFormat.Text" xml:space="preserve">
     <value>Format</value>
   </data>
-  <data name="NewImportFormatHelp.Text" xml:space="preserve">
-    <value>Le fichier CSV doit être formatté de la façon suivante: Nom du compte;Login;Mot de passe:URL;Commentaires</value>
-  </data>
   <data name="CloseButton.Content" xml:space="preserve">
     <value>Fermer sans sauvegarder</value>
   </data>
@@ -516,7 +513,7 @@
   <data name="CompositeKeyConfirmPassword.PlaceholderText" xml:space="preserve">
     <value>Confirmer le mot de passe</value>
   </data>
-  <data name="NewGroupTextBox" xml:space="preserve">
+  <data name="NewGroupTextBox.ButtonTooltip" xml:space="preserve">
     <value>Nom du groupe</value>
   </data>
 </root>

@@ -268,11 +268,21 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
-            <VisualStateGroup x:Name="TopMenuGroup">
+            <VisualStateGroup x:Name="PageLayout">
                 <VisualState x:Name="Small">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Medium">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -280,6 +290,9 @@
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AddEntryTextBlock" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="True"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

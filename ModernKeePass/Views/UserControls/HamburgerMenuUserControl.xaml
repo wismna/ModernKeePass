@@ -60,7 +60,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton Style="{StaticResource HamburgerToggleButton}" Unchecked="ToggleButton_OnUnchecked">
+            <ToggleButton Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl}" Unchecked="ToggleButton_OnUnchecked">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Checked">
                         <core:GoToStateAction StateName="Expanded" />

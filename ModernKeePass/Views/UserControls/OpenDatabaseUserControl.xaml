@@ -78,6 +78,7 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <interactivity:Interaction.Behaviors>
+            <!-- TODO: Correct the Runtime template binding error (even though it is actually working as intended) -->
             <core:DataTriggerBehavior Binding="{Binding IsError}" Value="True">
                 <core:GoToStateAction StateName="Error"/>
             </core:DataTriggerBehavior>
