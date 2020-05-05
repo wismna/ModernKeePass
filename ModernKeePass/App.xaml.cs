@@ -155,12 +155,26 @@ namespace ModernKeePass
                 _notification.Show("App resumed", "Database reopened (changes were saved)");
 #endif
             }
+            catch (DatabaseOpenException)
+            {
+#if DEBUG
+                _notification.Show("App resumed", "Previous database still open because it couldn't be closed (probable save error)");
+#endif
+            }
             catch (DatabaseClosedException)
             {
-                _navigation.NavigateTo(Constants.Navigation.MainPage);
 #if DEBUG
                 _notification.Show("App resumed", "Nothing to do, no previous database opened");
 #endif
+            }
+            catch (Exception ex)
+            {
+                _hockey.TrackException(ex);
+                _hockey.Flush();
+            }
+            finally
+            {
+                _navigation.NavigateTo(Constants.Navigation.MainPage);
             }
         }
 
@@ -198,9 +212,14 @@ namespace ModernKeePass
                     await _mediator.Send(new CloseDatabaseCommand()).ConfigureAwait(false);
                 }
             }
-            catch (Exception exception)
+            catch (SaveException ex)
             {
-                _notification.Show(exception.Source, exception.Message);
+                _notification.Show(_resource.GetResourceValue("MessageDialogSaveErrorTitle"), ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _hockey.TrackException(ex);
+                _hockey.Flush();
             }
             finally
             {
