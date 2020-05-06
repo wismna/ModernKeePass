@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using ModernKeePass.Domain.Entities;
@@ -27,7 +28,8 @@ namespace ModernKeePass.Infrastructure.KeePass
                 .ForMember(dest => dest.AdditionalFields, opt => opt.MapFrom(src =>
                     src.Strings.Where(s => !PwDefs.GetStandardFields().Contains(s.Key))
                         .ToDictionary(s => s.Key, s => GetEntryValue(src, s.Key))))
-                .ForMember(dest => dest.LastModificationDate, opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)));
+                .ForMember(dest => dest.LastModificationDate, opt => opt.MapFrom(src => new DateTimeOffset(src.LastModificationTime)))
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Binaries.Select(b => new KeyValuePair<string, byte[]> (b.Key, b.Value.ReadData()) )));
         }
         
         private string GetEntryValue(PwEntry entry, string key) => entry.Strings.GetSafe(key).ReadString();

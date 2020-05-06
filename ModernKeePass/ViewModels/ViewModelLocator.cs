@@ -37,7 +37,7 @@ namespace ModernKeePass.ViewModels
         
         public MainVm Main => ServiceLocator.Current.GetInstance<MainVm>(Guid.NewGuid().ToString());
         public SettingsVm Settings => ServiceLocator.Current.GetInstance<SettingsVm>(Guid.NewGuid().ToString());
-        public GroupDetailVm Group => ServiceLocator.Current.GetInstance<GroupDetailVm>(Guid.NewGuid().ToString());
-        public EntryDetailVm Entry => ServiceLocator.Current.GetInstance<EntryDetailVm>(Guid.NewGuid().ToString());
+        public GroupDetailVm Group => ServiceLocator.Current.GetInstance<GroupDetailVm>();
+        public EntryDetailVm Entry => ServiceLocator.Current.GetInstance<EntryDetailVm>();
     }
 }

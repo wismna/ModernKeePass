@@ -18,5 +18,6 @@ namespace ModernKeePass.Domain.Entities
         public Color ForegroundColor { get; set; }
         public Color BackgroundColor { get; set; }
         public bool HasExpirationDate { get; set; }
+        public Dictionary<string, byte[]> Attachments { get; set; } = new Dictionary<string, byte[]>();
     }
 }

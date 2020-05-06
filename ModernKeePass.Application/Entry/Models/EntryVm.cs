@@ -29,6 +29,7 @@ namespace ModernKeePass.Application.Entry.Models
         public bool HasExpirationDate { get; set; }
         public DateTimeOffset ExpirationDate { get; set; }
         public DateTimeOffset ModificationDate { get; set; }
+        public Dictionary<string, byte[]> Attachments { get; set; }
 
         public override string ToString()
         {
@@ -53,7 +54,8 @@ namespace ModernKeePass.Application.Entry.Models
                 .ForMember(d => d.ModificationDate, opts => opts.MapFrom(s => s.LastModificationDate))
                 .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.HasExpirationDate && s.ExpirationDate < DateTimeOffset.Now ? Icon.ReportHacked : s.Icon))
                 .ForMember(d => d.ForegroundColor, opts => opts.MapFrom(s => s.ForegroundColor))
-                .ForMember(d => d.BackgroundColor, opts => opts.MapFrom(s => s.BackgroundColor));
+                .ForMember(d => d.BackgroundColor, opts => opts.MapFrom(s => s.BackgroundColor))
+                .ForMember(d => d.Attachments, opts => opts.MapFrom(s => s.Attachments));
         }
     }
 }

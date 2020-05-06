@@ -516,4 +516,19 @@
   <data name="NewGroupTextBox.ButtonTooltip" xml:space="preserve">
     <value>New group name</value>
   </data>
+  <data name="EntryHubAdditional.Header" xml:space="preserve">
+    <value>Additional</value>
+  </data>
+  <data name="EntryHubAttachments.Header" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="EntryHubMain.Header" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="EntryHubOther.Header" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="EntryIcon.Text" xml:space="preserve">
+    <value>Icon</value>
+  </data>
 </root>

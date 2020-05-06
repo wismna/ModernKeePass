@@ -1,5 +1,0 @@
-Redesign of the UI (top menu and hamburger menu)
-Resuming the app re-opens previously opened database
-Notify user and show the Save As dialog when an error is encountered during saving
-Save As actually works now
-Creating a new group is now done inline
