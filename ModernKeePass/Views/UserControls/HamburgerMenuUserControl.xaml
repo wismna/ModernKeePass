@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:templateSelectors="using:ModernKeePass.TemplateSelectors"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:converters="using:ModernKeePass.Converters"
@@ -88,17 +87,7 @@
             IsSynchronizedWithCurrentItem="False"
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-            <ListView.Resources>
-                <DataTemplate x:Name="IsSpecial">
-                    <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
-                            <ToolTipService.ToolTip>
-                                <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
-                            </ToolTipService.ToolTip>
-                        </SymbolIcon>
-                        <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" FontStyle="Italic" />
-                    </StackPanel>
-                </DataTemplate>
+            <ListView.ItemTemplate>
                 <DataTemplate x:Name="IsNormal">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,15,0,15">
@@ -109,10 +98,7 @@
                         <TextBlock Text="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" x:Name="GroupTextBlock" TextWrapping="NoWrap" VerticalAlignment="Center" Margin="30,0,20,0" />
                     </StackPanel>
                 </DataTemplate>
-            </ListView.Resources>
-            <ListView.ItemTemplateSelector>
-                <templateSelectors:SelectableDataTemplateSelector FalseItem="{StaticResource IsNormal}" TrueItem="{StaticResource IsSpecial}" />
-            </ListView.ItemTemplateSelector>
+            </ListView.ItemTemplate>
             <ListView.HeaderTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical" Visibility="{Binding IsButtonVisible, ElementName=UserControl}">

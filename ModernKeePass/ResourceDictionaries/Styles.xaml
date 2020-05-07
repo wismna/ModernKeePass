@@ -16,15 +16,20 @@
     <Color x:Key="TextColorLight">WhiteSmoke</Color>
     <Color x:Key="BorderColor">DarkGray</Color>
     <Color x:Key="FlyoutColor">#FFF0F0F0</Color>
+    <Color x:Key="HubSectionColor">#FF777777</Color>
 
     <SolidColorBrush x:Key="MainColorBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="MainColorLightBrush" Color="{ThemeResource MainColorLight}" />
     <SolidColorBrush x:Key="MainColorDarkBrush" Color="{ThemeResource MainColorDark}" />
     <SolidColorBrush x:Key="TextColorLightBrush" Color="{ThemeResource TextColorLight}" />
+    <SolidColorBrush x:Key="HubSectionBrush" Color="{ThemeResource HubSectionColor}" />
 
     <Style TargetType="TextBlock" x:Key="TextBlockSettingsHeaderStyle" >
         <Setter Property="FontFamily" Value="Segoe UI" />
         <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontWeight" Value="SemiLight" />
+    </Style>
+    <Style TargetType="HyperlinkButton">
         <Setter Property="FontWeight" Value="SemiLight" />
     </Style>
 

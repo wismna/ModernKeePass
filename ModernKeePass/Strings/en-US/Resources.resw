@@ -525,8 +525,8 @@
   <data name="EntryHubMain.Header" xml:space="preserve">
     <value>Main</value>
   </data>
-  <data name="EntryHubOther.Header" xml:space="preserve">
-    <value>Other</value>
+  <data name="EntryHubPresentation.Header" xml:space="preserve">
+    <value>Presentation</value>
   </data>
   <data name="EntryIcon.Text" xml:space="preserve">
     <value>Icon</value>

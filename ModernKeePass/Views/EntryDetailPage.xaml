@@ -388,7 +388,7 @@
                             <Setter Property="TextWrapping" Value="Wrap"/>
                         </Style>
                     </Hub.Resources>
-                    <HubSection x:Uid="EntryHubMain" IsHeaderInteractive="True">
+                    <HubSection x:Uid="EntryHubMain">
                         <DataTemplate>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Margin="20,0,0,20" MinWidth="400">
@@ -440,9 +440,9 @@
                                                 <ToolTip x:Uid="EntryExpirationTooltip" />
                                             </ToolTipService.ToolTip>
                                         </SymbolIcon>
-                                        <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Horizontal" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Vertical" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
                                             <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
-                                            <TimePicker Time="{Binding ExpiryTime, Mode=TwoWay}" />
+                                            <TimePicker Margin="0,10,0,0" Time="{Binding ExpiryTime, Mode=TwoWay}" />
                                         </StackPanel>
                                     </Grid>
                                     
@@ -468,23 +468,7 @@
                             </ScrollViewer>
                         </DataTemplate>
                     </HubSection>
-                    <HubSection x:Uid="EntryHubAdditional" IsHeaderInteractive="True">
-                        <DataTemplate>
-                            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding AdditionalFields}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" />
-                                                <TextBox HorizontalAlignment="Left" Text="{Binding Value, Mode=TwoWay}" Width="350" IsEnabled="{Binding Source={StaticResource Locator}, Path=Entry.IsCurrentEntry}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </ScrollViewer>
-                        </DataTemplate>
-                    </HubSection>
-                    <HubSection x:Uid="EntryHubOther" IsHeaderInteractive="True">
+                    <HubSection x:Uid="EntryHubPresentation">
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock x:Uid="EntryIcon" Style="{StaticResource EntryTextBlockStyle}" />
@@ -496,7 +480,34 @@
                             </StackPanel>
                         </DataTemplate>
                     </HubSection>
-                    <HubSection x:Uid="EntryHubAttachments" IsHeaderInteractive="True">
+                    <HubSection x:Uid="EntryHubAdditional">
+                        <DataTemplate>
+                            <local:SelectableTemplateListView 
+                                 ItemsSource="{Binding AdditionalFields}"
+                                 ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+                                <local:SelectableTemplateListView.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBox Text="{Binding Name, Mode=TwoWay}" Width="350"
+                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                            <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350" 
+                                                     Text="{Binding Value, Mode=TwoWay}"
+                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </local:SelectableTemplateListView.SelectedItemTemplate>
+                                <local:SelectableTemplateListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
+                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Style="{StaticResource EntryTextBlockStyle}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </local:SelectableTemplateListView.ItemTemplate>
+                            </local:SelectableTemplateListView>
+                        </DataTemplate>
+                    </HubSection>
+                    <HubSection x:Uid="EntryHubAttachments" Foreground="{StaticResource HubSectionBrush}">
                         <DataTemplate>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Orientation="Vertical">

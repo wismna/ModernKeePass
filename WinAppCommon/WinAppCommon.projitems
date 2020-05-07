@@ -16,8 +16,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\NavigationHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\SuspensionManager.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Controls\ListViewWithDisable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\DisableListView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\PasswordBoxWithButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\SelectableTemplateListView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controls\TextBoxWithButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ColorToBrushConverter.cs" />
@@ -40,8 +41,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\FileNotFoundMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\SelectableDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AboutVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />

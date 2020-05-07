@@ -117,9 +117,6 @@
     <Compile Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
       <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserControls\BreadCrumbUserControl.xaml.cs">
-      <DependentUpon>BreadCrumbUserControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\UserControls\ColorPickerUserControl.xaml.cs">
       <DependentUpon>ColorPickerUserControl.xaml</DependentUpon>
     </Compile>
@@ -205,10 +202,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SettingsPageFrames\SettingsSavePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\UserControls\BreadCrumbUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

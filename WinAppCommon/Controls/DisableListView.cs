@@ -4,7 +4,7 @@ using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.Controls
 {
-    public class ListViewWithDisable: ListView
+    public class DisableListView: ListView
     {
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {

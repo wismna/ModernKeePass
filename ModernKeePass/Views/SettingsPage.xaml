@@ -48,7 +48,7 @@
             </Button>
             <TextBlock x:Name="TitleTextBox" x:Uid="SettingsTitle" Grid.Column="1" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
         </Grid>
-        <controls:ListViewWithDisable 
+        <controls:DisableListView 
             Grid.Column="0"
             Grid.Row="1"
             x:Name="MenuListView"
@@ -58,15 +58,15 @@
             SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
             IsSynchronizedWithCurrentItem="False"
             ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-            <controls:ListViewWithDisable.ItemTemplate>
+            <controls:DisableListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="{Binding SymbolIcon}" />
                         <TextBlock Text="{Binding Title}" Margin="10,5,0,0" />
                     </StackPanel>
                 </DataTemplate>
-            </controls:ListViewWithDisable.ItemTemplate>
-            <controls:ListViewWithDisable.GroupStyle>
+            </controls:DisableListView.ItemTemplate>
+            <controls:DisableListView.GroupStyle>
                 <GroupStyle HidesIfEmpty="True">
                     <GroupStyle.HeaderTemplate>
                         <DataTemplate>
@@ -79,8 +79,8 @@
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
                 </GroupStyle>
-            </controls:ListViewWithDisable.GroupStyle>
-        </controls:ListViewWithDisable>
+            </controls:DisableListView.GroupStyle>
+        </controls:DisableListView>
         <TextBlock x:Name="PageTitleTextBlock" Grid.Column="1" Grid.Row="0" FontSize="24" VerticalAlignment="Center" Margin="10,0,0,0" >
             <Run Text="{Binding SelectedItem}" />
         </TextBlock>
