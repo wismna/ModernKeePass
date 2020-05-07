@@ -21,12 +21,14 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 - View, delete and restore from entry history
 - Use Semantic Zoom to see your entries in a grouped mode
 - List recently opened databases
-- Open database from Windows Explorer
+- Open a database from Windows Explorer
 - Change database encryption
 - Change database compression
 - Change database key derivation
 - Displays and change entry colors and icons
-- Move entries from a group to another
+- Move entries and groups from a group to another
+- Entry custom fields (view, add, update, delete)
+- Entry attachments (view, add, delete)
 
 # Build and Test
 1. Clone the repository
@@ -36,8 +38,6 @@ You can get it [here](https://www.microsoft.com/en-us/store/p/modernkeepass/9mwq
 # Contribute
 I'm not the best at creating nice assets, so if anyone would like to contribute some nice icons, it would be awesome :)
 Otherwise, there are still many things left to implement:
-- Entry custom fields
-- Entry attachments
 - Multi entry selection (for delete, or move)
 - Import existing data from CSV, JSON, or XML
 - Open database from URL (and maybe some clouds?)

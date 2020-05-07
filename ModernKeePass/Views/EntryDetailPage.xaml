@@ -474,9 +474,9 @@
                                 <TextBlock x:Uid="EntryIcon" Style="{StaticResource EntryTextBlockStyle}" />
                                 <userControls:SymbolPickerUserControl SelectedSymbol="{Binding Icon, Mode=TwoWay}" HorizontalAlignment="Left" IsEnabled="{Binding IsCurrentEntry}" />
                                 <TextBlock x:Uid="EntryBackgroundColor" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="350" />
+                                <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
                                 <TextBlock x:Uid="EntryForegroundColor" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="350" />
+                                <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
                             </StackPanel>
                         </DataTemplate>
                     </HubSection>

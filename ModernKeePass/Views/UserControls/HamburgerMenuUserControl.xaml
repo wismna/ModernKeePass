@@ -138,7 +138,7 @@
                             ButtonCommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=Text}"
                             Style="{StaticResource TextBoxWithButtonStyle}"
                             KeyDown="NewGroupTextBox_OnKeyDown"
-                            ButtonSymbol="&#xE111;">
+                            ButtonSymbol="&#xE109;">
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="LostFocus">
                                     <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupButton}" PropertyName="Visibility" Value="Visible" />

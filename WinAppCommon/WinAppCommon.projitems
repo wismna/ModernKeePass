@@ -27,9 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Converters\IconToSymbolConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\InverseBooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\NullToBooleanConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\PluralizationConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Converters\ProgressBarLegalValuesConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Converters\TextToWidthConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ColorExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\DispatcherTaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\CredentialsMessage.cs" />
