@@ -44,6 +44,8 @@ namespace ModernKeePass.Application.Common.Interfaces
         GroupEntity CreateGroup(string parentGroupId, string name, bool isRecycleBin = false);
         void SortEntries(string groupId);
         void SortSubGroups(string groupId);
+        void AddAttachment(string entryId, string attachmentName, byte[] attachmentContent);
+        void DeleteAttachment(string entryId, string attachmentName);
 
         EntryEntity AddHistory(string entryId);
         EntryEntity RestoreFromHistory(string entryId, int historyIndex);

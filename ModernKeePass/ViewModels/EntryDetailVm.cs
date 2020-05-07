@@ -13,7 +13,9 @@ using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Entry.Commands.AddAttachment;
 using ModernKeePass.Application.Entry.Commands.AddHistory;
+using ModernKeePass.Application.Entry.Commands.DeleteAttachment;
 using ModernKeePass.Application.Entry.Commands.DeleteHistory;
 using ModernKeePass.Application.Entry.Commands.RestoreHistory;
 using ModernKeePass.Application.Entry.Commands.SetFieldValue;
@@ -90,6 +92,11 @@ namespace ModernKeePass.ViewModels
                         Name = f.Key,
                         Content = f.Value
                     }));
+                    Attachments.CollectionChanged += (sender, args) =>
+                    {
+                        SaveCommand.RaiseCanExecuteChanged();
+                        _isDirty = true;
+                    };
                     RaisePropertyChanged(string.Empty);
                 }
             }
@@ -102,6 +109,7 @@ namespace ModernKeePass.ViewModels
             {
                 Set(() => SelectedIndex, ref _selectedIndex, value);
                 RaisePropertyChanged(nameof(IsCurrentEntry));
+                AddAttachmentCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -251,6 +259,8 @@ namespace ModernKeePass.ViewModels
         public RelayCommand GoBackCommand { get; }
         public RelayCommand GoToParentCommand { get; set; }
         public RelayCommand<Attachment> OpenAttachmentCommand { get; set; }
+        public RelayCommand AddAttachmentCommand { get; set; }
+        public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
 
@@ -285,13 +295,15 @@ namespace ModernKeePass.ViewModels
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
+            AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
+            DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment));
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
         }
-
-
+        
         public async Task Initialize(string entryId)
         {
+            SelectedIndex = 0;
             SelectedItem = await _mediator.Send(new GetEntryQuery { Id = entryId });
             _parent = await _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId });
             History = new ObservableCollection<EntryVm> { SelectedItem };
@@ -299,7 +311,7 @@ namespace ModernKeePass.ViewModels
             {
                 History.Add(entry);
             }
-            SelectedIndex = 0;
+            History.CollectionChanged += (sender, args) => SaveCommand.RaiseCanExecuteChanged();
         }
 
         private async Task AskForDelete()
@@ -333,7 +345,6 @@ namespace ModernKeePass.ViewModels
                         await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
                         History.RemoveAt(SelectedIndex);
                         SelectedIndex = 0;
-                        SaveCommand.RaiseCanExecuteChanged();
                     });
             }
         }
@@ -385,7 +396,6 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
             History.Insert(0, SelectedItem);
             SelectedIndex = 0;
-            SaveCommand.RaiseCanExecuteChanged();
         }
         
         private async Task SaveChanges()
@@ -424,5 +434,21 @@ namespace ModernKeePass.ViewModels
             if (fileInfo == null) return;
             await _file.WriteBinaryContentsToFile(fileInfo.Id, attachment.Content);
         }
+
+        private async Task AddAttachment()
+        {
+            var fileInfo = await _file.OpenFile(string.Empty, Domain.Common.Constants.Extensions.Any, false);
+            if (fileInfo == null) return;
+            var contents = await _file.ReadBinaryFile(fileInfo.Id);
+            await _mediator.Send(new AddAttachmentCommand { Entry = SelectedItem, AttachmentName = fileInfo.Name, AttachmentContent = contents });
+            Attachments.Add(new Attachment { Name = fileInfo.Name, Content = contents });
+        }
+
+        private async Task DeleteAttachment(Attachment attachment)
+        {
+            await _mediator.Send(new DeleteAttachmentCommand { Entry = SelectedItem, AttachmentName = attachment.Name });
+            Attachments.Remove(attachment);
+        }
+
     }
 }

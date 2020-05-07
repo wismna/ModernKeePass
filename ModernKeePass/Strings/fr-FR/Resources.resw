@@ -531,4 +531,7 @@
   <data name="EntryIcon.Text" xml:space="preserve">
     <value>Icone</value>
   </data>
+  <data name="EntryAddAttachment.Text" xml:space="preserve">
+    <value>Ajouter une pièce jointe</value>
+  </data>
 </root>

@@ -1,4 +1,4 @@
-﻿<Page
+﻿<Page x:Name="Page"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -488,7 +488,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock x:Uid="EntryIcon" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:SymbolPickerUserControl SelectedSymbol="{Binding Icon, Mode=TwoWay}" HorizontalAlignment="Left"  />
+                                <userControls:SymbolPickerUserControl SelectedSymbol="{Binding Icon, Mode=TwoWay}" HorizontalAlignment="Left" IsEnabled="{Binding IsCurrentEntry}" />
                                 <TextBlock x:Uid="EntryBackgroundColor" Style="{StaticResource EntryTextBlockStyle}" />
                                 <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="350" />
                                 <TextBlock x:Uid="EntryForegroundColor" Style="{StaticResource EntryTextBlockStyle}" />
@@ -499,15 +499,31 @@
                     <HubSection x:Uid="EntryHubAttachments" IsHeaderInteractive="True">
                         <DataTemplate>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <ItemsControl ItemsSource="{Binding Attachments}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Vertical">
-                                                <HyperlinkButton Content="{Binding Name}" Command="{Binding Source={StaticResource Locator}, Path=Entry.OpenAttachmentCommand}" CommandParameter="{Binding}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                <StackPanel Orientation="Vertical">
+                                    <HyperlinkButton Command="{Binding Path=DataContext.AddAttachmentCommand, ElementName=Page}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <SymbolIcon Symbol="Attach" />
+                                            <TextBlock x:Uid="EntryAddAttachment" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                        </StackPanel>
+                                    </HyperlinkButton>
+                                    <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                                    <ItemsControl ItemsSource="{Binding Attachments}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <HyperlinkButton Content="{Binding Name}" Command="{Binding Path=DataContext.OpenAttachmentCommand, ElementName=Page}" CommandParameter="{Binding}" />
+                                                    <HyperlinkButton Grid.Column="1" Margin="10,0,0,0" HorizontalAlignment="Right" Command="{Binding Path=DataContext.DeleteAttachmentCommand, ElementName=Page}" CommandParameter="{Binding}">
+                                                        <SymbolIcon Symbol="Delete" />
+                                                    </HyperlinkButton>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
                             </ScrollViewer>
                         </DataTemplate>
                     </HubSection>

@@ -244,7 +244,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                     break;
             }
         }
-
+        
         public EntryEntity AddHistory(string entryId)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
@@ -305,6 +305,18 @@ namespace ModernKeePass.Infrastructure.KeePass
         {
             var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
             pwGroup.SortSubGroups(false);
+        }
+
+        public void AddAttachment(string entryId, string attachmentName, byte[] attachmentContent)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.Binaries.Set(attachmentName, new ProtectedBinary(true, attachmentContent));
+        }
+
+        public void DeleteAttachment(string entryId, string attachmentName)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.Binaries.Remove(attachmentName);
         }
 
         public EntryEntity GetEntry(string id)

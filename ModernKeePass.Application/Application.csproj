@@ -88,7 +88,9 @@
     <Compile Include="Common\Interfaces\ISettingsProxy.cs" />
     <Compile Include="Common\Mappings\IMapFrom.cs" />
     <Compile Include="Common\Mappings\MappingProfile.cs" />
+    <Compile Include="Entry\Commands\AddAttachment\AddAttachmentCommand.cs" />
     <Compile Include="Entry\Commands\AddHistory\AddHistoryCommand.cs" />
+    <Compile Include="Entry\Commands\DeleteAttachment\DeleteAttachmentCommand.cs" />
     <Compile Include="Entry\Commands\DeleteHistory\DeleteHistoryCommand.cs" />
     <Compile Include="Entry\Commands\RestoreHistory\RestoreHistoryCommand.cs" />
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
