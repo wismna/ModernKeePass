@@ -110,6 +110,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(bool),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(false, (o, args) => { }));
+  
+        public bool CanDragItems
+        {
+            get { return (bool)GetValue(CanDragItemsProperty); }
+            set { SetValue(CanDragItemsProperty, value); }
+        }
+        public static readonly DependencyProperty CanDragItemsProperty =
+            DependencyProperty.Register(
+                nameof(CanDragItems),
+                typeof(bool),
+                typeof(HamburgerMenuUserControl),
+                new PropertyMetadata(false, (o, args) => { }));
 
         public ICommand ActionButtonCommand
         {

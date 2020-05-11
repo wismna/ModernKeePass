@@ -445,7 +445,6 @@
                                             <TimePicker Margin="0,10,0,0" Time="{Binding ExpiryTime, Mode=TwoWay}" />
                                         </StackPanel>
                                     </Grid>
-                                    
                                 </StackPanel>
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup>
@@ -496,10 +495,10 @@
                                      ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
                                     <local:SelectableTemplateListView.SelectedItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Vertical" Margin="5">
                                                 <TextBox Text="{Binding Name, Mode=TwoWay}" Width="350"
                                                          IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                                <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350" 
+                                                <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350"  Margin="0,5,0,0"
                                                          Text="{Binding Value, Mode=TwoWay}"
                                                          IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
                                                 <Button x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
@@ -508,7 +507,7 @@
                                     </local:SelectableTemplateListView.SelectedItemTemplate>
                                     <local:SelectableTemplateListView.ItemTemplate>
                                         <DataTemplate>
-                                            <StackPanel Orientation="Vertical">
+                                            <StackPanel Orientation="Vertical" Margin="5">
                                                 <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
                                                 <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Style="{StaticResource EntryTextBlockStyle}"/>
                                             </StackPanel>
@@ -556,6 +555,8 @@
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -569,44 +570,41 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button
-                    Height="{StaticResource MenuHeight}"
-                    Width="{StaticResource MenuWidth}"
-                    Command="{Binding GoToParentCommand}"
-                    Style="{StaticResource NoBorderButtonStyle}">
-                    <SymbolIcon Symbol="Up" />
-                    <ToolTipService.ToolTip>
-                        <ToolTip Content="{Binding ParentGroupName}" />
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Viewbox MaxHeight="200">
-                    <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
-                </Viewbox>
-                <TextBox
-                    x:Uid="EntryTitle"
-                    x:Name="TitleTextBox"
-                    Text="{Binding Title, Mode=TwoWay}" 
-                    Background="Transparent"
-                    IsHitTestVisible="{Binding IsEditMode}"
-                    FontSize="20"
-                    FontWeight="Light"
-                    TextWrapping="NoWrap" 
-                    MinWidth="360"
-                    VerticalAlignment="Center">
-                    <interactivity:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
-                            <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
-                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
-                        </core:DataTriggerBehavior>
-                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
-                        </core:DataTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </TextBox>
-            </StackPanel>
+            <Button Grid.Column="1" 
+                Height="{StaticResource MenuHeight}"
+                Width="{StaticResource MenuWidth}"
+                Command="{Binding GoToParentCommand}"
+                Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Up" />
+                <ToolTipService.ToolTip>
+                    <ToolTip Content="{Binding ParentGroupName}" />
+                </ToolTipService.ToolTip>
+            </Button>
+            <Viewbox Grid.Column="2" MaxHeight="200">
+                <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
+            </Viewbox>
+            <TextBox Grid.Column="3"
+                x:Uid="EntryTitle"
+                x:Name="TitleTextBox"
+                Text="{Binding Title, Mode=TwoWay}" 
+                Background="Transparent"
+                IsHitTestVisible="{Binding IsEditMode}"
+                FontSize="20"
+                FontWeight="Light"
+                TextWrapping="NoWrap" 
+                VerticalAlignment="Center">
+                <interactivity:Interaction.Behaviors>
+                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
+                    </core:DataTriggerBehavior>
+                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
+                    </core:DataTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
             <userControls:TopMenuUserControl 
-                x:Name="TopMenu" Grid.Column="2"
+                x:Name="TopMenu" Grid.Column="4"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
                 RestoreButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource InverseBooleanToVisibilityConverter}}"

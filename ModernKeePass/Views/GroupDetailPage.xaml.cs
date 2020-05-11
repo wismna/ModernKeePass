@@ -1,5 +1,4 @@
-﻿using Windows.ApplicationModel.DataTransfer;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using ModernKeePass.Application.Entry.Models;
@@ -73,12 +72,6 @@ namespace ModernKeePass.Views
             {
                 e.DestinationItem.Item = e.SourceItem.Item;
             }
-        }
-
-        private void GridView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-            e.Cancel = !Model.IsEditMode;
-            e.Data.RequestedOperation = DataPackageOperation.Move;
         }
         
         private void GroupDetailPage_OnSizeChanged(object sender, SizeChangedEventArgs e)

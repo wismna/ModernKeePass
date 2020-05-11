@@ -189,6 +189,20 @@ namespace ModernKeePass.Infrastructure.KeePass
                 parentPwGroup.AddGroup(pwGroup, true);
             });
         }
+
+        public async Task MoveGroup(string parentGroupId, string groupId, int index)
+        {
+            await Task.Run(() =>
+            {
+                var parentPwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(parentGroupId), true);
+                var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
+                var currentIndex = (uint)parentPwGroup.Groups.IndexOf(pwGroup);
+
+                parentPwGroup.Groups.RemoveAt(currentIndex);
+                parentPwGroup.Groups.Insert((uint)index, pwGroup);
+            });
+        }
+
         public async Task RemoveEntry(string parentGroupId, string entryId)
         {
             await Task.Run(() =>

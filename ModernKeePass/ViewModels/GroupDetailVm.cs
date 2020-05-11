@@ -20,6 +20,7 @@ using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
 using ModernKeePass.Application.Group.Commands.DeleteGroup;
 using ModernKeePass.Application.Group.Commands.MoveEntry;
+using ModernKeePass.Application.Group.Commands.MoveGroup;
 using ModernKeePass.Application.Group.Commands.RemoveGroup;
 using ModernKeePass.Application.Group.Commands.SortEntries;
 using ModernKeePass.Application.Group.Commands.SortGroups;
@@ -106,7 +107,8 @@ namespace ModernKeePass.ViewModels
         private GroupVm _parent;
         private bool _isEditMode;
         private EntryVm _reorderedEntry;
-        
+        private GroupVm _reorderedGroup;
+
         public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
@@ -139,6 +141,7 @@ namespace ModernKeePass.ViewModels
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
             Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
+            Groups.CollectionChanged += Groups_CollectionChanged;
         }
 
         public void GoToEntry(string entryId, bool isNew = false)
@@ -207,6 +210,29 @@ namespace ModernKeePass.ViewModels
                     else
                     {
                         await _mediator.Send(new MoveEntryCommand {Entry = _reorderedEntry, ParentGroup = _group, Index = e.NewStartingIndex});
+                    }
+                    break;
+            }
+            SaveCommand.RaiseCanExecuteChanged();
+        }
+
+        private async void Groups_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                    var oldIndex = e.OldStartingIndex;
+                    _reorderedGroup = _group.SubGroups[oldIndex];
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    if (_reorderedGroup == null)
+                    {
+                        var group = (GroupVm)e.NewItems[0];
+                        await _mediator.Send(new AddGroupCommand() { GroupId = group.Id, ParentGroupId = Id });
+                    }
+                    else
+                    {
+                        await _mediator.Send(new MoveGroupCommand { Group = _reorderedGroup, ParentGroup = _group, Index = e.NewStartingIndex });
                     }
                     break;
             }

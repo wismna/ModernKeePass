@@ -41,6 +41,7 @@ namespace ModernKeePass.Application.Common.Interfaces
 
         GroupEntity GetGroup(string id); 
         Task AddGroup(string parentGroupId, string groupId);
+        Task MoveGroup(string parentGroupId, string groupId, int index);
         void UpdateGroup(GroupEntity group);
         Task RemoveGroup(string parentGroupId, string groupId);
         void DeleteEntity(string entityId);

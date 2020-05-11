@@ -1,2 +1,4 @@
 Ajout des champs additionnels
 Ajout des pièces-jointes
+Possibilite de reorganiser les groupes manuellement
+Quelques changements de design

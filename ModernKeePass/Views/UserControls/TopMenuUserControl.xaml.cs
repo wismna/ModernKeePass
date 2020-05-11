@@ -169,8 +169,7 @@ namespace ModernKeePass.Views.UserControls
         private void OverflowFlyout_OnOpening(object sender, object e)
         {
             EditFlyout.IsChecked = IsEditButtonChecked;
-
-            MoveFlyout.Visibility = MoveButtonVisibility;
+            
             RestoreFlyout.Visibility = RestoreButtonVisibility;
             SortEntriesFlyout.Visibility = SortButtonVisibility;
             SortGroupsFlyout.Visibility = SortButtonVisibility;
@@ -196,7 +195,7 @@ namespace ModernKeePass.Views.UserControls
         
         private void GroupSearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
-            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata:/Assets/ModernKeePass-SmallLogo.scale-80.png"));
             var groups = Model.Groups.Where(g => g.Title.IndexOf(args.QueryText, StringComparison.OrdinalIgnoreCase) >= 0).Take(5);
             foreach (var group in groups)
             {
@@ -218,7 +217,7 @@ namespace ModernKeePass.Views.UserControls
 
         private async void EntrySearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
-            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata://Assets/ModernKeePass-SmallLogo.scale-80.png"));
+            var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata:/Assets/ModernKeePass-SmallLogo.scale-80.png"));
             var results = (await Model.Search(args.QueryText)).Take(5);
             foreach (var result in results)
             {

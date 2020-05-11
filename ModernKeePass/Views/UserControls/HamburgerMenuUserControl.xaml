@@ -12,6 +12,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
     <Grid HorizontalAlignment="Left">
         <VisualStateManager.VisualStateGroups>
@@ -79,6 +80,9 @@
         <ListView 
             x:Name="ListView"
             Grid.Row="1"
+            AllowDrop="True"
+            CanReorderItems="{Binding CanDragItems, ElementName=UserControl}" 
+            CanDragItems="{Binding CanDragItems, ElementName=UserControl}"
             ItemsSource="{Binding ItemsSource, ElementName=UserControl}"
             SelectionChanged="Selector_OnSelectionChanged"
             SelectedItem="{Binding SelectedItem, ElementName=UserControl, Mode=TwoWay}"
@@ -148,6 +152,7 @@
                             </interactivity:Interaction.Behaviors>
                         </controls:TextBoxWithButton>
                         <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                        <TextBlock x:Uid="ReorderGroupsLabel" Margin="10,0,0,10" Visibility="{Binding CanDragItems, ElementName=UserControl, Converter={StaticResource BooleanToVisibilityConverter}}" TextWrapping="NoWrap" Style="{StaticResource BodyTextBlockStyle}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.HeaderTemplate>

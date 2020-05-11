@@ -97,6 +97,7 @@
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />
+    <Compile Include="Group\Commands\MoveGroup\MoveGroupCommand.cs" />
     <Compile Include="Group\Commands\UpdateGroup\UpdateGroupCommand.cs" />
     <Compile Include="Group\Queries\GetAllGroups\GetAllGroupsQuery.cs" />
     <Compile Include="Group\Queries\GetGroup\GetGroupQuery.cs" />

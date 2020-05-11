@@ -27,7 +27,7 @@ namespace ModernKeePass.ViewModels.ListItems
                 Set(nameof(Value), ref _value, value);
             }
         }
-
+        
         public FieldVm(string fieldName, string fieldValue)
         {
             _name = fieldName;

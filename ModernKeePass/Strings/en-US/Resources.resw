@@ -376,7 +376,7 @@
     <value>New group</value>
   </data>
   <data name="GroupsLeftListView.HeaderLabel" xml:space="preserve">
-    <value>Groups</value>
+    <value>Navigation</value>
   </data>
   <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
     <value>History</value>
@@ -539,5 +539,11 @@
   </data>
   <data name="EntryDeleteAdditionalField.Content" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="ReorderGroupsLabel.Text" xml:space="preserve">
+    <value>Drag and drop groups to reorder them</value>
+  </data>
+  <data name="EntryAdditionalFieldNameReserved.Text" xml:space="preserve">
+    <value>Invalid field name</value>
   </data>
 </root>

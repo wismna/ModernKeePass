@@ -150,7 +150,6 @@
             <Button.Flyout>
                 <MenuFlyout Opening="OverflowFlyout_OnOpening">
                     <MenuFlyoutItem x:Uid="TopMenuSaveFlyout" x:Name="SaveFlyout" />
-                    <MenuFlyoutItem x:Uid="TopMenuMoveFlyout" x:Name="MoveFlyout" Visibility="{Binding MoveButtonVisibility, ElementName=UserControl}" />
                     <MenuFlyoutItem x:Uid="TopMenuRestoreFlyout" x:Name="RestoreFlyout" Visibility="{Binding RestoreButtonVisibility, ElementName=UserControl}" />
                     <ToggleMenuFlyoutItem x:Uid="TopMenuEditFlyout" x:Name="EditFlyout" IsChecked="{Binding IsEditButtonChecked, ElementName=UserControl, Mode=TwoWay}" Click="EditButton_Click" />
                     <MenuFlyoutItem x:Uid="TopMenuDeleteFlyout" x:Name="DeleteFlyout" />

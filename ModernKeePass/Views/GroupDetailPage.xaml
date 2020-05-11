@@ -48,6 +48,7 @@
                 x:Name="HamburgerMenu"
                 x:Uid="GroupsLeftListView" 
                 ItemsSource="{Binding Groups}" 
+                CanDragItems="{Binding IsEditMode}"
                 SelectionChanged="groups_SelectionChanged" 
                 ActionButtonCommand="{Binding CreateGroupCommand}"
                 IsButtonVisible="Visible" />
@@ -62,7 +63,6 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Column="0" Grid.Row="0" x:Uid="ReorderEntriesLabel" Margin="10,10,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />
-                <!--<TextBlock Grid.Column="1" Grid.Row="0" x:Uid="EntrySymbol" Margin="40,20,0,0" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource BodyTextBlockStyle}" />-->
                 <HyperlinkButton Grid.Column="2" Grid.Row="0" VerticalAlignment="Top" Command="{Binding CreateEntryCommand}"  HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal">
                         <SymbolIcon Symbol="Add">
@@ -88,12 +88,11 @@
                             IsSynchronizedWithCurrentItem="False" 
                             BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
                             AllowDrop="True"
-                            CanReorderItems="True" 
-                            CanDragItems="True"
-                            DragItemsStarting="GridView_DragItemsStarting">
+                            CanReorderItems="{Binding IsEditMode}" 
+                            CanDragItems="{Binding IsEditMode}">
                             <interactivity:Interaction.Behaviors>
                                 <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                                    <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
+                                    <actions:SetupFocusAction TargetObject="{Binding}" />
                                 </core:DataTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <GridView.ItemTemplate>
@@ -183,6 +182,8 @@
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -196,24 +197,23 @@
                     Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <Button
-                    Height="{StaticResource MenuHeight}"
-                    Width="{StaticResource MenuWidth}"
-                    Command="{Binding GoToParentCommand}"
-                    Style="{StaticResource NoBorderButtonStyle}">
-                    <SymbolIcon Symbol="Up" />
-                    <ToolTipService.ToolTip>
-                        <ToolTip Content="{Binding ParentGroupName}" />
-                    </ToolTipService.ToolTip>
-                </Button>
-                <Viewbox MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
-                </Viewbox>
-                <Viewbox MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                    <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
-                </Viewbox>
-                <TextBox
+            <Button Grid.Column="1" 
+                Height="{StaticResource MenuHeight}"
+                Width="{StaticResource MenuWidth}"
+                Command="{Binding GoToParentCommand}"
+                Style="{StaticResource NoBorderButtonStyle}">
+                <SymbolIcon Symbol="Up" />
+                <ToolTipService.ToolTip>
+                    <ToolTip Content="{Binding ParentGroupName}" />
+                </ToolTipService.ToolTip>
+            </Button>
+            <Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
+            </Viewbox>
+            <Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
+            </Viewbox>
+            <TextBox Grid.Column="3"
                     x:Uid="GroupTitle"
                     x:Name="TitleTextBox"
                     Text="{Binding Title, Mode=TwoWay}" 
@@ -222,20 +222,18 @@
                     FontSize="20"
                     FontWeight="Light"
                     TextWrapping="NoWrap" 
-                    MinWidth="360"
                     VerticalAlignment="Center">
-                    <interactivity:Interaction.Behaviors>
-                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
-                            <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
-                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
-                        </core:DataTriggerBehavior>
-                        <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                            <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
-                        </core:DataTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </TextBox>
-            </StackPanel>
-            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
+                <interactivity:Interaction.Behaviors>
+                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
+                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
+                    </core:DataTriggerBehavior>
+                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
+                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
+                    </core:DataTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="4"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 SaveCommand="{Binding SaveCommand}"
@@ -252,22 +250,6 @@
             
         </Grid>
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="DragDropGroup">
-                <VisualState x:Name="Dragging">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridView" Storyboard.TargetProperty="BorderThickness">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="2"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Dropped">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GridView" Storyboard.TargetProperty="BorderThickness">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="0"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
             <VisualStateGroup x:Name="PageLayout">
                 <VisualState x:Name="Small">
                     <Storyboard>

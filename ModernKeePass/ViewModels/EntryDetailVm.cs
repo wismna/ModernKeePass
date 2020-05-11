@@ -275,7 +275,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
-
+        
         private readonly IMediator _mediator;
         private readonly INavigationService _navigation;
         private readonly IResourceProxy _resource;
@@ -285,7 +285,7 @@ namespace ModernKeePass.ViewModels
         private GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
-        private int _additionalFieldSelectedIndex;
+        private int _additionalFieldSelectedIndex = -1;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
@@ -307,11 +307,11 @@ namespace ModernKeePass.ViewModels
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
-            AddAdditionalField = new RelayCommand(AddField);
-            DeleteAdditionalField = new RelayCommand<FieldVm>(async field => await DeleteField(field), field => field != null);
+            AddAdditionalField = new RelayCommand(AddField, () => IsCurrentEntry);
+            DeleteAdditionalField = new RelayCommand<FieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
             AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
-            DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment));
+            DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment), _ => IsCurrentEntry);
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
             MessengerInstance.Register<EntryFieldValueChangedMessage>(this, async message => await SetFieldValue(message.FieldName, message.FieldValue));
