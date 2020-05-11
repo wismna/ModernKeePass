@@ -482,29 +482,40 @@
                     </HubSection>
                     <HubSection x:Uid="EntryHubAdditional">
                         <DataTemplate>
-                            <local:SelectableTemplateListView 
-                                 ItemsSource="{Binding AdditionalFields}"
-                                 ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-                                <local:SelectableTemplateListView.SelectedItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBox Text="{Binding Name, Mode=TwoWay}" Width="350"
-                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                            <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350" 
-                                                     Text="{Binding Value, Mode=TwoWay}"
-                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </local:SelectableTemplateListView.SelectedItemTemplate>
-                                <local:SelectableTemplateListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Vertical">
-                                            <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
-                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Style="{StaticResource EntryTextBlockStyle}"/>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </local:SelectableTemplateListView.ItemTemplate>
-                            </local:SelectableTemplateListView>
+                            <StackPanel Orientation="Vertical">
+                                <HyperlinkButton Command="{Binding Path=DataContext.AddAdditionalField, ElementName=Page}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <SymbolIcon Symbol="Add" />
+                                        <TextBlock x:Uid="EntryAddAdditionalField" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                    </StackPanel>
+                                </HyperlinkButton>
+                                <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                                <local:SelectableTemplateListView 
+                                     ItemsSource="{Binding AdditionalFields}"
+                                     SelectedIndex="{Binding AdditionalFieldSelectedIndex, Mode=TwoWay}"
+                                     ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+                                    <local:SelectableTemplateListView.SelectedItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBox Text="{Binding Name, Mode=TwoWay}" Width="350"
+                                                         IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                                <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350" 
+                                                         Text="{Binding Value, Mode=TwoWay}"
+                                                         IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                                <Button x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </local:SelectableTemplateListView.SelectedItemTemplate>
+                                    <local:SelectableTemplateListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
+                                                <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Style="{StaticResource EntryTextBlockStyle}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </local:SelectableTemplateListView.ItemTemplate>
+                                </local:SelectableTemplateListView>
+                            </StackPanel>
                         </DataTemplate>
                     </HubSection>
                     <HubSection x:Uid="EntryHubAttachments" Foreground="{StaticResource HubSectionBrush}">

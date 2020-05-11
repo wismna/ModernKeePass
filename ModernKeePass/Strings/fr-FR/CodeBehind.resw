@@ -276,4 +276,7 @@
   <data name="CompositeKeyFileNameSuggestion" xml:space="preserve">
     <value>Clé</value>
   </data>
+  <data name="EntryAddAdditionalField.Text" xml:space="preserve">
+    <value>Ajouter un champ</value>
+  </data>
 </root>

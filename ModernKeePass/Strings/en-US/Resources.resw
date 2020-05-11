@@ -534,4 +534,10 @@
   <data name="EntryAddAttachment.Text" xml:space="preserve">
     <value>Add attachment</value>
   </data>
+  <data name="EntryAddAdditionalField.Text" xml:space="preserve">
+    <value>Add field</value>
+  </data>
+  <data name="EntryDeleteAdditionalField.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

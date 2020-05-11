@@ -534,4 +534,7 @@
   <data name="EntryAddAttachment.Text" xml:space="preserve">
     <value>Ajouter une pièce jointe</value>
   </data>
+  <data name="EntryDeleteAdditionalField.Content" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
 </root>

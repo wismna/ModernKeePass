@@ -13,6 +13,7 @@ namespace ModernKeePass.ViewModels
     {
         private readonly IRecentProxy _recent;
         private ObservableCollection<RecentItemVm> _recentItems;
+        private int _selectedIndex;
 
         public ObservableCollection<RecentItemVm> RecentItems
         {
@@ -21,7 +22,13 @@ namespace ModernKeePass.ViewModels
         }
         
         public ICommand ClearAllCommand { get; }
-        
+
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { Set(() => SelectedIndex, ref _selectedIndex, value); }
+        }
+
         public RecentVm(IRecentProxy recent)
         {
             _recent = recent;
@@ -34,6 +41,7 @@ namespace ModernKeePass.ViewModels
         {
             var recentItems = _recent.GetAll().Select(r => new RecentItemVm(r));
             RecentItems = new ObservableCollection<RecentItemVm>(recentItems);
+            if (RecentItems.Any()) SelectedIndex = 0;
         }
 
         private void ClearAll()

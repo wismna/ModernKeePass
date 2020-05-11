@@ -2,24 +2,24 @@
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Exceptions;
 
-namespace ModernKeePass.Application.Entry.Commands.SetFieldValue
+namespace ModernKeePass.Application.Entry.Commands.UpsertField
 {
-    public class SetFieldValueCommand : IRequest
+    public class UpsertFieldCommand : IRequest
     {
         public string EntryId { get; set; }
         public string FieldName { get; set; }
         public object FieldValue { get; set; }
 
-        public class SetFieldValueCommandHandler : IRequestHandler<SetFieldValueCommand>
+        public class UpsertFieldCommandHandler : IRequestHandler<UpsertFieldCommand>
         {
             private readonly IDatabaseProxy _database;
 
-            public SetFieldValueCommandHandler(IDatabaseProxy database)
+            public UpsertFieldCommandHandler(IDatabaseProxy database)
             {
                 _database = database;
             }
 
-            public void Handle(SetFieldValueCommand message)
+            public void Handle(UpsertFieldCommand message)
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 

@@ -19,9 +19,17 @@ namespace ModernKeePass.Controls
 
         public SelectableTemplateListView()
         {
+            ContainerContentChanging += SelectableTemplateListView_ContainerContentChanging;
             SelectionChanged += SelectableTemplateListView_SelectionChanged;
         }
         
+        private void SelectableTemplateListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            args.ItemContainer.ContentTemplate = args.ItemContainer.IsSelected
+                ? SelectedItemTemplate
+                : ItemTemplate;
+        }
+
         private void SelectableTemplateListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listView = sender as ListView;

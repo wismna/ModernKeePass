@@ -242,9 +242,18 @@ namespace ModernKeePass.Infrastructure.KeePass
                 case EntryFieldName.ForegroundColor:
                     pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
+                default: 
+                    pwEntry.Strings.Set(fieldName, new ProtectedString(true, fieldValue.ToString()));
+                    break;
             }
         }
-        
+
+        public void DeleteField(string entryId, string fieldName)
+        {
+            var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
+            pwEntry.Strings.Remove(fieldName);
+        }
+
         public EntryEntity AddHistory(string entryId)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
@@ -306,7 +315,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             var pwGroup = _pwDatabase.RootGroup.FindGroup(BuildIdFromString(groupId), true);
             pwGroup.SortSubGroups(false);
         }
-
+        
         public void AddAttachment(string entryId, string attachmentName, byte[] attachmentContent)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);

@@ -91,6 +91,7 @@
     <Compile Include="Entry\Commands\AddAttachment\AddAttachmentCommand.cs" />
     <Compile Include="Entry\Commands\AddHistory\AddHistoryCommand.cs" />
     <Compile Include="Entry\Commands\DeleteAttachment\DeleteAttachmentCommand.cs" />
+    <Compile Include="Entry\Commands\DeleteField\DeleteFieldCommand.cs" />
     <Compile Include="Entry\Commands\DeleteHistory\DeleteHistoryCommand.cs" />
     <Compile Include="Entry\Commands\RestoreHistory\RestoreHistoryCommand.cs" />
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
@@ -121,8 +122,8 @@
     <Compile Include="Database\Queries\OpenDatabase\OpenDatabaseQueryValidator.cs" />
     <Compile Include="Database\Queries\ReOpenDatabase\ReOpenDatabaseQuery.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="Entry\Commands\SetFieldValue\SetFieldValueCommand.cs" />
-    <Compile Include="Entry\Commands\SetFieldValue\SetFieldValueCommandValidator.cs" />
+    <Compile Include="Entry\Commands\UpsertField\UpsertFieldCommand.cs" />
+    <Compile Include="Entry\Commands\UpsertField\UpsertFieldCommandValidator.cs" />
     <Compile Include="Entry\Models\EntryVm.cs" />
     <Compile Include="Group\Commands\AddEntry\AddEntryCommand.cs" />
     <Compile Include="Group\Commands\AddGroup\AddGroupCommand.cs" />

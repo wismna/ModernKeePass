@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace ModernKeePass.Application.Entry.Commands.SetFieldValue
+namespace ModernKeePass.Application.Entry.Commands.UpsertField
 {
-    public class SetFieldValueCommandValidator: AbstractValidator<SetFieldValueCommand>
+    public class UpsertFieldCommandValidator: AbstractValidator<UpsertFieldCommand>
     {
-        public SetFieldValueCommandValidator()
+        public UpsertFieldCommandValidator()
         {
             RuleFor(v => v.EntryId)
                 .NotNull()

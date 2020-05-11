@@ -16,9 +16,10 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Application.Entry.Commands.AddAttachment;
 using ModernKeePass.Application.Entry.Commands.AddHistory;
 using ModernKeePass.Application.Entry.Commands.DeleteAttachment;
+using ModernKeePass.Application.Entry.Commands.DeleteField;
 using ModernKeePass.Application.Entry.Commands.DeleteHistory;
 using ModernKeePass.Application.Entry.Commands.RestoreHistory;
-using ModernKeePass.Application.Entry.Commands.SetFieldValue;
+using ModernKeePass.Application.Entry.Commands.UpsertField;
 using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Application.Entry.Queries.GetEntry;
 using ModernKeePass.Application.Group.Commands.AddEntry;
@@ -34,6 +35,7 @@ using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Extensions;
 using ModernKeePass.Models;
+using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {
@@ -66,7 +68,7 @@ namespace ModernKeePass.ViewModels
         } 
         
         public ObservableCollection<EntryVm> History { get; private set; }
-        public ObservableCollection<Field> AdditionalFields { get; private set; }
+        public ObservableCollection<FieldVm> AdditionalFields { get; private set; }
         public ObservableCollection<Attachment> Attachments { get; private set; }
 
         /// <summary>
@@ -82,11 +84,9 @@ namespace ModernKeePass.ViewModels
                 Set(() => SelectedItem, ref _selectedItem, value, true);
                 if (value != null)
                 {
-                    AdditionalFields = new ObservableCollection<Field>(SelectedItem.AdditionalFields.Select(f => new Field
-                    {
-                        Name = f.Key,
-                        Value = f.Value
-                    }));
+                    AdditionalFields =
+                        new ObservableCollection<FieldVm>(
+                            SelectedItem.AdditionalFields.Select(f => new FieldVm(f.Key, f.Value)));
                     Attachments = new ObservableCollection<Attachment>(SelectedItem.Attachments.Select(f => new Attachment
                     {
                         Name = f.Key,
@@ -110,6 +110,16 @@ namespace ModernKeePass.ViewModels
                 Set(() => SelectedIndex, ref _selectedIndex, value);
                 RaisePropertyChanged(nameof(IsCurrentEntry));
                 AddAttachmentCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public int AdditionalFieldSelectedIndex
+        {
+            get { return _additionalFieldSelectedIndex; }
+            set
+            {
+                Set(() => AdditionalFieldSelectedIndex, ref _additionalFieldSelectedIndex, value);
+                DeleteAdditionalField.RaiseCanExecuteChanged();
             }
         }
 
@@ -258,6 +268,8 @@ namespace ModernKeePass.ViewModels
         public RelayCommand DeleteCommand { get; }
         public RelayCommand GoBackCommand { get; }
         public RelayCommand GoToParentCommand { get; set; }
+        public RelayCommand AddAdditionalField { get; set; }
+        public RelayCommand<FieldVm> DeleteAdditionalField { get; set; }
         public RelayCommand<Attachment> OpenAttachmentCommand { get; set; }
         public RelayCommand AddAttachmentCommand { get; set; }
         public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
@@ -273,11 +285,12 @@ namespace ModernKeePass.ViewModels
         private GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
+        private int _additionalFieldSelectedIndex;
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
         private bool _isDirty;
-        
+
         public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file)
         {
             _mediator = mediator;
@@ -294,13 +307,17 @@ namespace ModernKeePass.ViewModels
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
+            AddAdditionalField = new RelayCommand(AddField);
+            DeleteAdditionalField = new RelayCommand<FieldVm>(async field => await DeleteField(field), field => field != null);
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
             AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
             DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment));
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
+            MessengerInstance.Register<EntryFieldValueChangedMessage>(this, async message => await SetFieldValue(message.FieldName, message.FieldValue));
+            MessengerInstance.Register<EntryFieldNameChangedMessage>(this, async message => await UpdateFieldName(message.OldName, message.NewName, message.Value));
         }
-        
+
         public async Task Initialize(string entryId)
         {
             SelectedIndex = 0;
@@ -312,6 +329,70 @@ namespace ModernKeePass.ViewModels
                 History.Add(entry);
             }
             History.CollectionChanged += (sender, args) => SaveCommand.RaiseCanExecuteChanged();
+        }
+
+        public async Task GeneratePassword()
+        {
+            Password = await _mediator.Send(new GeneratePasswordCommand
+            {
+                BracketsPatternSelected = BracketsPatternSelected,
+                CustomChars = CustomChars,
+                DigitsPatternSelected = DigitsPatternSelected,
+                LowerCasePatternSelected = LowerCasePatternSelected,
+                MinusPatternSelected = MinusPatternSelected,
+                PasswordLength = (int)PasswordLength,
+                SpacePatternSelected = SpacePatternSelected,
+                SpecialPatternSelected = SpecialPatternSelected,
+                UnderscorePatternSelected = UnderscorePatternSelected,
+                UpperCasePatternSelected = UpperCasePatternSelected
+            });
+            RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
+        }
+        public async Task AddHistory()
+        {
+            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
+        }
+        
+        public void GoToGroup(string groupId)
+        {
+            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = groupId });
+        }
+        
+        private async Task Move(string destination)
+        {
+            await _mediator.Send(new AddEntryCommand { ParentGroupId = destination, EntryId = Id });
+            await _mediator.Send(new RemoveEntryCommand { ParentGroupId = _parent.Id, EntryId = Id });
+            GoToGroup(destination);
+        }
+        
+        private async Task SetFieldValue(string fieldName, object value)
+        {
+            await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
+            SaveCommand.RaiseCanExecuteChanged();
+            _isDirty = true;
+        }
+
+        private async Task UpdateFieldName(string oldName, string newName, string value)
+        {
+            if (!string.IsNullOrEmpty(oldName)) await _mediator.Send(new DeleteFieldCommand { EntryId = Id, FieldName = oldName });
+            await SetFieldValue(newName, value);
+        }
+        
+        private void AddField()
+        {
+            AdditionalFields.Add(new FieldVm(string.Empty, string.Empty));
+            AdditionalFieldSelectedIndex = AdditionalFields.Count - 1;
+        }
+
+        private async Task DeleteField(FieldVm field)
+        {
+            AdditionalFields.Remove(field);
+            if (!string.IsNullOrEmpty(field.Name))
+            {
+                await _mediator.Send(new DeleteFieldCommand {EntryId = Id, FieldName = field.Name});
+                SaveCommand.RaiseCanExecuteChanged();
+                _isDirty = true;
+            }
         }
 
         private async Task AskForDelete()
@@ -347,48 +428,6 @@ namespace ModernKeePass.ViewModels
                         SelectedIndex = 0;
                     });
             }
-        }
-
-        public async Task GeneratePassword()
-        {
-            Password = await _mediator.Send(new GeneratePasswordCommand
-            {
-                BracketsPatternSelected = BracketsPatternSelected,
-                CustomChars = CustomChars,
-                DigitsPatternSelected = DigitsPatternSelected,
-                LowerCasePatternSelected = LowerCasePatternSelected,
-                MinusPatternSelected = MinusPatternSelected,
-                PasswordLength = (int)PasswordLength,
-                SpacePatternSelected = SpacePatternSelected,
-                SpecialPatternSelected = SpecialPatternSelected,
-                UnderscorePatternSelected = UnderscorePatternSelected,
-                UpperCasePatternSelected = UpperCasePatternSelected
-            });
-            RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
-        }
-        
-        public async Task Move(string destination)
-        {
-            await _mediator.Send(new AddEntryCommand { ParentGroupId = destination, EntryId = Id });
-            await _mediator.Send(new RemoveEntryCommand { ParentGroupId = _parent.Id, EntryId = Id });
-            GoToGroup(destination);
-        }
-        
-        public async Task SetFieldValue(string fieldName, object value)
-        {
-            await _mediator.Send(new SetFieldValueCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
-            SaveCommand.RaiseCanExecuteChanged();
-            _isDirty = true;
-        }
-
-        public async Task AddHistory()
-        {
-            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
-        }
-        
-        public void GoToGroup(string groupId)
-        {
-            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = groupId });
         }
 
         private async Task RestoreHistory()
@@ -442,12 +481,16 @@ namespace ModernKeePass.ViewModels
             var contents = await _file.ReadBinaryFile(fileInfo.Id);
             await _mediator.Send(new AddAttachmentCommand { Entry = SelectedItem, AttachmentName = fileInfo.Name, AttachmentContent = contents });
             Attachments.Add(new Attachment { Name = fileInfo.Name, Content = contents });
+            SaveCommand.RaiseCanExecuteChanged();
+            _isDirty = true;
         }
 
         private async Task DeleteAttachment(Attachment attachment)
         {
             await _mediator.Send(new DeleteAttachmentCommand { Entry = SelectedItem, AttachmentName = attachment.Name });
             Attachments.Remove(attachment);
+            SaveCommand.RaiseCanExecuteChanged();
+            _isDirty = true;
         }
 
     }

@@ -36,10 +36,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpenedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseOpeningMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\DatabaseSavedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\EntryFieldNameChangedMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messages\EntryFieldValueChangedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\FileNotFoundMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AboutVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\FieldVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\MainMenuItemVm.cs" />

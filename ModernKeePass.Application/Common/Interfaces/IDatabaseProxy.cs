@@ -31,19 +31,22 @@ namespace ModernKeePass.Application.Common.Interfaces
         void CloseDatabase();
 
         EntryEntity GetEntry(string id);
-        GroupEntity GetGroup(string id); 
         Task AddEntry(string parentGroupId, string entryId);
         Task MoveEntry(string parentGroupId, string entryId, int index);
-        Task AddGroup(string parentGroupId, string groupId);
         void UpdateEntry(string entryId, string fieldName, object fieldValue);
-        void UpdateGroup(GroupEntity group);
+        void DeleteField(string entryId, string fieldName);
         Task RemoveEntry(string parentGroupId, string entryId);
+        EntryEntity CreateEntry(string parentGroupId);
+        void SortEntries(string groupId);
+
+        GroupEntity GetGroup(string id); 
+        Task AddGroup(string parentGroupId, string groupId);
+        void UpdateGroup(GroupEntity group);
         Task RemoveGroup(string parentGroupId, string groupId);
         void DeleteEntity(string entityId);
-        EntryEntity CreateEntry(string parentGroupId);
         GroupEntity CreateGroup(string parentGroupId, string name, bool isRecycleBin = false);
-        void SortEntries(string groupId);
         void SortSubGroups(string groupId);
+        
         void AddAttachment(string entryId, string attachmentName, byte[] attachmentContent);
         void DeleteAttachment(string entryId, string attachmentName);
 
