@@ -94,6 +94,7 @@
     <Compile Include="Entry\Commands\DeleteField\DeleteFieldCommand.cs" />
     <Compile Include="Entry\Commands\DeleteHistory\DeleteHistoryCommand.cs" />
     <Compile Include="Entry\Commands\RestoreHistory\RestoreHistoryCommand.cs" />
+    <Compile Include="Entry\Models\FieldVm.cs" />
     <Compile Include="Entry\Queries\GetEntry\GetEntryQuery.cs" />
     <Compile Include="Group\Commands\DeleteEntry\DeleteEntryCommand.cs" />
     <Compile Include="Group\Commands\DeleteGroup\DeleteGroupCommand.cs" />

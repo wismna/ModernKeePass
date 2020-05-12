@@ -80,8 +80,7 @@
     <Compile Include="DependencyInjection.cs" />
     <Compile Include="File\CsvImportFormat.cs" />
     <Compile Include="KeePass\EntryFieldMapper.cs" />
-    <Compile Include="KeePass\EntryMappingProfile.cs" />
-    <Compile Include="KeePass\GroupMappingProfile.cs" />
+    <Compile Include="KeePass\MappingProfiles.cs" />
     <Compile Include="KeePass\IconMapper.cs" />
     <Compile Include="KeePass\KeePassCryptographyClient.cs" />
     <Compile Include="KeePass\KeePassDatabaseClient.cs" />

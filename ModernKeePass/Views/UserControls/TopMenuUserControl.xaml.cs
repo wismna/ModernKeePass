@@ -221,7 +221,7 @@ namespace ModernKeePass.Views.UserControls
             var results = (await Model.Search(args.QueryText)).Take(5);
             foreach (var result in results)
             {
-                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title, result.ParentGroupName, result.Id, imageUri, string.Empty);
+                args.Request.SearchSuggestionCollection.AppendResultSuggestion(result.Title.Value, result.ParentGroupName, result.Id, imageUri, string.Empty);
             }
         }
 

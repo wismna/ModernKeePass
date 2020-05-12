@@ -276,4 +276,10 @@
   <data name="CompositeKeyFileNameSuggestion" xml:space="preserve">
     <value>Key</value>
   </data>
+  <data name="DatabaseTooBigDescription" xml:space="preserve">
+    <value>Database size is too big for auto-save on suspend. Please save your changes before closing the app !</value>
+  </data>
+  <data name="DatabaseTooBigTitle" xml:space="preserve">
+    <value>Attention</value>
+  </data>
 </root>

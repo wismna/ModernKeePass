@@ -1,4 +1,6 @@
-﻿namespace ModernKeePass.Domain.Enums
+﻿using System.Collections.Generic;
+
+namespace ModernKeePass.Domain.Enums
 {
     public static class EntryFieldName
     {
@@ -12,5 +14,19 @@
         public const string HasExpirationDate = nameof(HasExpirationDate);
         public const string BackgroundColor = nameof(BackgroundColor);
         public const string ForegroundColor = nameof(ForegroundColor);
+
+        public static IEnumerable<string> StandardFieldNames = new[]
+        {
+            Title,
+            UserName,
+            Password,
+            Url,
+            Notes,
+            Icon,
+            ExpirationDate,
+            HasExpirationDate,
+            BackgroundColor,
+            ForegroundColor
+        };
     }
 }

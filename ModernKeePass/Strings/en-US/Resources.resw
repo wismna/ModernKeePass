@@ -376,7 +376,7 @@
     <value>New group</value>
   </data>
   <data name="GroupsLeftListView.HeaderLabel" xml:space="preserve">
-    <value>Navigation</value>
+    <value>Groups</value>
   </data>
   <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
     <value>History</value>
@@ -545,5 +545,17 @@
   </data>
   <data name="EntryAdditionalFieldNameReserved.Text" xml:space="preserve">
     <value>Invalid field name</value>
+  </data>
+  <data name="EntryEnableFieldProtection.Header" xml:space="preserve">
+    <value>Enable protection ?</value>
+  </data>
+  <data name="EntryEnableFieldProtection.OffContent" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="EntryEnableFieldProtection.OnContent" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="TopMenuRestoreButton.Content" xml:space="preserve">
+    <value>Restore</value>
   </data>
 </root>

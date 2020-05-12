@@ -2,3 +2,4 @@ Ajout des champs additionnels
 Ajout des pièces-jointes
 Possibilite de reorganiser les groupes manuellement
 Quelques changements de design
+Mise a jour de la KeePassLib version 2.45

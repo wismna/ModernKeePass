@@ -68,7 +68,7 @@ namespace ModernKeePass.ViewModels
         } 
         
         public ObservableCollection<EntryVm> History { get; private set; }
-        public ObservableCollection<FieldVm> AdditionalFields { get; private set; }
+        public ObservableCollection<EntryFieldVm> AdditionalFields { get; private set; }
         public ObservableCollection<Attachment> Attachments { get; private set; }
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace ModernKeePass.ViewModels
                 if (value != null)
                 {
                     AdditionalFields =
-                        new ObservableCollection<FieldVm>(
-                            SelectedItem.AdditionalFields.Select(f => new FieldVm(f.Key, f.Value)));
+                        new ObservableCollection<EntryFieldVm>(
+                            SelectedItem.AdditionalFields.Select(f => new EntryFieldVm(f.Name, f.Value, f.IsProtected)));
                     Attachments = new ObservableCollection<Attachment>(SelectedItem.Attachments.Select(f => new Attachment
                     {
                         Name = f.Key,
@@ -131,32 +131,32 @@ namespace ModernKeePass.ViewModels
 
         public string Title
         {
-            get { return SelectedItem.Title; }
+            get { return SelectedItem.Title.Value; }
             set
             {
-                SelectedItem.Title = value;
-                SetFieldValue(nameof(Title), value).Wait();
+                SelectedItem.Title.Value = value;
+                SetFieldValue(nameof(Title), value, true).Wait();
             }
         }
 
         public string UserName
         {
-            get { return SelectedItem.Username; }
+            get { return SelectedItem.Username.Value; }
             set
             {
-                SelectedItem.Username = value;
-                SetFieldValue(nameof(UserName), value).Wait();
+                SelectedItem.Username.Value = value;
+                SetFieldValue(nameof(UserName), value, true).Wait();
                 RaisePropertyChanged(nameof(UserName));
             }
         }
 
         public string Password
         {
-            get { return SelectedItem.Password; }
+            get { return SelectedItem.Password.Value; }
             set
             {
-                SelectedItem.Password = value;
-                SetFieldValue(nameof(Password), value).Wait();
+                SelectedItem.Password.Value = value;
+                SetFieldValue(nameof(Password), value, true).Wait();
                 RaisePropertyChanged(nameof(Password));
                 RaisePropertyChanged(nameof(PasswordComplexityIndicator));
             }
@@ -164,22 +164,22 @@ namespace ModernKeePass.ViewModels
         
         public string Url
         {
-            get { return SelectedItem.Url; }
+            get { return SelectedItem.Url.Value; }
             set
             {
-                SelectedItem.Url = value;
-                SetFieldValue(nameof(Url), value).Wait();
+                SelectedItem.Url.Value = value;
+                SetFieldValue(nameof(Url), value, true).Wait();
                 RaisePropertyChanged(nameof(Url));
             }
         }
 
         public string Notes
         {
-            get { return SelectedItem.Notes; }
+            get { return SelectedItem.Notes.Value; }
             set
             {
-                SelectedItem.Notes = value;
-                SetFieldValue(nameof(Notes), value).Wait();
+                SelectedItem.Notes.Value = value;
+                SetFieldValue(nameof(Notes), value, true).Wait();
             }
         }
 
@@ -189,7 +189,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
-                SetFieldValue(nameof(Icon), SelectedItem.Icon).Wait();
+                SetFieldValue(nameof(Icon), SelectedItem.Icon, true).Wait();
             }
         }
 
@@ -201,7 +201,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = value.Date;
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate).Wait();
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, true).Wait();
             }
         }
 
@@ -213,7 +213,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = SelectedItem.ExpirationDate.Date.Add(value);
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate).Wait();
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, true).Wait();
             }
         }
         
@@ -223,7 +223,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.HasExpirationDate = value;
-                SetFieldValue(nameof(HasExpirationDate), value).Wait();
+                SetFieldValue(nameof(HasExpirationDate), value, true).Wait();
                 RaisePropertyChanged(nameof(HasExpirationDate));
             }
         }
@@ -234,7 +234,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.BackgroundColor = value.ToColor();
-                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor).Wait();
+                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor, true).Wait();
             }
         }
 
@@ -244,7 +244,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.ForegroundColor = value.ToColor();
-                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor).Wait();
+                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor, true).Wait();
             }
         }
 
@@ -269,7 +269,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand GoBackCommand { get; }
         public RelayCommand GoToParentCommand { get; set; }
         public RelayCommand AddAdditionalField { get; set; }
-        public RelayCommand<FieldVm> DeleteAdditionalField { get; set; }
+        public RelayCommand<EntryFieldVm> DeleteAdditionalField { get; set; }
         public RelayCommand<Attachment> OpenAttachmentCommand { get; set; }
         public RelayCommand AddAttachmentCommand { get; set; }
         public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
@@ -308,14 +308,14 @@ namespace ModernKeePass.ViewModels
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
             AddAdditionalField = new RelayCommand(AddField, () => IsCurrentEntry);
-            DeleteAdditionalField = new RelayCommand<FieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
+            DeleteAdditionalField = new RelayCommand<EntryFieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
             AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
             DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment), _ => IsCurrentEntry);
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
-            MessengerInstance.Register<EntryFieldValueChangedMessage>(this, async message => await SetFieldValue(message.FieldName, message.FieldValue));
-            MessengerInstance.Register<EntryFieldNameChangedMessage>(this, async message => await UpdateFieldName(message.OldName, message.NewName, message.Value));
+            MessengerInstance.Register<EntryFieldValueChangedMessage>(this, async message => await SetFieldValue(message.FieldName, message.FieldValue, message.IsProtected));
+            MessengerInstance.Register<EntryFieldNameChangedMessage>(this, async message => await UpdateFieldName(message.OldName, message.NewName, message.Value, message.IsProtected));
         }
 
         public async Task Initialize(string entryId)
@@ -348,6 +348,7 @@ namespace ModernKeePass.ViewModels
             });
             RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
         }
+
         public async Task AddHistory()
         {
             if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
@@ -365,26 +366,26 @@ namespace ModernKeePass.ViewModels
             GoToGroup(destination);
         }
         
-        private async Task SetFieldValue(string fieldName, object value)
+        private async Task SetFieldValue(string fieldName, object value, bool isProtected)
         {
-            await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value });
+            await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value, IsProtected = isProtected});
             SaveCommand.RaiseCanExecuteChanged();
             _isDirty = true;
         }
 
-        private async Task UpdateFieldName(string oldName, string newName, string value)
+        private async Task UpdateFieldName(string oldName, string newName, string value, bool isProtected)
         {
             if (!string.IsNullOrEmpty(oldName)) await _mediator.Send(new DeleteFieldCommand { EntryId = Id, FieldName = oldName });
-            await SetFieldValue(newName, value);
+            await SetFieldValue(newName, value, isProtected);
         }
         
         private void AddField()
         {
-            AdditionalFields.Add(new FieldVm(string.Empty, string.Empty));
+            AdditionalFields.Add(new EntryFieldVm(string.Empty, string.Empty, false));
             AdditionalFieldSelectedIndex = AdditionalFields.Count - 1;
         }
 
-        private async Task DeleteField(FieldVm field)
+        private async Task DeleteField(EntryFieldVm field)
         {
             AdditionalFields.Remove(field);
             if (!string.IsNullOrEmpty(field.Name))

@@ -9,6 +9,7 @@ namespace ModernKeePass.Application.Entry.Commands.UpsertField
         public string EntryId { get; set; }
         public string FieldName { get; set; }
         public object FieldValue { get; set; }
+        public bool IsProtected { get; set; } = true;
 
         public class UpsertFieldCommandHandler : IRequestHandler<UpsertFieldCommand>
         {
@@ -23,7 +24,7 @@ namespace ModernKeePass.Application.Entry.Commands.UpsertField
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                _database.UpdateEntry(message.EntryId, message.FieldName, message.FieldValue);
+                _database.UpdateEntry(message.EntryId, message.FieldName, message.FieldValue, message.IsProtected);
             }
         }
     }

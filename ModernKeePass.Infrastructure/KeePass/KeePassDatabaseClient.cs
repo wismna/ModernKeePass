@@ -228,7 +228,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(entityId), _dateTime.Now));
         }
 
-        public void UpdateEntry(string entryId, string fieldName, object fieldValue)
+        public void UpdateEntry(string entryId, string fieldName, object fieldValue, bool isProtected)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
 
@@ -239,7 +239,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                 case EntryFieldName.Password:
                 case EntryFieldName.Notes:
                 case EntryFieldName.Url:
-                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(true, fieldValue.ToString()));
+                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(isProtected, fieldValue.ToString()));
                     break;
                 case EntryFieldName.HasExpirationDate:
                     pwEntry.Expires = (bool)fieldValue;
@@ -257,7 +257,7 @@ namespace ModernKeePass.Infrastructure.KeePass
                     pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
                 default: 
-                    pwEntry.Strings.Set(fieldName, new ProtectedString(true, fieldValue.ToString()));
+                    pwEntry.Strings.Set(fieldName, new ProtectedString(isProtected, fieldValue.ToString()));
                     break;
             }
         }

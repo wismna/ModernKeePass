@@ -82,6 +82,7 @@
     <Compile Include="Dtos\PasswordGenerationOptions.cs" />
     <Compile Include="Entities\BaseEntity.cs" />
     <Compile Include="Entities\EntryEntity.cs" />
+    <Compile Include="Entities\FieldEntity.cs" />
     <Compile Include="Entities\GroupEntity.cs" />
     <Compile Include="Enums\CredentialStatusTypes.cs" />
     <Compile Include="Enums\DatabaseVersion.cs" />

@@ -3,7 +3,7 @@
   "dependencies": {
     "AutoMapper": "5.2.0",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "ModernKeePassLib": "2.44.3",
+    "ModernKeePassLib": "2.45.1",
     "NETStandard.Library": "2.0.3"
   },
   "frameworks": {

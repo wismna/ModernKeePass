@@ -441,8 +441,8 @@
                                             </ToolTipService.ToolTip>
                                         </SymbolIcon>
                                         <StackPanel Grid.Column="1" x:Name="ExpirationDatePanel" Orientation="Vertical" Visibility="{Binding HasExpirationDate, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <DatePicker Margin="0,0,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
-                                            <TimePicker Margin="0,10,0,0" Time="{Binding ExpiryTime, Mode=TwoWay}" />
+                                            <DatePicker Margin="10,5,20,0" Date="{Binding ExpiryDate, Mode=TwoWay}" />
+                                            <TimePicker Margin="10,10,0,0" Time="{Binding ExpiryTime, Mode=TwoWay}" />
                                         </StackPanel>
                                     </Grid>
                                 </StackPanel>
@@ -481,40 +481,51 @@
                     </HubSection>
                     <HubSection x:Uid="EntryHubAdditional">
                         <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <HyperlinkButton Command="{Binding Path=DataContext.AddAdditionalField, ElementName=Page}">
-                                    <StackPanel Orientation="Horizontal">
-                                        <SymbolIcon Symbol="Add" />
-                                        <TextBlock x:Uid="EntryAddAdditionalField" VerticalAlignment="Center" Margin="10,0,0,0" />
-                                    </StackPanel>
-                                </HyperlinkButton>
-                                <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
-                                <local:SelectableTemplateListView 
-                                     ItemsSource="{Binding AdditionalFields}"
-                                     SelectedIndex="{Binding AdditionalFieldSelectedIndex, Mode=TwoWay}"
-                                     ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
-                                    <local:SelectableTemplateListView.SelectedItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Vertical" Margin="5">
-                                                <TextBox Text="{Binding Name, Mode=TwoWay}" Width="350"
-                                                         IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                                <TextBox HorizontalAlignment="Left" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350"  Margin="0,5,0,0"
-                                                         Text="{Binding Value, Mode=TwoWay}"
-                                                         IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                                <Button x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </local:SelectableTemplateListView.SelectedItemTemplate>
-                                    <local:SelectableTemplateListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Vertical" Margin="5">
-                                                <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
-                                                <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Style="{StaticResource EntryTextBlockStyle}"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </local:SelectableTemplateListView.ItemTemplate>
-                                </local:SelectableTemplateListView>
-                            </StackPanel>
+                            <local:SelectableTemplateListView 
+                                ItemsSource="{Binding AdditionalFields}"
+                                SelectedIndex="{Binding AdditionalFieldSelectedIndex, Mode=TwoWay}"
+                                ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
+                                <local:SelectableTemplateListView.HeaderTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <HyperlinkButton Command="{Binding Path=DataContext.AddAdditionalField, ElementName=Page}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <SymbolIcon Symbol="Add" />
+                                                    <TextBlock x:Uid="EntryAddAdditionalField" VerticalAlignment="Center" Margin="10,0,0,0" />
+                                                </StackPanel>
+                                            </HyperlinkButton>
+                                            <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </local:SelectableTemplateListView.HeaderTemplate>
+                                <local:SelectableTemplateListView.SelectedItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <TextBox Grid.Row="0" Text="{Binding Name, Mode=TwoWay}" Width="350"
+                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                            <TextBox Grid.Row="1" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350"  Margin="0,5,0,0"
+                                                     Text="{Binding Value, Mode=TwoWay}"
+                                                     IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
+                                            <ToggleSwitch Grid.Row="2" x:Uid="EntryEnableFieldProtection" HorizontalAlignment="Left" IsOn="{Binding IsProtected, Mode=TwoWay}" />
+                                            <Button Grid.Row="2" x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Margin="0,15,0,0" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </local:SelectableTemplateListView.SelectedItemTemplate>
+                                <local:SelectableTemplateListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" Margin="5">
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
+                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="*****" Visibility="{Binding IsProtected, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBlockStyle}"/>
+                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Visibility="{Binding IsProtected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBlockStyle}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </local:SelectableTemplateListView.ItemTemplate>
+                            </local:SelectableTemplateListView>
                         </DataTemplate>
                     </HubSection>
                     <HubSection x:Uid="EntryHubAttachments" Foreground="{StaticResource HubSectionBrush}">

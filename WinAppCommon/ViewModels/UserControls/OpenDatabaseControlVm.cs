@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
 using ModernKeePass.Application.Common.Interfaces;
@@ -93,6 +94,7 @@ namespace ModernKeePass.ViewModels
         private readonly IResourceProxy _resource;
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
+        private readonly IDialogService _dialog;
         private bool _hasPassword;
         private bool _hasKeyFile;
         private bool _isOpening;
@@ -102,12 +104,13 @@ namespace ModernKeePass.ViewModels
         private string _keyFileText;
         private bool _isError;
 
-        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification, IFileProxy file)
+        public OpenDatabaseControlVm(IMediator mediator, IResourceProxy resource, INotificationService notification, IFileProxy file, IDialogService dialog)
         {
             _mediator = mediator;
             _resource = resource;
             _notification = notification;
             _file = file;
+            _dialog = dialog;
             OpenKeyFileCommand = new RelayCommand(async () => await OpenKeyFile());
             OpenDatabaseCommand = new RelayCommand<string>(async databaseFilePath => await TryOpenDatabase(databaseFilePath), _ => IsValid);
             _keyFileText = _resource.GetResourceValue("CompositeKeyDefaultKeyFile");
@@ -130,7 +133,7 @@ namespace ModernKeePass.ViewModels
             if (database.IsDirty)
             {
                 MessengerInstance.Register<DatabaseClosedMessage>(this, async message => await OpenDatabase(message.Parameter as string));
-                MessengerInstance.Send(new DatabaseAlreadyOpenedMessage {Parameter = databaseFilePath});
+                MessengerInstance.Send(new DatabaseAlreadyOpenedMessage { Parameter = databaseFilePath });
             }
             else await OpenDatabase(databaseFilePath);
         }
@@ -146,9 +149,11 @@ namespace ModernKeePass.ViewModels
                     KeyFilePath = HasKeyFile ? KeyFilePath : null,
                     Password = HasPassword ? Password : null,
                 });
-                var rootGroupId = (await _mediator.Send(new GetDatabaseQuery())).RootGroupId;
+                var database = await _mediator.Send(new GetDatabaseQuery());
 
-                MessengerInstance.Send(new DatabaseOpenedMessage { RootGroupId = rootGroupId });
+                if (database.Size > Common.Constants.File.OneMegaByte)
+                    await _dialog.ShowMessage(_resource.GetResourceValue("DatabaseTooBigDescription"), _resource.GetResourceValue("DatabaseTooBigTitle"));
+                MessengerInstance.Send(new DatabaseOpenedMessage { RootGroupId = database.RootGroupId });
             }
             catch (ArgumentException)
             {

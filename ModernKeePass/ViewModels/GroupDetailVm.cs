@@ -43,7 +43,7 @@ namespace ModernKeePass.ViewModels
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
 
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
-            group e by e.Title.ToUpper().FirstOrDefault() into grp
+            group e by e.Title.Name.ToUpper().FirstOrDefault() into grp
             orderby grp.Key
             select grp;
 

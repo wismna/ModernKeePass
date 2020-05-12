@@ -33,7 +33,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         EntryEntity GetEntry(string id);
         Task AddEntry(string parentGroupId, string entryId);
         Task MoveEntry(string parentGroupId, string entryId, int index);
-        void UpdateEntry(string entryId, string fieldName, object fieldValue);
+        void UpdateEntry(string entryId, string fieldName, object fieldValue, bool isProtected);
         void DeleteField(string entryId, string fieldName);
         Task RemoveEntry(string parentGroupId, string entryId);
         EntryEntity CreateEntry(string parentGroupId);

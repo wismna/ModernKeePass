@@ -2,3 +2,4 @@ Support for additional fields
 Support for attachments
 Ability to manually reorder groups
 Design changes
+Update to KeePassLib version 2.45

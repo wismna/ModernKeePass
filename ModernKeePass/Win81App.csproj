@@ -372,8 +372,8 @@
       <HintPath>..\packages\HockeySDK.WINRT.4.1.6\lib\portable-win81\Microsoft.HockeyApp.Kit.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ModernKeePassLib, Version=2.44.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ModernKeePassLib.2.44.3\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
+    <Reference Include="ModernKeePassLib, Version=2.45.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ModernKeePassLib.2.45.1\lib\netstandard1.2\ModernKeePassLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SixLabors.Core, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">

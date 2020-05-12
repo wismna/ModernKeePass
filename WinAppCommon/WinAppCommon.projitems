@@ -42,7 +42,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AboutVm.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\FieldVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\EntryFieldVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\MainMenuItemVm.cs" />
