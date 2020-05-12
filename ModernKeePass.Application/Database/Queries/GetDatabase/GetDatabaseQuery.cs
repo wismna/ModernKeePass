@@ -33,6 +33,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     database.KeyDerivationId = _databaseProxy.KeyDerivationId;
                     database.Size = _databaseProxy.Size;
                     database.IsDirty = _databaseProxy.IsDirty;
+                    database.MaxHistoryCount = _databaseProxy.MaxHistoryCount;
                 }
                 return database;
             }

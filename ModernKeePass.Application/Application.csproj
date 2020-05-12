@@ -106,6 +106,7 @@
     <Compile Include="Parameters\Commands\SetCipher\SetCipherCommand.cs" />
     <Compile Include="Parameters\Commands\SetCompression\SetCompressionCommand.cs" />
     <Compile Include="Parameters\Commands\SetHasRecycleBin\SetHasRecycleBinCommand.cs" />
+    <Compile Include="Parameters\Commands\SetMaxHistoryCount\SetHistoryCountCommand.cs" />
     <Compile Include="Parameters\Commands\SetKeyDerivation\SetKeyDerivationCommand.cs" />
     <Compile Include="Parameters\Commands\SetRecycleBin\SetRecycleBinCommand.cs" />
     <Compile Include="Parameters\Models\CipherVm.cs" />

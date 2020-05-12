@@ -40,6 +40,12 @@ namespace ModernKeePass.Infrastructure.KeePass
         public int Size { get; set; }
         public bool IsDirty { get; set; }
 
+        public int MaxHistoryCount
+        {
+            get { return _pwDatabase.HistoryMaxItems; }
+            set { _pwDatabase.HistoryMaxItems = value; }
+        }
+
         // Settings
         public bool IsRecycleBinEnabled
         {

@@ -19,6 +19,8 @@
             public static string SaveSuspend => nameof(SaveSuspend);
             public static string Sample => nameof(Sample);
             public static string DefaultFileFormat => nameof(DefaultFileFormat);
+            public static string ClipboardTimeout => nameof(ClipboardTimeout);
+            public static string HistoryMaxCount => nameof(HistoryMaxCount);
         }
     }
 }

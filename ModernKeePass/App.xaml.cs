@@ -166,14 +166,6 @@ namespace ModernKeePass
 #if DEBUG
                 _notification.Show("App resumed", "Nothing to do, no previous database opened");
 #endif
-            }
-            catch (Exception ex)
-            {
-                _hockey.TrackException(ex);
-                _hockey.Flush();
-            }
-            finally
-            {
                 _navigation.NavigateTo(Constants.Navigation.MainPage);
             }
         }
