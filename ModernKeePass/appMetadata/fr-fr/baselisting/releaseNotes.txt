@@ -2,6 +2,6 @@ Ajout des champs additionnels
 Ajout des pièces-jointes
 Ajout d'une expiration du presse papier
 Possibilite de reorganiser les groupes manuellement
-Possibilite de parametrer le nombre max d'historique
+Possibilite de parametrer le nombre max et la taille de l'historique
 Quelques changements de design
 Mise a jour de la KeePassLib version 2.45

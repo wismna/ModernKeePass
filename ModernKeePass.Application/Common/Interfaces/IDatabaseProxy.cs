@@ -23,6 +23,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         int Size { get; set; }
         bool IsDirty { get; set; }
         int MaxHistoryCount { get; set; }
+        long MaxHistorySize { get; set; }
 
         Task Open(byte[] file, Credentials credentials);
         Task ReOpen(byte[] file);

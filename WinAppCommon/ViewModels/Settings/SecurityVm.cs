@@ -3,48 +3,24 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using GalaSoft.MvvmLight;
 using MediatR;
-using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
-using ModernKeePass.Application.Group.Queries.GetGroup;
 using ModernKeePass.Application.Parameters.Commands.SetCipher;
 using ModernKeePass.Application.Parameters.Commands.SetCompression;
-using ModernKeePass.Application.Parameters.Commands.SetHasRecycleBin;
 using ModernKeePass.Application.Parameters.Commands.SetKeyDerivation;
-using ModernKeePass.Application.Parameters.Commands.SetRecycleBin;
 using ModernKeePass.Application.Parameters.Models;
 using ModernKeePass.Application.Parameters.Queries.GetCiphers;
 using ModernKeePass.Application.Parameters.Queries.GetCompressions;
 using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
 
-namespace ModernKeePass.ViewModels.ListItems
+namespace ModernKeePass.ViewModels.Settings
 {
     // TODO: implement Kdf settings
-    public class SettingsDatabaseVm: ObservableObject
+    public class SecurityVm: ObservableObject
     {
         private readonly IMediator _mediator;
         private readonly DatabaseVm _database;
 
-        public bool HasRecycleBin
-        {
-            get { return _database.IsRecycleBinEnabled; }
-            set
-            {
-                _mediator.Send(new SetHasRecycleBinCommand {HasRecycleBin = value}).Wait();
-                RaisePropertyChanged(nameof(HasRecycleBin));
-            }
-        }
-
-        public bool IsNewRecycleBin
-        {
-            get { return string.IsNullOrEmpty(_database.RecycleBinId); }
-            set
-            {
-                if (value) _mediator.Send(new SetRecycleBinCommand { RecycleBinId = null }).Wait();
-            }
-        }
-
-        public ObservableCollection<IEntityVm> Groups { get; }
         public ObservableCollection<CipherVm> Ciphers { get; }
         public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
         public ObservableCollection<KeyDerivationVm> KeyDerivations { get; }
@@ -67,21 +43,10 @@ namespace ModernKeePass.ViewModels.ListItems
             set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).Wait(); }
         }
 
-        public IEntityVm SelectedRecycleBin
-        {
-            get { return Groups.FirstOrDefault(g => g.Id == _database.RecycleBinId); }
-            set
-            {
-                if (!IsNewRecycleBin) _mediator.Send(new SetRecycleBinCommand { RecycleBinId = value.Id}).Wait();
-            }
-        }
-        
-        public SettingsDatabaseVm(IMediator mediator)
+        public SecurityVm(IMediator mediator)
         {
             _mediator = mediator;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
-            var rootGroup = _mediator.Send(new GetGroupQuery { Id = _database.RootGroupId }).GetAwaiter().GetResult();
-            Groups = new ObservableCollection<IEntityVm>(rootGroup.SubGroups);
             var ciphers = _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
             Ciphers = new ObservableCollection<CipherVm>(ciphers);
             var keyDerivations = _mediator.Send(new GetKeyDerivationsQuery()).GetAwaiter().GetResult();

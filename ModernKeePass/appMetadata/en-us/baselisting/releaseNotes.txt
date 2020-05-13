@@ -2,6 +2,6 @@ Support for additional fields
 Support for attachments
 Add an expiration timer for clipboard data
 Ability to manually reorder groups
-Ability to set max history count
+Ability to set max history count and size
 Design changes
 Update to KeePassLib version 2.45

@@ -297,9 +297,6 @@
   <data name="SettingsDatabaseKdf.Text" xml:space="preserve">
     <value>Key Derivation Algorithm</value>
   </data>
-  <data name="SettingsDatabaseRecycleBin.Header" xml:space="preserve">
-    <value>Recycle bin</value>
-  </data>
   <data name="SettingsDatabaseRecycleBin.OffContent" xml:space="preserve">
     <value>Disabled</value>
   </data>
@@ -557,5 +554,14 @@
   </data>
   <data name="TopMenuRestoreButton.Content" xml:space="preserve">
     <value>Restore</value>
+  </data>
+  <data name="SettingsHistoryMaxCount.Text" xml:space="preserve">
+    <value>Max history items</value>
+  </data>
+  <data name="SettingsHistoryMaxSize.Text" xml:space="preserve">
+    <value>Max history size (MB)</value>
+  </data>
+  <data name="SettingsCopyExpiration.Text" xml:space="preserve">
+    <value>Delete copied value from clipboard after how many seconds ?</value>
   </data>
 </root>

@@ -4,17 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:userControls="using:ModernKeePass.Views.UserControls"
     mc:Ignorable="d"
-    DataContext="{Binding Source={StaticResource Locator}, Path=SettingsSecurity}">
+    DataContext="{Binding Source={StaticResource Locator}, Path=Security}">
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock x:Uid="SettingsSecurityTitle" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,0,0,0" />
-        <TextBlock TextWrapping="WrapWholeWords" Margin="5,0,0,0">
-            <Run x:Uid="SettingsSecurityDesc1" />
-            <Run x:Uid="SettingsSecurityDesc2" FontWeight="SemiBold" />
-            <Run x:Uid="SettingsSecurityDesc3" />
-        </TextBlock>
-        <userControls:SetCredentialsUserControl Margin="0,20,0,0" x:Uid="SettingsSecurityUpdateButton"/>
+        <StackPanel.Resources>
+            <CollectionViewSource x:Name="Ciphers" Source="{Binding Ciphers}" />
+            <CollectionViewSource x:Name="Compressions" Source="{Binding Compressions}" />
+            <CollectionViewSource x:Name="KeyDerivations" Source="{Binding KeyDerivations}" />
+        </StackPanel.Resources>
+        <TextBlock x:Uid="SettingsDatabaseEncryption" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource Ciphers}}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedCipher, Mode=TwoWay}" />
+        <TextBlock x:Uid="SettingsDatabaseCompression" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource Compressions}}" SelectedItem="{Binding SelectedCompression, Mode=TwoWay}" />
+        <TextBlock x:Uid="SettingsDatabaseKdf" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
+        <ComboBox ItemsSource="{Binding Source={StaticResource KeyDerivations}}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedKeyDerivation, Mode=TwoWay}" />
     </StackPanel>
 </Page>

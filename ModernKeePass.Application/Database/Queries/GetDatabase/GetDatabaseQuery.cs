@@ -34,6 +34,7 @@ namespace ModernKeePass.Application.Database.Queries.GetDatabase
                     database.Size = _databaseProxy.Size;
                     database.IsDirty = _databaseProxy.IsDirty;
                     database.MaxHistoryCount = _databaseProxy.MaxHistoryCount;
+                    database.MaxHistorySize = _databaseProxy.MaxHistorySize;
                 }
                 return database;
             }

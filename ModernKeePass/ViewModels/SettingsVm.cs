@@ -8,6 +8,7 @@ using ModernKeePass.Application.Database.Queries.GetDatabase;
 using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.ViewModels.ListItems;
 using ModernKeePass.Views;
+using ModernKeePass.Views.SettingsPageFrames;
 
 namespace ModernKeePass.ViewModels
 {
@@ -58,18 +59,10 @@ namespace ModernKeePass.ViewModels
                 },
                 new ListMenuItemVm
                 {
-                    Title = resource.GetResourceValue("SettingsMenuItemSave"),
-                    Group = resource.GetResourceValue("SettingsMenuGroupApplication"),
-                    SymbolIcon = Symbol.Save,
-                    PageType = typeof(SettingsSavePage)
-                },
-                new ListMenuItemVm
-                {
                     Title = resource.GetResourceValue("SettingsMenuItemGeneral"),
-                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupApplication"),
                     SymbolIcon = Symbol.Setting,
-                    PageType = typeof(SettingsDatabasePage),
-                    IsEnabled = database.IsOpen
+                    PageType = typeof(SettingsGeneralPage)
                 },
                 new ListMenuItemVm
                 {
@@ -77,6 +70,30 @@ namespace ModernKeePass.ViewModels
                     Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
                     SymbolIcon = Symbol.Permissions,
                     PageType = typeof(SettingsSecurityPage),
+                    IsEnabled = database.IsOpen
+                },
+                new ListMenuItemVm
+                {
+                    Title = resource.GetResourceValue("SettingsMenuItemHistory"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
+                    SymbolIcon = Symbol.Undo,
+                    PageType = typeof(SettingsHistoryPage),
+                    IsEnabled = database.IsOpen
+                },
+                new ListMenuItemVm
+                {
+                    Title = resource.GetResourceValue("SettingsMenuItemRecycleBin"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
+                    SymbolIcon = Symbol.Delete,
+                    PageType = typeof(SettingsRecycleBinPage),
+                    IsEnabled = database.IsOpen
+                },
+                new ListMenuItemVm
+                {
+                    Title = resource.GetResourceValue("SettingsMenuItemCredentials"),
+                    Group = resource.GetResourceValue("SettingsMenuGroupDatabase"),
+                    SymbolIcon = Symbol.Account,
+                    PageType = typeof(SettingsCredentialsPage),
                     IsEnabled = database.IsOpen
                 }
             };

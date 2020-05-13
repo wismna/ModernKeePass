@@ -135,7 +135,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Title.Value = value;
-                SetFieldValue(nameof(Title), value, true).Wait();
+                SetFieldValue(nameof(Title), value, false).Wait();
             }
         }
 
@@ -145,7 +145,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Username.Value = value;
-                SetFieldValue(nameof(UserName), value, true).Wait();
+                SetFieldValue(nameof(UserName), value, false).Wait();
                 RaisePropertyChanged(nameof(UserName));
             }
         }
@@ -168,7 +168,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Url.Value = value;
-                SetFieldValue(nameof(Url), value, true).Wait();
+                SetFieldValue(nameof(Url), value, false).Wait();
                 RaisePropertyChanged(nameof(Url));
             }
         }
@@ -179,7 +179,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Notes.Value = value;
-                SetFieldValue(nameof(Notes), value, true).Wait();
+                SetFieldValue(nameof(Notes), value, false).Wait();
             }
         }
 
@@ -189,7 +189,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
-                SetFieldValue(nameof(Icon), SelectedItem.Icon, true).Wait();
+                SetFieldValue(nameof(Icon), SelectedItem.Icon, false).Wait();
             }
         }
 
@@ -201,7 +201,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = value.Date;
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, true).Wait();
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, false).Wait();
             }
         }
 
@@ -213,7 +213,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = SelectedItem.ExpirationDate.Date.Add(value);
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, true).Wait();
+                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, false).Wait();
             }
         }
         
@@ -223,7 +223,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.HasExpirationDate = value;
-                SetFieldValue(nameof(HasExpirationDate), value, true).Wait();
+                SetFieldValue(nameof(HasExpirationDate), value, false).Wait();
                 RaisePropertyChanged(nameof(HasExpirationDate));
             }
         }
@@ -234,7 +234,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.BackgroundColor = value.ToColor();
-                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor, true).Wait();
+                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor, false).Wait();
             }
         }
 
@@ -244,7 +244,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.ForegroundColor = value.ToColor();
-                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor, true).Wait();
+                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor, false).Wait();
             }
         }
 

@@ -46,6 +46,12 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.HistoryMaxItems = value; }
         }
 
+        public long MaxHistorySize
+        {
+            get { return _pwDatabase.HistoryMaxSize; }
+            set { _pwDatabase.HistoryMaxSize = value; }
+        }
+
         // Settings
         public bool IsRecycleBinEnabled
         {

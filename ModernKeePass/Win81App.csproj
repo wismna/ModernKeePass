@@ -102,17 +102,23 @@
     <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
       <DependentUpon>ImportExportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPageFrames\SettingsDatabasePage.xaml.cs">
-      <DependentUpon>SettingsDatabasePage.xaml</DependentUpon>
+    <Compile Include="Views\SettingsPageFrames\SettingsHistoryPage.xaml.cs">
+      <DependentUpon>SettingsHistoryPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsPageFrames\SettingsRecycleBinPage.xaml.cs">
+      <DependentUpon>SettingsRecycleBinPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
+      <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsNewDatabasePage.xaml.cs">
       <DependentUpon>SettingsNewDatabasePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPageFrames\SettingsSavePage.xaml.cs">
-      <DependentUpon>SettingsSavePage.xaml</DependentUpon>
+    <Compile Include="Views\SettingsPageFrames\SettingsGeneralPage.xaml.cs">
+      <DependentUpon>SettingsGeneralPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml.cs">
-      <DependentUpon>SettingsSecurityPage.xaml</DependentUpon>
+    <Compile Include="Views\SettingsPageFrames\SettingsCredentialsPage.xaml.cs">
+      <DependentUpon>SettingsCredentialsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsWelcomePage.xaml.cs">
       <DependentUpon>SettingsWelcomePage.xaml</DependentUpon>
@@ -201,7 +207,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPageFrames\SettingsSavePage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsHistoryPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsPageFrames\SettingsRecycleBinPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsPageFrames\SettingsGeneralPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -253,7 +267,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPageFrames\SettingsDatabasePage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -261,7 +275,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SettingsPageFrames\SettingsSecurityPage.xaml">
+    <Page Include="Views\SettingsPageFrames\SettingsCredentialsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

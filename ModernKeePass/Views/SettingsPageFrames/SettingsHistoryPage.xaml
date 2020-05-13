@@ -1,0 +1,16 @@
+﻿<Page
+    x:Class="ModernKeePass.Views.SettingsPageFrames.SettingsHistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    DataContext="{Binding Source={StaticResource Locator}, Path=History}">
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock x:Uid="SettingsHistoryMaxCount" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
+        <TextBox Text="{Binding MaxCount, Mode=TwoWay}" InputScope="Number" KeyDown="UIElement_OnKeyDown" />
+        <TextBlock x:Uid="SettingsHistoryMaxSize" Style="{StaticResource TextBlockSettingsHeaderStyle}" Margin="5,20,0,10" />
+        <TextBox Text="{Binding MaxSize, Mode=TwoWay}" InputScope="Number" KeyDown="UIElement_OnKeyDown" />
+    </StackPanel>
+</Page>

@@ -297,9 +297,6 @@
   <data name="SettingsDatabaseKdf.Text" xml:space="preserve">
     <value>Algorithme de dérivation de clé</value>
   </data>
-  <data name="SettingsDatabaseRecycleBin.Header" xml:space="preserve">
-    <value>Corbeille</value>
-  </data>
   <data name="SettingsDatabaseRecycleBin.OffContent" xml:space="preserve">
     <value>Désactivé</value>
   </data>
@@ -554,5 +551,14 @@
   </data>
   <data name="TopMenuRestoreButton.Content" xml:space="preserve">
     <value>Restaurer</value>
+  </data>
+  <data name="SettingsHistoryMaxCount.Text" xml:space="preserve">
+    <value>Nombre d'éléments d'historique max</value>
+  </data>
+  <data name="SettingsHistoryMaxSize.Text" xml:space="preserve">
+    <value>Taille de l'historique (MO)</value>
+  </data>
+  <data name="SettingsCopyExpiration.Text" xml:space="preserve">
+    <value>Supprimer la valeur copiée dans le presse papier après combien de secondes ?</value>
   </data>
 </root>

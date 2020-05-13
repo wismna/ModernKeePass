@@ -204,9 +204,6 @@
   <data name="SettingsMenuGroupDatabase" xml:space="preserve">
     <value>Base de données</value>
   </data>
-  <data name="SettingsMenuItemGeneral" xml:space="preserve">
-    <value>Général</value>
-  </data>
   <data name="SettingsMenuItemNew" xml:space="preserve">
     <value>Nouveau</value>
   </data>
@@ -215,9 +212,6 @@
   </data>
   <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
     <value>- compte utilisateur</value>
-  </data>
-  <data name="SettingsMenuItemSave" xml:space="preserve">
-    <value>Sauvegardes</value>
   </data>
   <data name="RecycleBinTitle" xml:space="preserve">
     <value>Corbeille</value>
@@ -284,5 +278,17 @@
   </data>
   <data name="DatabaseTooBigTitle" xml:space="preserve">
     <value>Attention</value>
+  </data>
+  <data name="SettingsMenuItemCredentials" xml:space="preserve">
+    <value>Identifiants</value>
+  </data>
+  <data name="SettingsMenuItemHistory" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="SettingsMenuItemRecycleBin" xml:space="preserve">
+    <value>Corbeille</value>
+  </data>
+  <data name="SettingsMenuItemGeneral" xml:space="preserve">
+    <value>Général</value>
   </data>
 </root>

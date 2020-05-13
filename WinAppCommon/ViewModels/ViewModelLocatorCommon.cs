@@ -20,7 +20,7 @@ using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.ViewModels.ListItems;
+using ModernKeePass.ViewModels.Settings;
 
 namespace ModernKeePass.ViewModels
 {
@@ -57,10 +57,12 @@ namespace ModernKeePass.ViewModels
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<INotificationService>());
             }
             
-            SimpleIoc.Default.Register<SettingsDatabaseVm>();
+            SimpleIoc.Default.Register<SecurityVm>();
             SimpleIoc.Default.Register<SettingsNewVm>();
-            SimpleIoc.Default.Register<SettingsSaveVm>();
-            SimpleIoc.Default.Register<SettingsSecurityVm>();
+            SimpleIoc.Default.Register<GeneralVm>();
+            SimpleIoc.Default.Register<CredentialsVm>();
+            SimpleIoc.Default.Register<RecycleBinVm>();
+            SimpleIoc.Default.Register<HistoryVm>();
             SimpleIoc.Default.Register<OpenDatabaseControlVm>();
             SimpleIoc.Default.Register<SetCredentialsVm>();
             SimpleIoc.Default.Register<TopMenuVm>();
@@ -70,10 +72,12 @@ namespace ModernKeePass.ViewModels
             SimpleIoc.Default.Register<SaveVm>();
         }
         
-        public SettingsDatabaseVm SettingsDatabase => ServiceLocator.Current.GetInstance<SettingsDatabaseVm>(Guid.NewGuid().ToString());
+        public SecurityVm Security => ServiceLocator.Current.GetInstance<SecurityVm>(Guid.NewGuid().ToString());
         public SettingsNewVm SettingsNew => ServiceLocator.Current.GetInstance<SettingsNewVm>(Guid.NewGuid().ToString());
-        public SettingsSaveVm SettingsSave => ServiceLocator.Current.GetInstance<SettingsSaveVm>(Guid.NewGuid().ToString());
-        public SettingsSecurityVm SettingsSecurity => ServiceLocator.Current.GetInstance<SettingsSecurityVm>(Guid.NewGuid().ToString());
+        public GeneralVm General => ServiceLocator.Current.GetInstance<GeneralVm>(Guid.NewGuid().ToString());
+        public CredentialsVm Credentials => ServiceLocator.Current.GetInstance<CredentialsVm>(Guid.NewGuid().ToString());
+        public RecycleBinVm RecycleBin => ServiceLocator.Current.GetInstance<RecycleBinVm>(Guid.NewGuid().ToString());
+        public HistoryVm History => ServiceLocator.Current.GetInstance<HistoryVm>(Guid.NewGuid().ToString());
         public OpenDatabaseControlVm OpenDatabaseControl => ServiceLocator.Current.GetInstance<OpenDatabaseControlVm>(Guid.NewGuid().ToString());
         public SetCredentialsVm SetCredentials => ServiceLocator.Current.GetInstance<SetCredentialsVm>(Guid.NewGuid().ToString());
         public TopMenuVm TopMenu => ServiceLocator.Current.GetInstance<TopMenuVm>(Guid.NewGuid().ToString());

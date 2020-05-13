@@ -64,17 +64,17 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                     _database.UpdateGroup(internetGroup);
 
                     var sample1 = _database.CreateEntry(_database.RootGroupId);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Title, "Sample Entry", true);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.UserName, "Username", true);
+                    _database.UpdateEntry(sample1.Id, EntryFieldName.Title, "Sample Entry", false);
+                    _database.UpdateEntry(sample1.Id, EntryFieldName.UserName, "Username", false);
                     _database.UpdateEntry(sample1.Id, EntryFieldName.Password, "Password", true);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Url, "https://keepass.info/", true);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Notes, "You may safely delete this sample", true);
+                    _database.UpdateEntry(sample1.Id, EntryFieldName.Url, "https://keepass.info/", false);
+                    _database.UpdateEntry(sample1.Id, EntryFieldName.Notes, "You may safely delete this sample", false);
 
                     var sample2 = _database.CreateEntry(_database.RootGroupId);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.Title, "Sample Entry #2", true);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.UserName, "Michael321", true);
+                    _database.UpdateEntry(sample2.Id, EntryFieldName.Title, "Sample Entry #2", false);
+                    _database.UpdateEntry(sample2.Id, EntryFieldName.UserName, "Michael321", false);
                     _database.UpdateEntry(sample2.Id, EntryFieldName.Password, "12345", true);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.Url, "https://keepass.info/help/kb/testform.html", true);
+                    _database.UpdateEntry(sample2.Id, EntryFieldName.Url, "https://keepass.info/help/kb/testform.html", false);
                 }
             }
         }

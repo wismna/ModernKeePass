@@ -216,8 +216,8 @@
   <data name="CompositeKeyErrorUserAccount" xml:space="preserve">
     <value>- user account</value>
   </data>
-  <data name="SettingsMenuItemSave" xml:space="preserve">
-    <value>Saving</value>
+  <data name="SettingsMenuItemCredentials" xml:space="preserve">
+    <value>Credentials</value>
   </data>
   <data name="RecycleBinTitle" xml:space="preserve">
     <value>Recycle Bin</value>
@@ -281,5 +281,11 @@
   </data>
   <data name="DatabaseTooBigTitle" xml:space="preserve">
     <value>Attention</value>
+  </data>
+  <data name="SettingsMenuItemHistory" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="SettingsMenuItemRecycleBin" xml:space="preserve">
+    <value>Recycle Bin</value>
   </data>
 </root>

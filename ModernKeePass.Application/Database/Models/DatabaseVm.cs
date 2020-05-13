@@ -13,5 +13,6 @@
         public int Size { get; internal set; }
         public bool IsDirty { get; internal set; }
         public int MaxHistoryCount { get; set; }
+        public long MaxHistorySize { get; set; }
     }
 }

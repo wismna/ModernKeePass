@@ -1,37 +1,57 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using GalaSoft.MvvmLight;
 using MediatR;
-using Messages;
-using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Database.Commands.UpdateCredentials;
+using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
+using ModernKeePass.Application.Parameters.Commands.SetCipher;
+using ModernKeePass.Application.Parameters.Commands.SetCompression;
+using ModernKeePass.Application.Parameters.Commands.SetKeyDerivation;
+using ModernKeePass.Application.Parameters.Models;
+using ModernKeePass.Application.Parameters.Queries.GetCiphers;
+using ModernKeePass.Application.Parameters.Queries.GetCompressions;
+using ModernKeePass.Application.Parameters.Queries.GetKeyDerivations;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
-    public class SettingsSecurityVm: ViewModelBase
+    // TODO: implement Kdf settings
+    public class SettingsSecurityVm: ObservableObject
     {
         private readonly IMediator _mediator;
-        private readonly IResourceProxy _resource;
-        private readonly INotificationService _notification;
-        
-        public SettingsSecurityVm(IMediator mediator, IResourceProxy resource, INotificationService notification)
-        {
-            _mediator = mediator;
-            _resource = resource;
-            _notification = notification;
+        private readonly DatabaseVm _database;
 
-            MessengerInstance.Register<CredentialsSetMessage>(this, async message => await UpdateDatabaseCredentials(message));
+        
+        public ObservableCollection<CipherVm> Ciphers { get; }
+        public IEnumerable<string> Compressions => _mediator.Send(new GetCompressionsQuery()).GetAwaiter().GetResult();
+        public ObservableCollection<KeyDerivationVm> KeyDerivations { get; }
+
+        public CipherVm SelectedCipher
+        {
+            get { return Ciphers.FirstOrDefault(c => c.Id == _database.CipherId); }
+            set { _mediator.Send(new SetCipherCommand {CipherId = value.Id}).Wait(); }
         }
 
-        public async Task UpdateDatabaseCredentials(CredentialsSetMessage message)
+        public string SelectedCompression
         {
-            await _mediator.Send(new UpdateCredentialsCommand
-            {
-                KeyFilePath = message.KeyFilePath,
-                Password = message.Password
-            });
-            var database = await _mediator.Send(new GetDatabaseQuery());
-            _notification.Show(database.Name, _resource.GetResourceValue("CompositeKeyUpdated"));
+            get { return Compressions.FirstOrDefault(c => c == _database.Compression); }
+            set { _mediator.Send(new SetCompressionCommand {Compression = value}).Wait(); }
+        }
+
+        public KeyDerivationVm SelectedKeyDerivation
+        {
+            get { return KeyDerivations.FirstOrDefault(c => c.Id == _database.KeyDerivationId); }
+            set { _mediator.Send(new SetKeyDerivationCommand {KeyDerivationId = value.Id}).Wait(); }
+        }
+
+        public SettingsSecurityVm(IMediator mediator)
+        {
+            _mediator = mediator;
+            _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
+            var ciphers = _mediator.Send(new GetCiphersQuery()).GetAwaiter().GetResult();
+            Ciphers = new ObservableCollection<CipherVm>(ciphers);
+            var keyDerivations = _mediator.Send(new GetKeyDerivationsQuery()).GetAwaiter().GetResult();
+            KeyDerivations = new ObservableCollection<KeyDerivationVm>(keyDerivations);
         }
     }
 }
