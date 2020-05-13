@@ -32,7 +32,8 @@ namespace ModernKeePass
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     sealed partial class App
-    {
+    { public static IServiceProvider Services { get; private set; }
+
         private readonly IResourceProxy _resource;
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
@@ -41,9 +42,7 @@ namespace ModernKeePass
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
         private readonly IMessenger _messenger;
-
-        public static IServiceProvider Services { get; private set; }
-
+        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -206,7 +205,7 @@ namespace ModernKeePass
             }
             catch (SaveException ex)
             {
-                _notification.Show(_resource.GetResourceValue("MessageDialogSaveErrorTitle"), ex.Message);
+                _notification.Show(ex.Source, ex.Message);
             }
             catch (Exception ex)
             {

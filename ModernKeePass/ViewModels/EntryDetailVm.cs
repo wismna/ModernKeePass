@@ -44,14 +44,46 @@ namespace ModernKeePass.ViewModels
         public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
         public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery {Password = Password}).GetAwaiter().GetResult();
-        public bool UpperCasePatternSelected { get; set; } = true;
-        public bool LowerCasePatternSelected { get; set; } = true;
-        public bool DigitsPatternSelected { get; set; } = true;
-        public bool MinusPatternSelected { get; set; }
-        public bool UnderscorePatternSelected { get; set; }
-        public bool SpacePatternSelected { get; set; }
-        public bool SpecialPatternSelected { get; set; }
-        public bool BracketsPatternSelected { get; set; }
+        public bool UpperCasePatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.UpperCasePattern, true); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.UpperCasePattern, value); }
+        }
+        public bool LowerCasePatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.LowerCasePattern, true); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.LowerCasePattern, value); }
+        }
+        public bool DigitsPatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.DigitsPattern, true); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.DigitsPattern, value); }
+        }
+        public bool MinusPatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.MinusPattern, false); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.MinusPattern, value); }
+        }
+        public bool UnderscorePatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.UnderscorePattern, false); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.UnderscorePattern, value); }
+        }
+        public bool SpacePatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.SpacePattern, false); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.SpacePattern, value); }
+        }
+        public bool SpecialPatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.SpecialPattern, true); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.SpecialPattern, value); }
+        }
+        public bool BracketsPatternSelected
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.BracketsPattern, false); }
+            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.BracketsPattern, value); }
+        }
         public string CustomChars { get; set; } = string.Empty;
 
         public string Id => SelectedItem.Id;
@@ -95,7 +127,6 @@ namespace ModernKeePass.ViewModels
                     Attachments.CollectionChanged += (sender, args) =>
                     {
                         SaveCommand.RaiseCanExecuteChanged();
-                        _isDirty = true;
                     };
                     RaisePropertyChanged(string.Empty);
                 }
@@ -282,6 +313,7 @@ namespace ModernKeePass.ViewModels
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
+        private readonly ISettingsProxy _settings;
         private GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
@@ -289,9 +321,8 @@ namespace ModernKeePass.ViewModels
         private bool _isEditMode;
         private bool _isRevealPassword;
         private double _passwordLength = 25;
-        private bool _isDirty;
 
-        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file)
+        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ISettingsProxy settings)
         {
             _mediator = mediator;
             _navigation = navigation;
@@ -299,6 +330,7 @@ namespace ModernKeePass.ViewModels
             _dialog = dialog;
             _notification = notification;
             _file = file;
+            _settings = settings;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -351,7 +383,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task AddHistory()
         {
-            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
+            if (Database.IsDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
         }
         
         public void GoToGroup(string groupId)
@@ -370,7 +402,6 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value, IsProtected = isProtected});
             SaveCommand.RaiseCanExecuteChanged();
-            _isDirty = true;
         }
 
         private async Task UpdateFieldName(string oldName, string newName, string value, bool isProtected)
@@ -392,7 +423,6 @@ namespace ModernKeePass.ViewModels
             {
                 await _mediator.Send(new DeleteFieldCommand {EntryId = Id, FieldName = field.Name});
                 SaveCommand.RaiseCanExecuteChanged();
-                _isDirty = true;
             }
         }
 
@@ -450,7 +480,6 @@ namespace ModernKeePass.ViewModels
                 MessengerInstance.Send(new SaveErrorMessage { Message = e.Message });
             }
             SaveCommand.RaiseCanExecuteChanged();
-            _isDirty = false;
         }
 
         private async Task Delete()
@@ -483,7 +512,6 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new AddAttachmentCommand { Entry = SelectedItem, AttachmentName = fileInfo.Name, AttachmentContent = contents });
             Attachments.Add(new Attachment { Name = fileInfo.Name, Content = contents });
             SaveCommand.RaiseCanExecuteChanged();
-            _isDirty = true;
         }
 
         private async Task DeleteAttachment(Attachment attachment)
@@ -491,7 +519,6 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new DeleteAttachmentCommand { Entry = SelectedItem, AttachmentName = attachment.Name });
             Attachments.Remove(attachment);
             SaveCommand.RaiseCanExecuteChanged();
-            _isDirty = true;
         }
 
     }

@@ -47,7 +47,6 @@
     <SolidColorBrush x:Key="HyperlinkForegroundThemeBrush" Color="{ThemeResource MainColor}" />
     <SolidColorBrush x:Key="HyperlinkPointerOverForegroundThemeBrush" Color="{ThemeResource MainColorLight}" />
 
-    <!--<SolidColorBrush x:Key="SearchBoxPointerOverBorderThemeBrush" Color="{ThemeResource MainColorLight}" />-->
     <SolidColorBrush x:Key="SearchBoxPointerOverTextThemeBrush" Color="{ThemeResource MainColorLight}" />
     <SolidColorBrush x:Key="SearchBoxBorderThemeBrush" Color="{ThemeResource BorderColor}" />
     <SolidColorBrush x:Key="SearchBoxFocusedBorderThemeBrush" Color="{ThemeResource MainColor}" />

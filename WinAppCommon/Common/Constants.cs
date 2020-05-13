@@ -21,6 +21,18 @@
             public static string DefaultFileFormat => nameof(DefaultFileFormat);
             public static string ClipboardTimeout => nameof(ClipboardTimeout);
             public static string HistoryMaxCount => nameof(HistoryMaxCount);
+
+            public static class PasswordGenerationOptions
+            {
+                public static string UpperCasePattern => nameof(UpperCasePattern);
+                public static string LowerCasePattern => nameof(LowerCasePattern);
+                public static string DigitsPattern => nameof(DigitsPattern);
+                public static string MinusPattern => nameof(MinusPattern);
+                public static string UnderscorePattern => nameof(UnderscorePattern);
+                public static string SpacePattern => nameof(SpacePattern);
+                public static string SpecialPattern => nameof(SpecialPattern);
+                public static string BracketsPattern => nameof(BracketsPattern);
+            }
         }
     }
 }
