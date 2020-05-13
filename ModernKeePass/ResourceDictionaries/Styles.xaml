@@ -86,4 +86,8 @@
     <Thickness x:Key="FlyoutBorderThemeThickness">0</Thickness>
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="{ThemeResource FlyoutColor}" />
     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="{ThemeResource FlyoutColor}" />
+
+    <Thickness x:Key="ToolTipBorderThemeThickness">0</Thickness>
+    <SolidColorBrush x:Key="ToolTipBorderThemeBrush" Color="{ThemeResource FlyoutColor}" />
+    <SolidColorBrush x:Key="ToolTipBackgroundThemeBrush" Color="{ThemeResource FlyoutColor}" />
 </ResourceDictionary>

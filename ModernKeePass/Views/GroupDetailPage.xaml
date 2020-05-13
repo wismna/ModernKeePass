@@ -134,7 +134,7 @@
                                                             </core:EventTriggerBehavior>
                                                         </interactivity:Interaction.Behaviors>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem x:Uid="EntryItemCopyUrl" IsEnabled="{Binding HasUrl}">
+                                                    <MenuFlyoutItem x:Uid="EntryItemCopyUrl" IsEnabled="{Binding IsValidUrl}">
                                                         <interactivity:Interaction.Behaviors>
                                                             <core:EventTriggerBehavior EventName="Click">
                                                                 <actions:NavigateToUrlAction Url="{Binding Url}" />

@@ -20,7 +20,7 @@ namespace ModernKeePass.Application.Entry.Models
         public FieldVm Password { get; set; }
         public FieldVm Notes { get; set; }
         public FieldVm Url { get; set; }
-        public bool HasUrl => !string.IsNullOrEmpty(Url.Value);
+        public bool IsValidUrl => Uri.IsWellFormedUriString(Url.Value, UriKind.Absolute);
         public List<FieldVm> AdditionalFields { get; set; }
         public List<EntryVm> History { get; set; }
         public Icon Icon { get; set; }

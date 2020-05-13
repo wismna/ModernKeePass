@@ -69,19 +69,6 @@ namespace ModernKeePass.Controls
                 typeof(TextBoxWithButton),
                 new PropertyMetadata(null, (o, args) => { }));
 
-        public bool IsButtonEnabled
-        {
-            get { return (bool)GetValue(IsButtonEnabledProperty); }
-            set { SetValue(IsButtonEnabledProperty, value); }
-        }
-        public static readonly DependencyProperty IsButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsButtonEnabled),
-                typeof(bool),
-                typeof(TextBoxWithButton),
-                new PropertyMetadata(true, (o, args) => { }));
-        
-
         public TextBoxWithButton()
         {
             DefaultStyleKey = typeof(TextBoxWithButton);

@@ -300,7 +300,6 @@
                                         Grid.Column="1"
                                         Style="{StaticResource ActionButtonStyle}"
                                         Content="{TemplateBinding ButtonSymbol}"
-                                        IsEnabled="{TemplateBinding IsButtonEnabled}"
                                         Command="{TemplateBinding ButtonCommand}"
                                         CommandParameter="{TemplateBinding ButtonCommandParameter}">
                                     <ToolTipService.ToolTip>
