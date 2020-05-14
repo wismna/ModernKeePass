@@ -147,35 +147,17 @@
   <data name="EntityRestoredTitle" xml:space="preserve">
     <value>Restored</value>
   </data>
-  <data name="EntryDeleted" xml:space="preserve">
-    <value>Entry permanently removed</value>
-  </data>
   <data name="EntryDeletingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete this entry?</value>
+    <value>Are you sure you want to delete {0} ?</value>
   </data>
   <data name="EntryRecycled" xml:space="preserve">
-    <value>Entry moved to the Recycle bin</value>
-  </data>
-  <data name="EntryRecyclingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to send this entry to the recycle bin?</value>
+    <value>{0} moved to the Recycle bin</value>
   </data>
   <data name="EntryRestored" xml:space="preserve">
     <value>Entry returned to its original group</value>
   </data>
-  <data name="GroupDeleted" xml:space="preserve">
-    <value>Group permanently removed</value>
-  </data>
-  <data name="GroupDeletingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to delete the whole group and all its entries?</value>
-  </data>
   <data name="GroupRecycled" xml:space="preserve">
-    <value>Group moved to the Recycle bin</value>
-  </data>
-  <data name="GroupRecyclingConfirmation" xml:space="preserve">
-    <value>Are you sure you want to send the whole group and all its entries to the recycle bin?</value>
-  </data>
-  <data name="GroupRestored" xml:space="preserve">
-    <value>Group returned to its original group</value>
+    <value>{0} moved to the Recycle bin</value>
   </data>
   <data name="MainMenuItemAbout" xml:space="preserve">
     <value>About</value>
@@ -287,5 +269,8 @@
   </data>
   <data name="SettingsMenuItemRecycleBin" xml:space="preserve">
     <value>Recycle Bin</value>
+  </data>
+  <data name="GroupDeletingConfirmation" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} and all its entries?</value>
   </data>
 </root>

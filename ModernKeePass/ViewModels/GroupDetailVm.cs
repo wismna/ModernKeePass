@@ -261,11 +261,13 @@ namespace ModernKeePass.ViewModels
             if (IsRecycleOnDelete)
             {
                 await Delete();
-                _notification.Show(_resource.GetResourceValue("GroupRecyclingConfirmation"), _resource.GetResourceValue("GroupRecycled"));
+                _notification.Show(_resource.GetResourceValue("EntityDeleting"), string.Format(_resource.GetResourceValue("GroupRecycled"), Title));
             }
             else
             {
-                await _dialog.ShowMessage(_resource.GetResourceValue("GroupDeletingConfirmation"), _resource.GetResourceValue("EntityDeleteTitle"),
+                await _dialog.ShowMessage(
+                    string.Format(_resource.GetResourceValue("GroupDeletingConfirmation"), Title), 
+                    _resource.GetResourceValue("EntityDeleting"),
                     _resource.GetResourceValue("EntityDeleteActionButton"),
                     _resource.GetResourceValue("EntityDeleteCancelButton"),
                     async isOk =>

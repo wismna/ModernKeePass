@@ -32,6 +32,7 @@
                 public static string SpacePattern => nameof(SpacePattern);
                 public static string SpecialPattern => nameof(SpecialPattern);
                 public static string BracketsPattern => nameof(BracketsPattern);
+                public static string PasswordLength => nameof(PasswordLength);
             }
         }
     }

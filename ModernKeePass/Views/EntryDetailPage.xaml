@@ -418,7 +418,7 @@
                                         </interactivity:Interaction.Behaviors>
                                     </local:TextBoxWithButton>
                                     <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
-                                    <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" IsEnabled="{Binding IsRevealPasswordEnabled}" />
+                                    <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" />
                                     <TextBlock Text="URL" Style="{StaticResource EntryTextBlockStyle}"/>
                                     <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
                                         <interactivity:Interaction.Behaviors>

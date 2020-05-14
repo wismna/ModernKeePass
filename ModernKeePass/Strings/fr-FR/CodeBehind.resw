@@ -147,35 +147,17 @@
   <data name="EntityRestoredTitle" xml:space="preserve">
     <value>Restauré</value>
   </data>
-  <data name="EntryDeleted" xml:space="preserve">
-    <value>Entrée supprimée définitivement</value>
-  </data>
   <data name="EntryDeletingConfirmation" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir supprimer cette entrée ?</value>
+    <value>Êtes-vous sûr de vouloir supprimer {0} ?</value>
   </data>
   <data name="EntryRecycled" xml:space="preserve">
-    <value>Entrée placée dans la Corbeille</value>
-  </data>
-  <data name="EntryRecyclingConfirmation" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir placer cette entrée dans la Corbeille ?</value>
-  </data>
-  <data name="EntryRestored" xml:space="preserve">
-    <value>Entrée replacée dans son groupe d'origine</value>
-  </data>
-  <data name="GroupDeleted" xml:space="preserve">
-    <value>Groupe supprimé définitivement</value>
+    <value>{0} placé dans la Corbeille</value>
   </data>
   <data name="GroupDeletingConfirmation" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir supprimer ce groupe et toutes ses entrées ?</value>
+    <value>Êtes-vous sûr de vouloir supprimer {0} et toutes ses entrées ?</value>
   </data>
   <data name="GroupRecycled" xml:space="preserve">
-    <value>Groupe placé dans la Corbeille</value>
-  </data>
-  <data name="GroupRecyclingConfirmation" xml:space="preserve">
-    <value>Êtes-vous sûr de vouloir envoyer ce groupe et toutes ses entrées vers la Corbeille ?</value>
-  </data>
-  <data name="GroupRestored" xml:space="preserve">
-    <value>Groupe replacé à sa place originelle</value>
+    <value>{0} placé dans la Corbeille</value>
   </data>
   <data name="MainMenuItemAbout" xml:space="preserve">
     <value>A propos</value>

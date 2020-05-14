@@ -41,9 +41,17 @@ namespace ModernKeePass.ViewModels
 {
     public class EntryDetailVm : ViewModelBase
     {
-        public bool IsRevealPasswordEnabled => !string.IsNullOrEmpty(Password);
         public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
         public double PasswordComplexityIndicator => _mediator.Send(new EstimatePasswordComplexityQuery {Password = Password}).GetAwaiter().GetResult();
+        public double PasswordLength
+        {
+            get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.PasswordLength, 25); }
+            set
+            {
+                _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.PasswordLength, value);
+                RaisePropertyChanged(nameof(PasswordLength));
+            }
+        }
         public bool UpperCasePatternSelected
         {
             get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.UpperCasePattern, true); }
@@ -126,7 +134,7 @@ namespace ModernKeePass.ViewModels
                     }));
                     Attachments.CollectionChanged += (sender, args) =>
                     {
-                        SaveCommand.RaiseCanExecuteChanged();
+                        UpdateDirtyStatus(true);
                     };
                     RaisePropertyChanged(string.Empty);
                 }
@@ -154,11 +162,6 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public double PasswordLength
-        {
-            get { return _passwordLength; }
-            set { Set(() => PasswordLength, ref _passwordLength, value); }
-        }
 
         public string Title
         {
@@ -278,8 +281,7 @@ namespace ModernKeePass.ViewModels
                 SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor, false).Wait();
             }
         }
-
-
+        
         public bool IsEditMode
         {
             get { return IsCurrentEntry && _isEditMode; }
@@ -320,7 +322,7 @@ namespace ModernKeePass.ViewModels
         private int _additionalFieldSelectedIndex = -1;
         private bool _isEditMode;
         private bool _isRevealPassword;
-        private double _passwordLength = 25;
+        private bool _isDirty;
 
         public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ISettingsProxy settings)
         {
@@ -360,7 +362,11 @@ namespace ModernKeePass.ViewModels
             {
                 History.Add(entry);
             }
-            History.CollectionChanged += (sender, args) => SaveCommand.RaiseCanExecuteChanged();
+            History.CollectionChanged += (sender, args) =>
+            {
+                SelectedIndex = 0;
+                SaveCommand.RaiseCanExecuteChanged();
+            };
         }
 
         public async Task GeneratePassword()
@@ -378,12 +384,11 @@ namespace ModernKeePass.ViewModels
                 UnderscorePatternSelected = UnderscorePatternSelected,
                 UpperCasePatternSelected = UpperCasePatternSelected
             });
-            RaisePropertyChanged(nameof(IsRevealPasswordEnabled));
         }
 
         public async Task AddHistory()
         {
-            if (Database.IsDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
+            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
         }
         
         public void GoToGroup(string groupId)
@@ -401,7 +406,7 @@ namespace ModernKeePass.ViewModels
         private async Task SetFieldValue(string fieldName, object value, bool isProtected)
         {
             await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value, IsProtected = isProtected});
-            SaveCommand.RaiseCanExecuteChanged();
+            UpdateDirtyStatus(true);
         }
 
         private async Task UpdateFieldName(string oldName, string newName, string value, bool isProtected)
@@ -422,7 +427,7 @@ namespace ModernKeePass.ViewModels
             if (!string.IsNullOrEmpty(field.Name))
             {
                 await _mediator.Send(new DeleteFieldCommand {EntryId = Id, FieldName = field.Name});
-                SaveCommand.RaiseCanExecuteChanged();
+                UpdateDirtyStatus(true);
             }
         }
 
@@ -433,12 +438,13 @@ namespace ModernKeePass.ViewModels
                 if (IsRecycleOnDelete)
                 {
                     await Delete();
-                    _notification.Show(_resource.GetResourceValue("EntryRecyclingConfirmation"), _resource.GetResourceValue("EntryRecycled"));
+                    _notification.Show(_resource.GetResourceValue("EntityDeleting"), string.Format(_resource.GetResourceValue("EntryRecycled"), Title));
                 }
                 else
                 {
-                    await _dialog.ShowMessage(_resource.GetResourceValue("EntryDeletingConfirmation"),
-                        _resource.GetResourceValue("EntityDeleteTitle"),
+                    await _dialog.ShowMessage(
+                        string.Format(_resource.GetResourceValue("EntryDeletingConfirmation"), Title),
+                        _resource.GetResourceValue("EntityDeleting"),
                         _resource.GetResourceValue("EntityDeleteActionButton"),
                         _resource.GetResourceValue("EntityDeleteCancelButton"),
                         async isOk =>
@@ -449,14 +455,14 @@ namespace ModernKeePass.ViewModels
             }
             else
             {
-                await _dialog.ShowMessage(_resource.GetResourceValue("HistoryDeleteDescription"), _resource.GetResourceValue("HistoryDeleteTitle"),
+                await _dialog.ShowMessage(_resource.GetResourceValue("HistoryDeleteDescription"), 
+                    _resource.GetResourceValue("HistoryDeleteTitle"),
                     _resource.GetResourceValue("EntityDeleteActionButton"),
                     _resource.GetResourceValue("EntityDeleteCancelButton"), async isOk =>
                     {
                         if (!isOk) return;
                         await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
                         History.RemoveAt(SelectedIndex);
-                        SelectedIndex = 0;
                     });
             }
         }
@@ -465,7 +471,6 @@ namespace ModernKeePass.ViewModels
         {
             await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
             History.Insert(0, SelectedItem);
-            SelectedIndex = 0;
         }
         
         private async Task SaveChanges()
@@ -479,7 +484,7 @@ namespace ModernKeePass.ViewModels
             {
                 MessengerInstance.Send(new SaveErrorMessage { Message = e.Message });
             }
-            SaveCommand.RaiseCanExecuteChanged();
+            UpdateDirtyStatus(false);
         }
 
         private async Task Delete()
@@ -490,6 +495,7 @@ namespace ModernKeePass.ViewModels
                 ParentGroupId = SelectedItem.ParentGroupId,
                 RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
             });
+            _isDirty = false;
             _navigation.GoBack();
         }
 
@@ -511,15 +517,18 @@ namespace ModernKeePass.ViewModels
             var contents = await _file.ReadBinaryFile(fileInfo.Id);
             await _mediator.Send(new AddAttachmentCommand { Entry = SelectedItem, AttachmentName = fileInfo.Name, AttachmentContent = contents });
             Attachments.Add(new Attachment { Name = fileInfo.Name, Content = contents });
-            SaveCommand.RaiseCanExecuteChanged();
         }
 
         private async Task DeleteAttachment(Attachment attachment)
         {
             await _mediator.Send(new DeleteAttachmentCommand { Entry = SelectedItem, AttachmentName = attachment.Name });
             Attachments.Remove(attachment);
-            SaveCommand.RaiseCanExecuteChanged();
         }
 
+        private void UpdateDirtyStatus(bool isDirty)
+        {
+            SaveCommand.RaiseCanExecuteChanged();
+            _isDirty = isDirty;
+        }
     }
 }
