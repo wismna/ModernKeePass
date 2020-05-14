@@ -15,7 +15,7 @@ namespace ModernKeePass.Domain.Enums
         public const string BackgroundColor = nameof(BackgroundColor);
         public const string ForegroundColor = nameof(ForegroundColor);
 
-        public static IEnumerable<string> StandardFieldNames = new[]
+        public static IEnumerable<string> StandardFieldNames => new[]
         {
             Title,
             UserName,
