@@ -83,7 +83,6 @@
                             AutomationProperties.AutomationId="ItemGridView"
                             AutomationProperties.Name="Entries"
                             TabIndex="1"
-                            Margin="10,0,0,0"
                             SelectionChanged="entries_SelectionChanged"
                             IsSynchronizedWithCurrentItem="False" 
                             BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
