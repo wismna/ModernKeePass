@@ -18,7 +18,7 @@ namespace ModernKeePass.Infrastructure
         public static IServiceCollection AddInfrastructureKeePass(this IServiceCollection services)
         {
             services.AddSingleton(typeof(IDatabaseProxy), typeof(KeePassDatabaseClient));
-            services.AddTransient(typeof(ICryptographyClient), typeof(KeePassCryptographyClient));
+            services.AddTransient(typeof(IDatabaseSettingsProxy), typeof(KeePassDatabaseSettingsProxy));
             services.AddTransient(typeof(ICredentialsProxy), typeof(KeePassCredentialsClient));
             return services;
         }
@@ -29,6 +29,7 @@ namespace ModernKeePass.Infrastructure
             services.AddTransient(typeof(ISettingsProxy), typeof(UwpSettingsClient));
             services.AddTransient(typeof(IRecentProxy), typeof(UwpRecentFilesClient));
             services.AddTransient(typeof(IResourceProxy), typeof(UwpResourceClient));
+            services.AddTransient(typeof(ICryptographyClient), typeof(UwpCryptographyClient));
             services.AddTransient(typeof(INotificationService), typeof(ToastNotificationService));
             return services;
         }

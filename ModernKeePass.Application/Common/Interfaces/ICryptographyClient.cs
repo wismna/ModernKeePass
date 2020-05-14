@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using ModernKeePass.Domain.Entities;
+﻿using System.Threading.Tasks;
 
 namespace ModernKeePass.Application.Common.Interfaces
 {
     public interface ICryptographyClient
     {
-        IEnumerable<BaseEntity> Ciphers { get; }
-        IEnumerable<BaseEntity> KeyDerivations { get; }
-        IEnumerable<string> CompressionAlgorithms { get; }
+        Task<string> Protect(string value);
+        Task<string> UnProtect(string value);
     }
 }

@@ -55,6 +55,7 @@ namespace ModernKeePass.ViewModels
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IDialogService>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<INavigationService>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<INotificationService>());
+                SimpleIoc.Default.Register(() => App.Services.GetRequiredService<ICryptographyClient>());
             }
             
             SimpleIoc.Default.Register<SecurityVm>();

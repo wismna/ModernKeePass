@@ -561,4 +561,7 @@
   <data name="SettingsCopyExpiration.Text" xml:space="preserve">
     <value>Supprimer la valeur copiée dans le presse papier après combien de secondes ?</value>
   </data>
+  <data name="EntryAddAdditionalField.Text" xml:space="preserve">
+    <value>Ajouter un champ</value>
+  </data>
 </root>

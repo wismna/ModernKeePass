@@ -25,12 +25,13 @@ namespace ModernKeePass.Application.Group.Commands.DeleteGroup
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
+                var isRecycleBin = message.GroupId.Equals(_database.RecycleBinId);
                 if (_database.IsRecycleBinEnabled && (string.IsNullOrEmpty(_database.RecycleBinId) || _database.RecycleBinId.Equals(Constants.EmptyId)))
                 {
                     _database.CreateGroup(_database.RootGroupId, message.RecycleBinName, true);
                 }
 
-                if (!_database.IsRecycleBinEnabled || message.ParentGroupId.Equals(_database.RecycleBinId))
+                if (!_database.IsRecycleBinEnabled || message.ParentGroupId.Equals(_database.RecycleBinId) || isRecycleBin)
                 {
                     _database.DeleteEntity(message.GroupId);
                 }
@@ -40,6 +41,7 @@ namespace ModernKeePass.Application.Group.Commands.DeleteGroup
                 }
 
                 await _database.RemoveGroup(message.ParentGroupId, message.GroupId);
+                if (isRecycleBin) _database.RecycleBinId = Constants.EmptyId;
             }
         }
     }

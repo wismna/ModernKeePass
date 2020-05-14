@@ -9,16 +9,16 @@ namespace ModernKeePass.Application.Parameters.Queries.GetCompressions
     {
         public class GetCompressionsQueryHandler : IRequestHandler<GetCompressionsQuery, IEnumerable<string>>
         {
-            private readonly ICryptographyClient _cryptography;
+            private readonly IDatabaseSettingsProxy _databaseSettings;
 
-            public GetCompressionsQueryHandler(ICryptographyClient cryptography)
+            public GetCompressionsQueryHandler(IDatabaseSettingsProxy databaseSettings)
             {
-                _cryptography = cryptography;
+                _databaseSettings = databaseSettings;
             }
 
             public IEnumerable<string> Handle(GetCompressionsQuery message)
             {
-                return _cryptography.CompressionAlgorithms.OrderBy(c => c);
+                return _databaseSettings.CompressionAlgorithms.OrderBy(c => c);
             }
         }
     }

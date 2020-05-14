@@ -270,9 +270,6 @@
   <data name="CompositeKeyFileNameSuggestion" xml:space="preserve">
     <value>Clé</value>
   </data>
-  <data name="EntryAddAdditionalField.Text" xml:space="preserve">
-    <value>Ajouter un champ</value>
-  </data>
   <data name="DatabaseTooBigDescription" xml:space="preserve">
     <value>La base de données est trop grosse pour sauvegarder automatiquement lors de la suspension. Pensez à bien sauvegarder vos changements avant de fermer l'app !</value>
   </data>

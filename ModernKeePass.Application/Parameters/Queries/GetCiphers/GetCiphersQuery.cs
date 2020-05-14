@@ -10,16 +10,16 @@ namespace ModernKeePass.Application.Parameters.Queries.GetCiphers
     {
         public class GetCiphersQueryHandler: IRequestHandler<GetCiphersQuery, IEnumerable<CipherVm>>
         {
-            private readonly ICryptographyClient _cryptography;
+            private readonly IDatabaseSettingsProxy _databaseSettings;
 
-            public GetCiphersQueryHandler(ICryptographyClient cryptography)
+            public GetCiphersQueryHandler(IDatabaseSettingsProxy databaseSettings)
             {
-                _cryptography = cryptography;
+                _databaseSettings = databaseSettings;
             }
 
             public IEnumerable<CipherVm> Handle(GetCiphersQuery message)
             {
-                return _cryptography.Ciphers.Select(c => new CipherVm
+                return _databaseSettings.Ciphers.Select(c => new CipherVm
                 {
                     Id = c.Id,
                     Name = c.Name

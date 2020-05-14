@@ -9,7 +9,7 @@ using ModernKeePassLib.Cryptography.KeyDerivation;
 
 namespace ModernKeePass.Infrastructure.KeePass
 {
-    public class KeePassCryptographyClient: ICryptographyClient
+    public class KeePassDatabaseSettingsProxy: IDatabaseSettingsProxy
     {
         public IEnumerable<BaseEntity> Ciphers
         {

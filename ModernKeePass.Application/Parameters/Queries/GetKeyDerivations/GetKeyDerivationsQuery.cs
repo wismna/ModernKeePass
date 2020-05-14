@@ -10,16 +10,16 @@ namespace ModernKeePass.Application.Parameters.Queries.GetKeyDerivations
     {
         public class GetKeyDerivationsQueryHandler : IRequestHandler<GetKeyDerivationsQuery, IEnumerable<KeyDerivationVm>>
         {
-            private readonly ICryptographyClient _cryptography;
+            private readonly IDatabaseSettingsProxy _databaseSettings;
 
-            public GetKeyDerivationsQueryHandler(ICryptographyClient cryptography)
+            public GetKeyDerivationsQueryHandler(IDatabaseSettingsProxy databaseSettings)
             {
-                _cryptography = cryptography;
+                _databaseSettings = databaseSettings;
             }
 
             public IEnumerable<KeyDerivationVm> Handle(GetKeyDerivationsQuery message)
             {
-                return _cryptography.KeyDerivations.Select(c => new KeyDerivationVm
+                return _databaseSettings.KeyDerivations.Select(c => new KeyDerivationVm
                 {
                     Id = c.Id,
                     Name = c.Name
