@@ -29,7 +29,7 @@ namespace ModernKeePass.Application.Group.Commands.CreateGroup
 
                 var group = _database.CreateGroup(message.ParentGroup.Id, message.Name, message.IsRecycleBin);
                 var groupVm = _mapper.Map<GroupVm>(group);
-                message.ParentGroup.SubGroups.Add(groupVm);
+                message.ParentGroup.Groups.Add(groupVm);
                 return groupVm;
             }
         }

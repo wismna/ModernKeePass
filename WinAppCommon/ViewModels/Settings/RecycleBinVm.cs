@@ -51,7 +51,7 @@ namespace ModernKeePass.ViewModels.Settings
             _mediator = mediator;
             _database = _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
             var rootGroup = _mediator.Send(new GetGroupQuery { Id = _database.RootGroupId }).GetAwaiter().GetResult();
-            Groups = new ObservableCollection<IEntityVm>(rootGroup.SubGroups);
+            Groups = new ObservableCollection<IEntityVm>(rootGroup.Groups);
         }
     }
 }

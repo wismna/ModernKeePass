@@ -39,29 +39,20 @@ namespace ModernKeePass.Application.Entry.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<EntryEntity, EntryVm>()
-                .ForMember(d => d.ParentGroupId, opts => opts.MapFrom(s => s.ParentId))
-                .ForMember(d => d.ParentGroupName, opts => opts.MapFrom(s => s.ParentName))
-                .ForMember(d => d.Id, opts => opts.MapFrom(s => s.Id))
                 .ForMember(d => d.Title, opts => opts.MapFrom(s => s.Fields.FirstOrDefault(f => 
-                    f.Name.Equals(EntryFieldName.Title, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Title, IsProtected = true } ))
+                    f.Name.Equals(EntryFieldName.Title, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Title, IsProtected = false } ))
                 .ForMember(d => d.Username, opts => opts.MapFrom(s => s.Fields.FirstOrDefault(f => 
-                    f.Name.Equals(EntryFieldName.UserName, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.UserName, IsProtected = true } ))
+                    f.Name.Equals(EntryFieldName.UserName, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.UserName, IsProtected = false } ))
                 .ForMember(d => d.Password, opts => opts.MapFrom(s => s.Fields.FirstOrDefault(f => 
                     f.Name.Equals(EntryFieldName.Password, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Password, IsProtected = true } ))
                 .ForMember(d => d.Url, opts => opts.MapFrom(s => s.Fields.FirstOrDefault(f => 
-                    f.Name.Equals(EntryFieldName.Url, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Url, IsProtected = true } ))
+                    f.Name.Equals(EntryFieldName.Url, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Url, IsProtected = false } ))
                 .ForMember(d => d.Notes, opts => opts.MapFrom(s => s.Fields.FirstOrDefault(f => 
-                    f.Name.Equals(EntryFieldName.Notes, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Notes, IsProtected = true } ))
+                    f.Name.Equals(EntryFieldName.Notes, StringComparison.OrdinalIgnoreCase)) ?? new FieldEntity { Name = EntryFieldName.Notes, IsProtected = false } ))
                 .ForMember(d => d.AdditionalFields, opts => opts.MapFrom(s => 
                     s.Fields.Where(f => !EntryFieldName.StandardFieldNames.Contains(f.Name, StringComparer.OrdinalIgnoreCase))))
                 .ForMember(d => d.History, opts => opts.MapFrom(s => s.History.Reverse()))
-                .ForMember(d => d.HasExpirationDate, opts => opts.MapFrom(s => s.HasExpirationDate))
-                .ForMember(d => d.ExpirationDate, opts => opts.MapFrom(s => s.ExpirationDate))
-                .ForMember(d => d.ModificationDate, opts => opts.MapFrom(s => s.LastModificationDate))
-                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.HasExpirationDate && s.ExpirationDate < DateTimeOffset.Now ? Icon.ReportHacked : s.Icon))
-                .ForMember(d => d.ForegroundColor, opts => opts.MapFrom(s => s.ForegroundColor))
-                .ForMember(d => d.BackgroundColor, opts => opts.MapFrom(s => s.BackgroundColor))
-                .ForMember(d => d.Attachments, opts => opts.MapFrom(s => s.Attachments));
+                .ForMember(d => d.Icon, opts => opts.MapFrom(s => s.HasExpirationDate && s.ExpirationDate < DateTimeOffset.Now ? Icon.ReportHacked : s.Icon));
         }
     }
 }

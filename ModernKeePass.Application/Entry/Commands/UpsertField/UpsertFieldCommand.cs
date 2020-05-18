@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Threading.Tasks;
+using MediatR;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Exceptions;
 
@@ -11,7 +12,7 @@ namespace ModernKeePass.Application.Entry.Commands.UpsertField
         public object FieldValue { get; set; }
         public bool IsProtected { get; set; } = true;
 
-        public class UpsertFieldCommandHandler : IRequestHandler<UpsertFieldCommand>
+        public class UpsertFieldCommandHandler : IAsyncRequestHandler<UpsertFieldCommand>
         {
             private readonly IDatabaseProxy _database;
 
@@ -20,11 +21,11 @@ namespace ModernKeePass.Application.Entry.Commands.UpsertField
                 _database = database;
             }
 
-            public void Handle(UpsertFieldCommand message)
+            public async Task Handle(UpsertFieldCommand message)
             {
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
-                _database.UpdateEntry(message.EntryId, message.FieldName, message.FieldValue, message.IsProtected);
+                await _database.UpdateEntry(message.EntryId, message.FieldName, message.FieldValue, message.IsProtected);
             }
         }
     }

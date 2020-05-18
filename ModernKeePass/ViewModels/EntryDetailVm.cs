@@ -126,7 +126,12 @@ namespace ModernKeePass.ViewModels
                 {
                     AdditionalFields =
                         new ObservableCollection<EntryFieldVm>(
-                            SelectedItem.AdditionalFields.Select(f => new EntryFieldVm(f.Name, f.Value, f.IsProtected)));
+                            SelectedItem.AdditionalFields.Select(f =>
+                            {
+                                var field = new EntryFieldVm(_cryptography);
+                                field.Initialize(f.Name, f.Value, f.IsProtected);
+                                return field;
+                            }));
                     Attachments = new ObservableCollection<Attachment>(SelectedItem.Attachments.Select(f => new Attachment
                     {
                         Name = f.Key,
@@ -161,8 +166,7 @@ namespace ModernKeePass.ViewModels
                 DeleteAdditionalField.RaiseCanExecuteChanged();
             }
         }
-
-
+        
         public string Title
         {
             get { return SelectedItem.Title.Value; }
@@ -186,11 +190,12 @@ namespace ModernKeePass.ViewModels
 
         public string Password
         {
-            get { return SelectedItem.Password.Value; }
+            get { return _cryptography.UnProtect(SelectedItem.Password.Value).GetAwaiter().GetResult(); }
             set
             {
-                SelectedItem.Password.Value = value;
-                SetFieldValue(nameof(Password), value, true).Wait();
+                var protectedPassword = _cryptography.Protect(value).GetAwaiter().GetResult();
+                SelectedItem.Password.Value = protectedPassword;
+                SetFieldValue(nameof(Password), protectedPassword, true).Wait();
                 RaisePropertyChanged(nameof(Password));
                 RaisePropertyChanged(nameof(PasswordComplexityIndicator));
             }
@@ -316,6 +321,7 @@ namespace ModernKeePass.ViewModels
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
         private readonly ISettingsProxy _settings;
+        private readonly ICryptographyClient _cryptography;
         private GroupVm _parent;
         private EntryVm _selectedItem;
         private int _selectedIndex;
@@ -324,7 +330,7 @@ namespace ModernKeePass.ViewModels
         private bool _isRevealPassword;
         private bool _isDirty;
 
-        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ISettingsProxy settings)
+        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ISettingsProxy settings, ICryptographyClient cryptography)
         {
             _mediator = mediator;
             _navigation = navigation;
@@ -333,6 +339,7 @@ namespace ModernKeePass.ViewModels
             _notification = notification;
             _file = file;
             _settings = settings;
+            _cryptography = cryptography;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             GeneratePasswordCommand = new RelayCommand(async () => await GeneratePassword());
@@ -417,7 +424,7 @@ namespace ModernKeePass.ViewModels
         
         private void AddField()
         {
-            AdditionalFields.Add(new EntryFieldVm(string.Empty, string.Empty, false));
+            AdditionalFields.Add(new EntryFieldVm(_cryptography));
             AdditionalFieldSelectedIndex = AdditionalFields.Count - 1;
         }
 

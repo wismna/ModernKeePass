@@ -26,7 +26,7 @@ namespace ModernKeePass.Application.Group.Commands.MoveGroup
                 if (!_database.IsOpen) throw new DatabaseClosedException();
 
                 await _database.MoveGroup(message.ParentGroup.Id, message.Group.Id, message.Index);
-                message.ParentGroup.SubGroups.Insert(message.Index, message.Group);
+                message.ParentGroup.Groups.Insert(message.Index, message.Group);
             }
         }
     }

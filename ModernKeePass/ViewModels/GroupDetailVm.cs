@@ -140,7 +140,7 @@ namespace ModernKeePass.ViewModels
 
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
-            Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
+            Groups = new ObservableCollection<GroupVm>(_group.Groups);
             Groups.CollectionChanged += Groups_CollectionChanged;
         }
 
@@ -222,7 +222,7 @@ namespace ModernKeePass.ViewModels
             {
                 case NotifyCollectionChangedAction.Remove:
                     var oldIndex = e.OldStartingIndex;
-                    _reorderedGroup = _group.SubGroups[oldIndex];
+                    _reorderedGroup = _group.Groups[oldIndex];
                     break;
                 case NotifyCollectionChangedAction.Add:
                     if (_reorderedGroup == null)
@@ -251,7 +251,7 @@ namespace ModernKeePass.ViewModels
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
-            Groups = new ObservableCollection<GroupVm>(_group.SubGroups);
+            Groups = new ObservableCollection<GroupVm>(_group.Groups);
             RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
         }

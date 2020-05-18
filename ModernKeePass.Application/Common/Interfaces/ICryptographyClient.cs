@@ -6,5 +6,6 @@ namespace ModernKeePass.Application.Common.Interfaces
     {
         Task<string> Protect(string value);
         Task<string> UnProtect(string value);
+        byte[] Random(uint length);
     }
 }

@@ -25,6 +25,7 @@ namespace ModernKeePass.Infrastructure.KeePass
     {
         private readonly IMapper _mapper;
         private readonly IDateTime _dateTime;
+        private readonly ICryptographyClient _cryptography;
         private readonly PwDatabase _pwDatabase = new PwDatabase();
         private Credentials _credentials;
         // Flag: Has Dispose already been called?
@@ -94,10 +95,11 @@ namespace ModernKeePass.Infrastructure.KeePass
             set { _pwDatabase.Compression = (PwCompressionAlgorithm) Enum.Parse(typeof(PwCompressionAlgorithm), value); }
         }
 
-        public KeePassDatabaseClient(IMapper mapper, IDateTime dateTime)
+        public KeePassDatabaseClient(IMapper mapper, IDateTime dateTime, ICryptographyClient cryptography)
         {
             _mapper = mapper;
             _dateTime = dateTime;
+            _cryptography = cryptography;
         }
 
         public async Task Open(byte[] file, Credentials credentials)
@@ -240,7 +242,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             _pwDatabase.DeletedObjects.Add(new PwDeletedObject(BuildIdFromString(entityId), _dateTime.Now));
         }
 
-        public void UpdateEntry(string entryId, string fieldName, object fieldValue, bool isProtected)
+        public async Task UpdateEntry(string entryId, string fieldName, object fieldValue, bool isProtected)
         {
             var pwEntry = _pwDatabase.RootGroup.FindEntry(BuildIdFromString(entryId), true);
 
@@ -251,7 +253,8 @@ namespace ModernKeePass.Infrastructure.KeePass
                 case EntryFieldName.Password:
                 case EntryFieldName.Notes:
                 case EntryFieldName.Url:
-                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(isProtected, fieldValue.ToString()));
+                    var unprotectedFieldValue = isProtected ? await _cryptography.UnProtect(fieldValue.ToString()) : fieldValue.ToString();
+                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(isProtected, unprotectedFieldValue));
                     break;
                 case EntryFieldName.HasExpirationDate:
                     pwEntry.Expires = (bool)fieldValue;
@@ -268,8 +271,9 @@ namespace ModernKeePass.Infrastructure.KeePass
                 case EntryFieldName.ForegroundColor:
                     pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
-                default: 
-                    pwEntry.Strings.Set(fieldName, new ProtectedString(isProtected, fieldValue.ToString()));
+                default:
+                    var unprotectedAdditionalFieldValue = isProtected ? await _cryptography.UnProtect(fieldValue.ToString()) : fieldValue.ToString();
+                    pwEntry.Strings.Set(fieldName, new ProtectedString(isProtected, unprotectedAdditionalFieldValue));
                     break;
             }
         }
@@ -394,7 +398,7 @@ namespace ModernKeePass.Infrastructure.KeePass
             {
                 Id = g.Uuid.ToHexString(),
                 Name = g.Name,
-                ParentName = g.ParentGroup?.Name
+                ParentGroupName = g.ParentGroup?.Name
             });
             return groups;
         }

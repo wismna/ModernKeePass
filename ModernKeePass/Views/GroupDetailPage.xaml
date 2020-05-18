@@ -128,7 +128,7 @@
                                                     <MenuFlyoutItem x:Uid="EntryItemCopyPassword">
                                                         <interactivity:Interaction.Behaviors>
                                                             <core:EventTriggerBehavior EventName="Click">
-                                                                <actions:ClipboardAction Text="{Binding Password}" />
+                                                                <actions:ClipboardAction Text="{Binding Password}" IsProtected="True" />
                                                                 <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Title}" />
                                                             </core:EventTriggerBehavior>
                                                         </interactivity:Interaction.Behaviors>

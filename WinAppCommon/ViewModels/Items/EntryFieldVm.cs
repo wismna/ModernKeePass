@@ -1,12 +1,14 @@
 ﻿using System.Linq;
 using GalaSoft.MvvmLight;
 using Messages;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Domain.Enums;
 
 namespace ModernKeePass.ViewModels.ListItems
 {
     public class EntryFieldVm: ViewModelBase
     {
+        private readonly ICryptographyClient _cryptography;
         private string _name;
         private string _value;
         private bool _isProtected;
@@ -24,7 +26,10 @@ namespace ModernKeePass.ViewModels.ListItems
 
         public string Value
         {
-            get { return _value; }
+            get
+            {
+                return IsProtected? _cryptography.UnProtect(_value).GetAwaiter().GetResult() : _value;
+            }
             set
             {
                 MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = value, IsProtected = IsProtected });
@@ -41,7 +46,12 @@ namespace ModernKeePass.ViewModels.ListItems
             }
         }
         
-        public EntryFieldVm(string fieldName, string fieldValue, bool isProtected)
+        public EntryFieldVm(ICryptographyClient cryptography)
+        {
+            _cryptography = cryptography;
+        }
+
+        public void Initialize(string fieldName, string fieldValue, bool isProtected)
         {
             _name = fieldName;
             _value = fieldValue;
