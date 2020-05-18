@@ -10,6 +10,7 @@ namespace ModernKeePass.Application.Common.Interfaces
         Task<FileInfo> CreateFile(string name, string extension, string description, bool addToRecent);
         Task<byte[]> ReadBinaryFile(string path);
         Task<IList<string>> ReadTextFile(string path);
+        Task WriteToLogFile(IEnumerable<string> data);
         Task WriteBinaryContentsToFile(string path, byte[] contents);
         void ReleaseFile(string path);
     }

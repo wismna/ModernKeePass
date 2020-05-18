@@ -32,16 +32,19 @@ namespace ModernKeePass.ViewModels.ListItems
             }
             set
             {
-                MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = value, IsProtected = IsProtected });
-                Set(nameof(Value), ref _value, value);
+                var protectedValue = IsProtected ? _cryptography.Protect(value).GetAwaiter().GetResult() : value;
+                MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = protectedValue, IsProtected = IsProtected });
+                Set(nameof(Value), ref _value, protectedValue);
             }
         }
+
         public bool IsProtected
         {
             get { return _isProtected; }
             set
             {
-                MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = Value, IsProtected = value });
+                if (!string.IsNullOrEmpty(Name))
+                    MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = Value, IsProtected = value });
                 Set(nameof(IsProtected), ref _isProtected, value);
             }
         }

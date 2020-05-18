@@ -93,6 +93,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="DependencyInjection.cs" />
+    <Compile Include="Log\HockeyAppLog.cs" />
     <Compile Include="Models\NavigationItem.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\MainPageFrames\DonatePage.xaml.cs">

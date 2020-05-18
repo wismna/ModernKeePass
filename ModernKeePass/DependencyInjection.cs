@@ -4,8 +4,10 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.HockeyApp;
+using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Common;
 using ModernKeePass.Views;
+using ModernKeePass.Log;
 
 namespace ModernKeePass
 {
@@ -37,6 +39,7 @@ namespace ModernKeePass
 #endif
                 return HockeyClient.Current;
             });
+            services.AddSingleton(typeof(ILogger), typeof(HockeyAppLog));
 
             return services;
         }

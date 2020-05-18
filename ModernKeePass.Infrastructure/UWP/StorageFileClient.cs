@@ -74,6 +74,24 @@ namespace ModernKeePass.Infrastructure.UWP
             return result;
         }
 
+        public async Task WriteToLogFile(IEnumerable<string> data)
+        {
+            var local = ApplicationData.Current.LocalFolder;
+            var logFile = await local.CreateFileAsync("LogFile.txt", CreationCollisionOption.OpenIfExists).AsTask();
+
+            if (logFile != null)
+            {
+                try
+                {
+                    await FileIO.AppendLinesAsync(logFile, data);
+                }
+                catch (Exception)
+                { 
+                    // If another option is available to the app to log error(i.e. Azure Mobile Service, etc...) then try that here
+                }
+            }
+        }
+
         public void ReleaseFile(string path)
         {
             StorageApplicationPermissions.FutureAccessList.Remove(path);

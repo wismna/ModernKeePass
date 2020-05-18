@@ -46,16 +46,5 @@ namespace ModernKeePass.Views.UserControls
                 });
             }
         }
-
-        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
-        {
-            ComboBox.SelectedItem = Colors.Find(c => c.ColorBrush.Color.Equals(SelectedColor.Color));
-        }
-
-        private void Selector_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var selectedItem = ComboBox.SelectedItem as Color? ?? new Color();
-            SelectedColor = selectedItem.ColorBrush;
-        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using MediatR;
 using System.Threading.Tasks;
 using ModernKeePass.Application.Common.Interfaces;
@@ -14,11 +16,13 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
         {
             private readonly IDatabaseProxy _database;
             private readonly IFileProxy _file;
+            private readonly ILogger _logger;
 
-            public SaveDatabaseCommandHandler(IDatabaseProxy database, IFileProxy file)
+            public SaveDatabaseCommandHandler(IDatabaseProxy database, IFileProxy file, ILogger logger)
             {
                 _database = database;
                 _file = file;
+                _logger = logger;
             }
 
             public async Task Handle(SaveDatabaseCommand message)
@@ -27,6 +31,7 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 
                 try
                 {
+                    var timeToSave = Stopwatch.StartNew();
                     if (!string.IsNullOrEmpty(message.FilePath))
                     {
                         _database.FileAccessToken = message.FilePath;
@@ -40,6 +45,13 @@ namespace ModernKeePass.Application.Database.Commands.SaveDatabase
 
                     // Transactional write to file
                     await _file.WriteBinaryContentsToFile(_database.FileAccessToken, contents);
+                    timeToSave.Stop();
+
+                    _logger.LogTrace("SaveCommand", new Dictionary<string, string>
+                    {
+                        { "duration", timeToSave.ElapsedMilliseconds.ToString()},
+                        { "size", _database.Size.ToString()}
+                    });
                 }
                 catch (Exception exception)
                 {

@@ -7,8 +7,8 @@
     mc:Ignorable="d">
     <ComboBox x:Name="ComboBox" 
               ItemsSource="{Binding Colors, ElementName=UserControl}" 
-              SelectionChanged="Selector_OnSelectionChanged" 
-              Loaded="ComboBox_Loaded" 
+              SelectedValue="{Binding SelectedColor, ElementName=UserControl, Mode=TwoWay}" 
+              SelectedValuePath="ColorBrush"
               IsEnabled="{Binding IsEnabled, ElementName=UserControl}">
         <ComboBox.ItemTemplate>
             <DataTemplate>

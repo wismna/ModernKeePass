@@ -321,7 +321,6 @@
                                             <Flyout>
                                                 <interactivity:Interaction.Behaviors>
                                                     <core:DataTriggerBehavior Binding="{Binding Password}" ComparisonCondition="NotEqual" Value="" >
-                                                        <!--<actions:CloseFlyoutAction />-->
                                                         <core:CallMethodAction MethodName="Hide" />
                                                     </core:DataTriggerBehavior>
                                                 </interactivity:Interaction.Behaviors>
@@ -506,12 +505,12 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <TextBox Grid.Row="0" Text="{Binding Name, Mode=TwoWay}" Width="350"
+                                            <TextBox Grid.Row="0" Text="{Binding Path=DataContext.AdditionalFieldName, ElementName=Page, Mode=TwoWay}" Width="350"
                                                      IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
                                             <TextBox Grid.Row="1" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350"  Margin="0,5,0,0"
-                                                     Text="{Binding Value, Mode=TwoWay}"
+                                                     Text="{Binding Path=DataContext.AdditionalFieldValue, ElementName=Page, Mode=TwoWay}"
                                                      IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                            <ToggleSwitch Grid.Row="2" x:Uid="EntryEnableFieldProtection" HorizontalAlignment="Left" IsOn="{Binding IsProtected, Mode=TwoWay}" />
+                                            <ToggleSwitch Grid.Row="2" x:Uid="EntryEnableFieldProtection" HorizontalAlignment="Left" IsOn="{Binding Path=DataContext.AdditionalFieldIsProtected, ElementName=Page, Mode=TwoWay}" />
                                             <Button Grid.Row="2" x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Margin="0,15,0,0" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
                                         </Grid>
                                     </DataTemplate>

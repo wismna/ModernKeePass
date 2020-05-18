@@ -12,27 +12,21 @@ namespace ModernKeePass.Infrastructure.UWP
         public async Task<string> Protect(string value)
         {
             if (string.IsNullOrEmpty(value)) return value;
-            try
-            {
-                // Create a DataProtectionProvider object for the specified descriptor.
-                var provider = new DataProtectionProvider("LOCAL=user");
-                
-                // Encode the plaintext input message to a buffer.
-                var buffMsg = CryptographicBuffer.ConvertStringToBinary(value, BinaryStringEncoding.Utf8);
 
-                // Encrypt the message.
-                var buffProtected = await provider.ProtectAsync(buffMsg).AsTask().ConfigureAwait(false);
-                
-                // Encode buffer to Base64
-                var protectedValue = CryptographicBuffer.EncodeToBase64String(buffProtected);
+            // Create a DataProtectionProvider object for the specified descriptor.
+            var provider = new DataProtectionProvider("LOCAL=user");
+            
+            // Encode the plaintext input message to a buffer.
+            var buffMsg = CryptographicBuffer.ConvertStringToBinary(value, BinaryStringEncoding.Utf8);
 
-                // Return the encrypted string.
-                return protectedValue;
-            }
-            catch (Exception e)
-            {
-                return string.Empty;
-            }
+            // Encrypt the message.
+            var buffProtected = await provider.ProtectAsync(buffMsg).AsTask().ConfigureAwait(false);
+            
+            // Encode buffer to Base64
+            var protectedValue = CryptographicBuffer.EncodeToBase64String(buffProtected);
+
+            // Return the encrypted string.
+            return protectedValue;
         }
 
         public async Task<string> UnProtect(string value)

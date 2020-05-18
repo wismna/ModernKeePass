@@ -38,11 +38,12 @@ namespace ModernKeePass
         private readonly IMediator _mediator;
         private readonly ISettingsProxy _settings;
         private readonly INavigationService _navigation;
-        private readonly IHockeyClient _hockey;
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
         private readonly IMessenger _messenger;
-        
+        private readonly ILogger _log;
+        private readonly IHockeyClient _hockey;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -63,6 +64,7 @@ namespace ModernKeePass
             _settings = Services.GetService<ISettingsProxy>();
             _navigation = Services.GetService<INavigationService>();
             _notification = Services.GetService<INotificationService>();
+            _log = Services.GetService<ILogger>();
             _hockey = Services.GetService<IHockeyClient>();
             _file = Services.GetService<IFileProxy>();
             _messenger = Services.GetService<IMessenger>();
@@ -93,8 +95,7 @@ namespace ModernKeePass
 
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            _hockey.TrackException(e.Exception);
-            _hockey.Flush();
+            _log.LogError(e.Exception);
         }
 
         /// <summary>
@@ -209,8 +210,7 @@ namespace ModernKeePass
             }
             catch (Exception ex)
             {
-                _hockey.TrackException(ex);
-                _hockey.Flush();
+                _log.LogError(ex);
             }
             finally
             {
