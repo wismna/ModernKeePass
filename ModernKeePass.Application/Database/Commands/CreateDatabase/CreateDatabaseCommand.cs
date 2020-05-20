@@ -64,17 +64,17 @@ namespace ModernKeePass.Application.Database.Commands.CreateDatabase
                     _database.UpdateGroup(internetGroup);
 
                     var sample1 = _database.CreateEntry(_database.RootGroupId);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Title, "Sample Entry", false);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.UserName, "Username", false);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Password, "Password", true);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Url, "https://keepass.info/", false);
-                    _database.UpdateEntry(sample1.Id, EntryFieldName.Notes, "You may safely delete this sample", false);
+                    await _database.UpdateEntry(sample1.Id, EntryFieldName.Title, "Sample Entry", false);
+                    await _database.UpdateEntry(sample1.Id, EntryFieldName.UserName, "Username", false);
+                    await _database.UpdateEntry(sample1.Id, EntryFieldName.Password, "Password", true);
+                    await _database.UpdateEntry(sample1.Id, EntryFieldName.Url, "https://keepass.info/", false);
+                    await _database.UpdateEntry(sample1.Id, EntryFieldName.Notes, "You may safely delete this sample", false);
 
                     var sample2 = _database.CreateEntry(_database.RootGroupId);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.Title, "Sample Entry #2", false);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.UserName, "Michael321", false);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.Password, "12345", true);
-                    _database.UpdateEntry(sample2.Id, EntryFieldName.Url, "https://keepass.info/help/kb/testform.html", false);
+                    await _database.UpdateEntry(sample2.Id, EntryFieldName.Title, "Sample Entry #2", false);
+                    await _database.UpdateEntry(sample2.Id, EntryFieldName.UserName, "Michael321", false);
+                    await _database.UpdateEntry(sample2.Id, EntryFieldName.Password, "12345", true);
+                    await _database.UpdateEntry(sample2.Id, EntryFieldName.Url, "https://keepass.info/help/kb/testform.html", false);
                 }
             }
         }

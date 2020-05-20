@@ -210,7 +210,7 @@ namespace ModernKeePass
             }
             catch (Exception ex)
             {
-                _log.LogError(ex);
+                await _log.LogError(ex);
             }
             finally
             {

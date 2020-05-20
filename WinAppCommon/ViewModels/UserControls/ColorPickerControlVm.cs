@@ -10,7 +10,7 @@ namespace ModernKeePass.ViewModels
     {
         private Color _selectedItem;
 
-        public class Color
+        public sealed class Color
         {
             public string ColorName { get; set; }
             public SolidColorBrush ColorBrush { get; set; }
