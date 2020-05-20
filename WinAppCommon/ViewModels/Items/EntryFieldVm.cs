@@ -24,6 +24,8 @@ namespace ModernKeePass.ViewModels.ListItems
             }
         }
 
+        public string DisplayValue => IsProtected? "*****" : _value;
+
         public string Value
         {
             get
@@ -35,6 +37,7 @@ namespace ModernKeePass.ViewModels.ListItems
                 var protectedValue = IsProtected ? _cryptography.Protect(value).GetAwaiter().GetResult() : value;
                 MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = protectedValue, IsProtected = IsProtected });
                 Set(nameof(Value), ref _value, protectedValue);
+                RaisePropertyChanged(nameof(DisplayValue));
             }
         }
 
@@ -43,9 +46,8 @@ namespace ModernKeePass.ViewModels.ListItems
             get { return _isProtected; }
             set
             {
-                if (!string.IsNullOrEmpty(Name))
-                    MessengerInstance.Send(new EntryFieldValueChangedMessage { FieldName = Name, FieldValue = Value, IsProtected = value });
                 Set(nameof(IsProtected), ref _isProtected, value);
+                if (!string.IsNullOrEmpty(Name)) Value = value ? _value : _cryptography.UnProtect(_value).GetAwaiter().GetResult();
             }
         }
         

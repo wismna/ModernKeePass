@@ -35,6 +35,7 @@ using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
 using ModernKeePass.Extensions;
 using ModernKeePass.Models;
+using ModernKeePass.ViewModels.ListItems;
 
 namespace ModernKeePass.ViewModels
 {
@@ -107,7 +108,7 @@ namespace ModernKeePass.ViewModels
         } 
         
         public ObservableCollection<EntryVm> History { get; private set; }
-        public ObservableCollection<FieldVm> AdditionalFields { get; private set; }
+        public ObservableCollection<EntryFieldVm> AdditionalFields { get; private set; }
         public ObservableCollection<Attachment> Attachments { get; private set; }
 
         /// <summary>
@@ -123,7 +124,15 @@ namespace ModernKeePass.ViewModels
                 Set(() => SelectedItem, ref _selectedItem, value, true);
                 if (value != null)
                 {
-                    AdditionalFields = new ObservableCollection<FieldVm>(SelectedItem.AdditionalFields);
+                    //AdditionalFields = new ObservableCollection<FieldVm>(SelectedItem.AdditionalFields);
+                    AdditionalFields =
+                        new ObservableCollection<EntryFieldVm>(
+                            SelectedItem.AdditionalFields.Select(f =>
+                            {
+                                var field = new EntryFieldVm(_cryptography);
+                                field.Initialize(f.Name, f.Value, f.IsProtected);
+                                return field;
+                            }));
 
                     Attachments = new ObservableCollection<Attachment>(SelectedItem.Attachments.Select(f => new Attachment
                     {
@@ -157,13 +166,13 @@ namespace ModernKeePass.ViewModels
             {
                 Set(() => AdditionalFieldSelectedIndex, ref _additionalFieldSelectedIndex, value);
                 DeleteAdditionalField.RaiseCanExecuteChanged();
-                if (value != -1)
+                /*if (value != -1)
                 {
                     var additionalField = AdditionalFields[value];
                     Set(nameof(AdditionalFieldName), ref _additionalFieldName, additionalField.Name);
                     Set(nameof(AdditionalFieldValue), ref _additionalFieldValue, additionalField.IsProtected ? _cryptography.UnProtect(additionalField.Value).GetAwaiter().GetResult() : additionalField.Value);
                     Set(nameof(AdditionalFieldIsProtected), ref _additionalFieldIsProtected, additionalField.IsProtected);
-                }
+                }*/
             }
         }
         
@@ -193,10 +202,10 @@ namespace ModernKeePass.ViewModels
             get { return _cryptography.UnProtect(SelectedItem.Password.Value).GetAwaiter().GetResult(); }
             set
             {
-                // TODO: cleanup this
                 var protectedPassword = _cryptography.Protect(value).ConfigureAwait(false).GetAwaiter().GetResult();
                 SelectedItem.Password.Value = protectedPassword;
-                SetFieldValue(nameof(Password), value, true).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(nameof(Password), protectedPassword, true).ConfigureAwait(false).GetAwaiter();
+
                 RaisePropertyChanged(nameof(Password));
                 RaisePropertyChanged(nameof(PasswordComplexityIndicator));
             }
@@ -300,7 +309,7 @@ namespace ModernKeePass.ViewModels
             set { Set(() => IsRevealPassword, ref _isRevealPassword, value); }
         }
 
-        private string _additionalFieldName;
+        /*private string _additionalFieldName;
         private string _additionalFieldValue;
         private bool _additionalFieldIsProtected;
 
@@ -333,7 +342,7 @@ namespace ModernKeePass.ViewModels
             {
                 SetFieldValue(AdditionalFieldName, AdditionalFieldValue, value).ConfigureAwait(false).GetAwaiter();
             }
-        }
+        }*/
 
         public RelayCommand SaveCommand { get; }
         public RelayCommand GeneratePasswordCommand { get; }
@@ -343,7 +352,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand GoBackCommand { get; }
         public RelayCommand GoToParentCommand { get; set; }
         public RelayCommand AddAdditionalField { get; set; }
-        public RelayCommand<FieldVm> DeleteAdditionalField { get; set; }
+        public RelayCommand<EntryFieldVm> DeleteAdditionalField { get; set; }
         public RelayCommand<Attachment> OpenAttachmentCommand { get; set; }
         public RelayCommand AddAttachmentCommand { get; set; }
         public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
@@ -385,7 +394,7 @@ namespace ModernKeePass.ViewModels
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
             AddAdditionalField = new RelayCommand(AddField, () => IsCurrentEntry);
-            DeleteAdditionalField = new RelayCommand<FieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
+            DeleteAdditionalField = new RelayCommand<EntryFieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
             AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
             DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment), _ => IsCurrentEntry);
@@ -448,8 +457,7 @@ namespace ModernKeePass.ViewModels
         
         private async Task SetFieldValue(string fieldName, object value, bool isProtected)
         {
-            var protectedValue = isProtected ? await _cryptography.Protect(value?.ToString()) : value;
-            await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = protectedValue, IsProtected = isProtected});
+            await _mediator.Send(new UpsertFieldCommand { EntryId = Id, FieldName = fieldName, FieldValue = value, IsProtected = isProtected});
             UpdateDirtyStatus(true);
         }
 
@@ -461,11 +469,11 @@ namespace ModernKeePass.ViewModels
         
         private void AddField()
         {
-            AdditionalFields.Add(new FieldVm());
+            AdditionalFields.Add(new EntryFieldVm(_cryptography));
             AdditionalFieldSelectedIndex = AdditionalFields.Count - 1;
         }
 
-        private async Task DeleteField(FieldVm field)
+        private async Task DeleteField(EntryFieldVm field)
         {
             AdditionalFields.Remove(field);
             if (!string.IsNullOrEmpty(field.Name))

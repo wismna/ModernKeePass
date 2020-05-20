@@ -505,12 +505,12 @@
                                                 <RowDefinition />
                                                 <RowDefinition />
                                             </Grid.RowDefinitions>
-                                            <TextBox Grid.Row="0" Text="{Binding Path=DataContext.AdditionalFieldName, ElementName=Page, Mode=TwoWay}" Width="350"
+                                            <TextBox Grid.Row="0" Text="{Binding Name, Mode=TwoWay}" Width="350"
                                                      IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
                                             <TextBox Grid.Row="1" AcceptsReturn="True" Height="100" TextWrapping="Wrap" Width="350"  Margin="0,5,0,0"
-                                                     Text="{Binding Path=DataContext.AdditionalFieldValue, ElementName=Page, Mode=TwoWay}"
+                                                     Text="{Binding Value, Mode=TwoWay}"
                                                      IsEnabled="{Binding Path=DataContext.IsCurrentEntry, ElementName=Page}" />
-                                            <ToggleSwitch Grid.Row="2" x:Uid="EntryEnableFieldProtection" HorizontalAlignment="Left" IsOn="{Binding Path=DataContext.AdditionalFieldIsProtected, ElementName=Page, Mode=TwoWay}" />
+                                            <ToggleSwitch Grid.Row="2" x:Uid="EntryEnableFieldProtection" HorizontalAlignment="Left" IsOn="{Binding IsProtected, Mode=TwoWay}" />
                                             <Button Grid.Row="2" x:Uid="EntryDeleteAdditionalField" HorizontalAlignment="Right" Margin="0,15,0,0" Command="{Binding Path=DataContext.DeleteAdditionalField, ElementName=Page}" CommandParameter="{Binding}" />
                                         </Grid>
                                     </DataTemplate>
@@ -519,8 +519,7 @@
                                     <DataTemplate>
                                         <StackPanel Orientation="Vertical" Margin="5">
                                             <TextBlock Text="{Binding Name}" Style="{StaticResource EntryTextBlockStyle}" FontWeight="SemiBold" />
-                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="*****" Visibility="{Binding IsProtected, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBlockStyle}"/>
-                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding Value}" Visibility="{Binding IsProtected, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource EntryTextBlockStyle}"/>
+                                            <TextBlock HorizontalAlignment="Left" MaxLines="3" FontSize="12" Margin="2,0,2,5" Text="{Binding DisplayValue}" Style="{StaticResource EntryTextBlockStyle}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </local:SelectableTemplateListView.ItemTemplate>
