@@ -49,6 +49,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\RecycleBinVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\GeneralVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\SecurityVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\ColorPickerControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\ListMenuItemVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\MainMenuItemVm.cs" />
