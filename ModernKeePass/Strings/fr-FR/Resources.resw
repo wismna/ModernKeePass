@@ -204,9 +204,6 @@
   <data name="EntryPassword.Text" xml:space="preserve">
     <value>Mot de passe</value>
   </data>
-  <data name="EntryShowPassword.Content" xml:space="preserve">
-    <value>Afficher le mot de passe</value>
-  </data>
   <data name="GroupCreateEntry.Text" xml:space="preserve">
     <value>Créer une nouvelle entrée</value>
   </data>
@@ -563,5 +560,14 @@
   </data>
   <data name="EntryAddAdditionalField.Text" xml:space="preserve">
     <value>Ajouter un champ</value>
+  </data>
+  <data name="EntryShowPassword.OffContent" xml:space="preserve">
+    <value>Afficher le mot de passe</value>
+  </data>
+  <data name="EntryShowPassword.OnContent" xml:space="preserve">
+    <value>Cacher le mot de passe</value>
+  </data>
+  <data name="PasswordGenerationButton.ButtonContent" xml:space="preserve">
+    <value>Aléatoire</value>
   </data>
 </root>

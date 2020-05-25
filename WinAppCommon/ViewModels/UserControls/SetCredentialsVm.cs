@@ -13,7 +13,6 @@ namespace ModernKeePass.ViewModels
     public class SetCredentialsVm : ViewModelBase
     {
         private readonly IMediator _mediator;
-        private readonly ICredentialsProxy _credentials;
         private readonly IResourceProxy _resource;
         private readonly IFileProxy _file;
 
@@ -48,10 +47,9 @@ namespace ModernKeePass.ViewModels
             get { return _password; }
             set
             {
-                _password = value;
+                Set(() => Password, ref _password, value);
                 RaisePropertyChanged(nameof(IsPasswordValid));
                 RaisePropertyChanged(nameof(IsValid));
-                RaisePropertyChanged(nameof(PasswordComplexityIndicator));
                 GenerateCredentialsCommand.RaiseCanExecuteChanged();
             }
         }
@@ -60,7 +58,7 @@ namespace ModernKeePass.ViewModels
             get { return _confirmPassword; }
             set
             {
-                _confirmPassword = value;
+                Set(() => ConfirmPassword, ref _confirmPassword, value);
                 RaisePropertyChanged(nameof(IsPasswordValid));
                 RaisePropertyChanged(nameof(IsValid));
                 GenerateCredentialsCommand.RaiseCanExecuteChanged();
@@ -85,8 +83,6 @@ namespace ModernKeePass.ViewModels
             set { Set(() => KeyFileText, ref _keyFileText, value); }
         }
         
-        public double PasswordComplexityIndicator => _credentials.EstimatePasswordComplexity(Password);
-
         public bool IsPasswordValid => HasPassword && Password == ConfirmPassword || !HasPassword;
         public bool IsKeyFileValid => HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) || !HasKeyFile;
         public bool IsValid => HasPassword && Password == ConfirmPassword || HasKeyFile && !string.IsNullOrEmpty(KeyFilePath) && (HasPassword || HasKeyFile);
@@ -102,10 +98,9 @@ namespace ModernKeePass.ViewModels
         private string _keyFilePath;
         private string _keyFileText;
         
-        public SetCredentialsVm(IMediator mediator, ICredentialsProxy credentials, IResourceProxy resource, IFileProxy file)
+        public SetCredentialsVm(IMediator mediator, IResourceProxy resource, IFileProxy file)
         {
             _mediator = mediator;
-            _credentials = credentials;
             _resource = resource;
             _file = file;
 
@@ -114,6 +109,12 @@ namespace ModernKeePass.ViewModels
             GenerateCredentialsCommand = new RelayCommand(GenerateCredentials, () => IsValid);
 
             _keyFileText = resource.GetResourceValue("CompositeKeyDefaultKeyFile");
+
+            MessengerInstance.Register<PasswordGeneratedMessage>(this, message =>
+            {
+                Password = message.Password;
+                ConfirmPassword = message.Password;
+            });
         }
         
         private async Task OpenKeyFile()

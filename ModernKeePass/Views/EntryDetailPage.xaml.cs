@@ -14,7 +14,7 @@ namespace ModernKeePass.Views
     public sealed partial class EntryDetailPage
     {
         public EntryDetailVm Model => (EntryDetailVm) DataContext;
-        
+
         public EntryDetailPage()
         {
             InitializeComponent();
@@ -29,7 +29,6 @@ namespace ModernKeePass.Views
             {
                 await Model.Initialize(args.Id);
                 Model.IsEditMode = args.IsNew;
-                if (args.IsNew) await Model.GeneratePassword();
             }
         }
 

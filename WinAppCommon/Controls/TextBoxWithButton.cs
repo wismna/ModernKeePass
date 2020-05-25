@@ -9,14 +9,14 @@ namespace ModernKeePass.Controls
     {
         public event EventHandler<RoutedEventArgs> ButtonClick;
 
-        public string ButtonSymbol
+        public string ButtonContent
         {
-            get { return (string)GetValue(ButtonSymbolProperty); }
-            set { SetValue(ButtonSymbolProperty, value); }
+            get { return (string)GetValue(ButtonContentProperty); }
+            set { SetValue(ButtonContentProperty, value); }
         }
-        public static readonly DependencyProperty ButtonSymbolProperty =
+        public static readonly DependencyProperty ButtonContentProperty =
             DependencyProperty.Register(
-                nameof(ButtonSymbol),
+                nameof(ButtonContent),
                 typeof(string),
                 typeof(TextBoxWithButton),
                 new PropertyMetadata("&#xE107;", (o, args) => { }));

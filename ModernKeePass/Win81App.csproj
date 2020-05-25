@@ -168,6 +168,9 @@
     <Compile Include="Views\UserControls\HamburgerMenuUserControl.xaml.cs">
       <DependentUpon>HamburgerMenuUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControls\PasswordGenerationBox.xaml.cs">
+      <DependentUpon>PasswordGenerationBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\UserControls\SymbolPickerUserControl.xaml.cs">
       <DependentUpon>SymbolPickerUserControl.xaml</DependentUpon>
     </Compile>
@@ -314,6 +317,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\UserControls\HamburgerMenuUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UserControls\PasswordGenerationBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

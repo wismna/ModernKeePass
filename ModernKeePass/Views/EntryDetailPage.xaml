@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:actions="using:ModernKeePass.Actions"
-    xmlns:userControls="using:ModernKeePass.Views.UserControls"
+    xmlns:controls="using:ModernKeePass.Views.UserControls"
     x:Class="ModernKeePass.Views.EntryDetailPage"
     mc:Ignorable="d"
     SizeChanged="EntryDetailPage_OnSizeChanged"
@@ -16,346 +16,6 @@
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
-        <converters:ProgressBarLegalValuesConverter x:Key="ProgressBarLegalValuesConverter" />
-        <converters:DoubleToSolidColorBrushConverter x:Key="DoubleToForegroundBrushComplexityConverter" />
-
-        <Style TargetType="local:PasswordBoxWithButton" x:Key="PasswordBoxWithButtonStyle">
-            <Setter Property="Background" Value="{ThemeResource SearchBoxBackgroundThemeBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderThemeBrush}" />
-            <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontSize" Value="{ThemeResource SearchBoxContentThemeFontSize}" />
-            <Setter Property="FontWeight" Value="{ThemeResource SearchBoxContentThemeFontWeight}"/>
-            <Setter Property="Foreground" Value="{ThemeResource SearchBoxForegroundThemeBrush}" />
-            <Setter Property="Padding" Value="{ThemeResource SearchBoxThemePadding}"/>
-            <Setter Property="IsTabStop" Value="False" />
-            <Setter Property="Width" Value="350" />
-            <Setter Property="Height" Value="32" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Typography.StylisticSet20" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="local:PasswordBoxWithButton">
-                        <Grid x:Name="SearchBoxGrid">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Foreground}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBackgroundThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverBorderThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxPointerOverTextThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxDisabledBackgroundThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxDisabledBorderThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxDisabledTextThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PasswordBox" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Focused">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBackgroundThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource MainColor}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonForegroundThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBorderThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="FocusedDropDown">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxGrid" Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBackgroundThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchBoxBorder" Storyboard.TargetProperty="BorderBrush">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBorderThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButton" Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedTextThemeBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid.Resources>
-                                <Style x:Key="ActionButtonStyle" TargetType="Button">
-                                    <Setter Property="IsTabStop" Value="False" />
-                                    <Setter Property="VerticalAlignment" Value="Stretch" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="Button">
-                                                <Grid Background="Transparent">
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Normal" />
-                                                            <VisualState x:Name="PointerOver">
-                                                                <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchGlyph" Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonPointerOverForegroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButtonBackground" Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxButtonPointerOverBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Pressed">
-                                                                <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SearchGlyph" Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedTextThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ActionButtonBackground" Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SearchBoxFocusedBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Disabled" />
-                                                        </VisualStateGroup>
-                                                        <VisualStateGroup x:Name="FocusStates">
-                                                            <VisualState x:Name="Focused" />
-                                                            <VisualState x:Name="Unfocused" />
-                                                            <VisualState x:Name="PointerFocused" />
-                                                        </VisualStateGroup>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                    <Grid x:Name="ActionButtonBackground" Background="{TemplateBinding Background}">
-                                                        <TextBlock x:Name="SearchGlyph"
-                                                               AutomationProperties.AccessibilityView="Raw"
-                                                               FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                               Foreground="{TemplateBinding Foreground}"
-                                                               HorizontalAlignment="Center"
-                                                               FontStyle="Normal"
-                                                               Padding="4,0,4,0"
-                                                               Text="{TemplateBinding Content}"
-                                                               VerticalAlignment="Center" />
-                                                    </Grid>
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                                <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
-                                    <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />
-                                    <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
-                                    <Setter Property="Foreground" Value="{ThemeResource TextBoxForegroundThemeBrush}" />
-                                    <Setter Property="Background" Value="{ThemeResource TextBoxBackgroundThemeBrush}" />
-                                    <Setter Property="BorderBrush" Value="{ThemeResource TextBoxBorderThemeBrush}" />
-                                    <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextSelectionHighlightColorThemeBrush}" />
-                                    <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
-                                    <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-                                    <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-                                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
-                                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
-                                    <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
-                                    <Setter Property="Padding" Value="{ThemeResource TextControlThemePadding}"/>
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="PasswordBox">
-                                                <Grid>
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroup x:Name="CommonStates">
-                                                            <VisualState x:Name="Disabled">
-                                                                <Storyboard>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement"
-                                                                                               Storyboard.TargetProperty="Background">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledBackgroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement"
-                                                                                               Storyboard.TargetProperty="BorderBrush">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledBorderThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement"
-                                                                                               Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContentPresenter"
-                                                                                               Storyboard.TargetProperty="Foreground">
-                                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextBoxDisabledForegroundThemeBrush}" />
-                                                                    </ObjectAnimationUsingKeyFrames>
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Normal">
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundElement"
-                                                                                 Storyboard.TargetProperty="Opacity"
-                                                                                 Duration="0"
-                                                                                 To="{ThemeResource TextControlBackgroundThemeOpacity}" />
-                                                                    <DoubleAnimation Storyboard.TargetName="BorderElement"
-                                                                                 Storyboard.TargetProperty="Opacity"
-                                                                                 Duration="0"
-                                                                                 To="{ThemeResource TextControlBorderThemeOpacity}" />
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="PointerOver">
-                                                                <Storyboard>
-                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundElement"
-                                                                                 Storyboard.TargetProperty="Opacity"
-                                                                                 Duration="0"
-                                                                                 To="{ThemeResource TextControlPointerOverBackgroundThemeOpacity}" />
-                                                                    <DoubleAnimation Storyboard.TargetName="BorderElement"
-                                                                                 Storyboard.TargetProperty="Opacity"
-                                                                                 Duration="0"
-                                                                                 To="{ThemeResource TextControlPointerOverBorderThemeOpacity}" />
-                                                                </Storyboard>
-                                                            </VisualState>
-                                                            <VisualState x:Name="Focused" />
-                                                        </VisualStateGroup>
-                                                        <VisualStateGroup x:Name="ButtonStates" />
-                                                    </VisualStateManager.VisualStateGroups>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="*" />
-                                                    </Grid.RowDefinitions>
-                                                    <Border x:Name="BackgroundElement"
-                                                        Grid.Row="1"
-                                                        Background="{TemplateBinding Background}"
-                                                        Margin="{TemplateBinding BorderThickness}" />
-                                                    <Border x:Name="BorderElement"
-                                                        Grid.Row="1"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}" />
-                                                    <ContentPresenter x:Name="HeaderContentPresenter"
-                                                                  Grid.Row="0"
-                                                                  Foreground="{ThemeResource TextBoxForegroundHeaderThemeBrush}"
-                                                                  Margin="0,4,0,4"
-                                                                  Content="{TemplateBinding Header}"
-                                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                                                  FontWeight="Semilight" />
-                                                    <ScrollViewer x:Name="ContentElement"
-                                                              Grid.Row="1"
-                                                              HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                                              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                                              VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                                              IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                                              IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                                              IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                                              Margin="{TemplateBinding BorderThickness}"
-                                                              Padding="{TemplateBinding Padding}"
-                                                              IsTabStop="False"
-                                                              AutomationProperties.AccessibilityView="Raw"
-                                                              ZoomMode="Disabled" />
-                                                    <ContentControl x:Name="PlaceholderTextContentPresenter"
-                                                              Grid.Row="1"
-                                                              Foreground="{ThemeResource TextBoxPlaceholderTextThemeBrush}"
-                                                              Margin="{TemplateBinding BorderThickness}"
-                                                              Padding="{TemplateBinding Padding}"
-                                                              IsTabStop="False"
-                                                              Grid.ColumnSpan="2"
-                                                              Content="{TemplateBinding PlaceholderText}"
-                                                              IsHitTestVisible="False" />
-                                                </Grid>
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </Grid.Resources>
-                            <Border x:Name="SearchBoxBorder"
-                                Background="Transparent"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <PasswordBox x:Name="PasswordBox"
-                                         BorderThickness="0"
-                                         Background="Transparent"
-                                         FontFamily="{TemplateBinding FontFamily}"
-                                         FontSize="{TemplateBinding FontSize}"
-                                         FontWeight="{TemplateBinding FontWeight}"
-                                         Foreground="{TemplateBinding Foreground}"
-                                         MaxLength="2048"
-                                         MinHeight="{ThemeResource SearchBoxTextBoxThemeMinHeight}"
-                                         Padding="{TemplateBinding Padding}"
-                                         PlaceholderText="{TemplateBinding PlaceholderText}"
-                                         Style="{StaticResource PasswordBoxStyle}"
-                                         VerticalAlignment="Stretch"
-                                         Margin="0"
-                                         Password="{Binding RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, Path=Password}"
-                                         IsPasswordRevealButtonEnabled="{TemplateBinding IsPasswordRevealEnabled}"/>
-                                    <Button x:Name="ActionButton"
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        Background="Transparent"
-                                        FontWeight="{ThemeResource SearchBoxButtonThemeFontWeight}"
-                                        FontSize="{TemplateBinding FontSize}"
-                                        Grid.Column="1"
-                                        Style="{StaticResource ActionButtonStyle}"
-                                        Content="{TemplateBinding ButtonSymbol}"
-                                        IsEnabled="{TemplateBinding IsButtonEnabled}">
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <interactivity:Interaction.Behaviors>
-                                                    <core:DataTriggerBehavior Binding="{Binding Password}" ComparisonCondition="NotEqual" Value="" >
-                                                        <core:CallMethodAction MethodName="Hide" />
-                                                    </core:DataTriggerBehavior>
-                                                </interactivity:Interaction.Behaviors>
-                                                <StackPanel>
-                                                    <TextBlock>
-                                                        <Run x:Uid="PasswordGeneratorLength" />
-                                                        <Run Text="{Binding PasswordLength}" />
-                                                    </TextBlock>
-                                                    <Slider Value="{Binding PasswordLength, Mode=TwoWay}" Margin="0,-10,0,-20" />
-                                                    <CheckBox IsChecked="{Binding UpperCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorUpper" />
-                                                    <CheckBox IsChecked="{Binding LowerCasePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorLower" />
-                                                    <CheckBox IsChecked="{Binding DigitsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorDigits" />
-                                                    <CheckBox IsChecked="{Binding MinusPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorMinus" />
-                                                    <CheckBox IsChecked="{Binding UnderscorePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorUnderscore" />
-                                                    <CheckBox IsChecked="{Binding SpacePatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpace" />
-                                                    <CheckBox IsChecked="{Binding SpecialPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorSpecial" />
-                                                    <CheckBox IsChecked="{Binding BracketsPatternSelected, Mode=TwoWay}" x:Uid="PasswordGeneratorBrackets" />
-                                                    <TextBlock x:Uid="PasswordGeneratorAlso" Margin="0,5,0,0"/>
-                                                    <TextBox Text="{Binding CustomChars, Mode=TwoWay}" />
-                                                    <Button x:Uid="PasswordGeneratorButton" Command="{Binding GeneratePasswordCommand}" />
-                                                </StackPanel>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                        <ToolTipService.ToolTip>
-                                            <ToolTip x:Uid="PasswordGeneratorTooltip" />
-                                        </ToolTipService.ToolTip>
-                                    </Button>
-                                </Grid>
-                            </Border>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.ChildrenTransitions>
@@ -372,7 +32,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl 
+            <controls:HamburgerMenuUserControl 
                 x:Name="HamburgerMenu"
                 x:Uid="HistoryLeftListView" 
                 ItemsSource="{Binding History}" 
@@ -390,7 +50,7 @@
                     <HubSection x:Uid="EntryHubMain">
                         <DataTemplate>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                <StackPanel Margin="20,0,0,20" MinWidth="400">
+                                <StackPanel Width="350" Margin="0,0,25,0">
                                     <StackPanel.Resources>
                                         <Style TargetType="CheckBox">
                                             <Setter Property="Margin" Value="0,20,0,0"/>
@@ -398,7 +58,7 @@
                                         </Style>
                                     </StackPanel.Resources>
                                     <TextBlock x:Uid="EntryLogin" Style="{StaticResource EntryTextBlockStyle}" />
-                                    <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                                    <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonContent="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                                         <interactivity:Interaction.Behaviors>
                                             <core:EventTriggerBehavior EventName="ButtonClick">
                                                 <actions:ClipboardAction Text="{Binding UserName}" />
@@ -407,19 +67,9 @@
                                         </interactivity:Interaction.Behaviors>
                                     </local:TextBoxWithButton>
                                     <TextBlock x:Uid="EntryPassword" Style="{StaticResource EntryTextBlockStyle}" />
-                                    <local:PasswordBoxWithButton Password="{Binding Password, Mode=TwoWay}" IsPasswordRevealEnabled="True" Visibility="{Binding IsRevealPassword, Converter={StaticResource InverseBooleanToVisibilityConverter}}" Style="{StaticResource PasswordBoxWithButtonStyle}" IsEnabled="{Binding IsCurrentEntry}" ButtonSymbol="&#xE15E;" />
-                                    <local:TextBoxWithButton x:Uid="PasswordTextBox" Text="{Binding Password, Mode=TwoWay}" Visibility="{Binding IsRevealPassword, Converter={StaticResource BooleanToVisibilityConverter}}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
-                                        <interactivity:Interaction.Behaviors>
-                                            <core:EventTriggerBehavior EventName="ButtonClick">
-                                                <actions:ClipboardAction Text="{Binding Password}" />
-                                                <actions:ToastAction x:Uid="ToastCopyPassword" Title="{Binding Title}" />
-                                            </core:EventTriggerBehavior>
-                                        </interactivity:Interaction.Behaviors>
-                                    </local:TextBoxWithButton>
-                                    <ProgressBar Value="{Binding PasswordComplexityIndicator, ConverterParameter=0\,128, Converter={StaticResource ProgressBarLegalValuesConverter}}" Maximum="128" Width="350" HorizontalAlignment="Left" Foreground="{Binding PasswordComplexityIndicator, ConverterParameter=128, Converter={StaticResource DoubleToForegroundBrushComplexityConverter}}" />
-                                    <CheckBox x:Uid="EntryShowPassword" HorizontalAlignment="Left" Margin="-3,0,0,0" IsChecked="{Binding IsRevealPassword, Mode=TwoWay}" />
+                                    <controls:PasswordGenerationBox Password="{Binding Password, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
                                     <TextBlock Text="URL" Style="{StaticResource EntryTextBlockStyle}"/>
-                                    <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonSymbol="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
+                                    <local:TextBoxWithButton x:Uid="UrlTextBox" Text="{Binding Url, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonContent="&#xE111;" IsEnabled="{Binding IsCurrentEntry}">
                                         <interactivity:Interaction.Behaviors>
                                             <core:EventTriggerBehavior EventName="ButtonClick">
                                                 <actions:NavigateToUrlAction Url="{Binding Url}" />
@@ -427,8 +77,8 @@
                                         </interactivity:Interaction.Behaviors>
                                     </local:TextBoxWithButton>
                                     <TextBlock x:Uid="EntryNotes" Style="{StaticResource EntryTextBlockStyle}" />
-                                    <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" IsEnabled="{Binding IsCurrentEntry}" />
-                                    <CheckBox x:Uid="EntryExpirationDate" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
+                                    <TextBox TextWrapping="Wrap" Text="{Binding Notes, Mode=TwoWay}" Width="350" Height="200" AcceptsReturn="True" IsSpellCheckEnabled="True" IsEnabled="{Binding IsCurrentEntry}" />
+                                    <CheckBox x:Uid="EntryExpirationDate" Margin="-3,0,0,0" IsChecked="{Binding HasExpirationDate, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" />
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
@@ -470,11 +120,11 @@
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <TextBlock x:Uid="EntryIcon" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:SymbolPickerUserControl SelectedSymbol="{Binding Icon, Mode=TwoWay}" HorizontalAlignment="Left" IsEnabled="{Binding IsCurrentEntry}" />
+                                <controls:SymbolPickerUserControl SelectedSymbol="{Binding Icon, Mode=TwoWay}" HorizontalAlignment="Left" IsEnabled="{Binding IsCurrentEntry}" />
                                 <TextBlock x:Uid="EntryBackgroundColor" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
+                                <controls:ColorPickerUserControl SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
                                 <TextBlock x:Uid="EntryForegroundColor" Style="{StaticResource EntryTextBlockStyle}" />
-                                <userControls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
+                                <controls:ColorPickerUserControl SelectedColor="{Binding ForegroundColor, Mode=TwoWay}" IsEnabled="{Binding IsCurrentEntry}" Width="250" />
                             </StackPanel>
                         </DataTemplate>
                     </HubSection>
@@ -612,7 +262,7 @@
                     </core:DataTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </TextBox>
-            <userControls:TopMenuUserControl 
+            <controls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="4"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -626,7 +276,7 @@
                         <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}"  />
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
-            </userControls:TopMenuUserControl>
+            </controls:TopMenuUserControl>
         </Grid>
     </Grid>
 </Page>

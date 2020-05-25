@@ -42,6 +42,7 @@ namespace ModernKeePass.Actions
             var dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
             dataPackage.SetText(IsProtected ? cryptography.UnProtect(Text).GetAwaiter().GetResult() : Text);
             Clipboard.SetContent(dataPackage);
+            Clipboard.Flush();
             _dispatcher.Start();
 
             return null;
@@ -49,8 +50,14 @@ namespace ModernKeePass.Actions
 
         private void Dispatcher_Tick(object sender, object e)
         {
-            Clipboard.SetContent(null);
-            _dispatcher.Stop();
+            try
+            {
+                Clipboard.SetContent(null);
+            }
+            finally
+            {
+                _dispatcher.Stop();
+            }
         }
     }
 }

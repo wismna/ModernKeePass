@@ -4,20 +4,20 @@ using Windows.UI.Xaml.Controls;
 
 namespace ModernKeePass.Controls
 {
-    public class PasswordBoxWithButton: SearchBox
+    public class PasswordGenerationBox : SearchBox
     {
         public event EventHandler<RoutedEventArgs> ButtonClick;
 
-        public string ButtonContent
+        public string ButtonSymbol
         {
-            get { return (string)GetValue(ButtonContentProperty); }
-            set { SetValue(ButtonContentProperty, value); }
+            get { return (string)GetValue(ButtonSymbolProperty); }
+            set { SetValue(ButtonSymbolProperty, value); }
         }
-        public static readonly DependencyProperty ButtonContentProperty =
+        public static readonly DependencyProperty ButtonSymbolProperty =
             DependencyProperty.Register(
-                nameof(ButtonContent),
+                nameof(ButtonSymbol),
                 typeof(string),
-                typeof(PasswordBoxWithButton),
+                typeof(PasswordGenerationBox),
                 new PropertyMetadata("&#xE107;", (o, args) => { }));
 
         public string ButtonTooltip
@@ -29,7 +29,7 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(ButtonTooltip),
                 typeof(string),
-                typeof(PasswordBoxWithButton),
+                typeof(PasswordGenerationBox),
                 new PropertyMetadata(string.Empty, (o, args) => { }));
 
         public string Password
@@ -41,9 +41,9 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(Password),
                 typeof(string),
-                typeof(PasswordBoxWithButton),
+                typeof(PasswordGenerationBox),
                 new PropertyMetadata(string.Empty, (o, args) => { }));
-        
+
         public bool IsButtonEnabled
         {
             get { return (bool)GetValue(IsButtonEnabledProperty); }
@@ -53,7 +53,7 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(IsButtonEnabled),
                 typeof(bool),
-                typeof(PasswordBoxWithButton),
+                typeof(PasswordGenerationBox),
                 new PropertyMetadata(true, (o, args) => { }));
 
         public bool IsPasswordRevealEnabled
@@ -65,14 +65,15 @@ namespace ModernKeePass.Controls
             DependencyProperty.Register(
                 nameof(IsPasswordRevealEnabled),
                 typeof(bool),
-                typeof(PasswordBoxWithButton),
+                typeof(PasswordGenerationBox),
                 new PropertyMetadata(true, (o, args) => { }));
 
-
-        public PasswordBoxWithButton()
+        
+        public PasswordGenerationBox()
         {
-            DefaultStyleKey = typeof(PasswordBoxWithButton);
+            DefaultStyleKey = typeof(PasswordGenerationBox);
         }
+
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();

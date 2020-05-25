@@ -68,6 +68,7 @@ namespace ModernKeePass.ViewModels
             SimpleIoc.Default.Register<SetCredentialsVm>();
             SimpleIoc.Default.Register<TopMenuVm>();
             SimpleIoc.Default.Register<ColorPickerControlVm>();
+            SimpleIoc.Default.Register<PasswordGenerationBoxControlVm>();
             SimpleIoc.Default.Register<NewVm>();
             SimpleIoc.Default.Register<OpenVm>();
             SimpleIoc.Default.Register<RecentVm>();
@@ -84,6 +85,7 @@ namespace ModernKeePass.ViewModels
         public SetCredentialsVm SetCredentials => ServiceLocator.Current.GetInstance<SetCredentialsVm>(Guid.NewGuid().ToString());
         public TopMenuVm TopMenu => ServiceLocator.Current.GetInstance<TopMenuVm>(Guid.NewGuid().ToString());
         public ColorPickerControlVm ColorPicker => ServiceLocator.Current.GetInstance<ColorPickerControlVm>(Guid.NewGuid().ToString());
+        public PasswordGenerationBoxControlVm PasswordGenerationBox => ServiceLocator.Current.GetInstance<PasswordGenerationBoxControlVm>(Guid.NewGuid().ToString());
         public NewVm New => ServiceLocator.Current.GetInstance<NewVm>(Guid.NewGuid().ToString());
         public OpenVm Open => ServiceLocator.Current.GetInstance<OpenVm>(Guid.NewGuid().ToString());
         public RecentVm Recent => ServiceLocator.Current.GetInstance<RecentVm>(Guid.NewGuid().ToString());
