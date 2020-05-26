@@ -121,7 +121,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Title.Value = value;
-                SetFieldValue(nameof(Title), value, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(SelectedItem.Title.Name, value, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
@@ -131,7 +131,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Username.Value = value;
-                SetFieldValue(nameof(UserName), value, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(SelectedItem.Username.Name, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(UserName));
             }
         }
@@ -143,7 +143,7 @@ namespace ModernKeePass.ViewModels
             {
                 var protectedPassword = _cryptography.Protect(value).ConfigureAwait(false).GetAwaiter().GetResult();
                 SelectedItem.Password.Value = protectedPassword;
-                SetFieldValue(nameof(Password), protectedPassword, true).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(SelectedItem.Password.Name, protectedPassword, true).ConfigureAwait(false).GetAwaiter();
 
                 RaisePropertyChanged(nameof(Password));
             }
@@ -155,7 +155,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Url.Value = value;
-                SetFieldValue(nameof(Url), value, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(SelectedItem.Url.Name, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(Url));
             }
         }
@@ -166,7 +166,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Notes.Value = value;
-                SetFieldValue(nameof(Notes), value, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(SelectedItem.Notes.Name, value, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
@@ -176,7 +176,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
-                SetFieldValue(nameof(Icon), SelectedItem.Icon, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.Icon, SelectedItem.Icon, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
@@ -188,7 +188,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = value.Date;
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.ExpirationDate, SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
@@ -200,7 +200,7 @@ namespace ModernKeePass.ViewModels
                 if (!HasExpirationDate) return;
 
                 SelectedItem.ExpirationDate = SelectedItem.ExpirationDate.Date.Add(value);
-                SetFieldValue("ExpirationDate", SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.ExpirationDate, SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
             }
         }
         
@@ -210,7 +210,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.HasExpirationDate = value;
-                SetFieldValue(nameof(HasExpirationDate), value, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.HasExpirationDate, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(HasExpirationDate));
             }
         }
@@ -221,7 +221,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.BackgroundColor = value.ToColor();
-                SetFieldValue(nameof(BackgroundColor), SelectedItem.BackgroundColor, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.BackgroundColor, SelectedItem.BackgroundColor, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
@@ -231,7 +231,7 @@ namespace ModernKeePass.ViewModels
             set
             {
                 SelectedItem.ForegroundColor = value.ToColor();
-                SetFieldValue(nameof(ForegroundColor), SelectedItem.ForegroundColor, false).ConfigureAwait(false).GetAwaiter();
+                SetFieldValue(EntryFieldName.ForegroundColor, SelectedItem.ForegroundColor, false).ConfigureAwait(false).GetAwaiter();
             }
         }
         
@@ -316,7 +316,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task AddHistory()
         {
-            if (_isDirty) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
+            if (_isDirty && Database.IsOpen) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
         }
         
         public void GoToGroup(string groupId)

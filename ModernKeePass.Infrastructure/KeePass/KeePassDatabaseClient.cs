@@ -248,15 +248,6 @@ namespace ModernKeePass.Infrastructure.KeePass
 
             switch (fieldName)
             {
-                case EntryFieldName.Title:
-                case EntryFieldName.UserName:
-                case EntryFieldName.Password:
-                case EntryFieldName.Notes:
-                case EntryFieldName.Url:
-                    var stringValue = fieldValue == null ? string.Empty: fieldValue.ToString();
-                    var unprotectedFieldValue = isProtected ? await _cryptography.UnProtect(stringValue) : stringValue;
-                    pwEntry.Strings.Set(EntryFieldMapper.MapFieldToPwDef(fieldName), new ProtectedString(isProtected, unprotectedFieldValue));
-                    break;
                 case EntryFieldName.HasExpirationDate:
                     pwEntry.Expires = (bool)fieldValue;
                     break;
@@ -273,9 +264,9 @@ namespace ModernKeePass.Infrastructure.KeePass
                     pwEntry.ForegroundColor = (Color)fieldValue;
                     break;
                 default:
-                    var additionalStringValue = fieldValue == null ? string.Empty: fieldValue.ToString();
-                    var unprotectedAdditionalFieldValue = isProtected ? await _cryptography.UnProtect(additionalStringValue) : additionalStringValue;
-                    pwEntry.Strings.Set(fieldName, new ProtectedString(isProtected, unprotectedAdditionalFieldValue));
+                    var stringValue = fieldValue == null ? string.Empty: fieldValue.ToString();
+                    var unprotectedFieldValue = isProtected ? await _cryptography.UnProtect(stringValue) : stringValue;
+                    pwEntry.Strings.Set(fieldName, new ProtectedString(isProtected, unprotectedFieldValue));
                     break;
             }
         }

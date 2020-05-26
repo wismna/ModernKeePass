@@ -1,2 +1,4 @@
 Protection des donnees en memoire en plus du chiffrement de la base de donnees
 Correction d'un bug dans l'expiration des donnees copiees
+Correction d'un souci de mapping de champs
+Correction d'un bug de resume de l'app
