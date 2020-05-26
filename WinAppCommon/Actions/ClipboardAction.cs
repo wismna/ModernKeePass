@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xaml.Interactivity;
@@ -11,6 +12,7 @@ namespace ModernKeePass.Actions
     public class ClipboardAction : DependencyObject, IAction
     {
         private DispatcherTimer _dispatcher;
+        private bool _isWindowActivated = true;
 
         public string Text
         {
@@ -36,6 +38,8 @@ namespace ModernKeePass.Actions
             var settings = App.Services.GetRequiredService<ISettingsProxy>();
             var cryptography = App.Services.GetRequiredService<ICryptographyClient>();
 
+            CoreWindow.GetForCurrentThread().Activated += ClipboardAction_Activated;
+
             _dispatcher = new DispatcherTimer {Interval = TimeSpan.FromSeconds(settings.GetSetting(Constants.Settings.ClipboardTimeout, 10))};
             _dispatcher.Tick += Dispatcher_Tick;
 
@@ -48,16 +52,14 @@ namespace ModernKeePass.Actions
             return null;
         }
 
+        private void ClipboardAction_Activated(CoreWindow sender, WindowActivatedEventArgs args)
+        {
+            _isWindowActivated = args.WindowActivationState != CoreWindowActivationState.Deactivated;
+        }
+
         private void Dispatcher_Tick(object sender, object e)
         {
-            try
-            {
-                Clipboard.SetContent(null);
-            }
-            finally
-            {
-                _dispatcher.Stop();
-            }
+            if (_isWindowActivated) Clipboard.SetContent(null);
         }
     }
 }

@@ -1,1 +1,2 @@
 Data is now protected in memory as well as at rest
+Fix clipboard copy expiration issue
