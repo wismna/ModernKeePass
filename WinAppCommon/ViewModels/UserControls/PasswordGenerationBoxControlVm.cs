@@ -21,7 +21,11 @@ namespace ModernKeePass.ViewModels
         public double PasswordLength
         {
             get { return _settings.GetSetting(Constants.Settings.PasswordGenerationOptions.PasswordLength, 25); }
-            set { _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.PasswordLength, value); }
+            set
+            {
+                _settings.PutSetting(Constants.Settings.PasswordGenerationOptions.PasswordLength, value);
+                RaisePropertyChanged(() => PasswordLength);
+            }
         }
         public bool UpperCasePatternSelected
         {
