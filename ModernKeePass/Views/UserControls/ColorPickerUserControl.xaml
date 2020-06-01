@@ -11,7 +11,6 @@
         SelectedItem="{Binding SelectedItem}"
         SelectedValue="{Binding SelectedColor, ElementName=UserControl}" 
         SelectedValuePath="ColorBrush"
-        Loaded="ComboBox_OnLoaded"
         SelectionChanged="ComboBox_OnSelectionChanged"
         IsEnabled="{Binding IsEnabled, ElementName=UserControl}">
         <ComboBox.ItemTemplate>

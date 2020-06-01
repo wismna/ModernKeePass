@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using ModernKeePass.ViewModels;
@@ -10,8 +9,6 @@ namespace ModernKeePass.Views.UserControls
 {
     public sealed partial class ColorPickerUserControl
     {
-        private ColorPickerControlVm Model => ComboBox.DataContext as ColorPickerControlVm;
-
         public SolidColorBrush SelectedColor
         {
             get { return (SolidColorBrush)GetValue(SelectedColorProperty); }
@@ -22,22 +19,21 @@ namespace ModernKeePass.Views.UserControls
                 nameof(SelectedColor),
                 typeof(SolidColorBrush),
                 typeof(ColorPickerUserControl),
-                new PropertyMetadata(new SolidColorBrush(), (o, args) => { }));
+                new PropertyMetadata(new SolidColorBrush(), (o, args) =>
+                {
+                    var colorPickerUserControl = o as ColorPickerUserControl;
+                    var vm = colorPickerUserControl?.ComboBox.DataContext as ColorPickerControlVm;
+                    vm?.Initialize(args.NewValue as SolidColorBrush);
+                }));
 
         public ColorPickerUserControl()
         {
             InitializeComponent();
         }
 
-        private void ComboBox_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            Model.Initialize(SelectedColor);
-        }
-
         private void ComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.RemovedItems.Any())
-                SelectedColor = ComboBox.SelectedValue as SolidColorBrush;
+            SelectedColor = (e.AddedItems[0] as ColorPickerControlVm.Color)?.ColorBrush;
         }
     }
 }
