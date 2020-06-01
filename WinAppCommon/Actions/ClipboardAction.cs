@@ -11,7 +11,6 @@ namespace ModernKeePass.Actions
 {
     public class ClipboardAction : DependencyObject, IAction
     {
-        private DispatcherTimer _dispatcher;
         private bool _isWindowActivated = true;
 
         public string Text
@@ -40,14 +39,14 @@ namespace ModernKeePass.Actions
 
             CoreWindow.GetForCurrentThread().Activated += ClipboardAction_Activated;
 
-            _dispatcher = new DispatcherTimer {Interval = TimeSpan.FromSeconds(settings.GetSetting(Constants.Settings.ClipboardTimeout, 10))};
-            _dispatcher.Tick += Dispatcher_Tick;
+            var dispatcher = new DispatcherTimer {Interval = TimeSpan.FromSeconds(settings.GetSetting(Constants.Settings.ClipboardTimeout, 10))};
+            dispatcher.Tick += Dispatcher_Tick;
 
             var dataPackage = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
             dataPackage.SetText(IsProtected ? cryptography.UnProtect(Text).GetAwaiter().GetResult() : Text);
             Clipboard.SetContent(dataPackage);
             Clipboard.Flush();
-            _dispatcher.Start();
+            dispatcher.Start();
 
             return null;
         }
