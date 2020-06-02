@@ -1,4 +1,5 @@
 Protection des donnees en memoire en plus du chiffrement de la base de donnees
-Correction d'un bug dans l'expiration des donnees copiees
+Amelioration du rendu de la vue Semantique dezoomee
 Avoir une couleur personnalisee ne declenche plus automatiquement un changement
+Correction d'un bug dans l'expiration des donnees copiees
 Correction d'un bug de resume de l'app

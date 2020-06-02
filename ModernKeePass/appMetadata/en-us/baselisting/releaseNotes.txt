@@ -1,4 +1,5 @@
 Data is now protected in memory as well as at rest
-Fix clipboard copy expiration issue
+Improved zoomed-out Semantic view
 Having a custom entry color doesn't automatically trigger a change
+Fix clipboard copy expiration issue
 Fix a resume bug

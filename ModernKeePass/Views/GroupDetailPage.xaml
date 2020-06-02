@@ -21,9 +21,6 @@
     <Grid>
         <Grid.Resources>
             <CollectionViewSource
-                x:Name="EntriesViewSource"
-                Source="{Binding Entries}" />
-            <CollectionViewSource
                 x:Name="EntriesZoomedOutViewSource"
                 Source="{Binding EntriesZoomedOut}" IsSourceGrouped="True" />
         </Grid.Resources>
@@ -79,7 +76,7 @@
                         <!-- Horizontal scrolling grid -->
                         <GridView
                             x:Name="GridView"
-                            ItemsSource="{Binding Source={StaticResource EntriesViewSource}}"
+                            ItemsSource="{Binding Entries}"
                             AutomationProperties.AutomationId="ItemGridView"
                             AutomationProperties.Name="Entries"
                             TabIndex="1"
