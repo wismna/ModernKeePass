@@ -151,23 +151,26 @@
                     <SemanticZoom.ZoomedOutView>
                         <GridView
                             ItemsSource="{Binding Source={StaticResource EntriesZoomedOutViewSource}}"
-                            SelectionChanged="groups_SelectionChanged"
                             SelectionMode="None"
                             IsSynchronizedWithCurrentItem="False">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VariableSizedWrapGrid Orientation="Vertical" ItemWidth="140" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Width="100" Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
-                                    </StackPanel>
+                                    <TextBlock Width="100" Margin="5,0,0,0" Text="{Binding Title}" Style="{StaticResource TitleTextBlockStyle}" TextWrapping="NoWrap"/>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
                             <GridView.GroupStyle>
                                 <GroupStyle HidesIfEmpty="True">
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <Grid Background="LightGray" HorizontalAlignment="Left">
-                                                <TextBlock Text="{Binding Key}" Width="50" Margin="30" Foreground="{StaticResource MainColorBrush}" Style="{StaticResource HeaderTextBlockStyle}" TextAlignment="Center" />
-                                            </Grid>
+                                            <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Key}" Width="50" Margin="20" Foreground="{StaticResource MainColorBrush}" Style="{StaticResource SubheaderTextBlockStyle}" TextAlignment="Center" />
+                                                <Border BorderBrush="DarkGray" BorderThickness="0,0,0,1" />
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
                                 </GroupStyle>
