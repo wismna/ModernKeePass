@@ -31,6 +31,7 @@ using ModernKeePass.Application.Group.Models;
 using ModernKeePass.Common;
 using ModernKeePass.Domain.Dtos;
 using ModernKeePass.Domain.Exceptions;
+using ModernKeePass.Domain.Interfaces;
 using ModernKeePass.Extensions;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels.ListItems;
@@ -39,9 +40,9 @@ namespace ModernKeePass.ViewModels
 {
     public class EntryDetailVm : ViewModelBase
     {
-        public bool HasExpired => HasExpirationDate && ExpiryDate < DateTime.Now;
+        public bool HasExpired => HasExpirationDate && ExpiryDate < _dateTime.Now;
         
-        public string Id => SelectedItem.Id;
+        public string Id => _current.Id;
 
         public string ParentGroupName => _parent.Title;
 
@@ -62,37 +63,6 @@ namespace ModernKeePass.ViewModels
         /// Determines if the Entry is current or from history
         /// </summary>
         public bool IsCurrentEntry => SelectedIndex == 0;
-
-        public EntryVm SelectedItem
-        {
-            get { return _selectedItem; }
-            set
-            {
-                Set(() => SelectedItem, ref _selectedItem, value, true);
-                if (value != null)
-                {
-                    AdditionalFields =
-                        new ObservableCollection<EntryFieldVm>(
-                            SelectedItem.AdditionalFields.Select(f =>
-                            {
-                                var field = new EntryFieldVm(_cryptography);
-                                field.Initialize(f.Name, f.Value, f.IsProtected);
-                                return field;
-                            }));
-
-                    Attachments = new ObservableCollection<Attachment>(SelectedItem.Attachments.Select(f => new Attachment
-                    {
-                        Name = f.Key,
-                        Content = f.Value
-                    }));
-                    Attachments.CollectionChanged += (sender, args) =>
-                    {
-                        UpdateDirtyStatus(true);
-                    };
-                    RaisePropertyChanged(string.Empty);
-                }
-            }
-        }
         
         public int SelectedIndex    
         {
@@ -117,33 +87,33 @@ namespace ModernKeePass.ViewModels
         
         public string Title
         {
-            get { return SelectedItem.Title.Value; }
+            get { return _current.Title.Value; }
             set
             {
-                SelectedItem.Title.Value = value;
-                SetFieldValue(SelectedItem.Title.Name, value, false).ConfigureAwait(false).GetAwaiter();
+                _current.Title.Value = value;
+                SetFieldValue(_current.Title.Name, value, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
         public string UserName
         {
-            get { return SelectedItem.Username.Value; }
+            get { return _current.Username.Value; }
             set
             {
-                SelectedItem.Username.Value = value;
-                SetFieldValue(SelectedItem.Username.Name, value, false).ConfigureAwait(false).GetAwaiter();
+                _current.Username.Value = value;
+                SetFieldValue(_current.Username.Name, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(UserName));
             }
         }
 
         public string Password
         {
-            get { return _cryptography.UnProtect(SelectedItem.Password.Value).GetAwaiter().GetResult(); }
+            get { return _cryptography.UnProtect(_current.Password.Value).GetAwaiter().GetResult(); }
             set
             {
                 var protectedPassword = _cryptography.Protect(value).ConfigureAwait(false).GetAwaiter().GetResult();
-                SelectedItem.Password.Value = protectedPassword;
-                SetFieldValue(SelectedItem.Password.Name, protectedPassword, true).ConfigureAwait(false).GetAwaiter();
+                _current.Password.Value = protectedPassword;
+                SetFieldValue(_current.Password.Name, protectedPassword, true).ConfigureAwait(false).GetAwaiter();
 
                 RaisePropertyChanged(nameof(Password));
             }
@@ -151,65 +121,65 @@ namespace ModernKeePass.ViewModels
         
         public string Url
         {
-            get { return SelectedItem.Url.Value; }
+            get { return _current.Url.Value; }
             set
             {
-                SelectedItem.Url.Value = value;
-                SetFieldValue(SelectedItem.Url.Name, value, false).ConfigureAwait(false).GetAwaiter();
+                _current.Url.Value = value;
+                SetFieldValue(_current.Url.Name, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(Url));
             }
         }
 
         public string Notes
         {
-            get { return SelectedItem.Notes.Value; }
+            get { return _current.Notes.Value; }
             set
             {
-                SelectedItem.Notes.Value = value;
-                SetFieldValue(SelectedItem.Notes.Name, value, false).ConfigureAwait(false).GetAwaiter();
+                _current.Notes.Value = value;
+                SetFieldValue(_current.Notes.Name, value, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
         public Symbol Icon
         {
-            get { return (Symbol)Enum.Parse(typeof(Symbol), SelectedItem.Icon.ToString()); }
+            get { return (Symbol)Enum.Parse(typeof(Symbol), _current.Icon.ToString()); }
             set
             {
-                SelectedItem.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
-                SetFieldValue(EntryFieldName.Icon, SelectedItem.Icon, false).ConfigureAwait(false).GetAwaiter();
+                _current.Icon = (Icon)Enum.Parse(typeof(Icon), value.ToString());
+                SetFieldValue(EntryFieldName.Icon, _current.Icon, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
         public DateTimeOffset ExpiryDate
         {
-            get { return SelectedItem.ExpirationDate; }
+            get { return _current.ExpirationDate; }
             set
             {
                 if (!HasExpirationDate) return;
 
-                SelectedItem.ExpirationDate = value.Date;
-                SetFieldValue(EntryFieldName.ExpirationDate, SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
+                _current.ExpirationDate = value.Date;
+                SetFieldValue(EntryFieldName.ExpirationDate, _current.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
         public TimeSpan ExpiryTime
         {
-            get { return SelectedItem.ExpirationDate.TimeOfDay; }
+            get { return _current.ExpirationDate.TimeOfDay; }
             set
             {
                 if (!HasExpirationDate) return;
 
-                SelectedItem.ExpirationDate = SelectedItem.ExpirationDate.Date.Add(value);
-                SetFieldValue(EntryFieldName.ExpirationDate, SelectedItem.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
+                _current.ExpirationDate = _current.ExpirationDate.Date.Add(value);
+                SetFieldValue(EntryFieldName.ExpirationDate, _current.ExpirationDate, false).ConfigureAwait(false).GetAwaiter();
             }
         }
         
         public bool HasExpirationDate
         {
-            get { return SelectedItem.HasExpirationDate; }
+            get { return _current.HasExpirationDate; }
             set
             {
-                SelectedItem.HasExpirationDate = value;
+                _current.HasExpirationDate = value;
                 SetFieldValue(EntryFieldName.HasExpirationDate, value, false).ConfigureAwait(false).GetAwaiter();
                 RaisePropertyChanged(nameof(HasExpirationDate));
             }
@@ -217,21 +187,21 @@ namespace ModernKeePass.ViewModels
 
         public SolidColorBrush BackgroundColor
         {
-            get { return SelectedItem?.BackgroundColor.ToSolidColorBrush(); }
+            get { return _current?.BackgroundColor.ToSolidColorBrush(); }
             set
             {
-                SelectedItem.BackgroundColor = value.ToColor();
-                SetFieldValue(EntryFieldName.BackgroundColor, SelectedItem.BackgroundColor, false).ConfigureAwait(false).GetAwaiter();
+                _current.BackgroundColor = value.ToColor();
+                SetFieldValue(EntryFieldName.BackgroundColor, _current.BackgroundColor, false).ConfigureAwait(false).GetAwaiter();
             }
         }
 
         public SolidColorBrush ForegroundColor
         {
-            get { return SelectedItem?.ForegroundColor.ToSolidColorBrush(); }
+            get { return _current?.ForegroundColor.ToSolidColorBrush(); }
             set
             {
-                SelectedItem.ForegroundColor = value.ToColor();
-                SetFieldValue(EntryFieldName.ForegroundColor, SelectedItem.ForegroundColor, false).ConfigureAwait(false).GetAwaiter();
+                _current.ForegroundColor = value.ToColor();
+                SetFieldValue(EntryFieldName.ForegroundColor, _current.ForegroundColor, false).ConfigureAwait(false).GetAwaiter();
             }
         }
         
@@ -246,12 +216,13 @@ namespace ModernKeePass.ViewModels
         public RelayCommand RestoreCommand { get; }
         public RelayCommand DeleteCommand { get; }
         public RelayCommand GoBackCommand { get; }
-        public RelayCommand GoToParentCommand { get; set; }
-        public RelayCommand AddAdditionalField { get; set; }
-        public RelayCommand<EntryFieldVm> DeleteAdditionalField { get; set; }
-        public RelayCommand<Attachment> OpenAttachmentCommand { get; set; }
-        public RelayCommand AddAttachmentCommand { get; set; }
-        public RelayCommand<Attachment> DeleteAttachmentCommand { get; set; }
+        public RelayCommand GoToParentCommand { get; }
+        public RelayCommand AddAdditionalField { get; }
+        public RelayCommand<EntryFieldVm> DeleteAdditionalField { get; }
+        public RelayCommand<Attachment> OpenAttachmentCommand { get; }
+        public RelayCommand AddAttachmentCommand { get; }
+        public RelayCommand<Attachment> DeleteAttachmentCommand { get; }
+        public RelayCommand<EntryVm> SetCurrentEntryCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         
@@ -262,14 +233,15 @@ namespace ModernKeePass.ViewModels
         private readonly INotificationService _notification;
         private readonly IFileProxy _file;
         private readonly ICryptographyClient _cryptography;
+        private readonly IDateTime _dateTime;
         private GroupVm _parent;
-        private EntryVm _selectedItem;
+        private EntryVm _current;
         private int _selectedIndex;
         private int _additionalFieldSelectedIndex = -1;
         private bool _isEditMode;
         private bool _isDirty;
 
-        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ICryptographyClient cryptography)
+        public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ICryptographyClient cryptography, IDateTime dateTime)
         {
             _mediator = mediator;
             _navigation = navigation;
@@ -278,6 +250,7 @@ namespace ModernKeePass.ViewModels
             _notification = notification;
             _file = file;
             _cryptography = cryptography;
+            _dateTime = dateTime;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && !string.IsNullOrEmpty(destination) && destination != _parent.Id);
@@ -290,6 +263,7 @@ namespace ModernKeePass.ViewModels
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
             AddAttachmentCommand = new RelayCommand(async () => await AddAttachment(), () => IsCurrentEntry);
             DeleteAttachmentCommand = new RelayCommand<Attachment>(async attachment => await DeleteAttachment(attachment), _ => IsCurrentEntry);
+            SetCurrentEntryCommand = new RelayCommand<EntryVm>(SetCurrentEntry, entry => entry != null);
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
             MessengerInstance.Register<EntryFieldValueChangedMessage>(this, async message => await SetFieldValue(message.FieldName, message.FieldValue, message.IsProtected));
@@ -300,10 +274,10 @@ namespace ModernKeePass.ViewModels
         public async Task Initialize(string entryId)
         {
             SelectedIndex = 0;
-            SelectedItem = await _mediator.Send(new GetEntryQuery { Id = entryId });
-            _parent = await _mediator.Send(new GetGroupQuery { Id = SelectedItem.ParentGroupId });
-            History = new ObservableCollection<EntryVm> { SelectedItem };
-            foreach (var entry in SelectedItem.History.Skip(1))
+            _current = await _mediator.Send(new GetEntryQuery { Id = entryId });
+            _parent = await _mediator.Send(new GetGroupQuery { Id = _current.ParentGroupId });
+            History = new ObservableCollection<EntryVm> { _current };
+            foreach (var entry in _current.History.Skip(1))
             {
                 History.Add(entry);
             }
@@ -398,7 +372,7 @@ namespace ModernKeePass.ViewModels
         private async Task RestoreHistory()
         {
             await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
-            History.Insert(0, SelectedItem);
+            History.Insert(0, _current);
         }
         
         private async Task SaveChanges()
@@ -420,7 +394,7 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new DeleteEntryCommand
             {
                 EntryId = Id,
-                ParentGroupId = SelectedItem.ParentGroupId,
+                ParentGroupId = _current.ParentGroupId,
                 RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
             });
             _isDirty = false;
@@ -443,13 +417,13 @@ namespace ModernKeePass.ViewModels
             var fileInfo = await _file.OpenFile(string.Empty, Domain.Common.Constants.Extensions.Any, false);
             if (fileInfo == null) return;
             var contents = await _file.ReadBinaryFile(fileInfo.Id);
-            await _mediator.Send(new AddAttachmentCommand { Entry = SelectedItem, AttachmentName = fileInfo.Name, AttachmentContent = contents });
+            await _mediator.Send(new AddAttachmentCommand { Entry = _current, AttachmentName = fileInfo.Name, AttachmentContent = contents });
             Attachments.Add(new Attachment { Name = fileInfo.Name, Content = contents });
         }
 
         private async Task DeleteAttachment(Attachment attachment)
         {
-            await _mediator.Send(new DeleteAttachmentCommand { Entry = SelectedItem, AttachmentName = attachment.Name });
+            await _mediator.Send(new DeleteAttachmentCommand { Entry = _current, AttachmentName = attachment.Name });
             Attachments.Remove(attachment);
         }
 
@@ -457,6 +431,30 @@ namespace ModernKeePass.ViewModels
         {
             SaveCommand.RaiseCanExecuteChanged();
             _isDirty = isDirty;
+        }
+
+        private void SetCurrentEntry(EntryVm entry)
+        {
+            _current = entry;
+            AdditionalFields =
+                new ObservableCollection<EntryFieldVm>(
+                    entry.AdditionalFields.Select(f =>
+                    {
+                        var field = new EntryFieldVm(_cryptography);
+                        field.Initialize(f.Name, f.Value, f.IsProtected);
+                        return field;
+                    }));
+
+            Attachments = new ObservableCollection<Attachment>(entry.Attachments.Select(f => new Attachment
+            {
+                Name = f.Key,
+                Content = f.Value
+            }));
+            Attachments.CollectionChanged += (sender, args) =>
+            {
+                UpdateDirtyStatus(true);
+            };
+            RaisePropertyChanged(string.Empty);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System.Linq;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using ModernKeePass.ViewModels;
@@ -33,7 +34,8 @@ namespace ModernKeePass.Views.UserControls
 
         private void ComboBox_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedColor = (e.AddedItems[0] as ColorPickerControlVm.Color)?.ColorBrush;
+            if (e.AddedItems.Any())
+                SelectedColor = (e.AddedItems[0] as ColorPickerControlVm.Color)?.ColorBrush;
         }
     }
 }

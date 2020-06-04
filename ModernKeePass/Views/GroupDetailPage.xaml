@@ -72,7 +72,6 @@
                             AutomationProperties.AutomationId="ItemGridView"
                             AutomationProperties.Name="Entries"
                             TabIndex="1"
-                            SelectionChanged="entries_SelectionChanged"
                             IsSynchronizedWithCurrentItem="False" 
                             BorderBrush="{StaticResource ListViewItemSelectedBackgroundThemeBrush}"
                             AllowDrop="True"
@@ -82,6 +81,9 @@
                                 <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
                                     <actions:SetupFocusAction TargetObject="{Binding}" />
                                 </core:DataTriggerBehavior>
+                                <core:EventTriggerBehavior EventName="SelectionChanged">
+                                    <core:InvokeCommandAction Command="{Binding GoToEntryCommand}" CommandParameter="{Binding SelectedItem, ElementName=GridView}" />
+                                </core:EventTriggerBehavior>
                             </interactivity:Interaction.Behaviors>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
@@ -174,9 +176,14 @@
                 x:Uid="GroupsLeftListView" 
                 ItemsSource="{Binding Groups}" 
                 CanDragItems="{Binding IsEditMode}"
-                SelectionChanged="groups_SelectionChanged" 
                 ActionButtonCommand="{Binding CreateGroupCommand}"
-                IsButtonVisible="Visible"  />
+                IsButtonVisible="Visible">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="SelectionChanged">
+                        <core:InvokeCommandAction Command="{Binding GoToGroupCommand}" CommandParameter="{Binding SelectedItem, ElementName=HamburgerMenu}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </userControls:HamburgerMenuUserControl>
         </Grid>
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">

@@ -213,8 +213,7 @@ namespace ModernKeePass.Views.UserControls
             MoveButton.CommandParameter = args.Tag;
             MoveCommand.RaiseCanExecuteChanged();
         }
-
-
+        
         private async void EntrySearchBox_OnSuggestionsRequested(SearchBox sender, SearchBoxSuggestionsRequestedEventArgs args)
         {
             var imageUri = RandomAccessStreamReference.CreateFromUri(new Uri("ms-appdata:/Assets/ModernKeePass-SmallLogo.scale-80.png"));

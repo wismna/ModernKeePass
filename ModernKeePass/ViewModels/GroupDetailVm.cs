@@ -92,9 +92,11 @@ namespace ModernKeePass.ViewModels
         public RelayCommand<string> MoveCommand { get; }
         public RelayCommand CreateEntryCommand { get; }
         public RelayCommand<string> CreateGroupCommand { get; }
-        public RelayCommand DeleteCommand { get; set; }
-        public RelayCommand GoBackCommand { get; set; }
-        public RelayCommand GoToParentCommand { get; set; }
+        public RelayCommand DeleteCommand { get; }
+        public RelayCommand GoBackCommand { get; }
+        public RelayCommand GoToParentCommand { get; }
+        public RelayCommand<GroupVm> GoToGroupCommand { get; }
+        public RelayCommand<EntryVm> GoToEntryCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         
@@ -125,7 +127,9 @@ namespace ModernKeePass.ViewModels
             CreateGroupCommand = new RelayCommand<string>(async newGroupName => await AddNewGroup(newGroupName), _ => !IsInRecycleBin && Database.RecycleBinId != Id);
             DeleteCommand = new RelayCommand(async () => await AskForDelete(),() => IsNotRoot);
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
-            GoToParentCommand= new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
+            GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
+            GoToGroupCommand = new RelayCommand<GroupVm>(group => GoToGroup(group.Id), group => group != null);
+            GoToEntryCommand = new RelayCommand<EntryVm>(entry => GoToEntry(entry.Id), entry => entry != null);
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
         }

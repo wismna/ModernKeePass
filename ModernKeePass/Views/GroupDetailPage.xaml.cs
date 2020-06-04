@@ -1,7 +1,6 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using ModernKeePass.Application.Entry.Models;
 using ModernKeePass.Models;
 using ModernKeePass.ViewModels;
 
@@ -37,33 +36,6 @@ namespace ModernKeePass.Views
         #endregion
         
         #region Event Handlers
-
-        private void groups_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var listView = sender as ListView;
-            switch (listView?.SelectedIndex)
-            {
-                case -1:
-                    return;
-                default:
-                    var group = listView?.SelectedItem as Application.Group.Models.GroupVm;
-                    Model.GoToGroup(group?.Id);
-                    break;
-            }
-        }
-        
-        private void entries_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            switch (GridView.SelectedIndex)
-            {
-                case -1:
-                    return;
-                default:
-                    var entry = GridView.SelectedItem as EntryVm;
-                    Model.GoToEntry(entry?.Id);
-                    break;
-            }
-        }
         
         private void SemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {

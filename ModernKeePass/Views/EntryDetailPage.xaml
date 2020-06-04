@@ -208,8 +208,13 @@
                 x:Name="HamburgerMenu"
                 x:Uid="HistoryLeftListView" 
                 ItemsSource="{Binding History}" 
-                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" 
-                SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="SelectionChanged">
+                        <core:InvokeCommandAction Command="{Binding SetCurrentEntryCommand}" CommandParameter="{Binding SelectedItem, ElementName=HamburgerMenu}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </controls:HamburgerMenuUserControl>
         </Grid>
         <!-- Bouton Précédent et titre de la page -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
