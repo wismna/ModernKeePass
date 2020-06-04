@@ -189,10 +189,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Win81App_StoreKey.pfx" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\CodeBehind.resw" />
-    <PRIResource Include="Strings\en-US\CodeBehind.resw" />
-    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />

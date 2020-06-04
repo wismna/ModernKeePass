@@ -32,14 +32,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <controls:HamburgerMenuUserControl 
-                x:Name="HamburgerMenu"
-                x:Uid="HistoryLeftListView" 
-                ItemsSource="{Binding History}" 
-                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" 
-                SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
             <Grid Grid.Column="1">
-                <Hub Padding="0">
+                <Hub x:Name="Hub" Padding="0">
                     <Hub.Resources>
                         <Style TargetType="TextBlock" x:Key="EntryTextBlockStyle">
                             <Setter Property="Margin" Value="0,20,0,0"/>
@@ -209,6 +203,13 @@
                     </HubSection>
                 </Hub>
             </Grid>
+            <controls:HamburgerMenuUserControl 
+                Grid.Column="0"
+                x:Name="HamburgerMenu"
+                x:Uid="HistoryLeftListView" 
+                ItemsSource="{Binding History}" 
+                SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" 
+                SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
         </Grid>
         <!-- Bouton Précédent et titre de la page -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
@@ -278,5 +279,30 @@
                 </interactivity:Interaction.Behaviors>
             </controls:TopMenuUserControl>
         </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PageLayout">
+                <VisualState x:Name="Small">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="-30,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Medium">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Large">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

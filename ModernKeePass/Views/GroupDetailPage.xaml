@@ -41,14 +41,6 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <userControls:HamburgerMenuUserControl 
-                x:Name="HamburgerMenu"
-                x:Uid="GroupsLeftListView" 
-                ItemsSource="{Binding Groups}" 
-                CanDragItems="{Binding IsEditMode}"
-                SelectionChanged="groups_SelectionChanged" 
-                ActionButtonCommand="{Binding CreateGroupCommand}"
-                IsButtonVisible="Visible" />
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -71,7 +63,7 @@
                     </StackPanel>
                 </HyperlinkButton>
 
-                <SemanticZoom Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" ScrollViewer.HorizontalScrollBarVisibility="Visible">
+                <SemanticZoom x:Name="SemanticZoom" Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" ViewChangeStarted="SemanticZoom_ViewChangeStarted" ScrollViewer.HorizontalScrollBarVisibility="Visible">
                     <SemanticZoom.ZoomedInView>
                         <!-- Horizontal scrolling grid -->
                         <GridView
@@ -176,6 +168,15 @@
                     </SemanticZoom.ZoomedOutView>
                 </SemanticZoom>
             </Grid>
+            <userControls:HamburgerMenuUserControl 
+                Grid.Column="0"
+                x:Name="HamburgerMenu"
+                x:Uid="GroupsLeftListView" 
+                ItemsSource="{Binding Groups}" 
+                CanDragItems="{Binding IsEditMode}"
+                SelectionChanged="groups_SelectionChanged" 
+                ActionButtonCommand="{Binding CreateGroupCommand}"
+                IsButtonVisible="Visible"  />
         </Grid>
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
@@ -258,12 +259,18 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="-60,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Medium">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="False"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -274,6 +281,9 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HamburgerMenu" Storyboard.TargetProperty="IsOpen">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="True"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

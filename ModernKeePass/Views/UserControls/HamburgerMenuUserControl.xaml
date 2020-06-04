@@ -60,7 +60,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl}" Unchecked="ToggleButton_OnUnchecked">
+            <ToggleButton x:Name="HamburgerButton" Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl, Mode=TwoWay}" Unchecked="ToggleButton_OnUnchecked">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Checked">
                         <core:GoToStateAction StateName="Expanded" />
@@ -125,6 +125,7 @@
                             </StackPanel>
                             <interactivity:Interaction.Behaviors>
                                 <core:EventTriggerBehavior EventName="Click">
+                                    <core:ChangePropertyAction TargetObject="{Binding ElementName=UserControl}" PropertyName="IsOpen" Value="True" />
                                     <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupTextBox}" PropertyName="Visibility" Value="Visible" />
                                     <core:ChangePropertyAction TargetObject="{Binding ElementName=NewGroupButton}" PropertyName="Visibility" Value="Collapsed" />
                                     <actions:SetupFocusAction TargetObject="{Binding ElementName=NewGroupTextBox}" />
