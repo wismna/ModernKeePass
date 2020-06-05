@@ -5,9 +5,9 @@ namespace ModernKeePass.Views
     /// <summary>
     /// The import/export page.
     /// </summary>
-    public sealed partial class ImportExportPage
+    public sealed partial class ImportPage
     {
-        public ImportExportPage()
+        public ImportPage()
         {
             InitializeComponent();
         }

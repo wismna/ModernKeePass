@@ -81,7 +81,6 @@
     <Compile Include="Common\Interfaces\IDatabaseProxy.cs" />
     <Compile Include="Common\Interfaces\IEntityVm.cs" />
     <Compile Include="Common\Interfaces\IFileProxy.cs" />
-    <Compile Include="Common\Interfaces\IImportFormat.cs" />
     <Compile Include="Common\Interfaces\ICredentialsProxy.cs" />
     <Compile Include="Common\Interfaces\ILogger.cs" />
     <Compile Include="Common\Interfaces\INotificationService.cs" />
@@ -105,6 +104,8 @@
     <Compile Include="Group\Queries\GetAllGroups\GetAllGroupsQuery.cs" />
     <Compile Include="Group\Queries\GetGroup\GetGroupQuery.cs" />
     <Compile Include="Group\Queries\SearchEntries\SearchEntriesQuery.cs" />
+    <Compile Include="Import\Commands\ImportFromCsv\ImportFromCsvCommand.cs" />
+    <Compile Include="Import\Commands\ImportFromCsv\ImportFromCsvCommandValidator.cs" />
     <Compile Include="Parameters\Commands\SetCipher\SetCipherCommand.cs" />
     <Compile Include="Parameters\Commands\SetCompression\SetCompressionCommand.cs" />
     <Compile Include="Parameters\Commands\SetHasRecycleBin\SetHasRecycleBinCommand.cs" />
@@ -119,7 +120,7 @@
     <Compile Include="Parameters\Queries\GetKeyDerivations\GetKeyDerivationsQuery.cs" />
     <Compile Include="Database\Commands\CloseDatabase\CloseDatabaseCommand.cs" />
     <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseCommand.cs" />
-    <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseQueryValidator.cs" />
+    <Compile Include="Database\Commands\CreateDatabase\CreateDatabaseCommandValidator.cs" />
     <Compile Include="Database\Commands\SaveDatabase\SaveDatabaseCommand.cs" />
     <Compile Include="Database\Commands\UpdateCredentials\UpdateCredentialsCommand.cs" />
     <Compile Include="Database\Models\DatabaseVm.cs" />

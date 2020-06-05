@@ -2,9 +2,9 @@
 
 namespace ModernKeePass.Application.Database.Commands.CreateDatabase
 {
-    public class CreateDatabaseQueryValidator : AbstractValidator<CreateDatabaseCommand>
+    public class CreateDatabaseCommandValidator : AbstractValidator<CreateDatabaseCommand>
     {
-        public CreateDatabaseQueryValidator()
+        public CreateDatabaseCommandValidator()
         {
             RuleFor(v => v.FilePath)
                 .NotNull()

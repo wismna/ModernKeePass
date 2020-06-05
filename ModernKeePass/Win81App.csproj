@@ -100,8 +100,8 @@
       <DependentUpon>DonatePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\BasePages\LayoutAwarePageBase.cs" />
-    <Compile Include="Views\MainPageFrames\ImportExportPage.xaml.cs">
-      <DependentUpon>ImportExportPage.xaml</DependentUpon>
+    <Compile Include="Views\MainPageFrames\ImportPage.xaml.cs">
+      <DependentUpon>ImportPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsPageFrames\SettingsHistoryPage.xaml.cs">
       <DependentUpon>SettingsHistoryPage.xaml</DependentUpon>
@@ -203,7 +203,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="Views\MainPageFrames\ImportExportPage.xaml">
+    <Page Include="Views\MainPageFrames\ImportPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

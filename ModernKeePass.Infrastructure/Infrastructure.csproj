@@ -78,7 +78,6 @@
   <ItemGroup>
     <Compile Include="Common\MachineDateTime.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="File\CsvImportFormat.cs" />
     <Compile Include="KeePass\MappingProfiles.cs" />
     <Compile Include="KeePass\IconMapper.cs" />
     <Compile Include="KeePass\KeePassDatabaseSettingsProxy.cs" />
