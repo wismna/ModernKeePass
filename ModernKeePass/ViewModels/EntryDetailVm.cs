@@ -55,7 +55,7 @@ namespace ModernKeePass.ViewModels
             }
         } 
         
-        public ObservableCollection<EntryVm> History { get; private set; }
+        public ObservableCollection<IEntityVm> History { get; private set; }
         public ObservableCollection<EntryFieldVm> AdditionalFields { get; private set; }
         public ObservableCollection<Attachment> Attachments { get; private set; }
 
@@ -275,8 +275,9 @@ namespace ModernKeePass.ViewModels
         {
             SelectedIndex = 0;
             _current = await _mediator.Send(new GetEntryQuery { Id = entryId });
+            SetCurrentEntry(_current);
             _parent = await _mediator.Send(new GetGroupQuery { Id = _current.ParentGroupId });
-            History = new ObservableCollection<EntryVm> { _current };
+            History = new ObservableCollection<IEntityVm> { _current };
             foreach (var entry in _current.History.Skip(1))
             {
                 History.Add(entry);
@@ -290,7 +291,7 @@ namespace ModernKeePass.ViewModels
 
         public async Task AddHistory()
         {
-            if (_isDirty && Database.IsOpen) await _mediator.Send(new AddHistoryCommand { Entry = History[0] });
+            if (_isDirty && Database.IsOpen) await _mediator.Send(new AddHistoryCommand { Entry = History[0] as EntryVm });
         }
         
         public void GoToGroup(string groupId)
@@ -363,7 +364,7 @@ namespace ModernKeePass.ViewModels
                     _resource.GetResourceValue("EntityDeleteCancelButton"), async isOk =>
                     {
                         if (!isOk) return;
-                        await _mediator.Send(new DeleteHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+                        await _mediator.Send(new DeleteHistoryCommand { Entry = History[0] as EntryVm, HistoryIndex = History.Count - SelectedIndex - 1 });
                         History.RemoveAt(SelectedIndex);
                     });
             }
@@ -371,7 +372,7 @@ namespace ModernKeePass.ViewModels
 
         private async Task RestoreHistory()
         {
-            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0], HistoryIndex = History.Count - SelectedIndex - 1 });
+            await _mediator.Send(new RestoreHistoryCommand { Entry = History[0] as EntryVm, HistoryIndex = History.Count - SelectedIndex - 1 });
             History.Insert(0, _current);
         }
         

@@ -9,6 +9,11 @@
     mc:Ignorable="d"
     DataContext="{Binding Source={StaticResource Locator}, Path=Recent}">
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <CollectionViewSource 
+            x:Name="RecentItemsSource" 
+            Source="{Binding RecentItems}" />
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -21,7 +26,7 @@
         </HyperlinkButton>
         <controls:SelectableTemplateListView Grid.Row="1"
             SelectedIndex="{Binding SelectedIndex}"
-            ItemsSource="{Binding RecentItems}"
+            ItemsSource="{Binding Source={StaticResource RecentItemsSource}}"
             ItemContainerStyle="{StaticResource ListViewLeftIndicatorItemExpanded}">
             <controls:SelectableTemplateListView.SelectedItemTemplate>
                 <DataTemplate>

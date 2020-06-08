@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.Controls;
+using System.Collections.ObjectModel;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -62,18 +63,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
 
-        public IEnumerable<IEntityVm> ItemsSource
+        public ObservableCollection<IEntityVm> ItemsSource
         {
-            get { return (IEnumerable<IEntityVm>)GetValue(ItemsSourceProperty); }
+            get { return (ObservableCollection<IEntityVm>)GetValue(ItemsSourceProperty); }
             set { SetValue(ItemsSourceProperty, value); }
         }
 
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register(
                 nameof(ItemsSource),
-                typeof(IEnumerable<IEntityVm>),
+                typeof(ObservableCollection<IEntityVm>),
                 typeof(HamburgerMenuUserControl),
-                new PropertyMetadata(new List<IEntityVm>(), (o, args) => { }));
+                new PropertyMetadata(new ObservableCollection<IEntityVm>(), (o, args) => { }));
 
         public object SelectedItem
         {

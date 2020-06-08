@@ -57,6 +57,7 @@
             Grid.Column="0"
             Grid.Row="1"
             x:Name="MenuListView"
+            ScrollViewer.VerticalScrollMode="Disabled"
             SelectionChanged="ListView_SelectionChanged" 
             Background="{ThemeResource AppBarBackgroundThemeBrush}"
             ItemsSource="{Binding Source={StaticResource MenuItemsSource}}"

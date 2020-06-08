@@ -79,7 +79,7 @@
                             CanDragItems="{Binding IsEditMode}">
                             <interactivity:Interaction.Behaviors>
                                 <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                                    <actions:SetupFocusAction TargetObject="{Binding}" />
+                                    <actions:SetupFocusAction TargetObject="{Binding ElementName=GridView}" />
                                 </core:DataTriggerBehavior>
                                 <core:EventTriggerBehavior EventName="SelectionChanged">
                                     <core:InvokeCommandAction Command="{Binding GoToEntryCommand}" CommandParameter="{Binding SelectedItem, ElementName=GridView}" />

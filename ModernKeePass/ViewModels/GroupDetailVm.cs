@@ -38,7 +38,7 @@ namespace ModernKeePass.ViewModels
     {
         public ObservableCollection<EntryVm> Entries { get; private set; }
 
-        public ObservableCollection<GroupVm> Groups { get; private set; }
+        public ObservableCollection<IEntityVm> Groups { get; private set; }
         
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
 
@@ -144,7 +144,7 @@ namespace ModernKeePass.ViewModels
 
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
-            Groups = new ObservableCollection<GroupVm>(_group.Groups);
+            Groups = new ObservableCollection<IEntityVm>(_group.Groups);
             Groups.CollectionChanged += Groups_CollectionChanged;
         }
 
@@ -255,7 +255,7 @@ namespace ModernKeePass.ViewModels
         private async Task SortGroupsAsync()
         {
             await _mediator.Send(new SortGroupsCommand {Group = _group});
-            Groups = new ObservableCollection<GroupVm>(_group.Groups);
+            Groups = new ObservableCollection<IEntityVm>(_group.Groups);
             RaisePropertyChanged(nameof(Groups));
             SaveCommand.RaiseCanExecuteChanged();
         }
