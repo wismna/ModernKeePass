@@ -39,6 +39,18 @@ namespace ModernKeePass.Views.UserControls
                 typeof(TopMenuUserControl),
                 new PropertyMetadata(null, (o, args) => { }));
 
+        public Visibility EditButtonVisibility
+        {
+            get { return (Visibility)GetValue(EditButtonVisibilityProperty); }
+            set { SetValue(EditButtonVisibilityProperty, value); }
+        }
+        public static readonly DependencyProperty EditButtonVisibilityProperty =
+            DependencyProperty.Register(
+                nameof(EditButtonVisibility),
+                typeof(Visibility),
+                typeof(TopMenuUserControl),
+                new PropertyMetadata(Visibility.Collapsed, (o, args) => { }));
+
         public ICommand DeleteCommand
         {
             get { return (ICommand)GetValue(DeleteCommandProperty); }

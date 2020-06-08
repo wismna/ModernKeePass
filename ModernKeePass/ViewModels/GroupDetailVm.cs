@@ -80,7 +80,7 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public string ParentGroupName => _parent?.Title;
+        public string ParentGroupName => _parent == null ? Database.Name : _parent.Title;
 
         public bool IsRecycleOnDelete => Database.IsRecycleBinEnabled && !IsInRecycleBin;
 

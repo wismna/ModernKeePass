@@ -174,6 +174,7 @@
                 Grid.Column="0"
                 x:Name="HamburgerMenu"
                 x:Uid="GroupsLeftListView" 
+                HeaderLabel="{Binding Title}"
                 ItemsSource="{Binding Groups}" 
                 CanDragItems="{Binding IsEditMode}"
                 ActionButtonCommand="{Binding CreateGroupCommand}"
@@ -189,7 +190,7 @@
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
-                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
@@ -206,42 +207,25 @@
             </Button>
             <Button Grid.Column="1" 
                 Height="{StaticResource MenuHeight}"
-                Width="{StaticResource MenuWidth}"
                 Command="{Binding GoToParentCommand}"
                 Style="{StaticResource NoBorderButtonStyle}">
-                <SymbolIcon Symbol="Up" />
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Up" />
+                    <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" HorizontalAlignment="Center" />
+                </StackPanel>
                 <ToolTipService.ToolTip>
                     <ToolTip Content="{Binding ParentGroupName}" />
                 </ToolTipService.ToolTip>
             </Button>
-            <Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--<Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
             </Viewbox>
             <Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                 <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
-            </Viewbox>
-            <TextBox Grid.Column="3"
-                    x:Uid="GroupTitle"
-                    x:Name="TitleTextBox"
-                    Text="{Binding Title, Mode=TwoWay}" 
-                    Background="Transparent"
-                    IsHitTestVisible="{Binding IsEditMode}"
-                    FontSize="20"
-                    FontWeight="Light"
-                    TextWrapping="NoWrap" 
-                    VerticalAlignment="Center">
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
-                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
-                    </core:DataTriggerBehavior>
-                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </TextBox>
+            </Viewbox>-->
             <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="4"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
+                EditButtonVisibility="Visible"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 SaveCommand="{Binding SaveCommand}"
                 MoveCommand="{Binding MoveCommand}"
@@ -269,6 +253,9 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="-60,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -278,6 +265,9 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -291,6 +281,9 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

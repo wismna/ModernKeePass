@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -26,7 +25,7 @@ namespace ModernKeePass.Views.UserControls
                 typeof(string),
                 typeof(HamburgerMenuUserControl),
                 new PropertyMetadata("Header", (o, args) => { }));
-
+        
         public string ButtonLabel
         {
             get { return (string)GetValue(ButtonLabelProperty); }

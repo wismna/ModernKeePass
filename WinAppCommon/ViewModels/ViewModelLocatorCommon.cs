@@ -21,6 +21,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Interfaces;
 using ModernKeePass.ViewModels.Settings;
+using ModernKeePass.Domain.Interfaces;
 
 namespace ModernKeePass.ViewModels
 {
@@ -45,7 +46,7 @@ namespace ModernKeePass.ViewModels
             else
             {
                 // Create run time view services and models
-                //SimpleIoc.Default.Register<IDataService, DataService>();IDataService
+                SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IDateTime>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IMediator>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IRecentProxy>());
                 SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IResourceProxy>());

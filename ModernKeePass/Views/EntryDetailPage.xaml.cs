@@ -28,7 +28,6 @@ namespace ModernKeePass.Views
             if (args != null)
             {
                 await Model.Initialize(args.Id);
-                Model.IsEditMode = args.IsNew;
             }
         }
 

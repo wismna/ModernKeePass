@@ -205,12 +205,6 @@ namespace ModernKeePass.ViewModels
             }
         }
         
-        public bool IsEditMode
-        {
-            get { return IsCurrentEntry && _isEditMode; }
-            set { Set(() => IsEditMode, ref _isEditMode, value); }
-        }
-        
         public RelayCommand SaveCommand { get; }
         public RelayCommand<string> MoveCommand { get; }
         public RelayCommand RestoreCommand { get; }
@@ -238,7 +232,6 @@ namespace ModernKeePass.ViewModels
         private EntryVm _current;
         private int _selectedIndex;
         private int _additionalFieldSelectedIndex = -1;
-        private bool _isEditMode;
         private bool _isDirty;
 
         public EntryDetailVm(IMediator mediator, INavigationService navigation, IResourceProxy resource, IDialogService dialog, INotificationService notification, IFileProxy file, ICryptographyClient cryptography, IDateTime dateTime)

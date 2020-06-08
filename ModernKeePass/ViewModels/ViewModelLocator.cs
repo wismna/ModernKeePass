@@ -15,9 +15,6 @@
 using System;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Extensions.DependencyInjection;
-using ModernKeePass.Domain.Interfaces;
-using GalaSoft.MvvmLight;
 
 namespace ModernKeePass.ViewModels
 {
@@ -32,18 +29,6 @@ namespace ModernKeePass.ViewModels
         /// </summary>
         public ViewModelLocator()
         {
-            if (ViewModelBase.IsInDesignModeStatic)
-            {
-                // Create design time view services and models
-                //SimpleIoc.Default.Register<IDataService, DesignDataService>();
-            }
-            else
-            {
-                // Create run time view services and models
-                //SimpleIoc.Default.Register<IDataService, DataService>();IDataService
-                SimpleIoc.Default.Register(() => App.Services.GetRequiredService<IDateTime>());
-            }
-
             SimpleIoc.Default.Register<SettingsVm>();
             SimpleIoc.Default.Register<MainVm>();
             SimpleIoc.Default.Register<GroupDetailVm>();

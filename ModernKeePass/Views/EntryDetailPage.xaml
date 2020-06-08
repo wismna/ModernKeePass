@@ -32,6 +32,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+
             <Grid Grid.Column="1">
                 <Hub x:Name="Hub" Padding="0">
                     <Hub.Resources>
@@ -51,6 +52,15 @@
                                             <Setter Property="FontSize" Value="18"/>
                                         </Style>
                                     </StackPanel.Resources>
+                                    <TextBlock x:Uid="EntryTitle" Style="{StaticResource EntryTextBlockStyle}" />
+                                    <local:TextBoxWithButton x:Uid="TitleTextBox" Text="{Binding Title, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonContent="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
+                                        <interactivity:Interaction.Behaviors>
+                                            <core:EventTriggerBehavior EventName="ButtonClick">
+                                                <actions:ClipboardAction Text="{Binding Title}" />
+                                                <actions:ToastAction x:Uid="ToastCopyTitle" Title="{Binding Title}" />
+                                            </core:EventTriggerBehavior>
+                                        </interactivity:Interaction.Behaviors>
+                                    </local:TextBoxWithButton>
                                     <TextBlock x:Uid="EntryLogin" Style="{StaticResource EntryTextBlockStyle}" />
                                     <local:TextBoxWithButton x:Uid="LoginTextBox" Text="{Binding UserName, Mode=TwoWay}" Style="{StaticResource TextBoxWithButtonStyle}" ButtonContent="&#xE16F;" IsEnabled="{Binding IsCurrentEntry}">
                                         <interactivity:Interaction.Behaviors>
@@ -220,57 +230,35 @@
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
-                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" 
-                    Command="{Binding GoBackCommand}"
-                    Height="{StaticResource MenuHeight}"
-                    Width="{StaticResource MenuWidth}"
-                    AutomationProperties.Name="Back"
-                    AutomationProperties.AutomationId="BackButton"
-                    AutomationProperties.ItemType="Navigation Button"
-                    Style="{StaticResource NoBorderButtonStyle}">
+                Command="{Binding GoBackCommand}"
+                Height="{StaticResource MenuHeight}"
+                Width="{StaticResource MenuWidth}"
+                AutomationProperties.Name="Back"
+                AutomationProperties.AutomationId="BackButton"
+                AutomationProperties.ItemType="Navigation Button"
+                Style="{StaticResource NoBorderButtonStyle}">
                 <SymbolIcon Symbol="Back" />
             </Button>
             <Button Grid.Column="1" 
                 Height="{StaticResource MenuHeight}"
-                Width="{StaticResource MenuWidth}"
                 Command="{Binding GoToParentCommand}"
                 Style="{StaticResource NoBorderButtonStyle}">
-                <SymbolIcon Symbol="Up" />
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Up" />
+                    <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" HorizontalAlignment="Center" />
+                </StackPanel>
                 <ToolTipService.ToolTip>
                     <ToolTip Content="{Binding ParentGroupName}" />
                 </ToolTipService.ToolTip>
             </Button>
-            <Viewbox Grid.Column="2" MaxHeight="200">
-                <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
-            </Viewbox>
-            <TextBox Grid.Column="3"
-                x:Uid="EntryTitle"
-                x:Name="TitleTextBox"
-                Text="{Binding Title, Mode=TwoWay}" 
-                Background="Transparent"
-                IsHitTestVisible="{Binding IsEditMode}"
-                FontSize="20"
-                FontWeight="Light"
-                TextWrapping="NoWrap" 
-                VerticalAlignment="Center">
-                <interactivity:Interaction.Behaviors>
-                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="True">
-                        <actions:SetupFocusAction TargetObject="{Binding ElementName=TitleTextBox}" />
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="2" />
-                    </core:DataTriggerBehavior>
-                    <core:DataTriggerBehavior Binding="{Binding IsEditMode}" Value="False">
-                        <core:ChangePropertyAction TargetObject="{Binding ElementName=TitleTextBox}" PropertyName="BorderThickness" Value="0" />
-                    </core:DataTriggerBehavior>
-                </interactivity:Interaction.Behaviors>
-            </TextBox>
             <controls:TopMenuUserControl 
                 x:Name="TopMenu" Grid.Column="4"
-                IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
                 MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
                 RestoreButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SaveCommand="{Binding SaveCommand}"
@@ -291,6 +279,9 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="-30,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -298,12 +289,18 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

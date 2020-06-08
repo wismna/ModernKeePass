@@ -372,9 +372,6 @@
   <data name="GroupsLeftListView.ButtonLabel" xml:space="preserve">
     <value>New group</value>
   </data>
-  <data name="GroupsLeftListView.HeaderLabel" xml:space="preserve">
-    <value>Groups</value>
-  </data>
   <data name="HistoryLeftListView.HeaderLabel" xml:space="preserve">
     <value>History</value>
   </data>
@@ -452,9 +449,6 @@
   </data>
   <data name="ToastUpdateDatabase.Title" xml:space="preserve">
     <value>Composite Key</value>
-  </data>
-  <data name="EntryTitle.PlaceholderText" xml:space="preserve">
-    <value>New entry name...</value>
   </data>
   <data name="SearchButtonLabel.Text" xml:space="preserve">
     <value>Search</value>
@@ -569,5 +563,14 @@
   </data>
   <data name="PasswordGenerationButton.ButtonContent" xml:space="preserve">
     <value>Random</value>
+  </data>
+  <data name="EntryTitle.Text" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="TitleTextBox.ButtonTooltip" xml:space="preserve">
+    <value>Copy title</value>
+  </data>
+  <data name="ToastCopyTitle.Message" xml:space="preserve">
+    <value>Title copied to clipboard</value>
   </data>
 </root>
