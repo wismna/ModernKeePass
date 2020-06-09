@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
 using ModernKeePass.Application.Common.Interfaces;
+using ModernKeePass.Application.Common.Models;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -18,6 +19,7 @@ using ModernKeePass.Application.Group.Commands.AddEntry;
 using ModernKeePass.Application.Group.Commands.AddGroup;
 using ModernKeePass.Application.Group.Commands.CreateEntry;
 using ModernKeePass.Application.Group.Commands.CreateGroup;
+using ModernKeePass.Application.Group.Commands.DeleteEntry;
 using ModernKeePass.Application.Group.Commands.DeleteGroup;
 using ModernKeePass.Application.Group.Commands.MoveEntry;
 using ModernKeePass.Application.Group.Commands.MoveGroup;
@@ -97,6 +99,7 @@ namespace ModernKeePass.ViewModels
         public RelayCommand GoToParentCommand { get; }
         public RelayCommand<GroupVm> GoToGroupCommand { get; }
         public RelayCommand<EntryVm> GoToEntryCommand { get; }
+        public RelayCommand<EntryVm> DeleteEntryCommand { get; }
 
         private DatabaseVm Database => _mediator.Send(new GetDatabaseQuery()).GetAwaiter().GetResult();
         
@@ -105,19 +108,21 @@ namespace ModernKeePass.ViewModels
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
+        private readonly IBreadcrumbService _breadcrumb;
         private GroupVm _group;
         private GroupVm _parent;
         private bool _isEditMode;
         private EntryVm _reorderedEntry;
         private GroupVm _reorderedGroup;
 
-        public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
+        public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification, IBreadcrumbService breadcrumb)
         {
             _mediator = mediator;
             _resource = resource;
             _navigation = navigation;
             _dialog = dialog;
             _notification = notification;
+            _breadcrumb = breadcrumb;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
@@ -130,8 +135,39 @@ namespace ModernKeePass.ViewModels
             GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
             GoToGroupCommand = new RelayCommand<GroupVm>(group => GoToGroup(group.Id), group => group != null);
             GoToEntryCommand = new RelayCommand<EntryVm>(entry => GoToEntry(entry.Id), entry => entry != null);
+            DeleteEntryCommand = new RelayCommand<EntryVm>(async entry => await AskForDeleteEntry(entry), entry => entry != null);
 
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
+        }
+
+        private async Task AskForDeleteEntry(EntryVm entry)
+        {
+            if (IsRecycleOnDelete)
+            {
+                await DeleteEntry(entry.Id);
+                _notification.Show(_resource.GetResourceValue("EntityDeleting"), string.Format(_resource.GetResourceValue("EntryRecycled"), entry.Title));
+            }
+            else
+            {
+                await _dialog.ShowMessage(
+                    string.Format(_resource.GetResourceValue("EntryDeletingConfirmation"), entry.Title),
+                    _resource.GetResourceValue("EntityDeleting"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"),
+                    async isOk =>
+                    {
+                        if (isOk) await DeleteEntry(entry.Id);
+                    });
+            }
+        }
+        private async Task DeleteEntry(string entryId)
+        {
+            await _mediator.Send(new DeleteEntryCommand
+            {
+                EntryId = entryId,
+                ParentGroupId = Id,
+                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+            });
         }
 
         public async Task Initialize(string groupId)
@@ -150,6 +186,7 @@ namespace ModernKeePass.ViewModels
 
         public void GoToEntry(string entryId, bool isNew = false)
         {
+            _breadcrumb.Push(new BreadcrumbItem { Name = Title, Path = Id, Icon = _group.Icon });
             _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem
             {
                 Id = entryId,
@@ -158,6 +195,7 @@ namespace ModernKeePass.ViewModels
         }
         public void GoToGroup(string groupId, bool isNew = false)
         {
+            _breadcrumb.Push(new BreadcrumbItem { Name = Title, Path = Id, Icon = _group.Icon });
             _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
             {
                 Id = groupId,
@@ -289,6 +327,8 @@ namespace ModernKeePass.ViewModels
                 ParentGroupId = _group.ParentGroupId,
                 RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
             });
+
+            _breadcrumb.Pop();
             _navigation.GoBack();
         }
     }

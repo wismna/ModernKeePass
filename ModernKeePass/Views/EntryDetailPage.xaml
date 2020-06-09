@@ -32,7 +32,6 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
             <Grid Grid.Column="1">
                 <Hub x:Name="Hub" Padding="0">
                     <Hub.Resources>
@@ -229,36 +228,13 @@
         <!-- Bouton Précédent et titre de la page -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" 
-                Command="{Binding GoBackCommand}"
-                Height="{StaticResource MenuHeight}"
-                Width="{StaticResource MenuWidth}"
-                AutomationProperties.Name="Back"
-                AutomationProperties.AutomationId="BackButton"
-                AutomationProperties.ItemType="Navigation Button"
-                Style="{StaticResource NoBorderButtonStyle}">
-                <SymbolIcon Symbol="Back" />
-            </Button>
-            <Button Grid.Column="1" 
-                Height="{StaticResource MenuHeight}"
-                Command="{Binding GoToParentCommand}"
-                Style="{StaticResource NoBorderButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Up" />
-                    <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" HorizontalAlignment="Center" />
-                </StackPanel>
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="{Binding ParentGroupName}" />
-                </ToolTipService.ToolTip>
-            </Button>
+            <controls:BreadcrumbUserControl x:Name="Breadcrumb" />
             <controls:TopMenuUserControl 
-                x:Name="TopMenu" Grid.Column="4"
+                x:Name="TopMenu" Grid.Column="2"
                 MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
                 RestoreButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SaveCommand="{Binding SaveCommand}"
@@ -279,9 +255,6 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="-30,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -289,18 +262,12 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Hub" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

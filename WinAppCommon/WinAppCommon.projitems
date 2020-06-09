@@ -42,6 +42,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messages\NavigateToPageMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\PasswordGeneratedMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messages\SaveErrorMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TemplateSelectors\FirstItemDataTemplateSelector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\AboutVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Items\EntryFieldVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\CredentialsVm.cs" />
@@ -50,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\RecycleBinVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\GeneralVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\Settings\SecurityVm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\BreadcrumbControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\ColorPickerControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UserControls\PasswordGenerationBoxControlVm.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelLocatorCommon.cs" />

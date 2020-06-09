@@ -43,9 +43,7 @@ namespace ModernKeePass.ViewModels
         public bool HasExpired => HasExpirationDate && ExpiryDate < _dateTime.Now;
         
         public string Id => _current.Id;
-
-        public string ParentGroupName => _parent.Title;
-
+        
         public bool IsRecycleOnDelete
         {
             get
@@ -209,8 +207,6 @@ namespace ModernKeePass.ViewModels
         public RelayCommand<string> MoveCommand { get; }
         public RelayCommand RestoreCommand { get; }
         public RelayCommand DeleteCommand { get; }
-        public RelayCommand GoBackCommand { get; }
-        public RelayCommand GoToParentCommand { get; }
         public RelayCommand AddAdditionalField { get; }
         public RelayCommand<EntryFieldVm> DeleteAdditionalField { get; }
         public RelayCommand<Attachment> OpenAttachmentCommand { get; }
@@ -249,8 +245,6 @@ namespace ModernKeePass.ViewModels
             MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && !string.IsNullOrEmpty(destination) && destination != _parent.Id);
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
-            GoBackCommand = new RelayCommand(() => _navigation.GoBack());
-            GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id));
             AddAdditionalField = new RelayCommand(AddField, () => IsCurrentEntry);
             DeleteAdditionalField = new RelayCommand<EntryFieldVm>(async field => await DeleteField(field), field => field != null && IsCurrentEntry);
             OpenAttachmentCommand = new RelayCommand<Attachment>(async attachment => await OpenAttachment(attachment));
