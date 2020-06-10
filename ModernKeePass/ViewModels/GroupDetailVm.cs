@@ -10,7 +10,6 @@ using GalaSoft.MvvmLight.Views;
 using MediatR;
 using Messages;
 using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Common.Models;
 using ModernKeePass.Application.Database.Commands.SaveDatabase;
 using ModernKeePass.Application.Database.Models;
 using ModernKeePass.Application.Database.Queries.GetDatabase;
@@ -43,6 +42,8 @@ namespace ModernKeePass.ViewModels
         public ObservableCollection<IEntityVm> Groups { get; private set; }
         
         public bool IsNotRoot => Database.RootGroupId != _group.Id;
+
+        public GroupVm Parent { get; private set; }
 
         public IOrderedEnumerable<IGrouping<char, EntryVm>> EntriesZoomedOut => from e in Entries
             group e by (e.Title.Value ?? string.Empty).ToUpper().FirstOrDefault() into grp
@@ -82,11 +83,11 @@ namespace ModernKeePass.ViewModels
             }
         }
 
-        public string ParentGroupName => _parent == null ? Database.Name : _parent.Title;
+        public string ParentGroupName => Parent == null ? Database.Name : Parent.Title;
 
         public bool IsRecycleOnDelete => Database.IsRecycleBinEnabled && !IsInRecycleBin;
 
-        public bool IsInRecycleBin => _parent != null && _parent.Id == Database.RecycleBinId;
+        public bool IsInRecycleBin => Parent != null && Parent.Id == Database.RecycleBinId;
         
         public RelayCommand SaveCommand { get; }
         public RelayCommand SortEntriesCommand { get; }
@@ -108,21 +109,18 @@ namespace ModernKeePass.ViewModels
         private readonly INavigationService _navigation;
         private readonly IDialogService _dialog;
         private readonly INotificationService _notification;
-        private readonly IBreadcrumbService _breadcrumb;
         private GroupVm _group;
-        private GroupVm _parent;
         private bool _isEditMode;
         private EntryVm _reorderedEntry;
         private GroupVm _reorderedGroup;
 
-        public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification, IBreadcrumbService breadcrumb)
+        public GroupDetailVm(IMediator mediator, IResourceProxy resource, INavigationService navigation, IDialogService dialog, INotificationService notification)
         {
             _mediator = mediator;
             _resource = resource;
             _navigation = navigation;
             _dialog = dialog;
             _notification = notification;
-            _breadcrumb = breadcrumb;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
             SortEntriesCommand = new RelayCommand(async () => await SortEntriesAsync(), () => IsEditMode);
@@ -132,7 +130,7 @@ namespace ModernKeePass.ViewModels
             CreateGroupCommand = new RelayCommand<string>(async newGroupName => await AddNewGroup(newGroupName), _ => !IsInRecycleBin && Database.RecycleBinId != Id);
             DeleteCommand = new RelayCommand(async () => await AskForDelete(),() => IsNotRoot);
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
-            GoToParentCommand = new RelayCommand(() => GoToGroup(_parent.Id), () => _parent != null);
+            GoToParentCommand = new RelayCommand(() => GoToGroup(Parent.Id), () => Parent != null);
             GoToGroupCommand = new RelayCommand<GroupVm>(group => GoToGroup(group.Id), group => group != null);
             GoToEntryCommand = new RelayCommand<EntryVm>(entry => GoToEntry(entry.Id), entry => entry != null);
             DeleteEntryCommand = new RelayCommand<EntryVm>(async entry => await AskForDeleteEntry(entry), entry => entry != null);
@@ -140,43 +138,14 @@ namespace ModernKeePass.ViewModels
             MessengerInstance.Register<DatabaseSavedMessage>(this, _ => SaveCommand.RaiseCanExecuteChanged());
         }
 
-        private async Task AskForDeleteEntry(EntryVm entry)
-        {
-            if (IsRecycleOnDelete)
-            {
-                await DeleteEntry(entry.Id);
-                _notification.Show(_resource.GetResourceValue("EntityDeleting"), string.Format(_resource.GetResourceValue("EntryRecycled"), entry.Title));
-            }
-            else
-            {
-                await _dialog.ShowMessage(
-                    string.Format(_resource.GetResourceValue("EntryDeletingConfirmation"), entry.Title),
-                    _resource.GetResourceValue("EntityDeleting"),
-                    _resource.GetResourceValue("EntityDeleteActionButton"),
-                    _resource.GetResourceValue("EntityDeleteCancelButton"),
-                    async isOk =>
-                    {
-                        if (isOk) await DeleteEntry(entry.Id);
-                    });
-            }
-        }
-        private async Task DeleteEntry(string entryId)
-        {
-            await _mediator.Send(new DeleteEntryCommand
-            {
-                EntryId = entryId,
-                ParentGroupId = Id,
-                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
-            });
-        }
-
         public async Task Initialize(string groupId)
         {
             _group = await _mediator.Send(new GetGroupQuery { Id = groupId });
             if (!string.IsNullOrEmpty(_group.ParentGroupId))
             {
-                _parent = await _mediator.Send(new GetGroupQuery { Id = _group.ParentGroupId });
+                Parent = await _mediator.Send(new GetGroupQuery {Id = _group.ParentGroupId});
             }
+            else Parent = null;
 
             Entries = new ObservableCollection<EntryVm>(_group.Entries);
             Entries.CollectionChanged += Entries_CollectionChanged;
@@ -186,7 +155,6 @@ namespace ModernKeePass.ViewModels
 
         public void GoToEntry(string entryId, bool isNew = false)
         {
-            _breadcrumb.Push(new BreadcrumbItem { Name = Title, Path = Id, Icon = _group.Icon });
             _navigation.NavigateTo(Constants.Navigation.EntryPage, new NavigationItem
             {
                 Id = entryId,
@@ -195,7 +163,6 @@ namespace ModernKeePass.ViewModels
         }
         public void GoToGroup(string groupId, bool isNew = false)
         {
-            _breadcrumb.Push(new BreadcrumbItem { Name = Title, Path = Id, Icon = _group.Icon });
             _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem
             {
                 Id = groupId,
@@ -218,7 +185,7 @@ namespace ModernKeePass.ViewModels
         public async Task Move(string destinationId)
         {
             await _mediator.Send(new AddGroupCommand {ParentGroupId = destinationId, GroupId = Id });
-            await _mediator.Send(new RemoveGroupCommand {ParentGroupId = _parent.Id, GroupId = Id });
+            await _mediator.Send(new RemoveGroupCommand {ParentGroupId = Parent.Id, GroupId = Id });
             GoToGroup(destinationId);
         }
         
@@ -327,9 +294,39 @@ namespace ModernKeePass.ViewModels
                 ParentGroupId = _group.ParentGroupId,
                 RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
             });
-
-            _breadcrumb.Pop();
+            
             _navigation.GoBack();
+        }
+
+        private async Task AskForDeleteEntry(EntryVm entry)
+        {
+            if (IsRecycleOnDelete)
+            {
+                await DeleteEntry(entry);
+                _notification.Show(_resource.GetResourceValue("EntityDeleting"), string.Format(_resource.GetResourceValue("EntryRecycled"), entry.Title));
+            }
+            else
+            {
+                await _dialog.ShowMessage(
+                    string.Format(_resource.GetResourceValue("EntryDeletingConfirmation"), entry.Title),
+                    _resource.GetResourceValue("EntityDeleting"),
+                    _resource.GetResourceValue("EntityDeleteActionButton"),
+                    _resource.GetResourceValue("EntityDeleteCancelButton"),
+                    async isOk =>
+                    {
+                        if (isOk) await DeleteEntry(entry);
+                    });
+            }
+        }
+        private async Task DeleteEntry(EntryVm entry)
+        {
+            await _mediator.Send(new DeleteEntryCommand
+            {
+                EntryId = entry.Id,
+                ParentGroupId = Id,
+                RecycleBinName = _resource.GetResourceValue("RecycleBinTitle")
+            });
+            Entries.Remove(entry);
         }
     }
 }

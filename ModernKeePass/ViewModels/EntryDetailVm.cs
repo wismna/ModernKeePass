@@ -43,13 +43,15 @@ namespace ModernKeePass.ViewModels
         public bool HasExpired => HasExpirationDate && ExpiryDate < _dateTime.Now;
         
         public string Id => _current.Id;
-        
+
+        public GroupVm Parent { get; private set; }
+
         public bool IsRecycleOnDelete
         {
             get
             {
                 var database = Database;
-                return database.IsRecycleBinEnabled && _parent.Id != database.RecycleBinId;
+                return database.IsRecycleBinEnabled && Parent.Id != database.RecycleBinId;
             }
         } 
         
@@ -224,7 +226,6 @@ namespace ModernKeePass.ViewModels
         private readonly IFileProxy _file;
         private readonly ICryptographyClient _cryptography;
         private readonly IDateTime _dateTime;
-        private GroupVm _parent;
         private EntryVm _current;
         private int _selectedIndex;
         private int _additionalFieldSelectedIndex = -1;
@@ -242,7 +243,7 @@ namespace ModernKeePass.ViewModels
             _dateTime = dateTime;
 
             SaveCommand = new RelayCommand(async () => await SaveChanges(), () => Database.IsDirty);
-            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => _parent != null && !string.IsNullOrEmpty(destination) && destination != _parent.Id);
+            MoveCommand = new RelayCommand<string>(async destination => await Move(destination), destination => Parent != null && !string.IsNullOrEmpty(destination) && destination != Parent.Id);
             RestoreCommand = new RelayCommand(async () => await RestoreHistory());
             DeleteCommand = new RelayCommand(async () => await AskForDelete());
             AddAdditionalField = new RelayCommand(AddField, () => IsCurrentEntry);
@@ -263,7 +264,7 @@ namespace ModernKeePass.ViewModels
             SelectedIndex = 0;
             _current = await _mediator.Send(new GetEntryQuery { Id = entryId });
             SetCurrentEntry(_current);
-            _parent = await _mediator.Send(new GetGroupQuery { Id = _current.ParentGroupId });
+            Parent = await _mediator.Send(new GetGroupQuery { Id = _current.ParentGroupId });
             History = new ObservableCollection<IEntityVm> { _current };
             foreach (var entry in _current.History.Skip(1))
             {
@@ -289,7 +290,7 @@ namespace ModernKeePass.ViewModels
         private async Task Move(string destination)
         {
             await _mediator.Send(new AddEntryCommand { ParentGroupId = destination, EntryId = Id });
-            await _mediator.Send(new RemoveEntryCommand { ParentGroupId = _parent.Id, EntryId = Id });
+            await _mediator.Send(new RemoveEntryCommand { ParentGroupId = Parent.Id, EntryId = Id });
             GoToGroup(destination);
         }
         

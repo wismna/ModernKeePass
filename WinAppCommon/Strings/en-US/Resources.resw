@@ -573,4 +573,7 @@
   <data name="ToastCopyTitle.Message" xml:space="preserve">
     <value>Title copied to clipboard</value>
   </data>
+  <data name="EntryItemDelete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
 </root>

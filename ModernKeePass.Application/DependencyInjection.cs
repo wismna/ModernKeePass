@@ -2,8 +2,6 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using ModernKeePass.Application.Common.Behaviors;
-using ModernKeePass.Application.Common.Interfaces;
-using ModernKeePass.Application.Common.Services;
 
 namespace ModernKeePass.Application
 {
@@ -14,8 +12,7 @@ namespace ModernKeePass.Application
             var assembly = typeof(DependencyInjection).GetTypeInfo().Assembly;
             services.AddMediatR(assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DirtyStatusBehavior<,>));
-
-            services.AddSingleton(typeof(IBreadcrumbService), typeof(BreadcrumbService));
+            
             return services;
         }
     }

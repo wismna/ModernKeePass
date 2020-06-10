@@ -130,7 +130,7 @@
                                                             </core:EventTriggerBehavior>
                                                         </interactivity:Interaction.Behaviors>
                                                     </MenuFlyoutItem>
-                                                    <MenuFlyoutItem x:Uid="EntryItemDelete" Command="{Binding DeleteEntryCommand}" CommandParameter="{Binding}" />
+                                                    <MenuFlyoutItem x:Uid="EntryItemDelete" Command="{Binding DataContext.DeleteEntryCommand, ElementName=Page}" CommandParameter="{Binding}" />
                                                 </MenuFlyout>
                                             </Button.Flyout>
                                         </Button>
@@ -189,41 +189,12 @@
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{StaticResource MenuWidthGridLength}"/>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" 
-                    Command="{Binding GoBackCommand}"
-                    Height="{StaticResource MenuHeight}"
-                    Width="{StaticResource MenuWidth}"
-                    AutomationProperties.Name="Back"
-                    AutomationProperties.AutomationId="BackButton"
-                    AutomationProperties.ItemType="Navigation Button"
-                    Style="{StaticResource NoBorderButtonStyle}">
-                <SymbolIcon Symbol="Back" />
-            </Button>
-            <Button Grid.Column="1" 
-                Height="{StaticResource MenuHeight}"
-                Command="{Binding GoToParentCommand}"
-                Style="{StaticResource NoBorderButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Up" />
-                    <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" HorizontalAlignment="Center" />
-                </StackPanel>
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="{Binding ParentGroupName}" />
-                </ToolTipService.ToolTip>
-            </Button>
-            <!--<Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <userControls:SymbolPickerUserControl Width="100" Height="70" SelectedSymbol="{Binding Icon, Mode=TwoWay}" />
-            </Viewbox>
-            <Viewbox Grid.Column="2" MaxHeight="200" Visibility="{Binding IsEditMode, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                <SymbolIcon Symbol="{Binding Icon}" Width="100" Height="70"  />
-            </Viewbox>-->
-            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="4"
+            <userControls:BreadcrumbUserControl x:Name="Breadcrumb" Group="{Binding Parent}" />
+            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 EditButtonVisibility="Visible"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
@@ -253,9 +224,6 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="-60,0,0,0"/>
                         </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="Medium">
@@ -265,9 +233,6 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -281,9 +246,6 @@
                         </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SemanticZoom" Storyboard.TargetProperty="Margin">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="0,0,0,0"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>

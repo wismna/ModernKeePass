@@ -53,18 +53,21 @@ namespace ModernKeePass.Views
                 VisualStateManager.GoToState(this, "Small", true);
                 VisualStateManager.GoToState(TopMenu, "Collapsed", true);
                 VisualStateManager.GoToState(HamburgerMenu, "Hidden", true);
+                VisualStateManager.GoToState(Breadcrumb, "Small", true);
             }
             else if (e.NewSize.Width > 640 && e.NewSize.Width <= 1008)
             {
                 VisualStateManager.GoToState(this, "Medium", true);
                 VisualStateManager.GoToState(TopMenu, "Overflowed", true);
                 VisualStateManager.GoToState(HamburgerMenu, "Collapsed", true);
+                VisualStateManager.GoToState(Breadcrumb, "Medium", true);
             }
             else
             {
                 VisualStateManager.GoToState(this, "Large", true);
                 VisualStateManager.GoToState(TopMenu, "Overflowed", true);
                 VisualStateManager.GoToState(HamburgerMenu, "Expanded", true);
+                VisualStateManager.GoToState(Breadcrumb, "Large", true);
             }
         }
         

@@ -9,18 +9,19 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
-    <StackPanel Orientation="Horizontal" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}">
+    <StackPanel x:Name="StackPanel" Orientation="Horizontal" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}">
         <StackPanel.Resources>
             <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
             <DataTemplate x:Key="FirstItemTemplate">
                 <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="0,3,0,0" />
                     <TextBlock Margin="10,5,10,0" Text="{Binding Name}" FontStyle="Italic" HorizontalAlignment="Center" />
                 </StackPanel>
             </DataTemplate>
             <DataTemplate x:Key="OtherItemTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Play" Margin="0" />
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="0" />
+                    <TextBlock Margin="10,5,10,0" Text=">" HorizontalAlignment="Center" />
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="0,3,0,0" />
                     <TextBlock Margin="10,5,10,0" Text="{Binding Name}" FontStyle="Italic" HorizontalAlignment="Center" />
                 </StackPanel>
             </DataTemplate>
@@ -37,17 +38,18 @@
         </Button>
         <Button
             Height="{StaticResource MenuHeight}"
-            Command="{Binding GoToCommand}"
+            Command="{Binding GoUpCommand}"
             Style="{StaticResource NoBorderButtonStyle}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Up" />
-                <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" HorizontalAlignment="Center" />
+                <SymbolIcon x:Name="UpButtonIcon" Symbol="{Binding ParentGroupIcon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="16,0,0,0" />
+                <TextBlock x:Name="UpButtonText" Margin="11,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" FontWeight="Normal" HorizontalAlignment="Center" />
             </StackPanel>
             <ToolTipService.ToolTip>
                 <ToolTip Content="{Binding ParentGroupName}" />
             </ToolTipService.ToolTip>
         </Button>
-        <ListView x:Name="ListView" ItemsSource="{Binding BreadcrumbItems}" Height="{StaticResource MenuHeight}">
+        <ListView x:Name="ListView" ItemsSource="{Binding BreadcrumbItems}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal" />
@@ -59,6 +61,7 @@
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="Margin" Value="0"/>
+                    <Setter Property="Height" Value="{StaticResource MenuHeight}" />
                 </Style>
             </ListView.ItemContainerStyle>
             <interactivity:Interaction.Behaviors>
@@ -71,6 +74,9 @@
             <VisualStateGroup x:Name="PageLayout">
                 <VisualState x:Name="Small">
                     <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonIcon" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -81,6 +87,9 @@
                 </VisualState>
                 <VisualState x:Name="Medium">
                     <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonIcon" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                         </ObjectAnimationUsingKeyFrames>
@@ -91,6 +100,9 @@
                 </VisualState>
                 <VisualState x:Name="Large">
                     <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonIcon" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="UpButtonText" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
                         </ObjectAnimationUsingKeyFrames>
