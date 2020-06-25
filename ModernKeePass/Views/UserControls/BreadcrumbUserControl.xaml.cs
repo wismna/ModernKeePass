@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System.Linq;
+using Windows.UI.Xaml;
 using ModernKeePass.Application.Group.Models;
 using ModernKeePass.ViewModels;
 
@@ -22,7 +23,9 @@ namespace ModernKeePass.Views.UserControls
                 {
                     var userControl = o as BreadcrumbUserControl;
                     var vm = userControl?.StackPanel.DataContext as BreadcrumbControlVm;
-                    if (vm != null) await vm.Initialize(args.NewValue as GroupVm).ConfigureAwait(false);
+                    if (vm == null) return;
+                    await vm.Initialize(args.NewValue as GroupVm).ConfigureAwait(false);
+                    userControl?.ListView.ScrollIntoView(vm.BreadcrumbItems.Last());
                 }));
 
         public BreadcrumbUserControl()

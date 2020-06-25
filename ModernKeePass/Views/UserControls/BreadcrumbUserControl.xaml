@@ -9,23 +9,29 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
-    <StackPanel x:Name="StackPanel" Orientation="Horizontal" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}">
-        <StackPanel.Resources>
+    <Grid x:Name="StackPanel" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}">
+        <Grid.Resources>
             <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
             <DataTemplate x:Key="FirstItemTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="0,3,0,0" />
                     <TextBlock Margin="10,5,10,0" Text="{Binding Name}" FontStyle="Italic" HorizontalAlignment="Center" />
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=33}" Margin="0,3,0,0" />
                 </StackPanel>
             </DataTemplate>
             <DataTemplate x:Key="OtherItemTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Margin="10,5,10,0" Text=">" HorizontalAlignment="Center" />
-                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="0,3,0,0" />
+                    <TextBlock Margin="10,5,10,0" Text="&lt;" HorizontalAlignment="Center" />
                     <TextBlock Margin="10,5,10,0" Text="{Binding Name}" FontStyle="Italic" HorizontalAlignment="Center" />
+                    <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=33}" Margin="0,3,0,0" />
                 </StackPanel>
             </DataTemplate>
-        </StackPanel.Resources>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
         <Button
             Command="{Binding GoBackCommand}"
             Height="{StaticResource MenuHeight}"
@@ -37,22 +43,23 @@
             <SymbolIcon Symbol="Back" />
         </Button>
         <Button
+            Grid.Column="1"
             Height="{StaticResource MenuHeight}"
             Command="{Binding GoUpCommand}"
             Style="{StaticResource NoBorderButtonStyle}">
             <StackPanel Orientation="Horizontal">
                 <SymbolIcon Symbol="Up" />
-                <SymbolIcon x:Name="UpButtonIcon" Symbol="{Binding ParentGroupIcon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="16,0,0,0" />
-                <TextBlock x:Name="UpButtonText" Margin="11,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" FontWeight="Normal" HorizontalAlignment="Center" />
+                <SymbolIcon x:Name="UpButtonIcon" Symbol="{Binding ParentGroupIcon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=33}" Margin="16,0,0,0" />
+                <TextBlock x:Name="UpButtonText" Margin="10,2,0,0" Text="{Binding ParentGroupName}" FontStyle="Italic" FontWeight="Normal" HorizontalAlignment="Center" />
             </StackPanel>
             <ToolTipService.ToolTip>
                 <ToolTip Content="{Binding ParentGroupName}" />
             </ToolTipService.ToolTip>
         </Button>
-        <ListView x:Name="ListView" ItemsSource="{Binding BreadcrumbItems}">
+        <ListView x:Name="ListView" Grid.Column="2" ItemsSource="{Binding BreadcrumbItems}" HorizontalAlignment="Right">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" />
+                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplateSelector>
@@ -113,5 +120,5 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-    </StackPanel>
+    </Grid>
 </UserControl>

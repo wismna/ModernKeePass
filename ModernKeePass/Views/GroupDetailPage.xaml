@@ -189,12 +189,11 @@
         <!-- Back button and page title -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <userControls:BreadcrumbUserControl x:Name="Breadcrumb" Group="{Binding Parent}" />
-            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="2"
+            <userControls:TopMenuUserControl x:Name="TopMenu" Grid.Column="1"
                 SortButtonVisibility="{Binding IsEditMode, Converter={StaticResource BooleanToVisibilityConverter}}"
                 EditButtonVisibility="Visible"
                 IsEditButtonChecked="{Binding IsEditMode, Mode=TwoWay}"
@@ -209,7 +208,6 @@
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
             </userControls:TopMenuUserControl>
-            
         </Grid>
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PageLayout">

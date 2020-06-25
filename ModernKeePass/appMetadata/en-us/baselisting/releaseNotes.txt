@@ -1,1 +1,2 @@
+(Re-)Added a breadcrumb to help with navigation
 Design improvements

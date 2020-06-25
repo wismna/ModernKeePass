@@ -60,7 +60,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-            <ToggleButton x:Name="HamburgerButton" Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl, Mode=TwoWay}" Unchecked="ToggleButton_OnUnchecked">
+            <ToggleButton Style="{StaticResource HamburgerToggleButton}" IsChecked="{Binding IsOpen, ElementName=UserControl, Mode=TwoWay}" Unchecked="ToggleButton_OnUnchecked">
                 <ToolTipService.ToolTip>
                     <ToolTip Content="{Binding HeaderLabel, ElementName=UserControl}" />
                 </ToolTipService.ToolTip>
@@ -97,7 +97,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:Name="IsNormal">
                     <StackPanel Orientation="Horizontal">
-                        <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=48}" Margin="7,10,0,15">
+                        <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=33}" Margin="7,10,0,15">
                             <ToolTipService.ToolTip>
                                 <ToolTip Content="{Binding Path={Binding DisplayMemberPath, ElementName=UserControl}}" />
                             </ToolTipService.ToolTip>

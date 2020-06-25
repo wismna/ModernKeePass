@@ -228,13 +228,12 @@
         <!-- Bouton Précédent et titre de la page -->
         <Grid Grid.Row="0" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <controls:BreadcrumbUserControl x:Name="Breadcrumb" Group="{Binding Parent}" />
             <controls:TopMenuUserControl 
-                x:Name="TopMenu" Grid.Column="2"
+                x:Name="TopMenu" Grid.Column="1"
                 MoveButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource BooleanToVisibilityConverter}}"
                 RestoreButtonVisibility="{Binding IsCurrentEntry, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                 SaveCommand="{Binding SaveCommand}"

@@ -16,7 +16,7 @@ namespace ModernKeePass.ViewModels
     {
         public ObservableCollection<BreadcrumbItem> BreadcrumbItems { get; }
         public string ParentGroupName { get; private set; }
-        public Icon ParentGroupIcon { get; private set; }
+        public Icon ParentGroupIcon { get; private set; } = Icon.Folder;
 
         public RelayCommand GoBackCommand { get; }
         public RelayCommand GoUpCommand { get; private set; }
@@ -33,22 +33,22 @@ namespace ModernKeePass.ViewModels
             BreadcrumbItems = new ObservableCollection<BreadcrumbItem>();
             GoBackCommand = new RelayCommand(() => _navigation.GoBack());
             GoToCommand = new RelayCommand<int>(GoTo);
+            GoUpCommand = new RelayCommand(() => GoTo(BreadcrumbItems.Count - 1), () => !string.IsNullOrEmpty(ParentGroupName));
         }
 
         public async Task Initialize(GroupVm group)
         {
-            GoUpCommand = new RelayCommand(() => GoTo(BreadcrumbItems.Count - 1), () => group != null);
-
             if (group == null) return;
+            GoBackCommand.RaiseCanExecuteChanged();
             ParentGroupName = group.Title;
             ParentGroupIcon = group.Icon;
 
-            BreadcrumbItems.Insert(0, new BreadcrumbItem { Path = group.Id, Name = group.Title, Icon = group.Icon });
+            BreadcrumbItems.Add(new BreadcrumbItem { Path = group.Id, Name = group.Title, Icon = group.Icon });
             var parentGroup = group;
             while (!string.IsNullOrEmpty(parentGroup.ParentGroupId))
             {
                 parentGroup = await _mediator.Send(new GetGroupQuery {Id = parentGroup.ParentGroupId});
-                BreadcrumbItems.Insert(0, new BreadcrumbItem {Path = parentGroup.Id, Name = parentGroup.Title, Icon = parentGroup.Icon});
+                BreadcrumbItems.Add(new BreadcrumbItem {Path = parentGroup.Id, Name = parentGroup.Title, Icon = parentGroup.Icon});
             }
         }
 

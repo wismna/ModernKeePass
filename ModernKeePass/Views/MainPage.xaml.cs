@@ -40,7 +40,11 @@ namespace ModernKeePass.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            var file = e.Parameter as FileInfo;
+            FileInfo file;
+            if (e.NavigationMode == NavigationMode.Back)
+                file = null;
+            else
+                file = e.Parameter as FileInfo;
             await Model.Initialize(Frame, MenuFrame, file);
         }
     }
