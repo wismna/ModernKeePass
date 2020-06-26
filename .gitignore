@@ -40,3 +40,4 @@ AppPackages/
 BundleArtifacts/
 *.DotSettings
 /ModernKeePass/Win81App_StoreKey.pfx
+.sonarqube/

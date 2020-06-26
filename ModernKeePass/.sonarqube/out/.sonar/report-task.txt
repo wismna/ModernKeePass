@@ -1,7 +1,0 @@
-organization=geogeob
-projectKey=ModernKeePass
-serverUrl=https://sonarcloud.io
-serverVersion=7.2.0.12953
-dashboardUrl=https://sonarcloud.io/dashboard/index/ModernKeePass
-ceTaskId=AWQER9hfTzX59Iu7A6N0
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWQER9hfTzX59Iu7A6N0
