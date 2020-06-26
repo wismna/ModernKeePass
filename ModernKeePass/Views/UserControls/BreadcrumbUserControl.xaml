@@ -9,8 +9,8 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
-    <Grid x:Name="StackPanel" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}">
-        <Grid.Resources>
+    <StackPanel x:Name="StackPanel" DataContext="{Binding Source={StaticResource Locator}, Path=Breadcrumb}" Orientation="Horizontal">
+        <StackPanel.Resources>
             <converters:IconToSymbolConverter x:Key="IconToSymbolConverter"/>
             <DataTemplate x:Key="FirstItemTemplate">
                 <StackPanel Orientation="Horizontal">
@@ -25,13 +25,7 @@
                     <SymbolIcon Symbol="{Binding Icon, Converter={StaticResource IconToSymbolConverter}, ConverterParameter=33}" Margin="0,3,0,0" />
                 </StackPanel>
             </DataTemplate>
-        </Grid.Resources>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        </StackPanel.Resources>
         <Button
             Command="{Binding GoBackCommand}"
             Height="{StaticResource MenuHeight}"
@@ -43,7 +37,6 @@
             <SymbolIcon Symbol="Back" />
         </Button>
         <Button
-            Grid.Column="1"
             Height="{StaticResource MenuHeight}"
             Command="{Binding GoUpCommand}"
             Style="{StaticResource NoBorderButtonStyle}">
@@ -56,10 +49,10 @@
                 <ToolTip Content="{Binding ParentGroupName}" />
             </ToolTipService.ToolTip>
         </Button>
-        <ListView x:Name="ListView" Grid.Column="2" ItemsSource="{Binding BreadcrumbItems}" HorizontalAlignment="Right">
+        <ListView x:Name="ListView" ItemsSource="{Binding BreadcrumbItems}" ScrollViewer.HorizontalScrollMode="Auto">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" />
+                    <ItemsStackPanel FlowDirection="RightToLeft" Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplateSelector>
@@ -120,5 +113,5 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-    </Grid>
+    </StackPanel>
 </UserControl>
