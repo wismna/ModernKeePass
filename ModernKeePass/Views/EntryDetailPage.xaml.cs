@@ -34,6 +34,7 @@ namespace ModernKeePass.Views
         protected override async void OnNavigatedFrom(NavigationEventArgs e)
         {
             await Model.AddHistory();
+            Model.Cleanup();
         }
 
         #endregion

@@ -1,2 +1,1 @@
-(R)Ajout du fil d'Ariane pour aider a la navigation
-Ameliorations de design
+Correction d'un probleme de duplication des champs additionnels

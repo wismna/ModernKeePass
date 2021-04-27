@@ -445,5 +445,11 @@ namespace ModernKeePass.ViewModels
             };
             RaisePropertyChanged(string.Empty);
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

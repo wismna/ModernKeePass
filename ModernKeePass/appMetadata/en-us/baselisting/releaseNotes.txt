@@ -1,2 +1,1 @@
-(Re-)Added a breadcrumb to help with navigation
-Design improvements
+Fixed a duplication issue with additional fields
