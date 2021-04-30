@@ -15,7 +15,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>Win81App_StoreKey.pfx</PackageCertificateKeyFile>
-    <PackageCertificateThumbprint>2F2C96140E5F198DC331284960C96B3174A25070</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>3C2433AEBC44667251EABCBFEBCE1A764FB3D544</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <AppxBundle>Always</AppxBundle>
@@ -192,6 +192,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Win81App_StoreKey.pfx" />
+    <None Include="Win81App_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
