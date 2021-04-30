@@ -39,5 +39,6 @@ project.lock.json
 AppPackages/
 BundleArtifacts/
 *.DotSettings
+/ModernKeePass/Win81App_TemporaryKey.pfx
 /ModernKeePass/Win81App_StoreKey.pfx
 .sonarqube/
