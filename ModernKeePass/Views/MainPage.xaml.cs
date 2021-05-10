@@ -18,16 +18,10 @@ namespace ModernKeePass.Views
         public MainPage()
         {
             InitializeComponent();
-            Unloaded += MainPage_Unloaded;
             ListView = MenuListView;
             ListViewSource = MenuItemsSource;
         }
-
-        private void MainPage_Unloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
-        {
-            Model.Cleanup();
-        }
-
+        
         private new void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             base.ListView_SelectionChanged(sender, e);
@@ -46,6 +40,11 @@ namespace ModernKeePass.Views
             else
                 file = e.Parameter as FileInfo;
             await Model.Initialize(Frame, MenuFrame, file);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Model.Cleanup();
         }
     }
 }

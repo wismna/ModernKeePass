@@ -69,5 +69,11 @@ namespace ModernKeePass.ViewModels
             await _mediator.Send(new CloseDatabaseCommand());
             _navigation.NavigateTo(Constants.Navigation.MainPage);
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

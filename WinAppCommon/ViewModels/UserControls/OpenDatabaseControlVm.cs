@@ -181,5 +181,11 @@ namespace ModernKeePass.ViewModels
                 IsOpening = false;
             }
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

@@ -33,5 +33,11 @@ namespace ModernKeePass.ViewModels.Settings
             var database = await _mediator.Send(new GetDatabaseQuery());
             _notification.Show(database.Name, _resource.GetResourceValue("CompositeKeyUpdated"));
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

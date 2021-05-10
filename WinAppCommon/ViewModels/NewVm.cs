@@ -72,5 +72,11 @@ namespace ModernKeePass.ViewModels
             var database = await _mediator.Send(new GetDatabaseQuery());
             _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = database.RootGroupId });
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

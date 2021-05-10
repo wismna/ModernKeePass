@@ -49,5 +49,10 @@ namespace ModernKeePass.ViewModels
             _recent.ClearAll();
             RecentItems.Clear();
         }
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

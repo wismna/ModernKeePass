@@ -193,5 +193,11 @@ namespace ModernKeePass.ViewModels
                     MessengerInstance.Send(new DatabaseClosedMessage { Parameter = message.Parameter });
                 });
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }

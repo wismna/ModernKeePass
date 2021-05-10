@@ -150,5 +150,11 @@ namespace ModernKeePass.ViewModels
                 KeyFilePath = HasKeyFile ? KeyFilePath : null
             });
         }
+
+        public override void Cleanup()
+        {
+            MessengerInstance.Unregister(this);
+            base.Cleanup();
+        }
     }
 }
