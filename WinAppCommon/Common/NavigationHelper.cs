@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -53,11 +54,11 @@ namespace ModernKeePass.Common
     ///     }
     /// </code>
     /// </example>
-    [Windows.Foundation.Metadata.WebHostHidden]
+    [WebHostHidden]
     public class NavigationHelper : DependencyObject
     {
-        private Page Page { get; set; }
-        private Frame Frame { get { return this.Page.Frame; } }
+        private Page  Page  { get; set; }
+        private Frame Frame => Page.Frame;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NavigationHelper"/> class.
@@ -67,31 +68,31 @@ namespace ModernKeePass.Common
         /// navigation requests only occur when the page is occupying the entire window.</param>
         public NavigationHelper(Page page)
         {
-            this.Page = page;
+            Page = page;
 
             // When this page is part of the visual tree make two changes:
             // 1) Map application view state to visual state for the page
             // 2) Handle hardware navigation requests
-            this.Page.Loaded += (sender, e) =>
+            Page.Loaded += (sender, e) =>
             {
 #if WINDOWS_PHONE_APP
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed += HardwareButtons_BackPressed;
 #else
                 // Keyboard and mouse navigation only apply when occupying the entire window
-                if (Page.ActualHeight == Window.Current.Bounds.Height &&
-                    Page.ActualWidth == Window.Current.Bounds.Width)
+                if (Page.ActualHeight.Equals(Window.Current.Bounds.Height) &&
+                    Page.ActualWidth.Equals(Window.Current.Bounds.Width))
                 {
                     // Listen to the window directly so focus isn't required
                     Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated +=
                         CoreDispatcher_AcceleratorKeyActivated;
                     Window.Current.CoreWindow.PointerPressed +=
-                        this.CoreWindow_PointerPressed;
+                        CoreWindow_PointerPressed;
                 }
 #endif
             };
 
             // Undo the same changes when the page is no longer visible
-            this.Page.Unloaded += (sender, e) =>
+            Page.Unloaded += (sender, e) =>
             {
 #if WINDOWS_PHONE_APP
                 Windows.Phone.UI.Input.HardwareButtons.BackPressed -= HardwareButtons_BackPressed;
@@ -99,15 +100,15 @@ namespace ModernKeePass.Common
                 Window.Current.CoreWindow.Dispatcher.AcceleratorKeyActivated -=
                     CoreDispatcher_AcceleratorKeyActivated;
                 Window.Current.CoreWindow.PointerPressed -=
-                    this.CoreWindow_PointerPressed;
+                    CoreWindow_PointerPressed;
 #endif
             };
         }
 
         #region Navigation support
 
-        RelayCommand _goBackCommand;
-        RelayCommand _goForwardCommand;
+        private RelayCommand _goBackCommand;
+        private RelayCommand _goForwardCommand;
 
         /// <summary>
         /// <see cref="RelayCommand"/> used to bind to the back Button's Command property
@@ -121,13 +122,7 @@ namespace ModernKeePass.Common
         {
             get
             {
-                if (_goBackCommand == null)
-                {
-                    _goBackCommand = new RelayCommand(
-                        () => this.GoBack(),
-                        () => this.CanGoBack());
-                }
-                return _goBackCommand;
+                return _goBackCommand ?? (_goBackCommand = new RelayCommand(GoBack, CanGoBack));
             }
             set
             {
@@ -141,19 +136,7 @@ namespace ModernKeePass.Common
         /// The <see cref="RelayCommand"/> is set up to use the virtual method <see cref="GoForward"/>
         /// as the Execute Action and <see cref="CanGoForward"/> for CanExecute.
         /// </summary>
-        public RelayCommand GoForwardCommand
-        {
-            get
-            {
-                if (_goForwardCommand == null)
-                {
-                    _goForwardCommand = new RelayCommand(
-                        () => this.GoForward(),
-                        () => this.CanGoForward());
-                }
-                return _goForwardCommand;
-            }
-        }
+        public RelayCommand GoForwardCommand => _goForwardCommand ?? (_goForwardCommand = new RelayCommand(GoForward, CanGoForward));
 
         /// <summary>
         /// Virtual method used by the <see cref="GoBackCommand"/> property
@@ -165,7 +148,7 @@ namespace ModernKeePass.Common
         /// </returns>
         public virtual bool CanGoBack()
         {
-            return this.Frame != null && this.Frame.CanGoBack;
+            return Frame != null && Frame.CanGoBack;
         }
         /// <summary>
         /// Virtual method used by the <see cref="GoForwardCommand"/> property
@@ -177,7 +160,7 @@ namespace ModernKeePass.Common
         /// </returns>
         public virtual bool CanGoForward()
         {
-            return this.Frame != null && this.Frame.CanGoForward;
+            return Frame != null && Frame.CanGoForward;
         }
 
         /// <summary>
@@ -186,7 +169,7 @@ namespace ModernKeePass.Common
         /// </summary>
         public virtual void GoBack()
         {
-            if (this.Frame != null && this.Frame.CanGoBack) this.Frame.GoBack();
+            if (Frame != null && Frame.CanGoBack) Frame.GoBack();
         }
         /// <summary>
         /// Virtual method used by the <see cref="GoForwardCommand"/> property
@@ -194,7 +177,7 @@ namespace ModernKeePass.Common
         /// </summary>
         public virtual void GoForward()
         {
-            if (this.Frame != null && this.Frame.CanGoForward) this.Frame.GoForward();
+            if (Frame != null && Frame.CanGoForward) Frame.GoForward();
         }
 
 #if WINDOWS_PHONE_APP
@@ -231,27 +214,27 @@ namespace ModernKeePass.Common
                 (virtualKey == VirtualKey.Left || virtualKey == VirtualKey.Right ||
                 (int)virtualKey == 166 || (int)virtualKey == 167))
             {
-                var coreWindow = Window.Current.CoreWindow;
-                var downState = CoreVirtualKeyStates.Down;
-                bool menuKey = (coreWindow.GetKeyState(VirtualKey.Menu) & downState) == downState;
-                bool controlKey = (coreWindow.GetKeyState(VirtualKey.Control) & downState) == downState;
-                bool shiftKey = (coreWindow.GetKeyState(VirtualKey.Shift) & downState) == downState;
-                bool noModifiers = !menuKey && !controlKey && !shiftKey;
-                bool onlyAlt = menuKey && !controlKey && !shiftKey;
+                var                        coreWindow  = Window.Current.CoreWindow;
+                const CoreVirtualKeyStates downState   = CoreVirtualKeyStates.Down;
+                var                        menuKey     = (coreWindow.GetKeyState(VirtualKey.Menu) & downState) == downState;
+                var                        controlKey  = (coreWindow.GetKeyState(VirtualKey.Control) & downState) == downState;
+                var                        shiftKey    = (coreWindow.GetKeyState(VirtualKey.Shift) & downState) == downState;
+                var                        noModifiers = !menuKey && !controlKey && !shiftKey;
+                var                        onlyAlt     = menuKey && !controlKey && !shiftKey;
 
-                if (((int)virtualKey == 166 && noModifiers) ||
-                    (virtualKey == VirtualKey.Left && onlyAlt))
+                if ((int)virtualKey == 166 && noModifiers ||
+                    virtualKey == VirtualKey.Left && onlyAlt)
                 {
                     // When the previous key or Alt+Left are pressed navigate back
                     e.Handled = true;
-                    this.GoBackCommand.Execute(null);
+                    GoBackCommand.Execute(null);
                 }
-                else if (((int)virtualKey == 167 && noModifiers) ||
-                    (virtualKey == VirtualKey.Right && onlyAlt))
+                else if ((int)virtualKey == 167 && noModifiers ||
+                    virtualKey == VirtualKey.Right && onlyAlt)
                 {
                     // When the next key or Alt+Right are pressed navigate forward
                     e.Handled = true;
-                    this.GoForwardCommand.Execute(null);
+                    GoForwardCommand.Execute(null);
                 }
             }
         }
@@ -272,14 +255,14 @@ namespace ModernKeePass.Common
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
                 properties.IsMiddleButtonPressed) return;
 
-            // If back or foward are pressed (but not both) navigate appropriately
-            bool backPressed = properties.IsXButton1Pressed;
-            bool forwardPressed = properties.IsXButton2Pressed;
+            // If back or forward are pressed (but not both) navigate appropriately
+            var backPressed = properties.IsXButton1Pressed;
+            var forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
             {
                 e.Handled = true;
-                if (backPressed) this.GoBackCommand.Execute(null);
-                if (forwardPressed) this.GoForwardCommand.Execute(null);
+                if (backPressed) GoBackCommand.Execute(null);
+                if (forwardPressed) GoForwardCommand.Execute(null);
             }
         }
 #endif
@@ -288,7 +271,7 @@ namespace ModernKeePass.Common
 
         #region Process lifetime management
 
-        private String _pageKey;
+        private string _pageKey;
 
         /// <summary>
         /// Register this event on the current page to populate the page
@@ -300,7 +283,7 @@ namespace ModernKeePass.Common
         /// Register this event on the current page to preserve
         /// state associated with the current page in case the
         /// application is suspended or the page is discarded from
-        /// the navigaqtion cache.
+        /// the navigation cache.
         /// </summary>
         public event SaveStateEventHandler SaveState;
 
@@ -313,15 +296,15 @@ namespace ModernKeePass.Common
         /// property provides the group to be displayed.</param>
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            this._pageKey = "Page-" + this.Frame.BackStackDepth;
+            var frameState = SuspensionManager.SessionStateForFrame(Frame);
+            _pageKey = "Page-" + Frame.BackStackDepth;
 
             if (e.NavigationMode == NavigationMode.New)
             {
                 // Clear existing state for forward navigation when adding a new page to the
                 // navigation stack
-                var nextPageKey = this._pageKey;
-                int nextPageIndex = this.Frame.BackStackDepth;
+                var nextPageKey = _pageKey;
+                var nextPageIndex = Frame.BackStackDepth;
                 while (frameState.Remove(nextPageKey))
                 {
                     nextPageIndex++;
@@ -329,20 +312,14 @@ namespace ModernKeePass.Common
                 }
 
                 // Pass the navigation parameter to the new page
-                if (this.LoadState != null)
-                {
-                    this.LoadState(this, new LoadStateEventArgs(e.Parameter, null));
-                }
+                LoadState?.Invoke(this, new LoadStateEventArgs(e.Parameter, null));
             }
             else
             {
                 // Pass the navigation parameter and preserved page state to the page, using
                 // the same strategy for loading suspended state and recreating pages discarded
                 // from cache
-                if (this.LoadState != null)
-                {
-                    this.LoadState(this, new LoadStateEventArgs(e.Parameter, (Dictionary<String, Object>)frameState[this._pageKey]));
-                }
+                LoadState?.Invoke(this, new LoadStateEventArgs(e.Parameter, (Dictionary<string, object>)frameState[_pageKey]));
             }
         }
 
@@ -355,12 +332,9 @@ namespace ModernKeePass.Common
         /// property provides the group to be displayed.</param>
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
-            var frameState = SuspensionManager.SessionStateForFrame(this.Frame);
-            var pageState = new Dictionary<String, Object>();
-            if (this.SaveState != null)
-            {
-                this.SaveState(this, new SaveStateEventArgs(pageState));
-            }
+            var frameState = SuspensionManager.SessionStateForFrame(Frame);
+            var pageState = new Dictionary<string, object>();
+            SaveState?.Invoke(this, new SaveStateEventArgs(pageState));
             frameState[_pageKey] = pageState;
         }
 
@@ -382,32 +356,31 @@ namespace ModernKeePass.Common
     public class LoadStateEventArgs : EventArgs
     {
         /// <summary>
-        /// The parameter value passed to <see cref="Frame.Navigate(Type, Object)"/> 
+        /// The parameter value passed to <see cref="Frame.Navigate(Type, object)"/> 
         /// when this page was initially requested.
         /// </summary>
-        public Object NavigationParameter { get; private set; }
+        public object NavigationParameter { get; private set; }
         /// <summary>
         /// A dictionary of state preserved by this page during an earlier
         /// session.  This will be null the first time a page is visited.
         /// </summary>
-        public Dictionary<string, Object> PageState { get; private set; }
+        public Dictionary<string, object> PageState { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoadStateEventArgs"/> class.
         /// </summary>
         /// <param name="navigationParameter">
-        /// The parameter value passed to <see cref="Frame.Navigate(Type, Object)"/> 
+        /// The parameter value passed to <see cref="Frame.Navigate(Type, object)"/> 
         /// when this page was initially requested.
         /// </param>
         /// <param name="pageState">
         /// A dictionary of state preserved by this page during an earlier
         /// session.  This will be null the first time a page is visited.
         /// </param>
-        public LoadStateEventArgs(Object navigationParameter, Dictionary<string, Object> pageState)
-            : base()
+        public LoadStateEventArgs(object navigationParameter, Dictionary<string, object> pageState)
         {
-            this.NavigationParameter = navigationParameter;
-            this.PageState = pageState;
+            NavigationParameter = navigationParameter;
+            PageState = pageState;
         }
     }
     /// <summary>
@@ -418,16 +391,15 @@ namespace ModernKeePass.Common
         /// <summary>
         /// An empty dictionary to be populated with serializable state.
         /// </summary>
-        public Dictionary<string, Object> PageState { get; private set; }
+        public Dictionary<string, object> PageState { get; private set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SaveStateEventArgs"/> class.
         /// </summary>
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
-        public SaveStateEventArgs(Dictionary<string, Object> pageState)
-            : base()
+        public SaveStateEventArgs(Dictionary<string, object> pageState)
         {
-            this.PageState = pageState;
+            PageState = pageState;
         }
     }
 }
