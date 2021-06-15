@@ -55,8 +55,8 @@ namespace ModernKeePass.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            Model.Cleanup();
             base.OnNavigatedFrom(e);
+            Model.Cleanup();
         }
     }
 }
