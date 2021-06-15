@@ -13,38 +13,50 @@ namespace ModernKeePass.Views
     /// </summary>
     public sealed partial class MainPage
     {
-        public new MainVm Model => (MainVm)DataContext;
+        public new MainVm Model => (MainVm) DataContext;
 
         public MainPage()
         {
             InitializeComponent();
-            ListView = MenuListView;
+            ListView       = MenuListView;
             ListViewSource = MenuItemsSource;
         }
-        
+
         private new void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             base.ListView_SelectionChanged(sender, e);
 
             var selectedItem = Model.SelectedItem as MainMenuItemVm;
-            if (selectedItem == null) MenuFrame.Navigate(typeof(WelcomePage));
-            else selectedItem.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
+            if (selectedItem == null)
+            {
+                MenuFrame.Navigate(typeof(WelcomePage));
+            }
+            else
+            {
+                selectedItem.Destination.Navigate(selectedItem.PageType, selectedItem.Parameter);
+            }
         }
-        
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             FileInfo file;
             if (e.NavigationMode == NavigationMode.Back)
+            {
                 file = null;
+            }
             else
+            {
                 file = e.Parameter as FileInfo;
+            }
+
             await Model.Initialize(Frame, MenuFrame, file);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             Model.Cleanup();
+            base.OnNavigatedFrom(e);
         }
     }
 }

@@ -15,35 +15,39 @@ namespace ModernKeePass.ViewModels
     public class BreadcrumbControlVm
     {
         public ObservableCollection<BreadcrumbItem> BreadcrumbItems { get; }
-        public string ParentGroupName { get; private set; }
-        public Icon ParentGroupIcon { get; private set; } = Icon.Folder;
+        public string                               ParentGroupName { get; private set; }
+        public Icon                                 ParentGroupIcon { get; private set; } = Icon.Folder;
 
-        public RelayCommand GoBackCommand { get; }
-        public RelayCommand GoUpCommand { get; private set; }
-        public RelayCommand<int> GoToCommand { get; }
+        public RelayCommand      GoBackCommand { get; }
+        public RelayCommand      GoUpCommand   { get; private set; }
+        public RelayCommand<int> GoToCommand   { get; }
 
-        private readonly IMediator _mediator;
+        private readonly IMediator          _mediator;
         private readonly INavigationService _navigation;
 
         public BreadcrumbControlVm(IMediator mediator, INavigationService navigation)
         {
-            _mediator = mediator;
+            _mediator   = mediator;
             _navigation = navigation;
-            
+
             BreadcrumbItems = new ObservableCollection<BreadcrumbItem>();
-            GoBackCommand = new RelayCommand(() => _navigation.GoBack());
-            GoToCommand = new RelayCommand<int>(GoTo);
-            GoUpCommand = new RelayCommand(() => GoTo(BreadcrumbItems.Count - 1), () => !string.IsNullOrEmpty(ParentGroupName));
+            GoBackCommand   = new RelayCommand(() => _navigation.GoBack());
+            GoToCommand     = new RelayCommand<int>(GoTo);
+            GoUpCommand     = new RelayCommand(() => GoTo(BreadcrumbItems.Count - 1), () => !string.IsNullOrEmpty(ParentGroupName));
         }
 
         public async Task Initialize(GroupVm group)
         {
-            if (group == null) return;
+            if (group == null)
+            {
+                return;
+            }
+
             GoBackCommand.RaiseCanExecuteChanged();
             ParentGroupName = group.Title;
             ParentGroupIcon = group.Icon;
 
-            BreadcrumbItems.Add(new BreadcrumbItem { Path = group.Id, Name = group.Title, Icon = group.Icon });
+            BreadcrumbItems.Add(new BreadcrumbItem {Path = group.Id, Name = group.Title, Icon = group.Icon});
             var parentGroup = group;
             while (!string.IsNullOrEmpty(parentGroup.ParentGroupId))
             {
@@ -54,9 +58,13 @@ namespace ModernKeePass.ViewModels
 
         private void GoTo(int index)
         {
-            if (BreadcrumbItems.Count == 0) return;
+            if (BreadcrumbItems.Count == 0)
+            {
+                return;
+            }
+
             var breadcrumb = BreadcrumbItems[index];
-            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem { Id = breadcrumb.Path });
+            _navigation.NavigateTo(Constants.Navigation.GroupPage, new NavigationItem {Id = breadcrumb.Path});
         }
     }
 }

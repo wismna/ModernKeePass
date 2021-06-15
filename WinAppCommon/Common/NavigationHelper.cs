@@ -120,15 +120,10 @@ namespace ModernKeePass.Common
         /// </summary>
         public RelayCommand GoBackCommand
         {
-            get
-            {
-                return _goBackCommand ?? (_goBackCommand = new RelayCommand(GoBack, CanGoBack));
-            }
-            set
-            {
-                _goBackCommand = value;
-            }
+            get { return _goBackCommand ?? (_goBackCommand = new RelayCommand(GoBack, CanGoBack)); }
+            set { _goBackCommand = value; }
         }
+
         /// <summary>
         /// <see cref="RelayCommand"/> used for navigating to the most recent item in 
         /// the forward navigation history, if a Frame manages its own navigation history.
@@ -150,6 +145,7 @@ namespace ModernKeePass.Common
         {
             return Frame != null && Frame.CanGoBack;
         }
+
         /// <summary>
         /// Virtual method used by the <see cref="GoForwardCommand"/> property
         /// to determine if the <see cref="Frame"/> can go forward.
@@ -169,15 +165,22 @@ namespace ModernKeePass.Common
         /// </summary>
         public virtual void GoBack()
         {
-            if (Frame != null && Frame.CanGoBack) Frame.GoBack();
+            if (Frame != null && Frame.CanGoBack)
+            {
+                Frame.GoBack();
+            }
         }
+
         /// <summary>
         /// Virtual method used by the <see cref="GoForwardCommand"/> property
         /// to invoke the <see cref="Windows.UI.Xaml.Controls.Frame.GoForward"/> method.
         /// </summary>
         public virtual void GoForward()
         {
-            if (Frame != null && Frame.CanGoForward) Frame.GoForward();
+            if (Frame != null && Frame.CanGoForward)
+            {
+                Frame.GoForward();
+            }
         }
 
 #if WINDOWS_PHONE_APP
@@ -203,16 +206,16 @@ namespace ModernKeePass.Common
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="e">Event data describing the conditions that led to the event.</param>
         private void CoreDispatcher_AcceleratorKeyActivated(CoreDispatcher sender,
-            AcceleratorKeyEventArgs e)
+                                                            AcceleratorKeyEventArgs e)
         {
             var virtualKey = e.VirtualKey;
 
             // Only investigate further when Left, Right, or the dedicated Previous or Next keys
             // are pressed
             if ((e.EventType == CoreAcceleratorKeyEventType.SystemKeyDown ||
-                e.EventType == CoreAcceleratorKeyEventType.KeyDown) &&
+                 e.EventType == CoreAcceleratorKeyEventType.KeyDown) &&
                 (virtualKey == VirtualKey.Left || virtualKey == VirtualKey.Right ||
-                (int)virtualKey == 166 || (int)virtualKey == 167))
+                 (int) virtualKey == 166 || (int) virtualKey == 167))
             {
                 var                        coreWindow  = Window.Current.CoreWindow;
                 const CoreVirtualKeyStates downState   = CoreVirtualKeyStates.Down;
@@ -222,15 +225,15 @@ namespace ModernKeePass.Common
                 var                        noModifiers = !menuKey && !controlKey && !shiftKey;
                 var                        onlyAlt     = menuKey && !controlKey && !shiftKey;
 
-                if ((int)virtualKey == 166 && noModifiers ||
+                if ((int) virtualKey == 166 && noModifiers ||
                     virtualKey == VirtualKey.Left && onlyAlt)
                 {
                     // When the previous key or Alt+Left are pressed navigate back
                     e.Handled = true;
                     GoBackCommand.Execute(null);
                 }
-                else if ((int)virtualKey == 167 && noModifiers ||
-                    virtualKey == VirtualKey.Right && onlyAlt)
+                else if ((int) virtualKey == 167 && noModifiers ||
+                         virtualKey == VirtualKey.Right && onlyAlt)
                 {
                     // When the next key or Alt+Right are pressed navigate forward
                     e.Handled = true;
@@ -247,22 +250,32 @@ namespace ModernKeePass.Common
         /// <param name="sender">Instance that triggered the event.</param>
         /// <param name="e">Event data describing the conditions that led to the event.</param>
         private void CoreWindow_PointerPressed(CoreWindow sender,
-            PointerEventArgs e)
+                                               PointerEventArgs e)
         {
             var properties = e.CurrentPoint.Properties;
 
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
-                properties.IsMiddleButtonPressed) return;
+                properties.IsMiddleButtonPressed)
+            {
+                return;
+            }
 
             // If back or forward are pressed (but not both) navigate appropriately
-            var backPressed = properties.IsXButton1Pressed;
+            var backPressed    = properties.IsXButton1Pressed;
             var forwardPressed = properties.IsXButton2Pressed;
             if (backPressed ^ forwardPressed)
             {
                 e.Handled = true;
-                if (backPressed) GoBackCommand.Execute(null);
-                if (forwardPressed) GoForwardCommand.Execute(null);
+                if (backPressed)
+                {
+                    GoBackCommand.Execute(null);
+                }
+
+                if (forwardPressed)
+                {
+                    GoForwardCommand.Execute(null);
+                }
             }
         }
 #endif
@@ -279,6 +292,7 @@ namespace ModernKeePass.Common
         /// state provided when recreating a page from a prior session.
         /// </summary>
         public event LoadStateEventHandler LoadState;
+
         /// <summary>
         /// Register this event on the current page to preserve
         /// state associated with the current page in case the
@@ -303,7 +317,7 @@ namespace ModernKeePass.Common
             {
                 // Clear existing state for forward navigation when adding a new page to the
                 // navigation stack
-                var nextPageKey = _pageKey;
+                var nextPageKey   = _pageKey;
                 var nextPageIndex = Frame.BackStackDepth;
                 while (frameState.Remove(nextPageKey))
                 {
@@ -319,7 +333,7 @@ namespace ModernKeePass.Common
                 // Pass the navigation parameter and preserved page state to the page, using
                 // the same strategy for loading suspended state and recreating pages discarded
                 // from cache
-                LoadState?.Invoke(this, new LoadStateEventArgs(e.Parameter, (Dictionary<string, object>)frameState[_pageKey]));
+                LoadState?.Invoke(this, new LoadStateEventArgs(e.Parameter, (Dictionary<string, object>) frameState[_pageKey]));
             }
         }
 
@@ -333,7 +347,7 @@ namespace ModernKeePass.Common
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
             var frameState = SuspensionManager.SessionStateForFrame(Frame);
-            var pageState = new Dictionary<string, object>();
+            var pageState  = new Dictionary<string, object>();
             SaveState?.Invoke(this, new SaveStateEventArgs(pageState));
             frameState[_pageKey] = pageState;
         }
@@ -345,6 +359,7 @@ namespace ModernKeePass.Common
     /// Represents the method that will handle the <see cref="NavigationHelper.LoadState"/>event
     /// </summary>
     public delegate void LoadStateEventHandler(object sender, LoadStateEventArgs e);
+
     /// <summary>
     /// Represents the method that will handle the <see cref="NavigationHelper.SaveState"/>event
     /// </summary>
@@ -360,6 +375,7 @@ namespace ModernKeePass.Common
         /// when this page was initially requested.
         /// </summary>
         public object NavigationParameter { get; private set; }
+
         /// <summary>
         /// A dictionary of state preserved by this page during an earlier
         /// session.  This will be null the first time a page is visited.
@@ -380,9 +396,10 @@ namespace ModernKeePass.Common
         public LoadStateEventArgs(object navigationParameter, Dictionary<string, object> pageState)
         {
             NavigationParameter = navigationParameter;
-            PageState = pageState;
+            PageState           = pageState;
         }
     }
+
     /// <summary>
     /// Class used to hold the event data required when a page attempts to save state.
     /// </summary>

@@ -85,7 +85,7 @@ namespace ModernKeePass.Views.BasePages
         /// <summary>
         /// Preserves state associated with this page in case the application is suspended or the
         /// page is discarded from the navigation cache.  Values must conform to the serialization
-        /// requirements of <see cref="Common.SuspensionManager.SessionState"/>.
+        /// requirements of <see cref="SuspensionManager.SessionState"/>.
         /// </summary>
         /// <param name="sender">The source of the event; typically <see cref="Common.NavigationHelper"/></param>
         /// <param name="e">Event data that provides an empty dictionary to be populated with
